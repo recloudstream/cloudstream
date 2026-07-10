@@ -1,6 +1,7 @@
 public final class com/lagradost/api/BuildConfig {
 	public static final field INSTANCE Lcom/lagradost/api/BuildConfig;
 	public final fun getMDL_API_KEY ()Ljava/lang/String;
+	public final fun getTRAKT_CLIENT_ID ()Ljava/lang/String;
 }
 
 public final class com/lagradost/api/ContextHelper_jvmKt {
@@ -20,11 +21,11 @@ public final class com/lagradost/cloudstream3/APIHolder {
 	public static final field INSTANCE Lcom/lagradost/cloudstream3/APIHolder;
 	public final fun addPluginMapping (Lcom/lagradost/cloudstream3/MainAPI;)V
 	public final fun capitalize (Ljava/lang/String;)Ljava/lang/String;
-	public final fun getAllProviders ()Ljava/util/List;
+	public final fun getAllProviders ()Lcom/lagradost/cloudstream3/utils/AtomicMutableList;
 	public final fun getApiFromNameNull (Ljava/lang/String;)Lcom/lagradost/cloudstream3/MainAPI;
 	public final fun getApiFromUrlNull (Ljava/lang/String;)Lcom/lagradost/cloudstream3/MainAPI;
 	public final fun getApiMap ()Ljava/util/Map;
-	public final fun getApis ()Ljava/util/List;
+	public final fun getApis ()Lcom/lagradost/cloudstream3/utils/AtomicList;
 	public final fun getCaptchaToken (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun getCaptchaToken$default (Lcom/lagradost/cloudstream3/APIHolder;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun getTracker (Ljava/util/List;Ljava/util/Set;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -34,7 +35,7 @@ public final class com/lagradost/cloudstream3/APIHolder {
 	public final fun initAll ()V
 	public final fun removePluginMapping (Lcom/lagradost/cloudstream3/MainAPI;)V
 	public final fun setApiMap (Ljava/util/Map;)V
-	public final fun setApis (Ljava/util/List;)V
+	public final fun setApis (Lcom/lagradost/cloudstream3/utils/AtomicList;)V
 }
 
 public final class com/lagradost/cloudstream3/Actor {
@@ -79,6 +80,7 @@ public final class com/lagradost/cloudstream3/ActorRole : java/lang/Enum {
 }
 
 public final class com/lagradost/cloudstream3/AniSearch {
+	public static final field Companion Lcom/lagradost/cloudstream3/AniSearch$Companion;
 	public fun <init> ()V
 	public fun <init> (Lcom/lagradost/cloudstream3/AniSearch$Data;)V
 	public synthetic fun <init> (Lcom/lagradost/cloudstream3/AniSearch$Data;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -92,7 +94,23 @@ public final class com/lagradost/cloudstream3/AniSearch {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/AniSearch$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/AniSearch$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/AniSearch;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/AniSearch;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/AniSearch$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/AniSearch$Data {
+	public static final field Companion Lcom/lagradost/cloudstream3/AniSearch$Data$Companion;
 	public fun <init> ()V
 	public fun <init> (Lcom/lagradost/cloudstream3/AniSearch$Data$Page;)V
 	public synthetic fun <init> (Lcom/lagradost/cloudstream3/AniSearch$Data$Page;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -106,7 +124,23 @@ public final class com/lagradost/cloudstream3/AniSearch$Data {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/AniSearch$Data$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/AniSearch$Data$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/AniSearch$Data;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/AniSearch$Data;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/AniSearch$Data$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/AniSearch$Data$Page {
+	public static final field Companion Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/util/ArrayList;)V
 	public synthetic fun <init> (Ljava/util/ArrayList;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -120,7 +154,23 @@ public final class com/lagradost/cloudstream3/AniSearch$Data$Page {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/AniSearch$Data$Page$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/AniSearch$Data$Page$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/AniSearch$Data$Page;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/AniSearch$Data$Page;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media {
+	public static final field Companion Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$Companion;
 	public fun <init> ()V
 	public fun <init> (Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverImage;Ljava/lang/String;)V
 	public synthetic fun <init> (Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverImage;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -152,7 +202,23 @@ public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverImage {
+	public static final field Companion Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverImage$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -169,7 +235,23 @@ public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverIma
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverImage$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverImage$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverImage;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverImage;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$CoverImage$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title {
+	public static final field Companion Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -185,6 +267,21 @@ public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title {
 	public final fun setEnglish (Ljava/lang/String;)V
 	public final fun setRomaji (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/AnimeLoadResponse : com/lagradost/cloudstream3/EpisodeResponse, com/lagradost/cloudstream3/LoadResponse {
@@ -283,10 +380,8 @@ public final class com/lagradost/cloudstream3/AnimeLoadResponse : com/lagradost/
 }
 
 public final class com/lagradost/cloudstream3/AnimeSearchResponse : com/lagradost/cloudstream3/SearchResponse {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/EnumSet;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/EnumSet;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/EnumSet;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/EnumSet;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/lang/Integer;
 	public final fun component11 ()Lcom/lagradost/cloudstream3/SearchQuality;
@@ -297,14 +392,14 @@ public final class com/lagradost/cloudstream3/AnimeSearchResponse : com/lagrados
 	public final fun component4 ()Lcom/lagradost/cloudstream3/TvType;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/Integer;
-	public final fun component7 ()Ljava/util/EnumSet;
+	public final fun component7 ()Ljava/util/Set;
 	public final fun component8 ()Ljava/lang/String;
 	public final fun component9 ()Ljava/util/Map;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/EnumSet;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)Lcom/lagradost/cloudstream3/AnimeSearchResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/AnimeSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/EnumSet;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/AnimeSearchResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)Lcom/lagradost/cloudstream3/AnimeSearchResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/AnimeSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/AnimeSearchResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getApiName ()Ljava/lang/String;
-	public final fun getDubStatus ()Ljava/util/EnumSet;
+	public final fun getDubStatus ()Ljava/util/Set;
 	public final fun getEpisodes ()Ljava/util/Map;
 	public fun getId ()Ljava/lang/Integer;
 	public fun getName ()Ljava/lang/String;
@@ -317,7 +412,7 @@ public final class com/lagradost/cloudstream3/AnimeSearchResponse : com/lagrados
 	public fun getUrl ()Ljava/lang/String;
 	public final fun getYear ()Ljava/lang/Integer;
 	public fun hashCode ()I
-	public final fun setDubStatus (Ljava/util/EnumSet;)V
+	public final fun setDubStatus (Ljava/util/Set;)V
 	public final fun setEpisodes (Ljava/util/Map;)V
 	public fun setId (Ljava/lang/Integer;)V
 	public final fun setOtherName (Ljava/lang/String;)V
@@ -331,6 +426,7 @@ public final class com/lagradost/cloudstream3/AnimeSearchResponse : com/lagrados
 }
 
 public final class com/lagradost/cloudstream3/AudioFile {
+	public static final field Companion Lcom/lagradost/cloudstream3/AudioFile$Companion;
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Map;
 	public fun equals (Ljava/lang/Object;)Z
@@ -340,6 +436,21 @@ public final class com/lagradost/cloudstream3/AudioFile {
 	public final fun setHeaders (Ljava/util/Map;)V
 	public final fun setUrl (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/AudioFile$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/AudioFile$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/AudioFile;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/AudioFile;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/AudioFile$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/AutoDownloadMode : java/lang/Enum {
@@ -744,6 +855,8 @@ public final class com/lagradost/cloudstream3/MainAPIKt {
 	public static final field USER_AGENT Ljava/lang/String;
 	public static final fun addDate (Lcom/lagradost/cloudstream3/Episode;Ljava/lang/String;Ljava/lang/String;)V
 	public static final fun addDate (Lcom/lagradost/cloudstream3/Episode;Ljava/util/Date;)V
+	public static final fun addDate (Lcom/lagradost/cloudstream3/Episode;Lkotlin/time/Instant;)V
+	public static final fun addDate (Lcom/lagradost/cloudstream3/Episode;Lkotlinx/datetime/LocalDate;)V
 	public static synthetic fun addDate$default (Lcom/lagradost/cloudstream3/Episode;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
 	public static final fun addDub (Lcom/lagradost/cloudstream3/AnimeSearchResponse;Ljava/lang/Integer;)V
 	public static final fun addDubStatus (Lcom/lagradost/cloudstream3/AnimeSearchResponse;Lcom/lagradost/cloudstream3/DubStatus;Ljava/lang/Integer;)V
@@ -774,6 +887,7 @@ public final class com/lagradost/cloudstream3/MainAPIKt {
 	public static final fun fixUrlNull (Lcom/lagradost/cloudstream3/MainAPI;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun getDurationFromString (Ljava/lang/String;)Ljava/lang/Integer;
 	public static final fun getFolderPrefix (Lcom/lagradost/cloudstream3/TvType;)Ljava/lang/String;
+	public static final fun getJson ()Lkotlinx/serialization/json/Json;
 	public static final fun getMapper ()Lcom/fasterxml/jackson/databind/json/JsonMapper;
 	public static final fun getQualityFromString (Ljava/lang/String;)Lcom/lagradost/cloudstream3/SearchQuality;
 	public static final fun getRhinoContext (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -786,6 +900,7 @@ public final class com/lagradost/cloudstream3/MainAPIKt {
 	public static final fun isEpisodeBased (Lcom/lagradost/cloudstream3/TvType;)Z
 	public static final fun isLiveStream (Lcom/lagradost/cloudstream3/TvType;)Z
 	public static final fun isMovieType (Lcom/lagradost/cloudstream3/TvType;)Z
+	public static final fun isUpcoming (Ljava/lang/String;)Z
 	public static final fun mainPage (Ljava/lang/String;Ljava/lang/String;Z)Lcom/lagradost/cloudstream3/MainPageData;
 	public static synthetic fun mainPage$default (Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lcom/lagradost/cloudstream3/MainPageData;
 	public static final fun mainPageOf ([Lcom/lagradost/cloudstream3/MainPageData;)Ljava/util/List;
@@ -839,7 +954,9 @@ public final class com/lagradost/cloudstream3/MainAPIKt {
 
 public final class com/lagradost/cloudstream3/MainActivityKt {
 	public static final fun getApp ()Lcom/lagradost/nicehttp/Requests;
+	public static final fun getInsecureApp ()Lcom/lagradost/nicehttp/Requests;
 	public static final fun setApp (Lcom/lagradost/nicehttp/Requests;)V
+	public static final fun setInsecureApp (Lcom/lagradost/nicehttp/Requests;)V
 }
 
 public final class com/lagradost/cloudstream3/MainPageData {
@@ -1026,6 +1143,7 @@ public final class com/lagradost/cloudstream3/ProviderType : java/lang/Enum {
 }
 
 public final class com/lagradost/cloudstream3/ProvidersInfoJson {
+	public static final field Companion Lcom/lagradost/cloudstream3/ProvidersInfoJson$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -1045,6 +1163,21 @@ public final class com/lagradost/cloudstream3/ProvidersInfoJson {
 	public final fun setStatus (I)V
 	public final fun setUrl (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/ProvidersInfoJson$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/ProvidersInfoJson$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/ProvidersInfoJson;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/ProvidersInfoJson;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/ProvidersInfoJson$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/Score {
@@ -1072,6 +1205,17 @@ public final class com/lagradost/cloudstream3/Score {
 	public static synthetic fun toStringNull$default (Lcom/lagradost/cloudstream3/Score;DIIZCILjava/lang/Object;)Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/Score$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/Score$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/Score;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/Score;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/Score$Companion {
 	public final fun from (Ljava/lang/Double;I)Lcom/lagradost/cloudstream3/Score;
 	public final fun from (Ljava/lang/Float;I)Lcom/lagradost/cloudstream3/Score;
@@ -1090,6 +1234,7 @@ public final class com/lagradost/cloudstream3/Score$Companion {
 	public final fun from5 (Ljava/lang/Integer;)Lcom/lagradost/cloudstream3/Score;
 	public final fun from5 (Ljava/lang/String;)Lcom/lagradost/cloudstream3/Score;
 	public final fun fromOld (Ljava/lang/Integer;)Lcom/lagradost/cloudstream3/Score;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/SearchQuality : java/lang/Enum {
@@ -1147,6 +1292,7 @@ public final class com/lagradost/cloudstream3/SearchResponseList {
 }
 
 public final class com/lagradost/cloudstream3/SeasonData {
+	public static final field Companion Lcom/lagradost/cloudstream3/SeasonData$Companion;
 	public fun <init> (ILjava/lang/String;Ljava/lang/Integer;)V
 	public synthetic fun <init> (ILjava/lang/String;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()I
@@ -1162,7 +1308,23 @@ public final class com/lagradost/cloudstream3/SeasonData {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/SeasonData$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/SeasonData$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/SeasonData;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/SeasonData;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/SeasonData$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/SettingsJson {
+	public static final field Companion Lcom/lagradost/cloudstream3/SettingsJson$Companion;
 	public fun <init> ()V
 	public fun <init> (Z)V
 	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -1174,6 +1336,21 @@ public final class com/lagradost/cloudstream3/SettingsJson {
 	public fun hashCode ()I
 	public final fun setEnableAdult (Z)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/SettingsJson$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/SettingsJson$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/SettingsJson;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/SettingsJson;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/SettingsJson$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/ShowStatus : java/lang/Enum {
@@ -1532,6 +1709,7 @@ public final class com/lagradost/cloudstream3/TvType : java/lang/Enum {
 	public static final field Podcast Lcom/lagradost/cloudstream3/TvType;
 	public static final field Torrent Lcom/lagradost/cloudstream3/TvType;
 	public static final field TvSeries Lcom/lagradost/cloudstream3/TvType;
+	public static final field Video Lcom/lagradost/cloudstream3/TvType;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/lagradost/cloudstream3/TvType;
 	public static fun values ()[Lcom/lagradost/cloudstream3/TvType;
@@ -2081,8 +2259,6 @@ public class com/lagradost/cloudstream3/extractors/EmturbovidExtractor : com/lag
 	public fun getName ()Ljava/lang/String;
 	public fun getRequiresReferer ()Z
 	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun setMainUrl (Ljava/lang/String;)V
-	public fun setName (Ljava/lang/String;)V
 }
 
 public class com/lagradost/cloudstream3/extractors/Evoload : com/lagradost/cloudstream3/utils/ExtractorApi {
@@ -2193,10 +2369,28 @@ public class com/lagradost/cloudstream3/extractors/Filesim : com/lagradost/cloud
 	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class com/lagradost/cloudstream3/extractors/Firestream : com/lagradost/cloudstream3/utils/ExtractorApi {
+	public fun <init> ()V
+	public fun getExtractorUrl (Ljava/lang/String;)Ljava/lang/String;
+	public fun getMainUrl ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun getRequiresReferer ()Z
+	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class com/lagradost/cloudstream3/extractors/FlaswishCom : com/lagradost/cloudstream3/extractors/StreamWishExtractor {
 	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
+}
+
+public class com/lagradost/cloudstream3/extractors/Flyfile : com/lagradost/cloudstream3/utils/ExtractorApi {
+	public fun <init> ()V
+	public fun getApiUrl ()Ljava/lang/String;
+	public fun getMainUrl ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun getRequiresReferer ()Z
+	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class com/lagradost/cloudstream3/extractors/FourCX : com/lagradost/cloudstream3/extractors/ContentX {
@@ -2514,6 +2708,12 @@ public final class com/lagradost/cloudstream3/extractors/Habetar : com/lagradost
 }
 
 public final class com/lagradost/cloudstream3/extractors/Haxloppd : com/lagradost/cloudstream3/extractors/VidHidePro {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Hgcloudto : com/lagradost/cloudstream3/extractors/StreamWishExtractor {
 	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
@@ -3256,6 +3456,12 @@ public final class com/lagradost/cloudstream3/extractors/Playerwish : com/lagrad
 	public fun getName ()Ljava/lang/String;
 }
 
+public final class com/lagradost/cloudstream3/extractors/Playmogo : com/lagradost/cloudstream3/extractors/DoodLaExtractor {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
+	public fun setMainUrl (Ljava/lang/String;)V
+}
+
 public class com/lagradost/cloudstream3/extractors/Rabbitstream : com/lagradost/cloudstream3/utils/ExtractorApi {
 	public fun <init> ()V
 	public fun extractRealKey (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -3772,6 +3978,15 @@ public class com/lagradost/cloudstream3/extractors/StreamWishExtractor : com/lag
 	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public class com/lagradost/cloudstream3/extractors/Streamcash : com/lagradost/cloudstream3/utils/ExtractorApi {
+	public fun <init> ()V
+	public fun getCdnUrl ()Ljava/lang/String;
+	public fun getMainUrl ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun getRequiresReferer ()Z
+	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class com/lagradost/cloudstream3/extractors/StreamhideCom : com/lagradost/cloudstream3/extractors/Filesim {
 	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
@@ -3803,12 +4018,6 @@ public final class com/lagradost/cloudstream3/extractors/Streamhub2 : com/lagrad
 	public fun getName ()Ljava/lang/String;
 	public fun setMainUrl (Ljava/lang/String;)V
 	public fun setName (Ljava/lang/String;)V
-}
-
-public final class com/lagradost/cloudstream3/extractors/Streamix : com/lagradost/cloudstream3/extractors/Streamup {
-	public fun <init> ()V
-	public fun getMainUrl ()Ljava/lang/String;
-	public fun getName ()Ljava/lang/String;
 }
 
 public final class com/lagradost/cloudstream3/extractors/Streamlare : com/lagradost/cloudstream3/extractors/Slmaxed {
@@ -3851,15 +4060,6 @@ public final class com/lagradost/cloudstream3/extractors/Streamsss : com/lagrado
 	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun setMainUrl (Ljava/lang/String;)V
-}
-
-public class com/lagradost/cloudstream3/extractors/Streamup : com/lagradost/cloudstream3/utils/ExtractorApi {
-	public fun <init> ()V
-	public fun getApiPath ()Ljava/lang/String;
-	public fun getMainUrl ()Ljava/lang/String;
-	public fun getName ()Ljava/lang/String;
-	public fun getRequiresReferer ()Z
-	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class com/lagradost/cloudstream3/extractors/Streamwish2 : com/lagradost/cloudstream3/extractors/StreamWishExtractor {
@@ -4223,11 +4423,52 @@ public class com/lagradost/cloudstream3/extractors/VidStack : com/lagradost/clou
 	public fun setName (Ljava/lang/String;)V
 }
 
-public final class com/lagradost/cloudstream3/extractors/Vidara : com/lagradost/cloudstream3/extractors/Streamup {
+public final class com/lagradost/cloudstream3/extractors/VidaaraxCom : com/lagradost/cloudstream3/extractors/Vidara {
 	public fun <init> ()V
-	public fun getApiPath ()Ljava/lang/String;
+	public fun getMainUrl ()Ljava/lang/String;
+}
+
+public final class com/lagradost/cloudstream3/extractors/VidaaraxNet : com/lagradost/cloudstream3/extractors/Vidara {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
+}
+
+public class com/lagradost/cloudstream3/extractors/Vidara : com/lagradost/cloudstream3/utils/ExtractorApi {
+	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
+	public fun getRequiresReferer ()Z
+	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/lagradost/cloudstream3/extractors/VidaraSo : com/lagradost/cloudstream3/extractors/Vidara {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Vidaraa : com/lagradost/cloudstream3/extractors/Vidara {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Vidaratem : com/lagradost/cloudstream3/extractors/Vidara {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Vidaraw : com/lagradost/cloudstream3/extractors/Vidara {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Vidarax : com/lagradost/cloudstream3/extractors/Vidara {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Vidavaca : com/lagradost/cloudstream3/extractors/Vidara {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
 }
 
 public final class com/lagradost/cloudstream3/extractors/Vide0Net : com/lagradost/cloudstream3/extractors/DoodLaExtractor {
@@ -4364,6 +4605,14 @@ public final class com/lagradost/cloudstream3/extractors/Vido : com/lagradost/cl
 }
 
 public class com/lagradost/cloudstream3/extractors/Vidoza : com/lagradost/cloudstream3/utils/ExtractorApi {
+	public fun <init> ()V
+	public fun getMainUrl ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun getRequiresReferer ()Z
+	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public class com/lagradost/cloudstream3/extractors/Vids : com/lagradost/cloudstream3/utils/ExtractorApi {
 	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
@@ -4567,9 +4816,11 @@ public final class com/lagradost/cloudstream3/extractors/Ztreamhub : com/lagrado
 public final class com/lagradost/cloudstream3/extractors/helper/AesHelper {
 	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/helper/AesHelper;
 	public final fun cryptoAESHandler (Ljava/lang/String;[BZLjava/lang/String;)Ljava/lang/String;
+	public final fun cryptoAESHandler (Ljava/lang/String;[BZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun cryptoAESHandler$default (Lcom/lagradost/cloudstream3/extractors/helper/AesHelper;Ljava/lang/String;[BZLjava/lang/String;ILjava/lang/Object;)Ljava/lang/String;
-	public final fun generateKeyAndIv ([B[BLjava/lang/String;IIII)Lkotlin/Pair;
-	public static synthetic fun generateKeyAndIv$default (Lcom/lagradost/cloudstream3/extractors/helper/AesHelper;[B[BLjava/lang/String;IIIIILjava/lang/Object;)Lkotlin/Pair;
+	public static synthetic fun cryptoAESHandler$default (Lcom/lagradost/cloudstream3/extractors/helper/AesHelper;Ljava/lang/String;[BZZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun generateKeyAndIv ([B[BIIII)Lkotlin/Pair;
+	public static synthetic fun generateKeyAndIv$default (Lcom/lagradost/cloudstream3/extractors/helper/AesHelper;[B[BIIIIILjava/lang/Object;)Lkotlin/Pair;
 	public final fun hexToByteArray (Ljava/lang/String;)[B
 }
 
@@ -4595,6 +4846,7 @@ public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper {
 }
 
 public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoJsonData {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoJsonData$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -4607,7 +4859,23 @@ public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoJ
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoJsonData$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoJsonData$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoJsonData;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoJsonData;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoJsonData$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSource {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSource$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -4625,7 +4893,23 @@ public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoS
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSource$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSource$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSource;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSource;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSource$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSources {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSources$Companion;
 	public fun <init> (Ljava/util/List;Ljava/util/List;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Ljava/util/List;
@@ -4638,7 +4922,30 @@ public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoS
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSources$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSources$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSources;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSources;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/helper/GogoHelper$GogoSources$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/helper/JwPlayerHelper {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/helper/JwPlayerHelper;
+	public final fun canParseJwScript (Ljava/lang/String;)Z
+	public final fun extractStreamLinks (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun extractStreamLinks$default (Lcom/lagradost/cloudstream3/extractors/helper/JwPlayerHelper;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class com/lagradost/cloudstream3/extractors/helper/JwPlayerHelper$Track {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/helper/JwPlayerHelper$Track$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -4653,6 +4960,21 @@ public final class com/lagradost/cloudstream3/extractors/helper/JwPlayerHelper$T
 	public final fun getLabel ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/extractors/helper/JwPlayerHelper$Track$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/helper/JwPlayerHelper$Track$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/helper/JwPlayerHelper$Track;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/helper/JwPlayerHelper$Track;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/helper/JwPlayerHelper$Track$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/extractors/helper/NineAnimeHelper {
@@ -4684,6 +5006,7 @@ public final class com/lagradost/cloudstream3/extractors/helper/WcoHelper$Compan
 }
 
 public final class com/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$ExternalKeys {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$ExternalKeys$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -4698,7 +5021,23 @@ public final class com/lagradost/cloudstream3/extractors/helper/WcoHelper$Compan
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$ExternalKeys$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$ExternalKeys$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$ExternalKeys;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$ExternalKeys;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$ExternalKeys$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$NewExternalKeys {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$NewExternalKeys$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -4713,6 +5052,21 @@ public final class com/lagradost/cloudstream3/extractors/helper/WcoHelper$Compan
 	public final fun getMainKey ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$NewExternalKeys$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$NewExternalKeys$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$NewExternalKeys;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$NewExternalKeys;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/helper/WcoHelper$Companion$NewExternalKeys$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/metaproviders/CrossTmdbProvider : com/lagradost/cloudstream3/metaproviders/TmdbProvider {
@@ -4731,6 +5085,7 @@ public final class com/lagradost/cloudstream3/metaproviders/CrossTmdbProvider : 
 }
 
 public final class com/lagradost/cloudstream3/metaproviders/CrossTmdbProvider$CrossMetaData {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/CrossTmdbProvider$CrossMetaData$Companion;
 	public fun <init> (ZLjava/util/List;)V
 	public synthetic fun <init> (ZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
@@ -4742,6 +5097,21 @@ public final class com/lagradost/cloudstream3/metaproviders/CrossTmdbProvider$Cr
 	public fun hashCode ()I
 	public final fun isSuccess ()Z
 	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/CrossTmdbProvider$CrossMetaData$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/CrossTmdbProvider$CrossMetaData$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/CrossTmdbProvider$CrossMetaData;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/CrossTmdbProvider$CrossMetaData;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/CrossTmdbProvider$CrossMetaData$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public abstract class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI : com/lagradost/cloudstream3/MainAPI {
@@ -4762,6 +5132,7 @@ public abstract class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI : 
 }
 
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Cast {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Cast$Companion;
 	public fun <init> (JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()J
 	public final fun component2 ()Ljava/lang/String;
@@ -4784,11 +5155,27 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Cast 
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Cast$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Cast$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Cast;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Cast;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Cast$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Companion {
 	public final fun getAPI_KEY ()Ljava/lang/String;
 }
 
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Credits {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Credits$Companion;
 	public fun <init> (Ljava/util/List;Ljava/util/List;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Ljava/util/List;
@@ -4801,7 +5188,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Credi
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Credits$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Credits$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Credits;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Credits;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Credits$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Crew {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Crew$Companion;
 	public fun <init> (JLjava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images;Ljava/lang/String;)V
 	public final fun component1 ()J
 	public final fun component2 ()Ljava/lang/String;
@@ -4820,7 +5223,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Crew 
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Crew$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Crew$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Crew;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Crew;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Crew$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Data {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Data$Companion;
 	public fun <init> ()V
 	public fun <init> (Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)V
 	public synthetic fun <init> (Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -4835,7 +5254,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Data 
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Data$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Data$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Data;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Data;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Data$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Genre {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Genre$Companion;
 	public fun <init> (JLjava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()J
 	public final fun component2 ()Ljava/lang/String;
@@ -4850,7 +5285,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Genre
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Genre$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Genre$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Genre;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Genre;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Genre$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -4867,7 +5318,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Image
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$LinkData {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$LinkData$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Long;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/Long;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -4898,7 +5365,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$LinkD
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$LinkData$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$LinkData$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$LinkData;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$LinkData;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$LinkData$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Media {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Media$Companion;
 	public fun <init> (JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;IJDLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images;Ljava/util/List;Ljava/lang/Long;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trailer;JJJJJJJLjava/lang/String;Ljava/lang/String;ZLjava/util/List;J)V
 	public synthetic fun <init> (JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;IJDLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images;Ljava/util/List;Ljava/lang/Long;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trailer;JJJJJJJLjava/lang/String;Ljava/lang/String;ZLjava/util/List;JIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()J
@@ -4978,7 +5461,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Media
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Media$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Media$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Media;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Media;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Media$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary$Companion;
 	public fun <init> (JLjava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images;)V
 	public synthetic fun <init> (JLjava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Images;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()J
@@ -5010,39 +5509,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Media
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Recommendations : java/util/ArrayList {
-	public fun <init> ()V
-	public fun contains (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)Z
-	public final fun contains (Ljava/lang/Object;)Z
-	public fun getSize ()I
-	public fun indexOf (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)I
-	public final fun indexOf (Ljava/lang/Object;)I
-	public fun lastIndexOf (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)I
-	public final fun lastIndexOf (Ljava/lang/Object;)I
-	public final fun remove (I)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;
-	public fun remove (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)Z
-	public final fun remove (Ljava/lang/Object;)Z
-	public fun removeAt (I)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;
-	public final fun size ()I
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
 
-public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$SearchResult : java/util/ArrayList {
-	public fun <init> ()V
-	public fun contains (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)Z
-	public final fun contains (Ljava/lang/Object;)Z
-	public fun getSize ()I
-	public fun indexOf (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)I
-	public final fun indexOf (Ljava/lang/Object;)I
-	public fun lastIndexOf (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)I
-	public final fun lastIndexOf (Ljava/lang/Object;)I
-	public final fun remove (I)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;
-	public fun remove (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;)Z
-	public final fun remove (Ljava/lang/Object;)Z
-	public fun removeAt (I)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary;
-	public final fun size ()I
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$MediaSummary$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisode {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisode$Companion;
 	public fun <init> (IIDILjava/lang/String;)V
 	public final fun component1 ()I
 	public final fun component2 ()I
@@ -5061,23 +5544,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowE
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodes : java/util/ArrayList {
-	public fun <init> ()V
-	public fun contains (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem;)Z
-	public final fun contains (Ljava/lang/Object;)Z
-	public fun getSize ()I
-	public fun indexOf (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem;)I
-	public final fun indexOf (Ljava/lang/Object;)I
-	public fun lastIndexOf (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem;)I
-	public final fun lastIndexOf (Ljava/lang/Object;)I
-	public final fun remove (I)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem;
-	public fun remove (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem;)Z
-	public final fun remove (Ljava/lang/Object;)Z
-	public fun removeAt (I)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem;
-	public final fun size ()I
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisode$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisode$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisode;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisode;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisode$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;I)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
@@ -5096,7 +5579,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowE
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$ShowEpisodesItem$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Source {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Source$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
@@ -5117,7 +5616,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Sourc
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Source$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Source$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Source;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Source;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Source$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Tag {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Tag$Companion;
 	public fun <init> (JLjava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()J
 	public final fun component2 ()Ljava/lang/String;
@@ -5132,7 +5647,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Tag {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Tag$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Tag$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Tag;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Tag;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Tag$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trailer {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trailer$Companion;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Long;)V
 	public synthetic fun <init> (Ljava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -5145,7 +5676,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trail
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trailer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trailer$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trailer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trailer;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trailer$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails$Companion;
 	public fun <init> (JLjava/lang/String;)V
 	public final fun component1 ()J
 	public final fun component2 ()Ljava/lang/String;
@@ -5158,7 +5705,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trail
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode$Companion;
 	public fun <init> (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails;)V
 	public final fun component1 ()Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails;
 	public final fun copy (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerDetails;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode;
@@ -5169,7 +5732,23 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trail
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerRoot {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerRoot$Companion;
 	public fun <init> (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode;)V
 	public final fun component1 ()Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode;
 	public final fun copy (Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerRoot;
@@ -5178,6 +5757,21 @@ public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$Trail
 	public final fun getTrailer ()Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerNode;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerRoot$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerRoot$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerRoot;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerRoot;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/MyDramaListAPI$TrailerRoot$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/metaproviders/SyncRedirector {
@@ -5676,6 +6270,7 @@ public abstract class com/lagradost/cloudstream3/plugins/BasePlugin {
 }
 
 public final class com/lagradost/cloudstream3/plugins/BasePlugin$Manifest {
+	public static final field Companion Lcom/lagradost/cloudstream3/plugins/BasePlugin$Manifest$Companion;
 	public fun <init> ()V
 	public final fun getName ()Ljava/lang/String;
 	public final fun getPluginClassName ()Ljava/lang/String;
@@ -5685,6 +6280,21 @@ public final class com/lagradost/cloudstream3/plugins/BasePlugin$Manifest {
 	public final fun setPluginClassName (Ljava/lang/String;)V
 	public final fun setRequiresResources (Z)V
 	public final fun setVersion (Ljava/lang/Integer;)V
+}
+
+public final synthetic class com/lagradost/cloudstream3/plugins/BasePlugin$Manifest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/plugins/BasePlugin$Manifest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/plugins/BasePlugin$Manifest;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/plugins/BasePlugin$Manifest;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/plugins/BasePlugin$Manifest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/plugins/BasePluginKt {
@@ -5712,8 +6322,67 @@ public final class com/lagradost/cloudstream3/utils/AppUtils {
 	public final fun toJson (Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public class com/lagradost/cloudstream3/utils/AtomicList : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun add (ILjava/lang/Object;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (ILjava/util/Collection;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public final fun distinctBy (Lkotlin/jvm/functions/Function1;)Lcom/lagradost/cloudstream3/utils/AtomicList;
+	public final fun filter (Lkotlin/jvm/functions/Function1;)Lcom/lagradost/cloudstream3/utils/AtomicList;
+	public fun get (I)Ljava/lang/Object;
+	public fun getSize ()I
+	public fun indexOf (Ljava/lang/Object;)I
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public fun lastIndexOf (Ljava/lang/Object;)I
+	public fun listIterator ()Ljava/util/ListIterator;
+	public fun listIterator (I)Ljava/util/ListIterator;
+	public final fun plus (Ljava/lang/Object;)Lcom/lagradost/cloudstream3/utils/AtomicList;
+	public final fun plus (Ljava/util/Collection;)Lcom/lagradost/cloudstream3/utils/AtomicList;
+	public fun remove (I)Ljava/lang/Object;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun replaceAll (Ljava/util/function/UnaryOperator;)V
+	public fun retainAll (Ljava/util/Collection;)Z
+	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun size ()I
+	public fun sort (Ljava/util/Comparator;)V
+	public fun subList (II)Ljava/util/List;
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public final fun withLock (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+}
+
+public final class com/lagradost/cloudstream3/utils/AtomicMutableList : com/lagradost/cloudstream3/utils/AtomicList, java/util/List, kotlin/jvm/internal/markers/KMutableList {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun add (ILjava/lang/Object;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (ILjava/util/Collection;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun iterator ()Ljava/util/Iterator;
+	public fun listIterator ()Ljava/util/ListIterator;
+	public fun listIterator (I)Ljava/util/ListIterator;
+	public final fun remove (I)Ljava/lang/Object;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeAt (I)Ljava/lang/Object;
+	public fun retainAll (Ljava/util/Collection;)Z
+	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public fun subList (II)Ljava/util/List;
+}
+
 public final class com/lagradost/cloudstream3/utils/Coroutines {
 	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/Coroutines;
+	public final fun atomicListOf ([Ljava/lang/Object;)Lcom/lagradost/cloudstream3/utils/AtomicMutableList;
 	public final fun ioSafe (Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Lkotlinx/coroutines/Job;
 	public final fun ioWork (Ljava/lang/Object;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun ioWorkSafe (Ljava/lang/Object;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -5728,10 +6397,10 @@ public final class com/lagradost/cloudstream3/utils/Coroutines_jvmKt {
 }
 
 public class com/lagradost/cloudstream3/utils/DrmExtractorLink : com/lagradost/cloudstream3/utils/ExtractorLink {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/UUID;Ljava/lang/String;Ljava/util/HashMap;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/UUID;Ljava/lang/String;Ljava/util/HashMap;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/UUID;Ljava/lang/String;Ljava/util/HashMap;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/UUID;Ljava/lang/String;Ljava/util/HashMap;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/uuid/Uuid;Ljava/lang/String;Ljava/util/HashMap;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/uuid/Uuid;Ljava/lang/String;Ljava/util/HashMap;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/uuid/Uuid;Ljava/lang/String;Ljava/util/HashMap;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/uuid/Uuid;Ljava/lang/String;Ljava/util/HashMap;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getAudioTracks ()Ljava/util/List;
 	public fun getExtractorData ()Ljava/lang/String;
 	public fun getHeaders ()Ljava/util/Map;
@@ -5746,7 +6415,8 @@ public class com/lagradost/cloudstream3/utils/DrmExtractorLink : com/lagradost/c
 	public fun getSource ()Ljava/lang/String;
 	public fun getType ()Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;
 	public fun getUrl ()Ljava/lang/String;
-	public fun getUuid ()Ljava/util/UUID;
+	public final synthetic fun getUuid ()Ljava/util/UUID;
+	public fun getUuid ()Lkotlin/uuid/Uuid;
 	public fun setAudioTracks (Ljava/util/List;)V
 	public fun setExtractorData (Ljava/lang/String;)V
 	public fun setHeaders (Ljava/util/Map;)V
@@ -5758,7 +6428,8 @@ public class com/lagradost/cloudstream3/utils/DrmExtractorLink : com/lagradost/c
 	public fun setQuality (I)V
 	public fun setReferer (Ljava/lang/String;)V
 	public fun setType (Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;)V
-	public fun setUuid (Ljava/util/UUID;)V
+	public final synthetic fun setUuid (Ljava/util/UUID;)V
+	public fun setUuid (Lkotlin/uuid/Uuid;)V
 }
 
 public abstract class com/lagradost/cloudstream3/utils/ExtractorApi {
@@ -5782,7 +6453,7 @@ public final class com/lagradost/cloudstream3/utils/ExtractorApiKt {
 	public static final fun getAndUnpack (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun getCLEARKEY_UUID ()Ljava/util/UUID;
 	public static final fun getExtractorApiFromName (Ljava/lang/String;)Lcom/lagradost/cloudstream3/utils/ExtractorApi;
-	public static final fun getExtractorApis ()Ljava/util/List;
+	public static final fun getExtractorApis ()Lcom/lagradost/cloudstream3/utils/AtomicMutableList;
 	public static final fun getINFER_TYPE ()Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;
 	public static final fun getPLAYREADY_UUID ()Ljava/util/UUID;
 	public static final fun getPacked (Ljava/lang/String;)Ljava/lang/String;
@@ -5804,6 +6475,8 @@ public final class com/lagradost/cloudstream3/utils/ExtractorApiKt {
 }
 
 public class com/lagradost/cloudstream3/utils/ExtractorLink : com/lagradost/cloudstream3/IDownloadableMinimum {
+	public static final field Companion Lcom/lagradost/cloudstream3/utils/ExtractorLink$Companion;
+	public synthetic fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/Map;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;Ljava/util/List;)V
@@ -5835,6 +6508,22 @@ public class com/lagradost/cloudstream3/utils/ExtractorLink : com/lagradost/clou
 	public fun setReferer (Ljava/lang/String;)V
 	public fun setType (Lcom/lagradost/cloudstream3/utils/ExtractorLinkType;)V
 	public fun toString ()Ljava/lang/String;
+	public static final synthetic fun write$Self (Lcom/lagradost/cloudstream3/utils/ExtractorLink;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+}
+
+public final synthetic class com/lagradost/cloudstream3/utils/ExtractorLink$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/ExtractorLink$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/utils/ExtractorLink;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/utils/ExtractorLink;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/utils/ExtractorLink$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/utils/ExtractorLinkPlayList : com/lagradost/cloudstream3/utils/ExtractorLink {
@@ -6197,18 +6886,18 @@ public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$PsshAtomUt
 }
 
 public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$Rendition {
-	public fun <init> (Ljava/net/URI;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;)V
-	public final fun component1 ()Ljava/net/URI;
+	public fun <init> (Lio/ktor/http/Url;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Lio/ktor/http/Url;
 	public final fun component2 ()Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
-	public final fun copy (Ljava/net/URI;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Rendition;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Rendition;Ljava/net/URI;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Rendition;
+	public final fun copy (Lio/ktor/http/Url;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Rendition;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Rendition;Lio/ktor/http/Url;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Rendition;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFormat ()Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;
 	public final fun getGroupId ()Ljava/lang/String;
 	public final fun getName ()Ljava/lang/String;
-	public final fun getUrl ()Ljava/net/URI;
+	public final fun getUrl ()Lio/ktor/http/Url;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6231,9 +6920,9 @@ public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$SchemeData
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$UriUtil {
-	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$UriUtil;
-	public final fun resolveToUri (Ljava/lang/String;Ljava/lang/String;)Ljava/net/URI;
+public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$UrlUtil {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$UrlUtil;
+	public final fun resolveToUrl (Ljava/lang/String;Ljava/lang/String;)Lio/ktor/http/Url;
 }
 
 public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$Util {
@@ -6246,21 +6935,21 @@ public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$Util {
 }
 
 public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$Variant {
-	public fun <init> (Ljava/net/URI;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public final fun component1 ()Ljava/net/URI;
+	public fun <init> (Lio/ktor/http/Url;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Lio/ktor/http/Url;
 	public final fun component2 ()Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun copy (Ljava/net/URI;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Variant;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Variant;Ljava/net/URI;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Variant;
+	public final fun copy (Lio/ktor/http/Url;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Variant;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Variant;Lio/ktor/http/Url;Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Variant;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAudioGroupId ()Ljava/lang/String;
 	public final fun getCaptionGroupId ()Ljava/lang/String;
 	public final fun getFormat ()Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$Format;
 	public final fun getSubtitleGroupId ()Ljava/lang/String;
-	public final fun getUrl ()Ljava/net/URI;
+	public final fun getUrl ()Lio/ktor/http/Url;
 	public final fun getVideoGroupId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public final fun isPlayableStandalone (Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$HlsMultivariantPlaylist;)Z
@@ -6291,10 +6980,29 @@ public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$VariantInf
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/lagradost/cloudstream3/utils/JsContext {
+	public synthetic fun <init> (JJLkotlinx/coroutines/CoroutineScope;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun eval (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun get (Ljava/lang/String;)Ljava/lang/Object;
+	public final fun getMaxExecutionTime-UwyO8pc ()J
+	public final fun getMaxInstructions ()J
+	public final fun set (Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun setMaxExecutionTime-LRDsOJo (J)V
+	public final fun setMaxInstructions (J)V
+}
+
 public final class com/lagradost/cloudstream3/utils/JsHunter {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun dehunt ()Ljava/lang/String;
 	public final fun detect ()Z
+}
+
+public final class com/lagradost/cloudstream3/utils/JsInterpreterKt {
+	public static final fun evalJs-1Y68eR8 (Ljava/lang/String;Ljava/lang/String;JJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun evalJs-1Y68eR8$default (Ljava/lang/String;Ljava/lang/String;JJLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun jsValueToString (Ljava/lang/Object;)Ljava/lang/String;
+	public static final fun newJsContext (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun newJsContext$default (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class com/lagradost/cloudstream3/utils/JsUnpacker {
@@ -6308,6 +7016,14 @@ public final class com/lagradost/cloudstream3/utils/JsUnpacker$Companion {
 	public final fun getC ()Ljava/util/List;
 	public final fun getZ ()Ljava/util/List;
 	public final fun load (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class com/lagradost/cloudstream3/utils/Levenshtein {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/Levenshtein;
+	public final fun partialRatio (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)I
+	public static synthetic fun partialRatio$default (Lcom/lagradost/cloudstream3/utils/Levenshtein;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)I
+	public final fun ratio (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)I
+	public static synthetic fun ratio$default (Lcom/lagradost/cloudstream3/utils/Levenshtein;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)I
 }
 
 public final class com/lagradost/cloudstream3/utils/M3u8Helper {
@@ -6457,7 +7173,9 @@ public final class com/lagradost/cloudstream3/utils/ShortLink$ShortUrl {
 public final class com/lagradost/cloudstream3/utils/StringUtils {
 	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/StringUtils;
 	public final fun decodeUri (Ljava/lang/String;)Ljava/lang/String;
+	public final fun decodeUrl (Ljava/lang/String;)Ljava/lang/String;
 	public final fun encodeUri (Ljava/lang/String;)Ljava/lang/String;
+	public final fun encodeUrl (Ljava/lang/String;)Ljava/lang/String;
 }
 
 public final class com/lagradost/cloudstream3/utils/SubtitleHelper {
@@ -6539,5 +7257,15 @@ public final class com/lagradost/cloudstream3/utils/SubtitleHelper$LanguageMetad
 
 public final class com/lagradost/cloudstream3/utils/SubtitleHelperKt {
 	public static final fun getCurrentLocale ()Ljava/lang/String;
+}
+
+public abstract class com/lagradost/cloudstream3/utils/serializers/NonEmptySerializer : kotlinx/serialization/json/JsonTransformingSerializer {
+	public fun <init> (Lkotlinx/serialization/KSerializer;)V
+	protected fun transformSerialize (Lkotlinx/serialization/json/JsonElement;)Lkotlinx/serialization/json/JsonElement;
+}
+
+public abstract class com/lagradost/cloudstream3/utils/serializers/WriteOnlySerializer : kotlinx/serialization/json/JsonTransformingSerializer {
+	public fun <init> (Lkotlinx/serialization/KSerializer;Ljava/util/Set;)V
+	protected fun transformSerialize (Lkotlinx/serialization/json/JsonElement;)Lkotlinx/serialization/json/JsonElement;
 }
 
