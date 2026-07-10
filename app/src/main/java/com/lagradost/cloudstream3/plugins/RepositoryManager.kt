@@ -141,12 +141,18 @@ object RepositoryManager {
             }
         } else if (fixedUrl.matches("^[a-zA-Z0-9!_-]+$".toRegex())) {
             safeAsync {
-                app.get("https://cutt.ly/${fixedUrl}", allowRedirects = false).let { it2 ->
-                    it2.headers["Location"]?.let { url ->
-                        if (url.startsWith("https://cutt.ly/404")) return@safeAsync null
-                        if (url.removeSuffix("/") == "https://cutt.ly") return@safeAsync null
-                        return@safeAsync url
-                    }
+                if (fixedUrl.startsWith("!")) {
+                    val response = app.get("https://py.md/${fixedUrl.removePrefix("!")}", allowRedirects = false)
+                    val url = response.headers["Location"] ?: return@safeAsync null
+                    if (url.startsWith("https://py.md/404")) return@safeAsync null
+                    if (url.removeSuffix("/") == "https://py.md") return@safeAsync null
+                    return@safeAsync url
+                } else {
+                    val response = app.get("https://cutt.ly/${fixedUrl}", allowRedirects = false)
+                    val url = response.headers["Location"] ?: return@safeAsync null
+                    if (url.startsWith("https://cutt.ly/404")) return@safeAsync null
+                    if (url.removeSuffix("/") == "https://cutt.ly") return@safeAsync null
+                    return@safeAsync url
                 }
             }
         } else null

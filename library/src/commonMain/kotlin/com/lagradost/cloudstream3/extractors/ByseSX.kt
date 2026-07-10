@@ -88,15 +88,15 @@ open class ByseSX : ExtractorApi() {
     }
 
     @OptIn(DelicateCryptographyApi::class)
-    private fun decryptPlayback(playback: Playback): String? {
+    private suspend fun decryptPlayback(playback: Playback): String? {
         val keyBytes = buildAesKey(playback)
         val ivBytes = b64UrlDecode(playback.iv)
         val cipherBytes = b64UrlDecode(playback.payload)
 
-        val aesKey = aesGcm.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
+        val aesKey = aesGcm.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, keyBytes)
         // 128-bit GCM tag (default)
         val cipher = aesKey.cipher()
-        val plainBytes = cipher.decryptWithIvBlocking(ivBytes, cipherBytes)
+        val plainBytes = cipher.decryptWithIv(ivBytes, cipherBytes)
 
         var jsonStr = plainBytes.decodeToString()
         if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1)

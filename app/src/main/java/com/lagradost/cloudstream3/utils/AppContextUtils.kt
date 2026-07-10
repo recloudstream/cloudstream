@@ -365,8 +365,14 @@ object AppContextUtils {
         }
     }
 
+    /** Sort subtitles by names */
     fun sortSubs(subs: Set<SubtitleData>): List<SubtitleData> {
-        return subs.sortedBy { it.name }
+        // Be aware, sorting by "$originalName $nameSuffix" causes "a (b) 1" < "a 1",
+        // where "originalName then nameSuffix" preserves "a 1" < "a (b) 1", because we do not compare '(' and '1'.
+        return subs
+            .sortedWith(
+                compareBy { subtitle: SubtitleData -> subtitle.originalName }
+                    .thenBy { subtitle: SubtitleData -> subtitle.nameSuffix })
     }
 
     fun Context.getApiSettings(): HashSet<String> {
