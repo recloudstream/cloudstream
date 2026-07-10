@@ -75,7 +75,9 @@ class UserPreferenceDelegate<T : Any>(
     ) {
         if (t == null) {
             removeKey(realKey)
-        } else setKeyClass(realKey, t)
+        } else {
+            setKeyClass(realKey, t)
+        }
     }
 }
 
@@ -188,7 +190,9 @@ object DataStoreHelper {
             val key = "$currentAccount/$USER_SELECTED_HOMEPAGE_API"
             if (value == null) {
                 removeKey(key)
-            } else setKey(key, value)
+            } else {
+                setKey(key, value)
+            }
         }
 
     fun setAccount(account: Account) {
