@@ -95,7 +95,6 @@ class ErrorLoadingException(message: String? = null) : Exception(message)
 
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
 
-@Prerelease
 val json = Json {
     encodeDefaults = true
     explicitNulls = false
@@ -1091,7 +1090,6 @@ enum class TvType(value: Int?) {
 
     Audio(16),
     Podcast(17),
-    @Prerelease
     Video(18),
 }
 
@@ -2549,12 +2547,10 @@ fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     }.onFailure { logError(it) }.getOrNull()
 }
 
-@Prerelease
 fun Episode.addDate(date: LocalDate?) {
     this.date = date?.atStartOfDayIn(TimeZone.currentSystemDefault())?.toEpochMilliseconds()
 }
 
-@Prerelease
 fun Episode.addDate(date: Instant?) {
     this.date = date?.toEpochMilliseconds()
 }
@@ -2701,7 +2697,6 @@ fun fetchUrls(text: String?): List<String> {
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
 }
 
-@Prerelease
 fun isUpcoming(dateString: String?): Boolean {
     return runCatching {
         val fmt = DateTimeComponents.Format {

@@ -20,7 +20,6 @@ object AesHelper {
     private val md5Hasher = provider.get(MD5).hasher()
 
     @OptIn(DelicateCryptographyApi::class)
-    @Prerelease
     fun cryptoAESHandler(
         data: String,
         pass: ByteArray,
