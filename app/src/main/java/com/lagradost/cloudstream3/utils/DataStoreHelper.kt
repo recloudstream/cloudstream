@@ -265,6 +265,14 @@ object DataStoreHelper {
      */
     @Serializable
     abstract class LibrarySearchResponse(
+       /**
+        * These fields are marked @Transient because this class is only ever serialized through
+        * through its subclasses, which redeclare each property with their own @SerialName
+        * annotations. Without @Transient here, kotlinx.serialization would try to
+        * generate a serializer for the abstract base class itself (or double-serialize
+        * these fields), which fails/conflicts since these are meant to be overridden,
+        * not serialized directly from the parent.
+        */
         @Transient override var id: Int? = null,
         @Transient open val latestUpdatedTime: Long = 0L,
         @Transient override val name: String = "",
