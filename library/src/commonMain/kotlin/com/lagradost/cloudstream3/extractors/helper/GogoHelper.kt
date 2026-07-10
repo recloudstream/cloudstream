@@ -28,7 +28,7 @@ object GogoHelper {
      * @param id base64Decode(show_id) + IV
      * @return the encryption key
      */
-    private fun getKey(id: String): String? {
+    private fun getEncryptionKey(id: String): String? {
         return safe {
             id.map {
                 it.code.toString(16)
@@ -64,7 +64,7 @@ object GogoHelper {
      * @param iv secret iv from site, required non-null if isUsingAdaptiveKeys is off
      * @param secretKey secret key for decryption from site, required non-null if isUsingAdaptiveKeys is off
      * @param secretDecryptKey secret key to decrypt the response json, required non-null if isUsingAdaptiveKeys is off
-     * @param isUsingAdaptiveKeys generates keys from IV and ID, see getKey()
+     * @param isUsingAdaptiveKeys generates keys from IV and ID, see [getEncryptionKey]
      * @param isUsingAdaptiveData generate encrypt-ajax data based on $("script[data-name='episode']")[0].dataset.value
      */
     suspend fun extractVidstream(
@@ -89,7 +89,7 @@ object GogoHelper {
         val foundIv = iv ?: (document ?: app.get(iframeUrl).document.also { document = it })
             .select("""div.wrapper[class*=container]""")
             .attr("class").split("-").lastOrNull() ?: return@safeApiCall
-        val foundKey = secretKey ?: getKey(base64Decode(id) + foundIv) ?: return@safeApiCall
+        val foundKey = secretKey ?: getEncryptionKey(base64Decode(id) + foundIv) ?: return@safeApiCall
         val foundDecryptKey = secretDecryptKey ?: foundKey
 
         val url = Url(iframeUrl)
