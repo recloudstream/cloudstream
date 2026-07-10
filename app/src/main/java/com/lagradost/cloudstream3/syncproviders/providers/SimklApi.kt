@@ -104,7 +104,9 @@ class SimklApi : SyncAPI() {
             val unixTime = APIHolder.unixTime
             return if (this > unixTime) {
                 (this - unixTime).toDuration(DurationUnit.SECONDS)
-            } else Duration.ZERO
+            } else {
+                Duration.ZERO
+            }
         }
 
         fun cleanOldCache() {
