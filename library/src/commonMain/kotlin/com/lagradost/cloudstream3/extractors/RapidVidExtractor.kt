@@ -35,14 +35,14 @@ open class RapidVid : ExtractorApi() {
 
         if (extractedValue != null) {
             val bytes = extractedValue.split("\\x").filter { it.isNotEmpty() }.map { it.toInt(16).toByte() }.toByteArray()
-            decoded   = String(bytes, Charsets.UTF_8)
+            decoded   = bytes.decodeToString()
         } else {
             val evalJWSsetup = Regex("""\};\s*(eval\(function[\s\S]*?)var played = \d+;""").find(videoReq)?.groupValues?.get(1) ?: throw ErrorLoadingException("File not found")
             val JWSsetup      = getAndUnpack(getAndUnpack(evalJWSsetup)).replace("\\\\", "\\")
             extractedValue  = Regex("""file":"(.*)","label""").find(JWSsetup)?.groupValues?.get(1)?.replace("\\\\x", "")
 
             val bytes = extractedValue?.chunked(2)?.map { it.toInt(16).toByte() }?.toByteArray()
-            decoded   = bytes?.toString(Charsets.UTF_8) ?: throw ErrorLoadingException("File not found")
+            decoded   = bytes?.decodeToString() ?: throw ErrorLoadingException("File not found")
         }
 
         callback.invoke(
