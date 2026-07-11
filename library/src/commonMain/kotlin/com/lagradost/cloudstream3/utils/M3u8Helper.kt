@@ -125,6 +125,8 @@ object M3u8Helper2 {
         iv: ByteArray = byteArrayOf(),
         index: Int,
     ): ByteArray {
+        // After next stable, we can just make this a wrapper
+        // return runBlocking { getDecryptedBytes(secretKey, data, iv, index) }
         val ivKey = if (iv.isEmpty()) defaultIv(index) else iv
         val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, secretKey)
         return aesKey.cipher(padding = true).decryptWithIvBlocking(ivKey, data)
