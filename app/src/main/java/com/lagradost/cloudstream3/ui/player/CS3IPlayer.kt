@@ -719,7 +719,7 @@ class CS3IPlayer : IPlayer {
          **/
         var preferredAudioTrackLanguage: String? = null
             get() {
-                return field ?: getKey(
+                return field ?: getKey<String>(
                     "$currentAccount/$PREFERRED_AUDIO_LANGUAGE_KEY",
                     field
                 )?.also {
