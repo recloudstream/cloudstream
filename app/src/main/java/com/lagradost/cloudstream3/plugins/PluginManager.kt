@@ -176,11 +176,11 @@ object PluginManager {
 
 
     fun getPluginsOnline(): Array<PluginData> {
-        return getKey(PLUGINS_KEY) ?: emptyArray()
+        return getKey<Array<PluginData>>(PLUGINS_KEY) ?: emptyArray()
     }
 
     fun getPluginsLocal(): Array<PluginData> {
-        return getKey(PLUGINS_KEY_LOCAL) ?: emptyArray()
+        return getKey<Array<PluginData>>(PLUGINS_KEY_LOCAL) ?: emptyArray()
     }
 
     private val CLOUD_STREAM_FOLDER =
