@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
+import com.lagradost.cloudstream3.utils.StringUtils.decodeUrl
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Cda : ExtractorApi() {
@@ -64,7 +64,7 @@ open class Cda : ExtractorApi() {
             .replace("_QWE", "")
             .replace("_Q5", "")
             .replace("_IKSDE", "")
-        a = a.decodeUri()
+        a = a.decodeUrl()
         a = a.map { char ->
             if (char.code in 33..126) {
                 return@map (33 + (char.code + 14) % 94).toChar().toString()

@@ -38,18 +38,21 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 const val CHROME_SUBTITLE_KEY = "chome_subtitle_settings"
 
+@Serializable
 data class SaveChromeCaptionStyle(
-    @JsonProperty("fontFamily") var fontFamily: String? = null,
-    @JsonProperty("fontGenericFamily") var fontGenericFamily: Int? = null,
-    @JsonProperty("backgroundColor") var backgroundColor: Int = 0x00FFFFFF, // transparent
-    @JsonProperty("edgeColor") var edgeColor: Int = Color.BLACK, // BLACK
-    @JsonProperty("edgeType") var edgeType: Int = EDGE_TYPE_OUTLINE,
-    @JsonProperty("foregroundColor") var foregroundColor: Int = Color.WHITE,
-    @JsonProperty("fontScale") var fontScale: Float = 1.05f,
-    @JsonProperty("windowColor") var windowColor: Int = Color.TRANSPARENT,
+    @JsonProperty("fontFamily") @SerialName("fontFamily") var fontFamily: String? = null,
+    @JsonProperty("fontGenericFamily") @SerialName("fontGenericFamily") var fontGenericFamily: Int? = null,
+    @JsonProperty("backgroundColor") @SerialName("backgroundColor") var backgroundColor: Int = 0x00FFFFFF, // transparent
+    @JsonProperty("edgeColor") @SerialName("edgeColor") var edgeColor: Int = Color.BLACK, // BLACK
+    @JsonProperty("edgeType") @SerialName("edgeType") var edgeType: Int = EDGE_TYPE_OUTLINE,
+    @JsonProperty("foregroundColor") @SerialName("foregroundColor") var foregroundColor: Int = Color.WHITE,
+    @JsonProperty("fontScale") @SerialName("fontScale") var fontScale: Float = 1.05f,
+    @JsonProperty("windowColor") @SerialName("windowColor") var windowColor: Int = Color.TRANSPARENT,
 )
 
 class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBinding>(

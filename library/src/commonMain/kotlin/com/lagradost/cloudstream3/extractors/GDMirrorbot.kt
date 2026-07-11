@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.base64Decode
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
-import java.net.URI
+import io.ktor.http.Url
 
 class Techinmind: GDMirrorbot() {
     override var name = "Techinmind Cloud AIO"
@@ -103,7 +103,7 @@ open class GDMirrorbot : ExtractorApi() {
     }
 
     private fun getBaseUrl(url: String): String {
-        return URI(url).let { "${it.scheme}://${it.host}" }
+        return Url(url).let { "${it.protocol.name}://${it.host}" }
     }
 }
 

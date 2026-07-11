@@ -7,7 +7,7 @@ package com.lagradost.cloudstream3
 @Deprecated(
     message = "AcraApplication is deprecated, use CloudStreamApp instead",
     replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp"),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 class AcraApplication {
 	companion object {
@@ -15,14 +15,14 @@ class AcraApplication {
 		@Deprecated(
 		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
 		    replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp.context"),
-		    level = DeprecationLevel.WARNING
+		    level = DeprecationLevel.ERROR
 		)
 		val context get() = CloudStreamApp.context
 
 		@Deprecated(
 		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
 		    replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp.removeKeys(folder)"),
-		    level = DeprecationLevel.WARNING
+		    level = DeprecationLevel.ERROR
 		)
 		fun removeKeys(folder: String): Int? =
 		    CloudStreamApp.removeKeys(folder)
@@ -30,7 +30,7 @@ class AcraApplication {
 		@Deprecated(
 		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
 		    replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp.setKey(path, value)"),
-		    level = DeprecationLevel.WARNING
+		    level = DeprecationLevel.ERROR
 		)
 		fun <T> setKey(path: String, value: T) =
 			CloudStreamApp.setKey(path, value)
@@ -38,7 +38,7 @@ class AcraApplication {
 		@Deprecated(
 		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
 		    replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp.setKey(folder, path, value)"),
-		    level = DeprecationLevel.WARNING
+		    level = DeprecationLevel.ERROR
 		)
 		fun <T> setKey(folder: String, path: String, value: T) =
 			CloudStreamApp.setKey(folder, path, value)
@@ -46,7 +46,7 @@ class AcraApplication {
 		@Deprecated(
 		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
 		    replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp.getKey(path, defVal)"),
-		    level = DeprecationLevel.WARNING
+		    level = DeprecationLevel.ERROR
 		)
 		inline fun <reified T : Any> getKey(path: String, defVal: T?): T? =
 			CloudStreamApp.getKey(path, defVal)
@@ -54,7 +54,7 @@ class AcraApplication {
 		@Deprecated(
 		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
 		    replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp.getKey(path)"),
-		    level = DeprecationLevel.WARNING
+		    level = DeprecationLevel.ERROR
 		)
 		inline fun <reified T : Any> getKey(path: String): T? =
 			CloudStreamApp.getKey(path)
@@ -62,7 +62,7 @@ class AcraApplication {
 		@Deprecated(
 		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
 		    replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp.getKey(folder, path)"),
-		    level = DeprecationLevel.WARNING
+		    level = DeprecationLevel.ERROR
 		)
 		inline fun <reified T : Any> getKey(folder: String, path: String): T? =
 		    CloudStreamApp.getKey(folder, path)
@@ -70,7 +70,7 @@ class AcraApplication {
 		@Deprecated(
 		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
 		    replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp.getKey(folder, path, defVal)"),
-		    level = DeprecationLevel.WARNING
+		    level = DeprecationLevel.ERROR
 		)
 		inline fun <reified T : Any> getKey(folder: String, path: String, defVal: T?): T? =
 			CloudStreamApp.getKey(folder, path, defVal)

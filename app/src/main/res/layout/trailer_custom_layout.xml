@@ -11,6 +11,7 @@
         android:id="@+id/player_metadata_scrim"
         android:layout_width="640dp"
         android:layout_height="match_parent"
+        android:layout_marginTop="-10dp"
         android:background="@drawable/bg_player_metadata_scrim_netflix"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"

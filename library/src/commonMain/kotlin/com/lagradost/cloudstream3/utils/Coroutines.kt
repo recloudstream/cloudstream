@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.utils
 
 import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
-import androidx.annotation.WorkerThread
 import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
@@ -10,6 +9,9 @@ import kotlinx.coroutines.*
 
 @AnyThread
 expect fun runOnMainThreadNative(@MainThread work: (() -> Unit))
+
+internal expect annotation class WorkerThread()
+
 object Coroutines {
     @AnyThread
     fun <T> T.main(@MainThread work: suspend ((T) -> Unit)): Job {
@@ -66,16 +68,14 @@ object Coroutines {
      * If you want to iterate over the list then you need to do:
      * list.withLock { code here }
      */
-    @Prerelease
     fun <T> atomicListOf(vararg items: T): AtomicMutableList<T> {
         return AtomicMutableList(items.toMutableList())
     }
 
-    // Deprecate after next stable
-    /*@Deprecated(
+    @Deprecated(
         message = "Use atomicListOf() instead.",
         replaceWith = ReplaceWith("atomicListOf(*items)"),
         level = DeprecationLevel.WARNING,
-    )*/
+    )
     fun <T> threadSafeListOf(vararg items: T): MutableList<T> = atomicListOf(*items)
 }

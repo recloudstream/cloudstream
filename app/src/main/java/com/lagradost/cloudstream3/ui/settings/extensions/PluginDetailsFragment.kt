@@ -54,7 +54,7 @@ class PluginDetailsFragment(val data: PluginViewData) : BaseBottomSheetDialogFra
     }
 
     override fun onBindingCreated(binding: FragmentPluginDetailsBinding) {
-        val metadata = data.plugin.second
+        val metadata = data.pluginWrapper.plugin
         binding.apply {
             pluginIcon.loadImage(metadata.iconUrl?.replace("%size%", "$iconSize")
                 ?.replace("%exact_size%", "$iconSizeExact")) {
@@ -135,7 +135,7 @@ class PluginDetailsFragment(val data: PluginViewData) : BaseBottomSheetDialogFra
     }
 
     private fun updateVoting(value: Int) {
-        val metadata = data.plugin.second
+        val metadata = data.pluginWrapper.plugin
         binding?.apply {
             pluginVotes.text = value.toString()
             if (metadata.hasVoted()) {

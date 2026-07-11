@@ -1640,11 +1640,11 @@ object VideoDownloadManager {
     }
 
     fun getDownloadResumePackage(context: Context, id: Int): DownloadResumePackage? {
-        return context.getKey(KEY_RESUME_PACKAGES, id.toString())
+        return context.getKey<DownloadResumePackage>(KEY_RESUME_PACKAGES, id.toString())
     }
 
     fun getDownloadQueuePackage(context: Context, id: Int): DownloadQueueWrapper? {
-        return context.getKey(KEY_RESUME_IN_QUEUE, id.toString())
+        return context.getKey<DownloadQueueWrapper>(KEY_RESUME_IN_QUEUE, id.toString())
     }
 
     fun getDownloadEpisodeMetadata(

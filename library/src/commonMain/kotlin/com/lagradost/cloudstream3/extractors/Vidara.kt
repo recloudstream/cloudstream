@@ -8,23 +8,45 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-class Streamix(): Streamup() {
-    override val name: String = "Streamix"
-    override val mainUrl = "https://streamix.so"
+class Vidavaca : Vidara() {
+    override val mainUrl = "https://vidavaca.net"
 }
 
-class Vidara(): Streamup() {
+class VidaaraxNet : Vidara() {
+    override val mainUrl = "https://vidaarax.net"
+}
+
+class VidaaraxCom : Vidara() {
+    override val mainUrl = "https://vidaarax.com"
+}
+
+class Vidaratem : Vidara() {
+    override val mainUrl = "https://vidaratem.com"
+}
+
+class Vidaraw : Vidara() {
+    override val mainUrl = "https://vidaraw.com"
+}
+
+class Vidarax : Vidara() {
+    override val mainUrl = "https://vidarax.cc"
+}
+
+class Vidaraa : Vidara() {
+    override val mainUrl = "https://vidaraa.cc"
+}
+
+class VidaraSo : Vidara() {
+    override val mainUrl = "https://vidara.so"
+}
+
+open class Vidara : ExtractorApi() {
     override val name: String = "Vidara"
     override val mainUrl = "https://vidara.to"
-    override val apiPath: String = "/api/stream"
-}
-
-open class Streamup() : ExtractorApi() {
-    override val name: String = "Streamup"
-    override val mainUrl: String = "https://strmup.to"
     override val requiresReferer: Boolean = false
-    open val apiPath: String = "/ajax/stream"
 
     override suspend fun getUrl(
         url: String,
@@ -33,8 +55,9 @@ open class Streamup() : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val fileCode = url.substringAfterLast("/")
-        val fileInfo = app.get("$mainUrl$apiPath?filecode=$fileCode")
-            .parsed<StreamUpFileInfo>()
+        val fileInfo =
+            app.post("$mainUrl/api/stream", json = mapOf("filecode" to fileCode, "device" to "web"))
+                .parsed<StreamUpFileInfo>()
 
         callback.invoke(
             newExtractorLink(
@@ -52,18 +75,21 @@ open class Streamup() : ExtractorApi() {
         }
     }
 
+    @Serializable
     private data class StreamUpFileInfo(
         val title: String,
         val thumbnail: String,
+        @SerialName("streaming_url")
         @JsonProperty("streaming_url")
         val streamingUrl: String,
         val subtitles: List<StreamUpSubtitle>?
     )
 
+    @Serializable
     private data class StreamUpSubtitle(
+        @SerialName("file_path")
         @JsonProperty("file_path")
         val filePath: String,
-        @JsonProperty("language")
         val language: String,
     )
 }

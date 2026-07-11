@@ -729,4 +729,5 @@
     </plurals>
     <string name="source_priority">ソースの優先順位</string>
     <string name="source_priority_help">プレイヤーでのビデオソースの並び順を設定します</string>
+    <string name="show_player_metadata_overlay">プレイヤーメタデータオーバーレイを表示</string>
 </resources>

@@ -553,7 +553,7 @@
     <string name="duplicate_add">Thêm vào</string>
     <string name="action_subscribe">Đăng ký</string>
     <string name="action_remove_from_favorites">Xóa khỏi mục yêu thích</string>
-    <string name="select_an_account">Chọn một Hồ sơ</string>
+    <string name="select_an_account">Chọn hồ sơ của bạn</string>
     <string name="duplicate_message_single">Có vẻ như một mục có khả năng trùng lặp đã tồn tại trong thư viện của bạn: \'%s.\' \n \nBạn vẫn muốn thêm mục này, thay thế mục hiện có hay hủy hành động?</string>
     <string name="enter_pin">Nhập mã PIN</string>
     <string name="pin">PIN</string>

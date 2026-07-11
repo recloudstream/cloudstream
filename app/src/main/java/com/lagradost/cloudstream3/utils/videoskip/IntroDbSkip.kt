@@ -6,6 +6,8 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class IntroDbSkip : SkipAPI() {
     override val name = "IntroDb"
@@ -55,23 +57,24 @@ class IntroDbSkip : SkipAPI() {
         )
     }
 
-
+    @Serializable
     data class IntroDbResponse(
-        @JsonProperty("imdb_id") val imdbId: String?,
-        val season: Int?,
-        val episode: Int?,
-        val intro: Segment?,
-        val recap: Segment?,
-        val outro: Segment?,
+        @JsonProperty("imdb_id") @SerialName("imdb_id") val imdbId: String?,
+        @JsonProperty("season") @SerialName("season") val season: Int?,
+        @JsonProperty("episode") @SerialName("episode") val episode: Int?,
+        @JsonProperty("intro") @SerialName("intro") val intro: Segment?,
+        @JsonProperty("recap") @SerialName("recap") val recap: Segment?,
+        @JsonProperty("outro") @SerialName("outro") val outro: Segment?,
     )
 
+    @Serializable
     data class Segment(
-        @JsonProperty("start_sec") val startSec: Double?,
-        @JsonProperty("end_sec") val endSec: Double?,
-        @JsonProperty("start_ms") val startMs: Long?,
-        @JsonProperty("end_ms") val endMs: Long?,
-        val confidence: Double?,
-        @JsonProperty("submission_count") val submissionCount: Int?,
-        @JsonProperty("updated_at") val updatedAt: String?,
+        @JsonProperty("start_sec") @SerialName("start_sec") val startSec: Double?,
+        @JsonProperty("end_sec") @SerialName("end_sec") val endSec: Double?,
+        @JsonProperty("start_ms") @SerialName("start_ms") val startMs: Long?,
+        @JsonProperty("end_ms") @SerialName("end_ms") val endMs: Long?,
+        @JsonProperty("confidence") @SerialName("confidence") val confidence: Double?,
+        @JsonProperty("submission_count") @SerialName("submission_count") val submissionCount: Int?,
+        @JsonProperty("updated_at") @SerialName("updated_at") val updatedAt: String?,
     )
 }

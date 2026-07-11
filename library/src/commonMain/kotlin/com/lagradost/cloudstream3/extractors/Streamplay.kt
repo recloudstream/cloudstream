@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
-import java.net.URI
+import io.ktor.http.Url
 
 open class Streamplay : ExtractorApi() {
     override val name = "Streamplay"
@@ -22,9 +22,7 @@ open class Streamplay : ExtractorApi() {
     ) {
         val request = app.get(url, referer = referer)
         val redirectUrl = request.url
-        val mainServer = URI(redirectUrl).let {
-            "${it.scheme}://${it.host}"
-        }
+        val mainServer = Url(redirectUrl).let { "${it.protocol.name}://${it.host}" }
         val key = redirectUrl.substringAfter("embed-").substringBefore(".html")
         val token =
             request.document.select("script").find { it.data().contains("sitekey:") }?.data()

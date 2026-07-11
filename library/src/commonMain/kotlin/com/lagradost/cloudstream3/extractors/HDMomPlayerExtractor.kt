@@ -23,7 +23,7 @@ open class HDMomPlayer : ExtractorApi() {
         if (bePlayer != null) {
             val bePlayerPass = bePlayer.get(1)
             val bePlayerData = bePlayer.get(2)
-            val encrypted    = AesHelper.cryptoAESHandler(bePlayerData, bePlayerPass.toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
+            val encrypted    = AesHelper.cryptoAESHandler(bePlayerData, bePlayerPass.encodeToByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
 
             m3uLink = Regex("""video_location\":\"([^\"]+)""").find(encrypted)?.groupValues?.get(1)
         } else {

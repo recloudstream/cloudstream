@@ -83,9 +83,9 @@ open class Gdriveplayer : ExtractorApi() {
             ?.split(Regex("\\D+"))
             ?.joinToString("") {
                 it.toInt().toChar().toString()
-            }.let { Regex("var pass = \"(\\S+?)\"").first(it ?: return)?.toByteArray() }
+            }.let { Regex("var pass = \"(\\S+?)\"").first(it ?: return)?.encodeToByteArray() }
             ?: throw ErrorLoadingException("can't find password")
-        val decryptedData = cryptoAESHandler(data, password, false, "AES/CBC/NoPadding")?.let { getAndUnpack(it) }?.replace("\\", "")
+        val decryptedData = cryptoAESHandler(data, password, false, false)?.let { getAndUnpack(it) }?.replace("\\", "")
 
         val sourceData = decryptedData?.substringAfter("sources:[")?.substringBefore("],")
         val subData = decryptedData?.substringAfter("tracks:[")?.substringBefore("],")
@@ -116,13 +116,11 @@ open class Gdriveplayer : ExtractorApi() {
                 )
             }
         }
-
     }
 
     data class Tracks(
         @JsonProperty("file") val file: String,
         @JsonProperty("kind") val kind: String,
-        @JsonProperty("label") val label: String
+        @JsonProperty("label") val label: String,
     )
-
 }

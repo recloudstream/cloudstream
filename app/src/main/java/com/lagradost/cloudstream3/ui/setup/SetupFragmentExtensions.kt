@@ -56,7 +56,7 @@ class SetupFragmentExtensions : BaseFragment<FragmentSetupExtensionsBinding>(
 
             if (hasRepos) {
                 binding?.repoRecyclerView?.adapter = RepoAdapter(true, {}, {
-                    PluginsViewModel.downloadAll(activity, it.url, null)
+                    PluginsViewModel.downloadAll(activity, it, null)
                 }).apply { submitList(repositories.toList()) }
             }
 //            else {
