@@ -28,6 +28,9 @@ import com.lagradost.cloudstream3.syncproviders.AuthToken
 import com.lagradost.cloudstream3.syncproviders.AuthUser
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.syncproviders.providers.SimklApi.ScrobbleEpisode
+import com.lagradost.cloudstream3.syncproviders.providers.SimklApi.ScrobbleEpisode.Companion.generatedSerializer
+import com.lagradost.cloudstream3.syncproviders.providers.SimklApi.ScrobbleRequest
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -1214,11 +1217,17 @@ class SimklApi : SyncAPI() {
     }
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @OptIn(ExperimentalSerializationApi::class) // KeepGeneratedSerializer is an experimental annotation for now
+    @Serializable(with = ScrobbleRequest.Serializer::class)
+    @KeepGeneratedSerializer
     data class ScrobbleRequest(
-        @JsonProperty("show") val show: MediaObject? = null,
-        @JsonProperty("movie") val movie: MediaObject? = null,
-        @JsonProperty("anime") val anime: MediaObject? = null,
-        @JsonProperty("episode") val episode: ScrobbleEpisode? = null,
-        @JsonProperty("progress") val progress: Double,
-    )
+        @JsonProperty("show") @SerialName("show") val show: MediaObject? = null,
+        @JsonProperty("movie") @SerialName("movie") val movie: MediaObject? = null,
+        @JsonProperty("anime") @SerialName("anime") val anime: MediaObject? = null,
+        @JsonProperty("episode") @SerialName("episode") val episode: ScrobbleEpisode? = null,
+        @JsonProperty("progress") @SerialName("progress") val progress: Double,
+    ) {
+        object Serializer :
+            NonEmptySerializer<ScrobbleRequest>(generatedSerializer())
+    }
 }
