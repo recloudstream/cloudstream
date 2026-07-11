@@ -319,7 +319,7 @@ class SyncViewModel : ViewModel() {
     ) = ioSafe {
         syncs.amap { (prefix, id) ->
             repos.firstOrNull {
-                it.idPrefix == prefix && it.supportScrobble
+                it.idPrefix == prefix && it.supportScrobble && it.scrobbleEnabled
             }?.onPlaybackStatus(
                 progress = SyncAPI.PlaybackProgress(
                     id = id,

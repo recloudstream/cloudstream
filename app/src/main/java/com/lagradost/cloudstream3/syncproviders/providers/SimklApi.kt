@@ -33,7 +33,12 @@ import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
+import com.lagradost.cloudstream3.utils.serializers.NonEmptySerializer
 import com.lagradost.cloudstream3.utils.txt
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.math.BigInteger
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
@@ -1147,10 +1152,16 @@ class SimklApi : SyncAPI() {
     }
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @OptIn(ExperimentalSerializationApi::class) // KeepGeneratedSerializer is an experimental annotation for now
+    @Serializable(with = ScrobbleEpisode.Serializer::class)
+    @KeepGeneratedSerializer
     data class ScrobbleEpisode(
-        @JsonProperty("season") val season: Int,
-        @JsonProperty("episode") val episode: Int,
-    )
+        @JsonProperty("season") @SerialName("season") val season: Int,
+        @JsonProperty("episode") @SerialName("episode") val episode: Int,
+    ) {
+        object Serializer :
+            NonEmptySerializer<ScrobbleEpisode>(generatedSerializer())
+    }
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     data class ScrobbleRequest(
@@ -1159,7 +1170,5 @@ class SimklApi : SyncAPI() {
         @JsonProperty("anime") val anime: MediaObject? = null,
         @JsonProperty("episode") val episode: ScrobbleEpisode? = null,
         @JsonProperty("progress") val progress: Double,
-
-
     )
 }

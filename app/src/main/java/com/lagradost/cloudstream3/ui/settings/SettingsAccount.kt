@@ -95,10 +95,10 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                 !info?.profilePicture.isNullOrEmpty()
             binding.accountMainProfilePicture.loadImage(info?.profilePicture)
 
-            binding.accountSupportScrobbleSwitch.isChecked = api.supportScrobbleDelegate.getValue(this, api::supportScrobble)
+            binding.accountSupportScrobbleSwitch.isChecked = api.scrobbleEnabled
             binding.accountSupportScrobbleSwitch.isVisible = api.supportScrobble
             binding.accountSupportScrobbleSwitch.setOnCheckedChangeListener { _, isChecked ->
-                api.supportScrobbleDelegate.setValue(this, api::supportScrobble, isChecked)
+                api.scrobbleEnabled = isChecked
             }
 
             binding.accountLogout.isVisible = info != null

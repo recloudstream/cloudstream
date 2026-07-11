@@ -28,9 +28,13 @@ abstract class AuthRepo(open val api: AuthAPI) {
     val isAvailable get() = !api.requiresLogin || authUser() != null
     val supportScrobble get() = api.supportScrobble
 
-    val supportScrobbleDelegate: PreferenceDelegate<Boolean> by lazy {
+    private val supportScrobbleDelegate: PreferenceDelegate<Boolean> by lazy {
         PreferenceDelegate("$idPrefix/supportScrobble", api.supportScrobble)
     }
+
+    var scrobbleEnabled: Boolean
+        get() = supportScrobbleDelegate.getValue(this, ::scrobbleEnabled)
+        set(value) = supportScrobbleDelegate.setValue(this, ::scrobbleEnabled, value)
 
     companion object {
         private val oauthPayload: MutableMap<String, String?> = mutableMapOf()
