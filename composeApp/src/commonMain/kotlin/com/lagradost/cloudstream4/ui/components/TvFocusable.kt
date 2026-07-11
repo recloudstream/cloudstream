@@ -67,8 +67,7 @@ fun Modifier.tvFocusable(
                         interactionSource.emit(PressInteraction.Release(press))
                     },
                     onTap = {
-                        if (!isFocused) effectiveFocusRequester.requestFocus()
-                        else onClick()
+                        if (!isFocused) effectiveFocusRequester.requestFocus() else onClick()
                     },
                 )
             }

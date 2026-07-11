@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.graphics.Color
 
 /**
@@ -40,16 +39,16 @@ class CloudStreamColorScheme(
     ongoing: Color,
     isLight: Boolean,
 ) {
-    var background by mutableStateOf(background, structuralEqualityPolicy())
-    var surfaceVariant by mutableStateOf(surfaceVariant, structuralEqualityPolicy())
-    var surface by mutableStateOf(surface, structuralEqualityPolicy())
-    var surfaceContainer by mutableStateOf(surfaceContainer, structuralEqualityPolicy())
-    var onBackground by mutableStateOf(onBackground, structuralEqualityPolicy())
-    var onSurfaceVariant by mutableStateOf(onSurfaceVariant, structuralEqualityPolicy())
-    var icon by mutableStateOf(icon, structuralEqualityPolicy())
-    var primary by mutableStateOf(primary, structuralEqualityPolicy())
-    var ongoing by mutableStateOf(ongoing, structuralEqualityPolicy())
-    var isLight by mutableStateOf(isLight, structuralEqualityPolicy())
+    var background by mutableStateOf(background)
+    var surfaceVariant by mutableStateOf(surfaceVariant)
+    var surface by mutableStateOf(surface)
+    var surfaceContainer by mutableStateOf(surfaceContainer)
+    var onBackground by mutableStateOf(onBackground)
+    var onSurfaceVariant by mutableStateOf(onSurfaceVariant)
+    var icon by mutableStateOf(icon)
+    var primary by mutableStateOf(primary)
+    var ongoing by mutableStateOf(ongoing)
+    var isLight by mutableStateOf(isLight)
 
     fun copy(
         background: Color = this.background,

@@ -10,9 +10,11 @@ import androidx.compose.ui.res.colorResource
 @Composable
 @ReadOnlyComposable
 actual fun resolveDynamicTheme(): CloudStreamColorScheme {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         buildMonetScheme()
-    else darkScheme()
+    } else {
+        darkScheme()
+    }
 }
 
 @Composable

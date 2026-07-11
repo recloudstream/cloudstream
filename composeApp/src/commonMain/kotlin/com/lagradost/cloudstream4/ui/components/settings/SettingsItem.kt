@@ -36,7 +36,7 @@ fun SettingsItem(
     subtitle: String? = null,
     icon: ImageVector? = null,
     focusRequester: FocusRequester? = null,
-    onClick: () -> Unit,
+    onClick: () -> Unit = {},
 ) {
     val colors = CloudStreamTheme.colors
     val isTV = remember { DeviceLayout.isLayout(DeviceLayout.TV) }
@@ -89,7 +89,6 @@ private fun SettingsItemPreview() {
             title = stringResource(Res.string.category_general),
             subtitle = stringResource(Res.string.category_general_subtitle),
             icon = tune,
-            onClick = {},
         )
     }
 }
@@ -101,7 +100,6 @@ private fun SettingsItemNoIconPreview() {
         SettingsItem(
             title = stringResource(Res.string.category_general),
             subtitle = stringResource(Res.string.category_general_subtitle),
-            onClick = {},
         )
     }
 }
@@ -113,7 +111,6 @@ private fun SettingsItemNoSubtitlePreview() {
         SettingsItem(
             title = stringResource(Res.string.category_general),
             icon = tune,
-            onClick = {},
         )
     }
 }

@@ -29,7 +29,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 enum class ProfileImage {
-    DARK_BLUE, BLUE, ORANGE, PINK, PURPLE, RED, TEAL,
+    BLUE,
+    DARK_BLUE,
+    ORANGE,
+    PINK,
+    PURPLE,
+    RED,
+    TEAL,
 }
 
 @Composable
@@ -50,18 +56,20 @@ private fun ProfileImage.toRes(): DrawableResource = when (this) {
  * otherwise falls back to the local [profileImage] background.
  *
  * @param profileImage Local background image fallback
+ * @param modifier Modifier to be applied to the profile picture container
  * @param size Diameter of the circle, default 50.dp
  * @param profilePictureUrl Optional remote URL to load via Coil
  */
 @Composable
 fun ProfilePicture(
     profileImage: ProfileImage,
+    modifier: Modifier = Modifier,
     size: Dp = 50.dp,
     profilePictureUrl: String? = null,
 ) {
     val colors = CloudStreamTheme.colors
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(size)
             .border(2.dp, colors.onBackground.copy(alpha = 0.2f), CircleShape)
             .clip(CircleShape),
