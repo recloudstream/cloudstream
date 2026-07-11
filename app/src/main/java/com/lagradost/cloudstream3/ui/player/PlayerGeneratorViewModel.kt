@@ -10,6 +10,8 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.ui.player.source_priority.ProfileSettings
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper.getLinkPriority
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -40,12 +42,20 @@ data class GeneratorState(
     val id: Int?,
 )
 
+data class DisplayLink(
+    val link: VideoLink,
+    // If the link should be displayed and used by the player
+    val shouldUseLink: Boolean,
+    val priority: Int
+)
+
 /** Immutable state of all current links relevant to displaying the video */
 // @MustUseReturnValues
 // @Immutable
 data class VideoState(
     val subtitles: PersistentSet<SubtitleData> = persistentSetOf(),
     val links: PersistentSet<VideoLink> = persistentSetOf(),
+    val erroredLinks: PersistentSet<VideoLink> = persistentSetOf(),
     val stamps: PersistentList<VideoSkipStamp> = persistentListOf(),
     val loading: Resource<Unit> = Resource.Loading(),
     val generatorState: GeneratorState? = null,
@@ -56,19 +66,52 @@ data class VideoState(
      *
      * sortedBy is not exactly expensive, but each hasNextMirror does it again, so this alleviates unnecessary recomputation
      * */
-    private val sortedLinks: ConcurrentHashMap<Int, List<VideoLink>> = ConcurrentHashMap()
+    private val sortedLinks: ConcurrentHashMap<Int, List<DisplayLink>> = ConcurrentHashMap()
 
+    /**
+     * The cache is guaranteed to be up to date link-wise due to the immutable links.
+     * However, hideNegativeSources and hideErrorSources could be updated, which requires clearing the cache.
+     */
     fun clearSortedLinksCache() = sortedLinks.clear()
+
+    private fun hasLinkErrored(link: VideoLink): Boolean {
+        return erroredLinks.any { it == link }
+    }
+
+    private fun VideoLink.toDisplayLink(
+        qualityProfile: Int,
+        hideNegativeSources: Boolean,
+        hideErrorSources: Boolean
+    ): DisplayLink {
+        val priority = getLinkPriority(qualityProfile, this.first)
+        val shouldHideLink =
+            (hideNegativeSources && priority < 0) || (hideErrorSources && hasLinkErrored(this))
+        val displayLink = DisplayLink(this, !shouldHideLink, priority)
+
+        return displayLink
+    }
 
     // Modifying sortedLinks is not considered a "visible" side effect, and rerunning it does not change the result
     // It is by all standards, idempotent and by extension also pure as it has no "visible" side effect
     /** Returns .links in the sorted order according to the qualityProfile.
      * Use .links if order is not needed */
     @Contract(pure = true)
-    fun sortLinks(qualityProfile: Int): List<VideoLink> {
-        return sortedLinks[qualityProfile] ?: links.sortedBy { link ->
+    fun sortLinks(qualityProfile: Int): List<DisplayLink> {
+        sortedLinks[qualityProfile]?.let {
+            return it
+        }
+
+        val hideNegativeSources =
+            QualityDataHelper.getProfileSetting(qualityProfile, ProfileSettings.HideNegativeSources)
+        val hideErrorSources =
+            QualityDataHelper.getProfileSetting(qualityProfile, ProfileSettings.HideErrorSources)
+
+        return links.map { link ->
             // negative because we want to sort highest quality first
-            -getLinkPriority(qualityProfile, link.first)
+            link.toDisplayLink(qualityProfile, hideNegativeSources, hideErrorSources)
+        }.sortedBy {
+            // negative because we want to sort highest quality first
+            -it.priority
         }.also { value -> sortedLinks[qualityProfile] = value }
     }
 
@@ -113,6 +156,12 @@ data class VideoState(
     @JvmName("setVideoSkipStamp")
     @Contract(pure = true)
     fun set(items: Collection<VideoSkipStamp>): VideoState = copy(stamps = items.toPersistentList())
+
+    @Contract(pure = true)
+    fun addError(item: VideoLink): VideoState = copy(erroredLinks = erroredLinks.add(item))
+
+    @Contract(pure = true)
+    fun setError(items: Collection<VideoLink>): VideoState = copy(erroredLinks = items.toPersistentSet())
 }
 
 data class VideoLive<T>(
@@ -141,9 +190,8 @@ class PlayerGeneratorViewModel : ViewModel() {
     var state = VideoState(instance = 0)
         private set
 
-    private val _currentLinks =
-        MutableLiveData<VideoLive<Set<Pair<ExtractorLink?, ExtractorUri?>>>>(null)
-    val currentLinks: LiveData<VideoLive<Set<Pair<ExtractorLink?, ExtractorUri?>>>> = _currentLinks
+    private val _currentLinks = MutableLiveData<VideoLive<Set<VideoLink>>>(null)
+    val currentLinks: LiveData<VideoLive<Set<VideoLink>>> = _currentLinks
 
     private val _currentSubtitles = MutableLiveData<VideoLive<Set<SubtitleData>>>(null)
     val currentSubtitles: LiveData<VideoLive<Set<SubtitleData>>> = _currentSubtitles

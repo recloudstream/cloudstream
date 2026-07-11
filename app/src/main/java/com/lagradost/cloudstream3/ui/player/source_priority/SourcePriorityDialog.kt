@@ -14,7 +14,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class SourcePriorityDialog(
     val ctx: Context,
-    @StyleRes themeRes: Int,
+    @StyleRes val themeRes: Int,
     val links: List<LinkSource>,
     private val profile: QualityDataHelper.QualityProfile,
     /**
@@ -28,76 +28,79 @@ class SourcePriorityDialog(
             PlayerSelectSourcePriorityBinding.inflate(LayoutInflater.from(ctx), null, false)
         setContentView(binding.root)
         fixSystemBarsPadding(binding.root)
-        val sourcesRecyclerView = binding.sortSources
-        val qualitiesRecyclerView = binding.sortQualities
-        val profileText = binding.profileTextEditable
-        val saveBtt = binding.saveBtt
-        val exitBtt = binding.closeBtt
-        val helpBtt = binding.helpBtt
 
-        profileText.setText(QualityDataHelper.getProfileName(profile.id).asString(context))
-        profileText.hint = txt(R.string.profile_number, profile.id).asString(context)
+        binding.apply {
+            profileTextEditable.setText(
+                QualityDataHelper.getProfileName(profile.id).asString(context)
+            )
+            profileTextEditable.hint = txt(R.string.profile_number, profile.id).asString(context)
 
-        sourcesRecyclerView.adapter = PriorityAdapter<Nothing?>(
-        ).apply {
-            submitList(links.map { link ->
-                SourcePriority(
-                    null,
-                    link.source,
-                    QualityDataHelper.getSourcePriority(profile.id, link.source)
-                )
-            }.distinctBy { it.name }.sortedBy { -it.priority })
-        }
+            sortSources.adapter = PriorityAdapter<Nothing?>(
+            ).apply {
+                val sortedLinks = links.map { link ->
+                    SourcePriority(
+                        null,
+                        link.source,
+                        QualityDataHelper.getSourcePriority(profile.id, link.source)
+                    )
+                }.distinctBy { it.name }.sortedBy { -it.priority }
 
-        qualitiesRecyclerView.adapter = PriorityAdapter<Qualities>(
-        ).apply {
-            submitList(Qualities.entries.mapNotNull {
-                SourcePriority(
-                    it,
-                    Qualities.getStringByIntFull(it.value).ifBlank { return@mapNotNull null },
-                    QualityDataHelper.getQualityPriority(profile.id, it)
-                )
-            }.sortedBy { -it.priority })
-        }
-
-        @Suppress("UNCHECKED_CAST") // We know the types
-        saveBtt.setOnClickListener {
-            val qualityAdapter = qualitiesRecyclerView.adapter as? PriorityAdapter<Qualities>
-            val sourcesAdapter = sourcesRecyclerView.adapter as? PriorityAdapter<Nothing?>
-
-            val qualities = qualityAdapter?.immutableCurrentList ?: emptyList()
-            val sources = sourcesAdapter?.immutableCurrentList ?: emptyList()
-
-            qualities.forEach {
-                QualityDataHelper.setQualityPriority(profile.id, it.data, it.priority)
+                submitList(sortedLinks)
             }
 
-            sources.forEach {
-                QualityDataHelper.setSourcePriority(profile.id, it.name, it.priority)
+            sortQualities.adapter = PriorityAdapter<Qualities>(
+            ).apply {
+                submitList(Qualities.entries.mapNotNull {
+                    SourcePriority(
+                        it,
+                        Qualities.getStringByIntFull(it.value).ifBlank { return@mapNotNull null },
+                        QualityDataHelper.getQualityPriority(profile.id, it)
+                    )
+                }.sortedBy { -it.priority })
             }
 
-            qualityAdapter?.submitList(qualities.sortedBy { -it.priority })
-            sourcesAdapter?.submitList(sources.sortedBy { -it.priority })
+            @Suppress("UNCHECKED_CAST") // We know the types
+            saveBtt.setOnClickListener {
+                val qualityAdapter = sortQualities.adapter as? PriorityAdapter<Qualities>
+                val sourcesAdapter = sortSources.adapter as? PriorityAdapter<Nothing?>
 
-            val savedProfileName = profileText.text.toString()
-            if (savedProfileName.isBlank()) {
-                QualityDataHelper.setProfileName(profile.id, null)
-            } else {
-                QualityDataHelper.setProfileName(profile.id, savedProfileName)
+                val qualities = qualityAdapter?.immutableCurrentList ?: emptyList()
+                val sources = sourcesAdapter?.immutableCurrentList ?: emptyList()
+
+                qualities.forEach {
+                    QualityDataHelper.setQualityPriority(profile.id, it.data, it.priority)
+                }
+
+                sources.forEach {
+                    QualityDataHelper.setSourcePriority(profile.id, it.name, it.priority)
+                }
+
+                qualityAdapter?.submitList(qualities.sortedBy { -it.priority })
+                sourcesAdapter?.submitList(sources.sortedBy { -it.priority })
+
+                val savedProfileName = profileTextEditable.text.toString()
+                if (savedProfileName.isBlank()) {
+                    QualityDataHelper.setProfileName(profile.id, null)
+                } else {
+                    QualityDataHelper.setProfileName(profile.id, savedProfileName)
+                }
+                updatedCallback.invoke()
             }
-            updatedCallback.invoke()
-        }
 
-        exitBtt.setOnClickListener {
-            this.dismissSafe()
-        }
+            closeBtt.setOnClickListener {
+                dismissSafe()
+            }
 
-        helpBtt.setOnClickListener {
-            AlertDialog.Builder(context, R.style.AlertDialogCustom).apply {
-                setMessage(R.string.quality_profile_help)
-            }.show()
-        }
+            helpBtt.setOnClickListener {
+                AlertDialog.Builder(context, R.style.AlertDialogCustom).apply {
+                    setMessage(R.string.quality_profile_help)
+                }.show()
+            }
 
+            settingsBtt.setOnClickListener {
+                SourceProfileSettingsDialog(ctx, themeRes, profile.id).show()
+            }
+        }
         super.show()
     }
 }
