@@ -1185,7 +1185,6 @@ public final class com/lagradost/cloudstream3/Score {
 	public static final field MAX I
 	public static final field MAX_ZEROS I
 	public static final field MIN I
-	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public final fun toByte (I)B
