@@ -1202,6 +1202,10 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
 
             skipChapterButton.setOnClickListener {
+                // Switch focus for a better UX, as otherwise it is reset to a random button like "back button"
+                if(skipChapterButton.hasFocus()) {
+                    playerPausePlay.requestFocus()
+                }
                 player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
             }
 

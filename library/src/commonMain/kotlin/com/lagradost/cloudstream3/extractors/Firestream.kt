@@ -9,7 +9,6 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Prerelease
 class Firestream : ExtractorApi() {
     override val name: String = "Firestream"
     override val mainUrl: String = "https://firestream.to"

@@ -133,12 +133,12 @@ open class Rabbitstream : ExtractorApi() {
         return extractedKey to sources
     }
 
-    private inline fun <reified T> decryptMapped(input: String, key: String): T? {
+    private inline suspend fun <reified T> decryptMapped(input: String, key: String): T? {
         val decrypt = decrypt(input, key)
         return AppUtils.tryParseJson(decrypt)
     }
 
-    private fun decrypt(input: String, key: String): String {
+    private suspend fun decrypt(input: String, key: String): String {
         return decryptSourceUrl(
             generateKey(
                 salt = base64DecodeArray(input).copyOfRange(8, 16),
@@ -147,7 +147,7 @@ open class Rabbitstream : ExtractorApi() {
         )
     }
 
-    private fun generateKey(salt: ByteArray, secret: ByteArray): ByteArray {
+    private suspend fun generateKey(salt: ByteArray, secret: ByteArray): ByteArray {
         var key = md5(secret + salt)
         var currentKey = key
         while (currentKey.size < 48) {
@@ -157,18 +157,18 @@ open class Rabbitstream : ExtractorApi() {
         return currentKey
     }
 
-    private fun md5(input: ByteArray): ByteArray =
-        md5Hasher.hashBlocking(input)
+    private suspend fun md5(input: ByteArray): ByteArray =
+        md5Hasher.hash(input)
 
     @OptIn(DelicateCryptographyApi::class)
-    private fun decryptSourceUrl(decryptionKey: ByteArray, sourceUrl: String): String {
+    private suspend fun decryptSourceUrl(decryptionKey: ByteArray, sourceUrl: String): String {
         val cipherData = base64DecodeArray(sourceUrl)
         val encrypted = cipherData.copyOfRange(16, cipherData.size)
         val keyBytes = decryptionKey.copyOfRange(0, 32)
         val ivBytes = decryptionKey.copyOfRange(32, decryptionKey.size)
 
-        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
-        val decryptedData = aesKey.cipher(padding = true).decryptWithIvBlocking(ivBytes, encrypted)
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, keyBytes)
+        val decryptedData = aesKey.cipher(padding = true).decryptWithIv(ivBytes, encrypted)
         return decryptedData.decodeToString()
     }
 
