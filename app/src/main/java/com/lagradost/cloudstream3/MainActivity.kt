@@ -171,6 +171,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -1214,7 +1215,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
         safe {
             val appVer = BuildConfig.VERSION_NAME
-            val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
+            val lastAppAutoBackup: String = getKey<String>("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
                 if (lastAppAutoBackup.isEmpty()) return@safe
@@ -1428,8 +1429,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
                     else -> {
                         resultviewPreviewBookmark.isEnabled = false
-                        resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
-                        resultviewPreviewBookmark.setText(R.string.loading)
+                        resultviewPreviewBookmark.showProgress()
+                        //resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
+                        //resultviewPreviewBookmark.setText(R.string.loading)
                     }
                 }
             }
@@ -2016,7 +2018,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
 
         try {
-            if (getKey(HAS_DONE_SETUP_KEY, false) != true) {
+            if (getKey<Boolean>(HAS_DONE_SETUP_KEY, false) != true) {
                 navController.navigate(R.id.navigation_setup_language)
                 // If no plugins bring up extensions screen
             } else if (PluginManager.getPluginsOnline().isEmpty()

@@ -65,6 +65,8 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogTe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.hideProgress
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import qrcode.QRCode
@@ -348,6 +350,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                     email = if (req.email) binding.loginEmailInput.text?.toString() else null,
                     server = if (req.server) binding.loginServerInput.text?.toString() else null,
                 )
+                binding.applyBtt.showProgress()
                 ioSafe {
                     try {
                         if (api.login(loginData)) {
@@ -377,6 +380,8 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                                 api.name
                             )
                         )
+                    } finally {
+                        binding.applyBtt.hideProgress()
                     }
                 }
             }
