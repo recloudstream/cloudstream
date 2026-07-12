@@ -74,12 +74,23 @@ private suspend fun fetchProxiflyList(): List<Triple<String, Int, String>> =
             return@withContext cached
         }
         try {
-            val conn = java.net.URL(PROXIFLY_SOCKS5_URL).openConnection()
-                    as java.net.HttpURLConnection
-            conn.connectTimeout = 10_000
-            conn.readTimeout    = 10_000
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0")
-            val json = conn.inputStream.bufferedReader().readText()
+            val client = com.lagradost.cloudstream3.app.baseClient.newBuilder()
+                .proxy(Proxy.NO_PROXY)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build()
+
+            val request = Request.Builder()
+                .url(PROXIFLY_SOCKS5_URL)
+                .header("User-Agent", "Mozilla/5.0")
+                .build()
+
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) {
+                Log.w(TAG, "Proxifly returned code ${response.code}")
+                return@withContext cachedProxyList ?: emptyList()
+            }
+            val json = response.body?.string() ?: ""
             val arr = JSONArray(json)
 
             data class Entry(val ip: String, val port: Int, val country: String, val score: Int)
