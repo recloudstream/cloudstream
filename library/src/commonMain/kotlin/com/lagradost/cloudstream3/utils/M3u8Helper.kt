@@ -234,6 +234,10 @@ object M3u8Helper2 {
             body.close()
             if (tsData.isEmpty()) throw ErrorLoadingException("no data")
 
+            // Some sources respond with "error 404" or similar, this checks for small responses that
+            // looks like ASCII
+            if (tsData.size < 128 && tsData.all { it >= 0 }) throw ErrorLoadingException("ASCII found instead of data")
+
             return if (isEncrypted) {
                 getDecrypted(encryptionData, tsData, encryptionIv, index)
             } else {

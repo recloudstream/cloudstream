@@ -39,8 +39,11 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.parse
 import kotlinx.datetime.toInstant
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
+import kotlin.jvm.JvmName
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import kotlin.time.Clock
@@ -88,13 +91,12 @@ annotation class SkipSerializationTest
 const val AllLanguagesName = "universal"
 
 const val USER_AGENT =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
 
 class ErrorLoadingException(message: String? = null) : Exception(message)
 
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
 
-@Prerelease
 val json = Json {
     encodeDefaults = true
     explicitNulls = false
@@ -324,7 +326,7 @@ object APIHolder {
         ).toJson().toRequestBody(RequestBodyTypes.JSON.toMediaTypeOrNull())
 
         return app.post("https://graphql.anilist.co", requestBody = data)
-            .parsedSafe()
+            .parsedSafe<AniSearch>()
     }
 }
 
@@ -392,17 +394,18 @@ const val PROVIDER_STATUS_SLOW = 2
 const val PROVIDER_STATUS_OK = 1
 const val PROVIDER_STATUS_DOWN = 0
 
+@Serializable
 data class ProvidersInfoJson(
-    @JsonProperty("name") var name: String,
-    @JsonProperty("url") var url: String,
-    @JsonProperty("credentials") var credentials: String? = null,
-    @JsonProperty("status") var status: Int,
+    @JsonProperty("name") @SerialName("name") var name: String,
+    @JsonProperty("url") @SerialName("url") var url: String,
+    @JsonProperty("credentials") @SerialName("credentials") var credentials: String? = null,
+    @JsonProperty("status") @SerialName("status") var status: Int,
 )
 
+@Serializable
 data class SettingsJson(
-    @JsonProperty("enableAdult") var enableAdult: Boolean = false,
+    @JsonProperty("enableAdult") @SerialName("enableAdult") var enableAdult: Boolean = false,
 )
-
 
 data class MainPageData(
     val name: String,
@@ -796,13 +799,10 @@ fun fixTitle(str: String): String {
     }
 }
 
-/**
- * Get rhino context in a safe way as it needs to be initialized on the main thread.
- *
- * Make sure you get the scope using: val scope: Scriptable = rhino.initSafeStandardObjects()
- *
- * Use like the following: rhino.evaluateString(scope, js, "JavaScript", 1, null)
- **/
+@Deprecated(
+    message = "Use newJsContext or evalJs instead.",
+    level = DeprecationLevel.WARNING,
+)
 suspend fun getRhinoContext(): org.mozilla.javascript.Context {
     return Coroutines.mainWork {
         val rhino = org.mozilla.javascript.Context.enter()
@@ -869,10 +869,10 @@ enum class DubStatus(val id: Int) {
  * of this as a decimal class specifically for ratings.
  * */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@Serializable
 class Score private constructor(
     /** Decimal between [0, 10^9] representing the min score and max score respectively */
-    @JsonProperty("data")
-    private val data: Int,
+    @JsonProperty("data") @SerialName("data") private val data: Int,
 ) {
     override fun hashCode(): Int = this.data.hashCode()
     override fun equals(other: Any?): Boolean = other is Score && this.data == other.data
@@ -1092,7 +1092,6 @@ enum class TvType(value: Int?) {
 
     Audio(16),
     Podcast(17),
-    @Prerelease
     Video(18),
 }
 
@@ -1198,9 +1197,10 @@ suspend fun newSubtitleFile(
  * @see newAudioFile
  * */
 @ConsistentCopyVisibility
+@Serializable
 data class AudioFile internal constructor(
-    var url: String,
-    var headers: Map<String, String>? = null
+    @JsonProperty("url") @SerialName("url") var url: String,
+    @JsonProperty("headers") @SerialName("headers") var headers: Map<String, String>? = null,
 )
 
 /** Creates an AudioFile with optional initializer for setting additional properties.
@@ -1823,7 +1823,7 @@ interface LoadResponse {
 
         /** Read the id string to get all other ids */
         fun readIdFromString(idString: String?): Map<SimklSyncServices, String> {
-            return tryParseJson(idString) ?: return emptyMap()
+            return tryParseJson<Map<SimklSyncServices, String>>(idString) ?: return emptyMap()
         }
 
         fun LoadResponse.isMovie(): Boolean {
@@ -2177,10 +2177,11 @@ data class NextAiring(
  * @param name To be shown next to the season like "Season $displaySeason $name" but if displaySeason is null then "$name"
  * @param displaySeason What to be displayed next to the season name, if null then the name is the only thing shown.
  * */
+@Serializable
 data class SeasonData(
-    val season: Int,
-    val name: String? = null,
-    val displaySeason: Int? = null, // will use season if null
+    @JsonProperty("season") @SerialName("season") val season: Int,
+    @JsonProperty("name") @SerialName("name") val name: String? = null,
+    @JsonProperty("displaySeason") @SerialName("displaySeason") val displaySeason: Int? = null, // will use season if null
 )
 
 /** Abstract interface of EpisodeResponse */
@@ -2550,21 +2551,18 @@ fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     }.onFailure { logError(it) }.getOrNull()
 }
 
-@Prerelease
 fun Episode.addDate(date: LocalDate?) {
     this.date = date?.atStartOfDayIn(TimeZone.currentSystemDefault())?.toEpochMilliseconds()
 }
 
-@Prerelease
 fun Episode.addDate(date: Instant?) {
     this.date = date?.toEpochMilliseconds()
 }
 
-// Deprecate after next stable
-/* @Deprecated(
+@Deprecated(
     message = "Use addDate with LocalDate, Instant, or String instead.",
     level = DeprecationLevel.WARNING,
-) */
+)
 fun Episode.addDate(date: java.util.Date?) {
     this.date = date?.time
 }
@@ -2702,7 +2700,6 @@ fun fetchUrls(text: String?): List<String> {
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
 }
 
-@Prerelease
 fun isUpcoming(dateString: String?): Boolean {
     return runCatching {
         val fmt = DateTimeComponents.Format {
@@ -2738,32 +2735,38 @@ data class Tracker(
     val cover: String? = null,
 )
 
+@Serializable
 data class AniSearch(
-    @JsonProperty("data") var data: Data? = Data()
+    @JsonProperty("data") @SerialName("data") var data: Data? = Data(),
 ) {
+    @Serializable
     data class Data(
-        @JsonProperty("Page") var page: Page? = Page()
+        @JsonProperty("Page") @SerialName("Page") var page: Page? = Page(),
     ) {
+        @Serializable
         data class Page(
-            @JsonProperty("media") var media: ArrayList<Media> = arrayListOf()
+            @JsonProperty("media") @SerialName("media") var media: ArrayList<Media> = arrayListOf(),
         ) {
+            @Serializable
             data class Media(
-                @JsonProperty("title") var title: Title? = null,
-                @JsonProperty("id") var id: Int? = null,
-                @JsonProperty("idMal") var idMal: Int? = null,
-                @JsonProperty("seasonYear") var seasonYear: Int? = null,
-                @JsonProperty("format") var format: String? = null,
-                @JsonProperty("coverImage") var coverImage: CoverImage? = null,
-                @JsonProperty("bannerImage") var bannerImage: String? = null,
+                @JsonProperty("title") @SerialName("title") var title: Title? = null,
+                @JsonProperty("id") @SerialName("id") var id: Int? = null,
+                @JsonProperty("idMal") @SerialName("idMal") var idMal: Int? = null,
+                @JsonProperty("seasonYear") @SerialName("seasonYear") var seasonYear: Int? = null,
+                @JsonProperty("format") @SerialName("format") var format: String? = null,
+                @JsonProperty("coverImage") @SerialName("coverImage") var coverImage: CoverImage? = null,
+                @JsonProperty("bannerImage") @SerialName("bannerImage") var bannerImage: String? = null,
             ) {
+                @Serializable
                 data class CoverImage(
-                    @JsonProperty("extraLarge") var extraLarge: String? = null,
-                    @JsonProperty("large") var large: String? = null,
+                    @JsonProperty("extraLarge") @SerialName("extraLarge") var extraLarge: String? = null,
+                    @JsonProperty("large") @SerialName("large") var large: String? = null,
                 )
 
+                @Serializable
                 data class Title(
-                    @JsonProperty("romaji") var romaji: String? = null,
-                    @JsonProperty("english") var english: String? = null,
+                    @JsonProperty("romaji") @SerialName("romaji") var romaji: String? = null,
+                    @JsonProperty("english") @SerialName("english") var english: String? = null,
                 ) {
                     fun isMatchingTitles(title: String?): Boolean {
                         if (title == null) return false

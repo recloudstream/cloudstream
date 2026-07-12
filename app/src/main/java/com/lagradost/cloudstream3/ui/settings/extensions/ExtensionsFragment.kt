@@ -39,6 +39,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.hideProgress
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 import com.lagradost.cloudstream3.utils.setText
 
 class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
@@ -278,13 +280,18 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
             binding.applyBtt.setOnClickListener secondListener@{
                 val name = binding.repoNameInput.text?.toString()
                 val urlInput = binding.repoUrlInput.text?.toString()
+                if (urlInput.isNullOrEmpty()) {
+                    showToast(R.string.error_invalid_url, Toast.LENGTH_SHORT)
+                    return@secondListener
+                }
+                binding.applyBtt.showProgress()
                 ioSafe {
-                    val url = urlInput?.let { it1 -> RepositoryManager.parseRepoUrl(it1) }
-                    if (url.isNullOrBlank()) {
-                        main {
+                    try {
+                        val url = RepositoryManager.parseRepoUrl(urlInput)
+                        if (url.isNullOrBlank()) {
                             showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
+                            return@ioSafe
                         }
-                    } else {
                         val repository = RepositoryManager.parseRepository(url)
 
                         // Exit if wrong repository
@@ -300,22 +307,27 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
                         extensionViewModel.loadStats()
                         extensionViewModel.loadRepositories()
 
+                        dialog.dismissSafe(activity) // Only dismiss if the repo was added
+
                         val plugins = RepositoryManager.getRepoPlugins(newRepo)
                         if (plugins.isNullOrEmpty()) {
                             showToast(R.string.no_plugins_found_error, Toast.LENGTH_LONG)
-                        } else {
-                            this@ExtensionsFragment.activity?.addRepositoryDialog(
-                                newRepo
-                            )
+                            return@ioSafe
                         }
+
+                        this@ExtensionsFragment.activity?.addRepositoryDialog(
+                            newRepo
+                        )
+                    } finally {
+                        binding.applyBtt.hideProgress()
                     }
                 }
-                dialog.dismissSafe(activity)
             }
             binding.cancelBtt.setOnClickListener {
                 dialog.dismissSafe(activity)
             }
         }
+
 
         val isTv = isLayout(TV)
         binding.apply {

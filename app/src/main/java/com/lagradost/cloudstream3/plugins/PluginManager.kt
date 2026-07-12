@@ -176,11 +176,11 @@ object PluginManager {
 
 
     fun getPluginsOnline(): Array<PluginData> {
-        return getKey(PLUGINS_KEY) ?: emptyArray()
+        return getKey<Array<PluginData>>(PLUGINS_KEY) ?: emptyArray()
     }
 
     fun getPluginsLocal(): Array<PluginData> {
-        return getKey(PLUGINS_KEY_LOCAL) ?: emptyArray()
+        return getKey<Array<PluginData>>(PLUGINS_KEY_LOCAL) ?: emptyArray()
     }
 
     private val CLOUD_STREAM_FOLDER =
@@ -512,6 +512,9 @@ object PluginManager {
             val res = dir.mkdirs()
             if (!res) {
                 Log.w(TAG, "Failed to create local directories")
+                // We have tried to load local plugins, but exit early.
+                // This needs to be true to prevent the downloader waiting for plugins.
+                loadedLocalPlugins = true
                 return
             }
         }

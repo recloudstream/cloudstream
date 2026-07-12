@@ -117,8 +117,10 @@ import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
+import com.lagradost.cloudstream3.utils.UIHelper.hideProgress
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.getImageBitmapFromUrl
 import com.lagradost.cloudstream3.utils.setText
@@ -507,7 +509,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         showDownloadProgress(DownloadEvent(0, 0, 0, null))
 
-        uiReset()
+        // uiReset() // Removed due to UX
+        
         currentSelectedLink = link
         //  setEpisodes(viewModel.getAllMeta() ?: emptyList())
         setPlayerDimen(null)
@@ -790,47 +793,58 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         binding.applyBtt.setOnClickListener {
-            currentSubtitle?.let { currentSubtitle ->
-                providers.firstOrNull { it.idPrefix == currentSubtitle.idPrefix }?.let { api ->
-                    ioSafe {
-                        when (val apiResource =
-                            Resource.fromResult(api.resource(currentSubtitle))) {
-                            is Resource.Success -> {
-                                val subtitles = apiResource.value.getSubtitles().map { resource ->
-                                    SubtitleData(
-                                        originalName = resource.name ?: getName(
-                                            currentSubtitle,
-                                            true
-                                        ),
-                                        nameSuffix = "",
-                                        url = resource.url,
-                                        origin = resource.origin,
-                                        mimeType = resource.url.toSubtitleMimeType(),
-                                        headers = currentSubtitle.headers,
-                                        languageCode = currentSubtitle.lang
-                                    )
-                                }
-                                if (subtitles.isEmpty()) {
-                                    showToast(R.string.no_subtitles)
-                                    return@ioSafe
-                                }
-                                runOnMainThread {
-                                    addAndSelectSubtitles(*subtitles.toTypedArray())
-                                }
-                            }
+            val currentSubtitle = currentSubtitle
+            if (currentSubtitle == null) {
+                dialog.dismissSafe()
+                return@setOnClickListener
+            }
 
-                            is Resource.Failure -> {
-                                showToast(apiResource.errorString)
-                            }
+            val api = providers.firstOrNull { it.idPrefix == currentSubtitle.idPrefix }
+            if (api == null) {
+                dialog.dismissSafe()
+                return@setOnClickListener
+            }
 
-                            is Resource.Loading -> {
-                                // not possible
-                            }
+            binding.applyBtt.showProgress()
+            ioSafe {
+                val apiResource =
+                    Resource.fromResult(api.resource(currentSubtitle))
+                binding.applyBtt.hideProgress()
+                when (apiResource) {
+                    is Resource.Success -> {
+                        val subtitles = apiResource.value.getSubtitles().map { resource ->
+                            SubtitleData(
+                                originalName = resource.name ?: getName(
+                                    currentSubtitle,
+                                    true
+                                ),
+                                nameSuffix = "",
+                                url = resource.url,
+                                origin = resource.origin,
+                                mimeType = resource.url.toSubtitleMimeType(),
+                                headers = currentSubtitle.headers,
+                                languageCode = currentSubtitle.lang
+                            )
                         }
+                        if (subtitles.isEmpty()) {
+                            showToast(R.string.no_subtitles)
+                            return@ioSafe
+                        }
+                        dialog.dismissSafe()
+                        runOnMainThread {
+                            addAndSelectSubtitles(*subtitles.toTypedArray())
+                        }
+                    }
+
+                    is Resource.Failure -> {
+                        showToast(apiResource.errorString)
+                    }
+
+                    is Resource.Loading -> {
+                        // not possible
                     }
                 }
             }
-            dialog.dismissSafe()
         }
 
         dialog.setOnDismissListener {
@@ -1698,8 +1712,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                         if (settingsManager.getBoolean(
                                 ctx.getString(R.string.episode_sync_enabled_key), true
                             )
-                        ) maxEpisodeSet = meta.episode
-                        sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
+                        ) {
+                            maxEpisodeSet = meta.episode
+                            sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
+                        }
                     }
                 }
 

@@ -69,24 +69,35 @@ kotlin {
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
             implementation(libs.bundles.cryptography) // Cryptography
-
-            // Deprecated; will be removed once extensions have time to migrate from using it
-            implementation("me.xdrop:fuzzywuzzy:1.4.0")
         }
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
 
         val jvmCommonMain by creating {
             dependsOn(commonMain.get())
             dependencies {
+                implementation(libs.kotlin.reflect)
                 implementation(libs.newpipeextractor)
             }
         }
 
         androidMain { dependsOn(jvmCommonMain) }
         jvmMain { dependsOn(jvmCommonMain) }
+    }
+
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    // https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html
+    abiValidation {
+        enabled.set(true)
+        this.filters {
+            exclude {
+                annotatedWith.add("com.lagradost.cloudstream3.Prerelease")
+                annotatedWith.add("com.lagradost.cloudstream3.InternalAPI")
+            }
+        }
     }
 }
 

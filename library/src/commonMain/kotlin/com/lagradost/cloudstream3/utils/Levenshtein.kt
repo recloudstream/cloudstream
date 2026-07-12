@@ -28,7 +28,6 @@ import com.lagradost.cloudstream3.Prerelease
 import kotlin.math.round
 
 // Taken from https://github.com/terrakok/FuzzyKot/blob/f794d43/fuzzykot/src/commonMain/kotlin/com/github/terrakok/fuzzykot/Levenshtein.kt
-@Prerelease
 object Levenshtein {
     fun ratio(s1: String, s2: String, processor: (String) -> String = { it }): Int {
         val p1 = processor(s1)
