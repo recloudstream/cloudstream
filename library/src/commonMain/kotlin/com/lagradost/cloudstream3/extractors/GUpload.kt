@@ -23,16 +23,14 @@ open class GUpload: ExtractorApi() {
     ) {
         val response = app.get(url, referer = referer).text
 
-        val playerConfigEncoded = response.substringAfter("decodePayload('").substringBefore("');")
-        val playerConfigString = base64Decode(playerConfigEncoded).substringAfter("|")
-
+        val playerConfigString = response.substringAfter("const config = ").substringBefore(";")
         val playerConfig = AppUtils.parseJson<VideoInfo>(playerConfigString)
 
         callback.invoke(
             newExtractorLink(
                 source = name,
                 name = name,
-                url = playerConfig.videoUrl.replace("\\", ""),
+                url = playerConfig.videoUrl,
             ) {
                 Regex("/(\\d+p)\\.").find(playerConfig.videoUrl)?.groupValues?.get(1)?.let {
                     quality = getQualityFromName(it)
