@@ -70,7 +70,7 @@ private suspend fun fetchProxiflyList(): List<Triple<String, Int, String>> =
     withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         val cached = cachedProxyList
-        if (cached != null && (now - proxyCachedAt) < PROXY_LIST_TTL_MS) {
+        if (cached != null && now - proxyCachedAt < PROXY_LIST_TTL_MS) {
             return@withContext cached
         }
         try {
