@@ -428,13 +428,6 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                                                 getString(R.string.vpn_connected).format(server.name),
                                                 android.widget.Toast.LENGTH_LONG
                                             )
-                                            // Test app.get to verify baseClient routing
-                                            try {
-                                                val testIp = app.get("https://api.ipify.org?format=json").text
-                                                Log.d("VpnProviders", "APP_GET_TEST: IP returned from app.get = $testIp")
-                                            } catch (e: Exception) {
-                                                Log.e("VpnProviders", "APP_GET_TEST failed", e)
-                                            }
                                         } else {
                                             // Proxy test failed: revert the preference so the next
                                             // buildDefaultClient won't try a broken proxy
