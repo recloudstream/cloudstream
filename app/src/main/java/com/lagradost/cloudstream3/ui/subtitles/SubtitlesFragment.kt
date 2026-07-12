@@ -261,7 +261,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
         }
 
         fun getCurrentSavedStyle(): SaveCaptionStyle {
-            return cachedSubtitleStyle ?: (getKey(SUBTITLE_KEY) ?: SaveCaptionStyle(
+            return cachedSubtitleStyle ?: (getKey<SaveCaptionStyle>(SUBTITLE_KEY) ?: SaveCaptionStyle(
                 foregroundColor = getDefColor(0),
                 backgroundColor = getDefColor(2),
                 windowColor = getDefColor(3),
@@ -293,11 +293,11 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
         }
 
         fun getDownloadSubsLanguageTagIETF(): List<String> {
-            return getKey(SUBTITLE_DOWNLOAD_KEY) ?: listOf("en")
+            return getKey<List<String>>(SUBTITLE_DOWNLOAD_KEY) ?: listOf("en")
         }
 
         fun getAutoSelectLanguageTagIETF(): String {
-            return getKey(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
+            return getKey<String>(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
         }
     }
 

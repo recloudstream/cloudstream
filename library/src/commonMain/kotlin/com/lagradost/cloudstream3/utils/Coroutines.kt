@@ -72,11 +72,10 @@ object Coroutines {
         return AtomicMutableList(items.toMutableList())
     }
 
-    // Deprecate after next stable
-    /*@Deprecated(
+    @Deprecated(
         message = "Use atomicListOf() instead.",
         replaceWith = ReplaceWith("atomicListOf(*items)"),
         level = DeprecationLevel.WARNING,
-    )*/
+    )
     fun <T> threadSafeListOf(vararg items: T): MutableList<T> = atomicListOf(*items)
 }
