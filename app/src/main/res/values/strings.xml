@@ -343,6 +343,16 @@
     <string name="video_disk_description">Causes problems if set too high on devices with low storage space, such as Android TV.</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
+    <string name="vpn_pref">VPN Proxy</string>
+    <string name="vpn_pref_summary">Route traffic through a free VPN proxy to bypass regional blocks</string>
+    <string name="vpn_connecting">Connecting to VPN…</string>
+    <string name="vpn_connected">Connected to %s</string>
+    <string name="vpn_error">Failed to connect to VPN server</string>
+    <string name="vpn_proxy_unavailable">VPN proxy unavailable: no working proxy found (tried SOCKS5 + HTTP CONNECT on ports 1080, 8080, 3128…). Try a different server or check your network.</string>
+    <string name="vpn_fetching_servers">Fetching VPN servers…</string>
+    <string name="vpn_ssl_title">VPN – Allow Insecure Proxies</string>
+    <string name="vpn_ssl_summary_on">SSL errors ignored — more proxies available, but traffic may be intercepted</string>
+    <string name="vpn_ssl_summary_off">Secure — only proxies with valid SSL certificates are used</string>
     <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="jsdelivr_enabled">Could not reach GitHub. Turning on jsDelivr proxy…</string>
     <string name="jsdelivr_proxy_summary">Bypass blocking of raw github URLs using jsDelivr. May cause updates to be delayed by few days.</string>
