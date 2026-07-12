@@ -6386,7 +6386,7 @@ public class com/lagradost/cloudstream3/utils/AtomicList : java/util/List, kotli
 	public fun add (Ljava/lang/Object;)Z
 	public fun addAll (ILjava/util/Collection;)Z
 	public fun addAll (Ljava/util/Collection;)Z
-	public fun Vlear ()V
+	public fun clear ()V
 	public fun contains (Ljava/lang/Object;)Z
 	public fun containsAll (Ljava/util/Collection;)Z
 	public final fun distinctBy (Lkotlin/jvm/functions/Function1;)Lcom/lagradost/cloudstream3/utils/AtomicList;
