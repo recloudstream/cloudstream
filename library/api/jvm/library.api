@@ -1968,12 +1968,13 @@ public class com/lagradost/cloudstream3/extractors/Dailymotion : com/lagradost/c
 	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class com/lagradost/cloudstream3/extractors/Dailymotion$MetaData {
+public final class com/lagradost/cloudstream3/extractors/Dailymotion$Metadata {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/Dailymotion$Metadata$Companion;
 	public fun <init> (Ljava/util/Map;Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper;)V
 	public final fun component1 ()Ljava/util/Map;
 	public final fun component2 ()Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper;
-	public final fun copy (Ljava/util/Map;Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper;)Lcom/lagradost/cloudstream3/extractors/Dailymotion$MetaData;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/extractors/Dailymotion$MetaData;Ljava/util/Map;Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/extractors/Dailymotion$MetaData;
+	public final fun copy (Ljava/util/Map;Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper;)Lcom/lagradost/cloudstream3/extractors/Dailymotion$Metadata;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/extractors/Dailymotion$Metadata;Ljava/util/Map;Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/extractors/Dailymotion$Metadata;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getQualities ()Ljava/util/Map;
 	public final fun getSubtitles ()Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper;
@@ -1981,7 +1982,23 @@ public final class com/lagradost/cloudstream3/extractors/Dailymotion$MetaData {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/extractors/Dailymotion$Metadata$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/Dailymotion$Metadata$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/Dailymotion$Metadata;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/Dailymotion$Metadata;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Dailymotion$Metadata$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/extractors/Dailymotion$Quality {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/Dailymotion$Quality$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
@@ -1994,7 +2011,23 @@ public final class com/lagradost/cloudstream3/extractors/Dailymotion$Quality {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/extractors/Dailymotion$Quality$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/Dailymotion$Quality$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/Dailymotion$Quality;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/Dailymotion$Quality;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Dailymotion$Quality$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/extractors/Dailymotion$SubtitleData {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitleData$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/List;
@@ -2007,7 +2040,23 @@ public final class com/lagradost/cloudstream3/extractors/Dailymotion$SubtitleDat
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/extractors/Dailymotion$SubtitleData$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitleData$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitleData;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitleData;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Dailymotion$SubtitleData$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class com/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper {
+	public static final field Companion Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper$Companion;
 	public fun <init> (ZLjava/util/Map;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Ljava/util/Map;
@@ -2018,6 +2067,21 @@ public final class com/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWr
 	public final fun getEnable ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/extractors/Dailymotion$SubtitlesWrapper$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class com/lagradost/cloudstream3/extractors/DatabaseGdrive : com/lagradost/cloudstream3/extractors/Gdriveplayer {
@@ -2435,8 +2499,6 @@ public class com/lagradost/cloudstream3/extractors/GDMirrorbot : com/lagradost/c
 	public fun getName ()Ljava/lang/String;
 	public fun getRequiresReferer ()Z
 	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun setMainUrl (Ljava/lang/String;)V
-	public fun setName (Ljava/lang/String;)V
 }
 
 public class com/lagradost/cloudstream3/extractors/GUpload : com/lagradost/cloudstream3/utils/ExtractorApi {
@@ -3701,7 +3763,6 @@ public final class com/lagradost/cloudstream3/extractors/Simpulumlamerop : com/l
 	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
-	public fun setMainUrl (Ljava/lang/String;)V
 }
 
 public class com/lagradost/cloudstream3/extractors/Slmaxed : com/lagradost/cloudstream3/utils/ExtractorApi {
@@ -4203,9 +4264,6 @@ public final class com/lagradost/cloudstream3/extractors/Techinmind : com/lagrad
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
 	public fun getRequiresReferer ()Z
-	public fun setMainUrl (Ljava/lang/String;)V
-	public fun setName (Ljava/lang/String;)V
-	public fun setRequiresReferer (Z)V
 }
 
 public final class com/lagradost/cloudstream3/extractors/Tubeless : com/lagradost/cloudstream3/extractors/Voe {
@@ -4296,7 +4354,6 @@ public final class com/lagradost/cloudstream3/extractors/Urochsunloath : com/lag
 	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
-	public fun setMainUrl (Ljava/lang/String;)V
 }
 
 public class com/lagradost/cloudstream3/extractors/Userload : com/lagradost/cloudstream3/utils/ExtractorApi {
@@ -4743,7 +4800,6 @@ public final class com/lagradost/cloudstream3/extractors/Yipsu : com/lagradost/c
 	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
-	public fun setMainUrl (Ljava/lang/String;)V
 }
 
 public class com/lagradost/cloudstream3/extractors/YourUpload : com/lagradost/cloudstream3/utils/ExtractorApi {
@@ -6330,7 +6386,7 @@ public class com/lagradost/cloudstream3/utils/AtomicList : java/util/List, kotli
 	public fun add (Ljava/lang/Object;)Z
 	public fun addAll (ILjava/util/Collection;)Z
 	public fun addAll (Ljava/util/Collection;)Z
-	public fun clear ()V
+	public fun Vlear ()V
 	public fun contains (Ljava/lang/Object;)Z
 	public fun containsAll (Ljava/util/Collection;)Z
 	public final fun distinctBy (Lkotlin/jvm/functions/Function1;)Lcom/lagradost/cloudstream3/utils/AtomicList;
