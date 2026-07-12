@@ -33,7 +33,9 @@ object AesHelper {
         val cipher = aesKey.cipher(padding = padding)
         return if (!encrypt) {
             cipher.decryptWithIv(iv, input)
-        } else cipher.encryptWithIv(iv, input)
+        } else {
+            cipher.encryptWithIv(iv, input)
+        }
     }
 
     suspend fun cryptoAESHandler(
