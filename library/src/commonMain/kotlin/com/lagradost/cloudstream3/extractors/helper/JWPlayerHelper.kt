@@ -13,7 +13,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.collections.orEmpty
 
-@Prerelease
 object JwPlayerHelper {
     private val sourceRegex = Regex(""""?sources"?:\s*(\[.*?\])""")
     private val tracksRegex = Regex(""""?tracks"?:\s*(\[.*?\])""")

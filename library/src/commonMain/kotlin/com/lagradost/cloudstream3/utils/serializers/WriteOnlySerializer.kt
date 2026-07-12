@@ -25,7 +25,6 @@ import kotlinx.serialization.json.JsonTransformingSerializer
  *       )
  *   }
  */
-@Prerelease
 abstract class WriteOnlySerializer<T : Any>(
     tSerializer: KSerializer<T>,
     private val keysToIgnore: Set<String>,

@@ -106,6 +106,13 @@
             android:textSize="12sp"
             tools:text="https://github.com/..." />
 
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="5dp"
+            tools:visibility="visible"
+            android:visibility="gone"
+            android:id="@+id/repository_name_text"
+            style="@style/SmallBlackButton"
+            tools:text="Repository name" />
     </LinearLayout>
 
     <ImageView
@@ -134,6 +141,7 @@
         android:contentDescription="@string/download"
         android:focusable="true"
         android:nextFocusLeft="@id/action_settings"
+        android:nextFocusRight="@id/add_repo_button_imageview"
         android:padding="12dp"
         tools:src="@drawable/ic_baseline_add_24" />
 

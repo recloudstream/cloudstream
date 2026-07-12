@@ -28,7 +28,6 @@ import kotlinx.serialization.json.JsonTransformingSerializer
  *       object Serializer : NonEmptySerializer<MyData>(MyData.generatedSerializer())
  *   }
  */
-@Prerelease
 abstract class NonEmptySerializer<T : Any>(tSerializer: KSerializer<T>) :
     JsonTransformingSerializer<T>(tSerializer) {
 

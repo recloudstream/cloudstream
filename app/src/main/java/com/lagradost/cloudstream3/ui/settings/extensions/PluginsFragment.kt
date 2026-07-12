@@ -23,12 +23,13 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSyst
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
-const val PLUGINS_BUNDLE_NAME = "name"
-const val PLUGINS_BUNDLE_URL = "url"
+const val PLUGINS_BUNDLE_DATA = "data"
 const val PLUGINS_BUNDLE_LOCAL = "isLocal"
 
 class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
@@ -61,24 +62,25 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
             }
         }
 
-        val name = arguments?.getString(PLUGINS_BUNDLE_NAME)
-        val url = arguments?.getString(PLUGINS_BUNDLE_URL)
+        val repositoryData = arguments?.getString(PLUGINS_BUNDLE_DATA)?.let { data ->
+            tryParseJson<RepositoryData>(data)
+        }
         val isLocal = arguments?.getBoolean(PLUGINS_BUNDLE_LOCAL) == true
         // download all extensions button
         val downloadAllButton = binding.settingsToolbar.menu?.findItem(R.id.download_all)
 
-        if (url == null || name == null) {
+        if (repositoryData == null) {
             dispatchBackPressed()
             return
         }
 
         setToolBarScrollFlags()
-        setUpToolbar(name)
+        setUpToolbar(repositoryData.name)
         binding.settingsToolbar.apply {
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem?.itemId) {
                     R.id.download_all -> {
-                        PluginsViewModel.downloadAll(activity, url, pluginViewModel)
+                        PluginsViewModel.downloadAll(activity, repositoryData, pluginViewModel)
                     }
 
                     R.id.lang_filter -> {
@@ -159,7 +161,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
             setRecycledViewPool(PluginAdapter.sharedPool)
             adapter =
                 PluginAdapter {
-                    pluginViewModel.handlePluginAction(activity, listOf(url), it, isLocal)
+                    pluginViewModel.handlePluginAction(activity, listOf(repositoryData), it, isLocal)
                 }
         }
 
@@ -183,7 +185,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
 
             binding.tvtypesChipsScroll.root.isVisible = false
         } else {
-            pluginViewModel.updatePluginList(context, listOf(url))
+            pluginViewModel.updatePluginList(context, listOf(repositoryData))
             binding.tvtypesChipsScroll.root.isVisible = true
             // not needed for users but may be useful for devs
             downloadAllButton?.isVisible = BuildConfig.DEBUG
@@ -204,21 +206,17 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
     }
 
     companion object {
-        fun newInstance(name: String, url: String, isLocal: Boolean): Bundle {
+        fun newInstance(repositoryData: RepositoryData): Bundle {
             return Bundle().apply {
-                putString(PLUGINS_BUNDLE_NAME, name)
-                putString(PLUGINS_BUNDLE_URL, url)
-                putBoolean(PLUGINS_BUNDLE_LOCAL, isLocal)
+                putString(PLUGINS_BUNDLE_DATA, repositoryData.toJson())
+                putBoolean(PLUGINS_BUNDLE_LOCAL, false)
             }
         }
-
-//        class RepoSearchView(context: Context) : android.widget.SearchView(context) {
-//            var onActionViewCollapsed = {}
-//
-//            override fun onActionViewCollapsed() {
-//                onActionViewCollapsed()
-//            }
-//        }
-
+         fun newLocalInstance(name: String): Bundle {
+            return Bundle().apply {
+                putString(PLUGINS_BUNDLE_DATA, RepositoryData("", name, "").toJson())
+                putBoolean(PLUGINS_BUNDLE_LOCAL, true)
+            }
+        }
     }
 }
