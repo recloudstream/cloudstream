@@ -6189,6 +6189,10 @@ public final class com/lagradost/cloudstream3/mvvm/ArchComponentExtKt {
 	public static final fun throwAbleToResource (Ljava/lang/Throwable;)Lcom/lagradost/cloudstream3/mvvm/Resource;
 }
 
+public final class com/lagradost/cloudstream3/mvvm/ArchComponentExt_jvmCommonKt {
+	public static final fun platformThrowAbleToResource (Ljava/lang/Throwable;)Lcom/lagradost/cloudstream3/mvvm/Resource;
+}
+
 public final class com/lagradost/cloudstream3/mvvm/DebugException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;)V
 }
@@ -6390,6 +6394,10 @@ public final class com/lagradost/cloudstream3/utils/Coroutines {
 	public final fun mainWork (Ljava/lang/Object;Lkotlin/jvm/functions/Function3;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun runOnMainThread (Lkotlin/jvm/functions/Function0;)V
 	public final fun threadSafeListOf ([Ljava/lang/Object;)Ljava/util/List;
+}
+
+public final class com/lagradost/cloudstream3/utils/Coroutines_jvmCommonKt {
+	public static final fun getWorkerDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
 }
 
 public final class com/lagradost/cloudstream3/utils/Coroutines_jvmKt {
