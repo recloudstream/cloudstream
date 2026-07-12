@@ -80,6 +80,7 @@ import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
+import com.lagradost.cloudstream3.extractors.Firestream
 import com.lagradost.cloudstream3.extractors.Multimoviesshg
 import com.lagradost.cloudstream3.extractors.FlaswishCom
 import com.lagradost.cloudstream3.extractors.Flyfile
@@ -228,12 +229,10 @@ import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
 import com.lagradost.cloudstream3.extractors.Streamhub2
-import com.lagradost.cloudstream3.extractors.Streamix
 import com.lagradost.cloudstream3.extractors.Streamlare
 import com.lagradost.cloudstream3.extractors.StreamoUpload
 import com.lagradost.cloudstream3.extractors.Streamplay
 import com.lagradost.cloudstream3.extractors.Streamsss
-import com.lagradost.cloudstream3.extractors.Streamup
 import com.lagradost.cloudstream3.extractors.Streamwish2
 import com.lagradost.cloudstream3.extractors.Strwish
 import com.lagradost.cloudstream3.extractors.Strwish2
@@ -271,6 +270,7 @@ import com.lagradost.cloudstream3.extractors.VidHidePro5
 import com.lagradost.cloudstream3.extractors.VidHidePro6
 import com.lagradost.cloudstream3.extractors.VidHideHub
 import com.lagradost.cloudstream3.extractors.Ryderjet
+import com.lagradost.cloudstream3.extractors.Streamcash
 import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -287,8 +287,17 @@ import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.VinovoSi
 import com.lagradost.cloudstream3.extractors.VinovoTo
 import com.lagradost.cloudstream3.extractors.VidNest
+import com.lagradost.cloudstream3.extractors.VidaaraxCom
+import com.lagradost.cloudstream3.extractors.VidaaraxNet
 import com.lagradost.cloudstream3.extractors.Vidara
+import com.lagradost.cloudstream3.extractors.VidaraSo
+import com.lagradost.cloudstream3.extractors.Vidaraa
+import com.lagradost.cloudstream3.extractors.Vidaratem
+import com.lagradost.cloudstream3.extractors.Vidaraw
+import com.lagradost.cloudstream3.extractors.Vidarax
+import com.lagradost.cloudstream3.extractors.Vidavaca
 import com.lagradost.cloudstream3.extractors.Vide0Net
+import com.lagradost.cloudstream3.extractors.Vids
 import com.lagradost.cloudstream3.extractors.Vidsonic
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
@@ -319,6 +328,9 @@ import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -409,6 +421,7 @@ enum class ExtractorLinkType {
     MAGNET;
 
     // See https://www.iana.org/assignments/media-types/media-types.xhtml
+    @JsonIgnore
     fun getMimeType(): String {
         return when (this) {
             VIDEO -> "video/mp4"
@@ -676,26 +689,27 @@ open class DrmExtractorLink private constructor(
  * @property audioTracks List of separate audio tracks that can be used with this video
  * @see newExtractorLink
  * */
+@Serializable
 open class ExtractorLink
 @Deprecated("Use newExtractorLink", level = DeprecationLevel.WARNING)
 constructor(
-    open val source: String,
-    open val name: String,
-    override val url: String,
-    override var referer: String,
-    open var quality: Int,
-    override var headers: Map<String, String> = mapOf(),
+    @SerialName("source") open val source: String,
+    @SerialName("name") open val name: String,
+    @SerialName("url") override val url: String,
+    @SerialName("referer") override var referer: String,
+    @SerialName("quality") open var quality: Int,
+    @SerialName("headers") override var headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
-    open var extractorData: String? = null,
-    open var type: ExtractorLinkType,
+    @SerialName("extractorData") open var extractorData: String? = null,
+    @SerialName("type") open var type: ExtractorLinkType,
     /** List of separate audio tracks that can be merged with this video */
-    open var audioTracks: List<AudioFile> = emptyList(),
+    @SerialName("audioTracks") open var audioTracks: List<AudioFile> = emptyList(),
 ) : IDownloadableMinimum {
-    val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
-    val isDash: Boolean get() = type == ExtractorLinkType.DASH
+    @get:JsonIgnore val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
+    @get:JsonIgnore val isDash: Boolean get() = type == ExtractorLinkType.DASH
 
     // Cached video size
-    private var videoSize: Long? = null
+    @Transient private var videoSize: Long? = null
 
     /**
      * Get video size in bytes with one head request. Only available for ExtractorLinkType.Video
@@ -1090,6 +1104,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Tantifilm(),
     Userload(),
     Supervideo(),
+    Streamcash(),
 
     // StreamSB.kt works
     //  SBPlay(),
@@ -1160,9 +1175,15 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     MoviehabNet(),
     Jeniusplay(),
     StreamoUpload(),
-    Streamup(),
-    Streamix(),
     Vidara(),
+    Vidavaca(),
+    Vidaraa(),
+    Vidaraw(),
+    Vidarax(),
+    VidaraSo(),
+    Vidaratem(),
+    VidaaraxCom(),
+    VidaaraxNet(),
 
     GamoVideo(),
     Gdriveplayerapi(),
@@ -1299,7 +1320,9 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     GUpload(),
     HlsWish(),
     ByseQekaho(),
-    Flyfile()
+    Flyfile(),
+    Firestream(),
+    Vids(),
 )
 
 
