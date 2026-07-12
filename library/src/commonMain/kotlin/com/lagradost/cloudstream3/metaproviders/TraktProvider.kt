@@ -47,7 +47,7 @@ open class TraktProvider : MainAPI() {
 
     private val traktApiUrl = "https://api.trakt.tv"
 
-    val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID
+    private val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID
 
     override val mainPage = mainPageOf(
         "$traktApiUrl/movies/trending" to "Trending Movies", //Most watched movies right now

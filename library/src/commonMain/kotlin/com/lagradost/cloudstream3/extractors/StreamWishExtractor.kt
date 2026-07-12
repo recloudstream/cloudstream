@@ -28,7 +28,6 @@ class Ewish : StreamWishExtractor() {
     override val mainUrl = "https://embedwish.com"
 }
 
-@Prerelease
 class Hgcloudto : StreamWishExtractor() {
     override val name = "Hgcloud"
     override val mainUrl = "https://Hgcloud.to"

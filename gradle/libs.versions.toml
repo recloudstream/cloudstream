@@ -13,6 +13,7 @@ colorpicker = "6b46b49"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
 constraintlayout = "2.2.1"
 coreKtx = "1.18.0"
+cryptography = "0.6.0"
 desugar_jdk_libs_nio = "2.1.5"
 dokkaGradlePlugin = "2.2.0"
 espressoCore = "3.7.0"
@@ -28,10 +29,11 @@ juniversalchardet = "2.5.0"
 kotlinGradlePlugin = "2.3.20"
 kotlinxAtomicfu = "0.33.0"
 kotlinxCollectionsImmutable = "0.4.0"
-kotlinxCoroutinesCore = "1.11.0"
+kotlinxCoroutines = "1.11.0"
 kotlinxDatetime = "0.8.0"
 kotlinxIOCore = "0.9.1"
 kotlinxSerializationJson = "1.11.0"
+ksoup = "0.2.6"
 ktor = "3.5.0"
 lifecycleKtx = "2.10.0"
 material = "1.14.0"
@@ -62,7 +64,7 @@ compileSdk = "36"
 targetSdk = "36"
 
 versionCode = "68"
-versionName = "4.7.0"
+versionName = "4.8.0"
 
 [libraries]
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
@@ -77,6 +79,8 @@ conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = 
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 core = { module = "androidx.test:core" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+cryptography-core = { module = "dev.whyoleg.cryptography:cryptography-core", version.ref = "cryptography" }
+cryptography-provider-optimal = { module = "dev.whyoleg.cryptography:cryptography-provider-optimal", version.ref = "cryptography" }
 databinding = { module = "androidx.databinding:viewbinding", version.ref = "androidGradlePlugin" }
 desugar_jdk_libs_nio = { module = "com.android.tools:desugar_jdk_libs_nio", version.ref = "desugar_jdk_libs_nio" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
@@ -89,13 +93,16 @@ jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { module = "junit:junit", version.ref = "junit" }
 junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junitKtx" }
 juniversalchardet = { module = "com.github.albfernandez:juniversalchardet", version.ref = "juniversalchardet" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlinGradlePlugin" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinGradlePlugin" }
 kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "kotlinxAtomicfu" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIOCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
 lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleKtx" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleKtx" }
@@ -143,6 +150,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 
 [bundles]
 coil = ["coil", "coil-network-okhttp"]
+cryptography = ["cryptography-core", "cryptography-provider-optimal"]
 lifecycle = ["lifecycle-livedata-ktx", "lifecycle-viewmodel-ktx"]
 media3 = ["media3-cast", "media3-common", "media3-container", "media3-datasource-cronet", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
 navigation = ["navigation-fragment-ktx", "navigation-ui-ktx"]

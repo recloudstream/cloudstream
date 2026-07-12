@@ -20,6 +20,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
@@ -52,11 +53,12 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
 
 const val LIBRARY_FOLDER = "library_folder"
-
 
 enum class LibraryOpenerType(@StringRes val stringRes: Int) {
     Default(R.string.action_default),
@@ -67,13 +69,15 @@ enum class LibraryOpenerType(@StringRes val stringRes: Int) {
 }
 
 /** Used to store how the user wants to open said poster */
+@Serializable
 data class LibraryOpener(
-    val openType: LibraryOpenerType,
-    val providerData: ProviderLibraryData?,
+    @JsonProperty("openType") @SerialName("openType") val openType: LibraryOpenerType,
+    @JsonProperty("providerData") @SerialName("providerData") val providerData: ProviderLibraryData?,
 )
 
+@Serializable
 data class ProviderLibraryData(
-    val apiName: String
+    @JsonProperty("apiName") @SerialName("apiName") val apiName: String,
 )
 
 class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
