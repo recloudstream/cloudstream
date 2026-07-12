@@ -1,8 +1,10 @@
 package com.lagradost.cloudstream3.mvvm
 
+import androidx.annotation.AnyThread
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.utils.AppDebug
+import com.lagradost.cloudstream3.utils.WorkerThread
 import kotlinx.coroutines.*
 import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
@@ -232,8 +234,9 @@ fun <T> throwAbleToResource(
     }
 }
 
+@AnyThread
 suspend fun <T> safeApiCall(
-    apiCall: suspend () -> T,
+    @WorkerThread apiCall: suspend () -> T,
 ): Resource<T> {
     return withContext(Dispatchers.IO) {
         try {
