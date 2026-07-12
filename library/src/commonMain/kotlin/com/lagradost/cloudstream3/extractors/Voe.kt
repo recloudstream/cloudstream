@@ -1,18 +1,16 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
 class Tubeless : Voe() {
     override val name = "Tubeless"
@@ -68,17 +66,14 @@ open class Voe : ExtractorApi() {
         if (redirectUrl != null) {
             res = app.get(redirectUrl, referer = referer)
         }
-        val encodedString = res.document.selectFirst("script[type=application/json]")
-            ?.data()?.trim()
-            ?.substringAfter("[\"")
-            ?.substringBeforeLast("\"]")
+        val encodedString = res.document.selectFirst("script[type=application/json]")?.data()?.trim()?.substringAfter("[\"")?.substringBeforeLast("\"]")
         if (encodedString == null) {
             println("encoded string not found.")
             return
         }
         val decryptedJson = decryptF7(encodedString)
-        val m3u8 = decryptedJson?.source
-        val mp4 = decryptedJson?.directAccessUrl
+        val m3u8 = decryptedJson.get("source")?.asString
+        val mp4 = decryptedJson.get("direct_access_url")?.asString
 
         if (m3u8 != null) {
             M3u8Helper.generateM3u8(
@@ -88,7 +83,8 @@ open class Voe : ExtractorApi() {
                 headers = mapOf("Origin" to "$mainUrl/")
             ).forEach(callback)
         }
-        if (mp4 != null) {
+        if (mp4!=null)
+        {
             callback.invoke(
                 newExtractorLink(
                     source = "$name MP4",
@@ -103,13 +99,7 @@ open class Voe : ExtractorApi() {
         }
     }
 
-    @Serializable
-    private data class VoeDecrypted(
-        @JsonProperty("source") @SerialName("source") val source: String? = null,
-        @JsonProperty("direct_access_url") @SerialName("direct_access_url") val directAccessUrl: String? = null,
-    )
-
-    private fun decryptF7(p8: String): VoeDecrypted? {
+    private fun decryptF7(p8: String): JsonObject {
         return try {
             val vF = rot13(p8)
             val vF2 = replacePatterns(vF)
@@ -118,10 +108,11 @@ open class Voe : ExtractorApi() {
             val vF5 = charShift(vF4, 3)
             val vF6 = reverse(vF5)
             val vAtob = base64Decode(vF6)
-            parseJson<VoeDecrypted>(vAtob)
+
+            JsonParser.parseString(vAtob).asJsonObject
         } catch (e: Exception) {
             println("Decryption error: ${e.message}")
-            null
+            JsonObject()
         }
     }
 
@@ -149,4 +140,5 @@ open class Voe : ExtractorApi() {
     }
 
     private fun reverse(input: String): String = input.reversed()
+
 }

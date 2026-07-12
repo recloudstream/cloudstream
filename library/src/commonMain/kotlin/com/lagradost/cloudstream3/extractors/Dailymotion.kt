@@ -1,18 +1,15 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.Gson
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.newSubtitleFile
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import io.ktor.http.Url
 import io.ktor.http.decodeURLPart
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
 class Geodailymotion : Dailymotion() {
     override val name = "GeoDailymotion"
@@ -38,7 +35,8 @@ open class Dailymotion : ExtractorApi() {
         val metaDataUrl = "$baseUrl/player/metadata/video/$id"
 
         val response = app.get(metaDataUrl, referer = embedUrl).text
-        val meta = parseJson<MetaData>(response)
+        val gson = Gson()
+        val meta = gson.fromJson(response, MetaData::class.java)
 
         meta.qualities?.get("auto")?.forEach { quality ->
             val videoUrl = quality.url
@@ -79,27 +77,23 @@ open class Dailymotion : ExtractorApi() {
         return if (id.matches(videoIdRegex)) id else null
     }
 
-    @Serializable
     data class MetaData(
-        @JsonProperty("qualities") @SerialName("qualities") val qualities: Map<String, List<Quality>>?,
-        @JsonProperty("subtitles") @SerialName("subtitles") val subtitles: SubtitlesWrapper?,
+        val qualities: Map<String, List<Quality>>?,
+        val subtitles: SubtitlesWrapper?
     )
 
-    @Serializable
     data class Quality(
-        @JsonProperty("type") @SerialName("type") val type: String?,
-        @JsonProperty("url") @SerialName("url") val url: String?,
+        val type: String?,
+        val url: String?
     )
 
-    @Serializable
     data class SubtitlesWrapper(
-        @JsonProperty("enable") @SerialName("enable") val enable: Boolean,
-        @JsonProperty("data") @SerialName("data") val data: Map<String, SubtitleData>?,
+        val enable: Boolean,
+        val data: Map<String, SubtitleData>?
     )
 
-    @Serializable
     data class SubtitleData(
-        @JsonProperty("label") @SerialName("label") val label: String,
-        @JsonProperty("urls") @SerialName("urls") val urls: List<String>,
+        val label: String,
+        val urls: List<String>
     )
 }
