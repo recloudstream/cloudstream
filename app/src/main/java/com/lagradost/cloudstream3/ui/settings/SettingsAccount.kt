@@ -75,7 +75,9 @@ import qrcode.QRCode
 class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
 
     companion object {
-        /** Used by nginx plugin too */
+        /**
+         * Used by nginx plugin too
+         */
         @SuppressLint("StringFormatInvalid")
         fun showLoginInfo(
             activity: FragmentActivity?,

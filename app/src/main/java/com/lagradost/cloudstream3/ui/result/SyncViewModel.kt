@@ -308,7 +308,9 @@ class SyncViewModel : ViewModel() {
         updateUserData()
     }
 
-    /** Triggers on every player event (Start/Pause/Stop/Ended) */
+    /**
+     * Triggers on every player event (Start/Pause/Stop/Ended)
+     * */
     fun updatePlaybackStatus(
         status: SyncAPI.PlaybackStatus,
         season: Int?,

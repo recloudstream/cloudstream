@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.syncproviders
 
-/** Stateless safe abstraction of SyncAPI */
+/**
+ * Stateless safe abstraction of SyncAPI
+ * */
 class SyncRepo(override val api: SyncAPI) : AuthRepo(api) {
     val syncIdName = api.syncIdName
     var requireLibraryRefresh: Boolean

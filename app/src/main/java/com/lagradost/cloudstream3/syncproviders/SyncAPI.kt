@@ -26,16 +26,21 @@ abstract class SyncAPI : AuthAPI() {
     open var requireLibraryRefresh: Boolean = true
     open val mainUrl: String = "NONE"
 
-    /** Currently unused, but will be used to correctly render the UI.
-     * This should specify what sync watch types can be used with this service. */
+    /**
+     * Currently unused, but will be used to correctly render the UI.
+     * This should specify what sync watch types can be used with this service.
+     * */
     open val supportedWatchTypes: Set<SyncWatchType> = SyncWatchType.entries.toSet()
+
     /**
      * Allows certain providers to open pages from
      * library links.
      **/
     open val syncIdName: SyncIdName? = null
 
-    /** Modify the current status of an item */
+    /**
+     * Modify the current status of an item
+     * */
     @Throws
     @WorkerThread
     open suspend fun updateStatus(
@@ -44,29 +49,39 @@ abstract class SyncAPI : AuthAPI() {
         newStatus: AbstractSyncStatus
     ): Boolean = throw NotImplementedError()
 
-    /** Get the current status of an item */
+    /**
+     * Get the current status of an item
+     * */
     @Throws
     @WorkerThread
     open suspend fun status(auth: AuthData?, id: String): AbstractSyncStatus? =
         throw NotImplementedError()
 
-    /** Get metadata about an item */
+    /**
+     * Get metadata about an item
+     * */
     @Throws
     @WorkerThread
     open suspend fun load(auth: AuthData?, id: String): SyncResult? = throw NotImplementedError()
 
-    /** Search this service for any results for a given query */
+    /**
+     * Search this service for any results for a given query
+     * */
     @Throws
     @WorkerThread
     open suspend fun search(auth: AuthData?, query: String): List<SyncSearchResult>? =
         throw NotImplementedError()
 
-    /** Get the current library/bookmarks of this service */
+    /**
+     * Get the current library/bookmarks of this service
+     * */
     @Throws
     @WorkerThread
     open suspend fun library(auth: AuthData?): LibraryMetadata? = throw NotImplementedError()
 
-    /** Helper function, may be used in the future */
+    /**
+     * Helper function, may be used in the future
+     * */
     @Throws
     open fun urlToId(url: String): String? = null
 
@@ -76,7 +91,7 @@ abstract class SyncAPI : AuthAPI() {
         auth: AuthData?,
         progress: PlaybackProgress,
         status: PlaybackStatus
-    ) : Boolean = false
+    ): Boolean = false
 
     enum class PlaybackStatus {
         Started,
@@ -84,20 +99,28 @@ abstract class SyncAPI : AuthAPI() {
         Stopped
     }
 
-    /** Triggers on every player event (Start/Pause/Stop/Ended) */
+    /**
+     * Triggers on every player event (Start/Pause/Stop/Ended)
+     * */
     data class PlaybackProgress(
-        /** Show/Movie Sync level ID */
+        /**
+         * Show/Movie Sync level ID
+         * */
         val id: String,
-        /** Season Number, Should be null for Movies */
+        /**
+         * Season Number, Should be null for Movies
+         * */
         val season: Int?,
-        /** Episode Number, Should be null for Movies */
+        /**
+         * Episode Number, Should be null for Movies
+         * */
         val episode: Int?,
         val type: TvType?,
         val positionMs: Long,
         val durationMs: Long,
     ) {
         val progressPercentage: Double
-            get() = if (durationMs<= 0L) 0.0 else
+            get() = if (durationMs <= 0L) 0.0 else
                 (positionMs.toDouble() / durationMs.toDouble() * 100.0).coerceIn(0.0, 100.0)
     }
 
@@ -151,9 +174,13 @@ abstract class SyncAPI : AuthAPI() {
         var posterUrl: String? = null,
         var backgroundPosterUrl: String? = null,
 
-        /** In unixtime */
+        /**
+         * In unixtime
+         * */
         var startDate: Long? = null,
-        /** In unixtime */
+        /**
+         * In unixtime
+         * */
         var endDate: Long? = null,
         var recommendations: List<SyncSearchResult>? = null,
         var nextSeason: SyncSearchResult? = null,

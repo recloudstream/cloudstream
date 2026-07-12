@@ -16,7 +16,9 @@ import java.net.URI
 import java.security.SecureRandom
 
 data class AuthLoginPage(
-    /** The website to open to authenticate */
+    /**
+     * The website to open to authenticate
+     */
     val url: String,
     /**
      * State/control code to verify against the redirectUrl to make sure the request is valid.
@@ -33,13 +35,19 @@ data class AuthToken(
      */
     @JsonProperty("accessToken") @SerialName("accessToken")
     val accessToken: String? = null,
-    /** For OAuth a special refresh token is issues to refresh the access token. */
+    /**
+     * For OAuth a special refresh token is issues to refresh the access token.
+     */
     @JsonProperty("refreshToken") @SerialName("refreshToken")
     val refreshToken: String? = null,
-    /** In UnixTime (sec) when it expires */
+    /**
+     * In UnixTime (sec) when it expires
+     */
     @JsonProperty("accessTokenLifetime") @SerialName("accessTokenLifetime")
     val accessTokenLifetime: Long? = null,
-    /** In UnixTime (sec) when it expires */
+    /**
+     * In UnixTime (sec) when it expires
+     * */
     @JsonProperty("refreshTokenLifetime") @SerialName("refreshTokenLifetime")
     val refreshTokenLifetime: Long? = null,
     /**
@@ -59,7 +67,9 @@ data class AuthToken(
 @OptIn(ExperimentalSerializationApi::class) // JsonNames is an experimental annotation for now
 @Serializable
 data class AuthUser(
-    /** Account display-name, can also be email if name does not exist */
+    /**
+     * Account display-name, can also be email if name does not exist
+     */
     @JsonProperty("name") @SerialName("name")
     val name: String?,
     /**
@@ -68,10 +78,14 @@ data class AuthUser(
      */
     @JsonProperty("id") @SerialName("id")
     val id: Int,
-    /** Profile picture URL */
+    /**
+     * Profile picture URL
+     */
     @JsonProperty("profilePicture") @SerialName("profilePicture")
     val profilePicture: String? = null,
-    /** Profile picture Headers of the URL */
+    /**
+     * Profile picture Headers of the URL
+     */
     @JsonProperty("profilePictureHeaders") @JsonAlias("profilePictureHeader")
     @SerialName("profilePictureHeaders") @JsonNames("profilePictureHeader")
     val profilePictureHeaders: Map<String, String>? = null,
@@ -102,7 +116,9 @@ data class AuthPinData(
     val interval: Int,
 )
 
-/** The login field requirements to display to the user */
+/**
+ * The login field requirements to display to the user
+ */
 data class AuthLoginRequirement(
     val password: Boolean = false,
     val username: Boolean = false,
@@ -119,38 +135,56 @@ data class AuthLoginResponse(
     @JsonProperty("server") @SerialName("server") val server: String?,
 )
 
-/** Stateless Authentication class used for all personalized content */
+/**
+ * Stateless Authentication class used for all personalized content
+ */
 abstract class AuthAPI {
     open val name: String = "NONE"
     open val idPrefix: String = "NONE"
 
-    /** Drawable icon of the service */
+    /**
+     * Drawable icon of the service
+     */
     open val icon: Int? = null
 
-    /** If this service requires an account to use */
+    /**
+     * If this service requires an account to use
+     * */
     open val requiresLogin: Boolean = true
 
-    /** Link to a website for creating a new account */
+    /**
+     * Link to a website for creating a new account
+     * */
     open val createAccountUrl: String? = null
 
-    /** The sensitive redirect URL from OAuth should contain "/redirectUrlIdentifier" to trigger the login */
+    /**
+     * The sensitive redirect URL from OAuth should contain "/redirectUrlIdentifier" to trigger the login
+     */
     open val redirectUrlIdentifier: String? = null
 
-    /** Has OAuth2 login support, including login, loginRequest and refreshToken */
+    /**
+     * Has OAuth2 login support, including login, loginRequest and refreshToken
+     */
     open val hasOAuth2: Boolean = false
 
-    /** Has on device pin support, aka login with a QR code */
+    /**
+     * Has on device pin support, aka login with a QR code
+     */
     open val hasPin: Boolean = false
 
-    /** Has in app login support, aka login with a dialog */
+    /**
+     * Has in app login support, aka login with a dialog
+     */
     open val hasInApp: Boolean = false
 
-    /** The requirements to login in app */
+    /**
+     * The requirements to login in app
+     */
     open val inAppLoginRequirement: AuthLoginRequirement? = null
 
     /** Determine if SyncApi supports Playback Scrobbling.
      *  @see SyncAPI.onPlaybackStatus
-     *  */
+     */
     open val supportScrobble: Boolean = false
 
     companion object {
@@ -195,37 +229,53 @@ abstract class AuthAPI {
         }
     }
 
-    /** Is this url a valid redirect url for this service? */
+    /**
+     * Is this url a valid redirect url for this service?
+     */
     @Throws
     open fun isValidRedirectUrl(url: String): Boolean =
         redirectUrlIdentifier != null && url.contains("/$redirectUrlIdentifier")
 
-    /** OAuth2 login from a valid redirectUrl, and payload given in loginRequest */
+    /**
+     * OAuth2 login from a valid redirectUrl, and payload given in loginRequest
+     */
     @Throws
     open suspend fun login(redirectUrl: String, payload: String?): AuthToken? =
         throw NotImplementedError()
 
-    /** OAuth2 login request, asking the service to provide a url to open in the browser */
+    /**
+     * OAuth2 login request, asking the service to provide a url to open in the browser
+     */
     @Throws
     open fun loginRequest(): AuthLoginPage? = throw NotImplementedError()
 
-    /** Pin login request, asking the service to provide an verificationUrl to display with a QR code */
+    /**
+     * Pin login request, asking the service to provide an verificationUrl to display with a QR code
+     * */
     @Throws
     open suspend fun pinRequest(): AuthPinData? = throw NotImplementedError()
 
-    /** OAuth2 token refresh, this ensures that all token passed to other functions will be valid */
+    /**
+     * OAuth2 token refresh, this ensures that all token passed to other functions will be valid
+     */
     @Throws
     open suspend fun refreshToken(token: AuthToken): AuthToken? = throw NotImplementedError()
 
-    /** Pin login, this will be called periodically while logging in to check if the pin has been verified by the user */
+    /**
+     * Pin login, this will be called periodically while logging in to check if the pin has been verified by the user
+     */
     @Throws
     open suspend fun login(payload: AuthPinData): AuthToken? = throw NotImplementedError()
 
-    /** In app login */
+    /**
+     * In-app login
+     */
     @Throws
     open suspend fun login(form: AuthLoginResponse): AuthToken? = throw NotImplementedError()
 
-    /** Get the visible user account */
+    /**
+     * Get the visible user account
+     */
     @Throws
     open suspend fun user(token: AuthToken?): AuthUser? = throw NotImplementedError()
 
