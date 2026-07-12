@@ -10,17 +10,18 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
-import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.nicehttp.requestCreator
+import io.ktor.http.Url
+import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import java.net.URI
 
 /**
  * When used as Interceptor additionalUrls cannot be returned, use WebViewResolver(...).resolveUsingWebView(...)
@@ -119,7 +120,7 @@ actual class WebViewResolver actual constructor(
         }
 
         var fixedRequest: Request? = null
-        val extraRequestList = threadSafeListOf<Request>()
+        val extraRequestList = atomicListOf<Request>()
 
         main {
             try {
@@ -211,7 +212,7 @@ actual class WebViewResolver actual constructor(
                          * */
                         return@runBlocking try {
                             when {
-                                blacklistedFiles.any { URI(webViewUrl).path.contains(it) } || webViewUrl.endsWith(
+                                blacklistedFiles.any { Url(webViewUrl).encodedPath.decodeURLPart().contains(it) } || webViewUrl.endsWith(
                                     "/favicon.ico"
                                 ) -> WebResourceResponse(
                                     "image/png",
