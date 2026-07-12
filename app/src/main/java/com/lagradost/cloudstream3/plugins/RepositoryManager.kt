@@ -98,7 +98,7 @@ data class PluginWrapper(
 object RepositoryManager {
     const val ONLINE_PLUGINS_FOLDER = "Extensions"
     val PREBUILT_REPOSITORIES: Array<RepositoryData> by lazy {
-        getKey("PREBUILT_REPOSITORIES") ?: emptyArray()
+        getKey<Array<RepositoryData>>("PREBUILT_REPOSITORIES") ?: emptyArray()
     }
     private val GH_REGEX =
         Regex("^https://raw.githubusercontent.com/([A-Za-z0-9-]+)/([A-Za-z0-9_.-]+)/(.*)$")
@@ -141,12 +141,18 @@ object RepositoryManager {
             }
         } else if (fixedUrl.matches("^[a-zA-Z0-9!_-]+$".toRegex())) {
             safeAsync {
-                app.get("https://cutt.ly/${fixedUrl}", allowRedirects = false).let { it2 ->
-                    it2.headers["Location"]?.let { url ->
-                        if (url.startsWith("https://cutt.ly/404")) return@safeAsync null
-                        if (url.removeSuffix("/") == "https://cutt.ly") return@safeAsync null
-                        return@safeAsync url
-                    }
+                if (fixedUrl.startsWith("!")) {
+                    val response = app.get("https://py.md/${fixedUrl.removePrefix("!")}", allowRedirects = false)
+                    val url = response.headers["Location"] ?: return@safeAsync null
+                    if (url.startsWith("https://py.md/404")) return@safeAsync null
+                    if (url.removeSuffix("/") == "https://py.md") return@safeAsync null
+                    return@safeAsync url
+                } else {
+                    val response = app.get("https://cutt.ly/${fixedUrl}", allowRedirects = false)
+                    val url = response.headers["Location"] ?: return@safeAsync null
+                    if (url.startsWith("https://cutt.ly/404")) return@safeAsync null
+                    if (url.removeSuffix("/") == "https://cutt.ly") return@safeAsync null
+                    return@safeAsync url
                 }
             }
         } else null
@@ -234,7 +240,7 @@ object RepositoryManager {
     }
 
     fun getRepositories(): Array<RepositoryData> {
-        return getKey(REPOSITORIES_KEY) ?: emptyArray()
+        return getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
     }
 
     // Don't want to read before we write in another thread
