@@ -1,9 +1,14 @@
 package com.lagradost.cloudstream4.utils
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
 import com.lagradost.cloudstream4.preferences.PreferenceDefaults
 import kotlin.jvm.JvmInline
 
 object DeviceLayout {
+    @Immutable
     @JvmInline // This still works but has no affect on non-JVM targets
     value class Layout(private val value: Int) {
         infix fun or(other: Layout) = Layout(value or other.value)
@@ -16,6 +21,7 @@ object DeviceLayout {
     val COMPUTER = Layout(0b01000)
 
     private var layoutId = Layout(-1)
+    private val layoutState = mutableStateOf(layoutId)
     // TODO when fully on Compose
     // private val layoutId: Int get() = resolveLayout()
 
@@ -30,6 +36,18 @@ object DeviceLayout {
      */
     fun isLayout(flags: Layout): Boolean = layoutId.and(flags)
 
+    /**
+     * Returns a [State] that is true if the layout is any of the flags, so
+     * so isLayoutState(TV or EMULATOR) is a valid statement
+     * for checking if the layout is in the emulator
+     * or tv. Auto will become the "TV" or the
+     * "PHONE" layout.
+     *
+     * Valid flags are: PHONE, TV, EMULATOR, or COMPUTER
+     */
+    fun isLayoutState(layoutFlags: Layout): State<Boolean> =
+        derivedStateOf { layoutState.value.and(layoutFlags) }
+
     /** Returns true if the current orientation is landscape. */
     fun isLandscape(): Boolean =
         isLayout(TV or EMULATOR) || DeviceInfo.isLandscape()
@@ -43,6 +61,7 @@ object DeviceLayout {
      */
     fun update() {
         layoutId = resolveLayout()
+        layoutState.value = layoutId
     }
 
     private fun resolveLayout(): Layout {

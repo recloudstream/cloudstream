@@ -1,10 +1,12 @@
 package com.lagradost.cloudstream3.ui.compose.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import com.lagradost.cloudstream3.BuildConfig
@@ -46,12 +48,13 @@ class SettingsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = ComposeView(requireContext()).apply {
+    ): View = ComposeView(inflater.context).apply {
         setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 
         setContent {
-            val profile = buildProfileState()
-            val version = buildVersionState()
+            val context = LocalContext.current
+            val profile = buildProfileState(context)
+            val version = buildVersionState(context)
             CloudStreamTheme(
                 mode = context.loadThemeMode(),
                 primaryColor = context.loadPrimaryColor(),
@@ -71,7 +74,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun buildProfileState(): SettingsProfileState {
+    private fun buildProfileState(context: Context): SettingsProfileState {
         for (syncApi in AccountManager.allApis) {
             val login = syncApi.authUser() ?: continue
             if (login.profilePicture.isNullOrEmpty()) continue
@@ -81,13 +84,11 @@ class SettingsFragment : Fragment() {
             )
         }
 
-        val account = runCatching {
-            DataStoreHelper.accounts.firstOrNull {
-                it.keyIndex == DataStoreHelper.selectedKeyIndex
-            } ?: DataStoreHelper.getDefaultAccount(requireActivity())
-        }.getOrNull()
+        val account = DataStoreHelper.accounts.firstOrNull {
+            it.keyIndex == DataStoreHelper.selectedKeyIndex
+        } ?: DataStoreHelper.getDefaultAccount(context)
 
-        val profileImage = when (account?.defaultImageIndex) {
+        val profileImage = when (account.defaultImageIndex) {
             0 -> ProfileImage.DARK_BLUE
             1 -> ProfileImage.BLUE
             2 -> ProfileImage.ORANGE
@@ -99,13 +100,13 @@ class SettingsFragment : Fragment() {
         }
 
         return SettingsProfileState(
-            name = account?.name ?: "",
-            profilePictureUrl = (account?.image as? UiImage.Image)?.url,
+            name = account.name,
+            profilePictureUrl = (account.image as? UiImage.Image)?.url,
             profileImage = profileImage,
         )
     }
 
-    private fun buildVersionState(): SettingsVersionState {
+    private fun buildVersionState(context: Context): SettingsVersionState {
         val buildDate = SimpleDateFormat
             .getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, Locale.getDefault())
             .apply { timeZone = TimeZone.getTimeZone("UTC") }
@@ -114,7 +115,7 @@ class SettingsFragment : Fragment() {
 
         return SettingsVersionState(
             appVersion = BuildConfig.VERSION_NAME,
-            commitHash = activity?.currentCommitHash() ?: "",
+            commitHash = context.currentCommitHash(),
             buildDate = buildDate,
         )
     }

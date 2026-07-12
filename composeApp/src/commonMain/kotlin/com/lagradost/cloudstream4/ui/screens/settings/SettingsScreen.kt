@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -134,7 +135,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val colors = CloudStreamTheme.colors
-    val isTV = remember { DeviceLayout.isLayout(DeviceLayout.TV) }
+    val isTV by remember { DeviceLayout.isLayoutState(DeviceLayout.TV) }
     val firstItemFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
