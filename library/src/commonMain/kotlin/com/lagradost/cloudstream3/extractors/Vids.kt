@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
-@Prerelease
 open class Vids : ExtractorApi() {
     override val name: String = "Vids"
     override val mainUrl: String = "https://vids.st"

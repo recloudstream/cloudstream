@@ -86,7 +86,6 @@ private const val JS_DEFAULT_MAX_INSTRUCTIONS: Long = 50_000_000L
  * Convert any JS runtime value to its JavaScript string representation.
  * Mirrors what JS `String(value)` would produce.
  */
-@Prerelease
 fun jsValueToString(v: Any?): String = toJsString(v)
 
 /**
@@ -106,7 +105,6 @@ fun jsValueToString(v: Any?): String = toJsString(v)
  * @param scope the [CoroutineScope] this context's cancellation is tied to. Supplied
  *        automatically by [newJsContext] from the caller's own coroutine context.
  */
-@Prerelease
 class JsContext internal constructor(
     var maxExecutionTime: Duration = JS_DEFAULT_MAX_EXECUTION_TIME,
     var maxInstructions: Long = JS_DEFAULT_MAX_INSTRUCTIONS,
@@ -160,7 +158,6 @@ class JsContext internal constructor(
  *       eval("x + 1")
  *   }
  */
-@Prerelease
 suspend fun newJsContext(
     initializer: suspend JsContext.() -> Unit = {},
 ): JsContext {
@@ -188,7 +185,6 @@ suspend fun newJsContext(
  *         Returns [Unit] on evaluation failure, timeout, or when the result is JS undefined.
  *         JS null is represented as Kotlin null. Use [jsValueToString] to convert to a JS string.
  */
-@Prerelease
 @Throws(CancellationException::class)
 suspend fun evalJs(
     js: String,
