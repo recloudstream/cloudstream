@@ -10,7 +10,6 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Prerelease
 open class Flyfile : ExtractorApi() {
     override val name: String = "FlyFile"
     override val mainUrl: String = "https://flyfile.app"

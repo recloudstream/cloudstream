@@ -328,6 +328,9 @@ import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -418,6 +421,7 @@ enum class ExtractorLinkType {
     MAGNET;
 
     // See https://www.iana.org/assignments/media-types/media-types.xhtml
+    @JsonIgnore
     fun getMimeType(): String {
         return when (this) {
             VIDEO -> "video/mp4"
@@ -685,26 +689,27 @@ open class DrmExtractorLink private constructor(
  * @property audioTracks List of separate audio tracks that can be used with this video
  * @see newExtractorLink
  * */
+@Serializable
 open class ExtractorLink
 @Deprecated("Use newExtractorLink", level = DeprecationLevel.WARNING)
 constructor(
-    open val source: String,
-    open val name: String,
-    override val url: String,
-    override var referer: String,
-    open var quality: Int,
-    override var headers: Map<String, String> = mapOf(),
+    @SerialName("source") open val source: String,
+    @SerialName("name") open val name: String,
+    @SerialName("url") override val url: String,
+    @SerialName("referer") override var referer: String,
+    @SerialName("quality") open var quality: Int,
+    @SerialName("headers") override var headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
-    open var extractorData: String? = null,
-    open var type: ExtractorLinkType,
+    @SerialName("extractorData") open var extractorData: String? = null,
+    @SerialName("type") open var type: ExtractorLinkType,
     /** List of separate audio tracks that can be merged with this video */
-    open var audioTracks: List<AudioFile> = emptyList(),
+    @SerialName("audioTracks") open var audioTracks: List<AudioFile> = emptyList(),
 ) : IDownloadableMinimum {
-    val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
-    val isDash: Boolean get() = type == ExtractorLinkType.DASH
+    @get:JsonIgnore val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
+    @get:JsonIgnore val isDash: Boolean get() = type == ExtractorLinkType.DASH
 
     // Cached video size
-    private var videoSize: Long? = null
+    @Transient private var videoSize: Long? = null
 
     /**
      * Get video size in bytes with one head request. Only available for ExtractorLinkType.Video
