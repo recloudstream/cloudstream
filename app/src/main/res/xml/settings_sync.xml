@@ -52,6 +52,12 @@
             android:summary="@string/sync_plugins_summary"
             android:title="@string/sync_plugins_title" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="sync_account_logins_enabled"
+            android:summary="@string/sync_account_logins_summary"
+            android:title="@string/sync_account_logins_title" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

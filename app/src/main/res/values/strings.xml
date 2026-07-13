@@ -803,6 +803,8 @@
 
     <string name="sync_plugins_title">Sync online plugins</string>
     <string name="sync_plugins_summary">Include the list of installed online plugins in the sync</string>
+    <string name="sync_account_logins_title">Sync account logins</string>
+    <string name="sync_account_logins_summary">Include tracking (AniList, MAL, Kitsu, Simkl) and subtitle logins in the sync</string>
     <string name="sync_connected_toast">Google Drive connected</string>
     <string name="sync_disconnected_toast">Google Drive disconnected</string>
     <string name="sync_push_started">Uploading to cloud…</string>

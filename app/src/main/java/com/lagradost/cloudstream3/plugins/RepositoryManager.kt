@@ -132,31 +132,40 @@ object RepositoryManager {
 
     suspend fun parseRepoUrl(url: String): String? {
         val fixedUrl = url.trim()
-        return if (fixedUrl.contains("^https?://".toRegex())) {
-            fixedUrl
-        } else if (fixedUrl.contains("^(cloudstreamrepo://)|(https://cs\\.repo/\\??)".toRegex())) {
-            fixedUrl.replace("^(cloudstreamrepo://)|(https://cs\\.repo/\\??)".toRegex(), "").let {
-                return@let if (!it.contains("^https?://".toRegex()))
-                    "https://${it}"
-                else fixedUrl
+
+        // 1. Direct http/https URLs
+        if (fixedUrl.contains("^https?://".toRegex())) {
+            return fixedUrl
+        }
+
+        // 2. Custom protocols (cloudstreamrepo:// or cs.repo)
+        val customProtoRegex = "^(cloudstreamrepo://)|(https://cs\\.repo/\\??)".toRegex()
+        if (fixedUrl.contains(customProtoRegex)) {
+            val stripped = fixedUrl.replace(customProtoRegex, "")
+            return if (!stripped.contains("^https?://".toRegex())) {
+                "https://$stripped"
+            } else {
+                fixedUrl
             }
-        } else if (fixedUrl.matches("^[a-zA-Z0-9!_-]+$".toRegex())) {
-            safeAsync {
-                if (fixedUrl.startsWith("!")) {
-                    val response = app.get("https://py.md/${fixedUrl.removePrefix("!")}", allowRedirects = false)
-                    val url = response.headers["Location"] ?: return@safeAsync null
-                    if (url.startsWith("https://py.md/404")) return@safeAsync null
-                    if (url.removeSuffix("/") == "https://py.md") return@safeAsync null
-                    return@safeAsync url
-                } else {
-                    val response = app.get("https://cutt.ly/${fixedUrl}", allowRedirects = false)
-                    val url = response.headers["Location"] ?: return@safeAsync null
-                    if (url.startsWith("https://cutt.ly/404")) return@safeAsync null
-                    if (url.removeSuffix("/") == "https://cutt.ly") return@safeAsync null
-                    return@safeAsync url
-                }
+        }
+
+        // 3. URL shorteners / IDs (py.md or cutt.ly)
+        if (fixedUrl.matches("^[a-zA-Z0-9!_-]+$".toRegex())) {
+            return safeAsync {
+                val isPyMd = fixedUrl.startsWith("!")
+                val baseUrl = if (isPyMd) "https://py.md" else "https://cutt.ly"
+                val path = if (isPyMd) fixedUrl.removePrefix("!") else fixedUrl
+
+                val response = app.get("$baseUrl/$path", allowRedirects = false)
+                val location = response.headers["Location"] ?: return@safeAsync null
+
+                if (location.startsWith("$baseUrl/404")) return@safeAsync null
+                if (location.removeSuffix("/") == baseUrl) return@safeAsync null
+                location
             }
-        } else null
+        }
+
+        return null
     }
 
     suspend fun parseRepository(url: String): Repository? {

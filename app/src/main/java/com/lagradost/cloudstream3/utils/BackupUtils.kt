@@ -108,12 +108,24 @@ object BackupUtils {
 
 
     fun String.isTransferable(context: Context): Boolean {
-        val pluginSyncEnabled = context.getDefaultSharedPrefs().getBoolean("sync_plugins_enabled", false)
-        val excluded = if (pluginSyncEnabled) {
-            nonTransferableKeys.filter { it != PLUGINS_KEY }
-        } else {
-            nonTransferableKeys
-        }
+        val prefs = context.getDefaultSharedPrefs()
+        val pluginSyncEnabled = prefs.getBoolean("sync_plugins_enabled", false)
+        val accountLoginSyncEnabled = prefs.getBoolean("sync_account_logins_enabled", false)
+
+        val trackingKeys = listOf(
+            AccountManager.ACCOUNT_TOKEN,
+            AccountManager.ACCOUNT_IDS,
+            "anilist_token", "anilist_user",
+            "mal_user", "mal_token", "mal_refresh_token", "mal_unixtime",
+            "open_subtitles_user",
+            "subdl_user",
+            "simkl_token",
+        )
+
+        var excluded: List<String> = nonTransferableKeys
+        if (pluginSyncEnabled) excluded = excluded.filter { it != PLUGINS_KEY }
+        if (accountLoginSyncEnabled) excluded = excluded.filter { it !in trackingKeys }
+
         return !excluded.any { this.contains(it) }
     }
 
