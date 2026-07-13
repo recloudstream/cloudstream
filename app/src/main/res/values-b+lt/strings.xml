@@ -249,7 +249,7 @@
     <string name="action_remove_from_watched">Pašalinti iš žiūrimų</string>
     <string name="audio_tracks">Garso takelis</string>
     <string name="filler" formatted="true">Užpildymas</string>
-    <string name="duration_format" formatted="true">min</string>
+    <string name="duration_format" formatted="true">%d min</string>
     <string name="title_home">Namai</string>
     <string name="download_queue">Atsisiuntimų eilė</string>
     <string name="speech_recognition_unavailable">Balso atpažinimas nepasiekiamas</string>
