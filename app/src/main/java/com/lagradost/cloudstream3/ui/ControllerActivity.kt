@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.android.gms.cast.MediaLoadOptions
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.MediaSeekOptions
@@ -34,35 +35,24 @@ import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.CastHelper.awaitLinks
 import com.lagradost.cloudstream3.utils.CastHelper.getMediaInfo
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.json.JSONObject
-
-/*class SkipOpController(val view: ImageView) : UIController() {
-    init {
-        view.setImageResource(R.drawable.exo_controls_fastforward)
-        view.setOnClickListener {
-            remoteMediaClient?.let {
-                val options = MediaSeekOptions.Builder()
-                    .setPosition(it.approximateStreamPosition + 85000)
-                it.seek(options.build())
-            }
-        }
-    }
-}*/
 
 private fun RemoteMediaClient.getItemIndex(): Int? {
     return try {
         val index = this.mediaQueue.itemIds.indexOf(this.currentItem?.itemId ?: 0)
         if (index < 0) null else index
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -89,48 +79,41 @@ class SkipNextEpisodeController(val view: ImageView) : UIController() {
     }
 }
 
+@Serializable
 data class MetadataHolder(
-    val apiName: String,
-    val isMovie: Boolean,
-    val title: String?,
-    val poster: String?,
-    val currentEpisodeIndex: Int,
-    val episodes: List<ResultEpisode>,
-    val currentLinks: List<ExtractorLink>,
-    val currentSubtitles: List<SubtitleData>
+    @JsonProperty("apiName") @SerialName("apiName") val apiName: String,
+    @JsonProperty("isMovie") @SerialName("isMovie") val isMovie: Boolean,
+    @JsonProperty("title") @SerialName("title") val title: String?,
+    @JsonProperty("poster") @SerialName("poster") val poster: String?,
+    @JsonProperty("currentEpisodeIndex") @SerialName("currentEpisodeIndex") val currentEpisodeIndex: Int,
+    @JsonProperty("episodes") @SerialName("episodes") val episodes: List<ResultEpisode>,
+    @JsonProperty("currentLinks") @SerialName("currentLinks") val currentLinks: List<ExtractorLink>,
+    @JsonProperty("currentSubtitles") @SerialName("currentSubtitles") val currentSubtitles: List<SubtitleData>,
 )
 
-class SelectSourceController(val view: ImageView, val activity: ControllerActivity) :
-    UIController() {
+class SelectSourceController(val view: ImageView, val activity: ControllerActivity) : UIController() {
     init {
         view.setImageResource(R.drawable.ic_baseline_playlist_play_24)
         view.setOnClickListener {
-            //  lateinit var dialog: AlertDialog
             val holder = getCurrentMetaData()
-
             if (holder != null) {
                 val items = holder.currentLinks
                 if (items.isNotEmpty() && remoteMediaClient?.currentItem != null) {
-                    val subTracks =
-                        remoteMediaClient?.mediaInfo?.mediaTracks?.filter { it.type == MediaTrack.TYPE_TEXT }
-                            ?: ArrayList()
+                    val subTracks = remoteMediaClient?.mediaInfo?.mediaTracks?.filter { it.type == MediaTrack.TYPE_TEXT }
+                        ?: ArrayList()
 
-                    val bottomSheetDialogBuilder =
-                        AlertDialog.Builder(view.context, R.style.AlertDialogCustomBlack)
+                    val bottomSheetDialogBuilder = AlertDialog.Builder(view.context, R.style.AlertDialogCustomBlack)
                     bottomSheetDialogBuilder.setView(R.layout.sort_bottom_sheet)
+
                     val bottomSheetDialog = bottomSheetDialogBuilder.create()
                     bottomSheetDialog.show()
-                    //  bottomSheetDialog.setContentView(R.layout.sort_bottom_sheet)
-                    val providerList =
-                        bottomSheetDialog.findViewById<ListView>(R.id.sort_providers)!!
-                    val subtitleList =
-                        bottomSheetDialog.findViewById<ListView>(R.id.sort_subtitles)!!
+
+                    val providerList = bottomSheetDialog.findViewById<ListView>(R.id.sort_providers)!!
+                    val subtitleList = bottomSheetDialog.findViewById<ListView>(R.id.sort_subtitles)!!
                     if (subTracks.isEmpty()) {
-                        bottomSheetDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility =
-                            GONE
+                        bottomSheetDialog.findViewById<LinearLayout>(R.id.sort_subtitles_holder)?.visibility = GONE
                     } else {
-                        val arrayAdapter =
-                            ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
+                        val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
                         arrayAdapter.add(view.context.getString(R.string.no_subtitles))
                         arrayAdapter.addAll(subTracks.mapNotNull { it.name })
 
@@ -138,10 +121,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         subtitleList.adapter = arrayAdapter
 
                         val currentTracks = remoteMediaClient?.mediaStatus?.activeTrackIds
-
-                        val subtitleIndex =
-                            if (currentTracks == null) 0 else subTracks.map { it.id }
-                                .indexOfFirst { currentTracks.contains(it) } + 1
+                        val subtitleIndex = if (currentTracks == null) 0 else subTracks.map { it.id }
+                            .indexOfFirst { currentTracks.contains(it) } + 1
 
                         subtitleList.setSelection(subtitleIndex)
                         subtitleList.setItemChecked(subtitleIndex, true)
@@ -153,9 +134,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 ChromecastSubtitlesFragment.getCurrentSavedStyle().apply {
                                     val font = TextTrackStyle()
                                     font.setFontFamily(fontFamily ?: "Google Sans")
-                                    fontGenericFamily?.let {
-                                        font.fontGenericFamily = it
-                                    }
+                                    fontGenericFamily?.let { font.fontGenericFamily = it }
                                     font.windowColor = windowColor
                                     font.backgroundColor = backgroundColor
 
@@ -172,7 +151,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                         if (!it.status.isSuccess) {
                                             Log.e(
                                                 "CHROMECAST", "Failed with status code:" +
-                                                        it.status.statusCode + " > " + it.status.statusMessage
+                                                    it.status.statusCode + " > " + it.status.statusMessage
                                             )
                                         }
                                     }
@@ -181,17 +160,15 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         }
                     }
 
-                    //https://developers.google.com/cast/docs/reference/web_receiver/cast.framework.messages.MediaInformation
+                    // https://developers.google.com/cast/docs/reference/web_receiver/cast.framework.messages.MediaInformation
                     val contentUrl = (remoteMediaClient?.currentItem?.media?.contentUrl
                         ?: remoteMediaClient?.currentItem?.media?.contentId)
 
-                    val sortingMethods =
-                        items.map { "${it.name} ${Qualities.getStringByInt(it.quality)}" }
-                            .toTypedArray()
+                    val sortingMethods = items.map { "${it.name} ${Qualities.getStringByInt(it.quality)}" }
+                        .toTypedArray()
                     val sotringIndex = items.indexOfFirst { it.url == contentUrl }
 
-                    val arrayAdapter =
-                        ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
+                    val arrayAdapter = ArrayAdapter<String>(view.context, R.layout.sort_bottom_single_choice)
                     arrayAdapter.addAll(sortingMethods.toMutableList())
 
                     providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
@@ -201,10 +178,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
                     providerList.setOnItemClickListener { _, _, which, _ ->
                         val epData = holder.episodes[holder.currentEpisodeIndex]
-
                         fun loadMirror(index: Int) {
                             if (holder.currentLinks.size <= index) return
-
                             val mediaItem = getMediaInfo(
                                 epData,
                                 holder,
@@ -214,25 +189,21 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                             )
 
                             val startAt = remoteMediaClient?.approximateStreamPosition ?: 0
-
-                            //remoteMediaClient.load(mediaItem, true, startAt)
                             try { // THIS IS VERY IMPORTANT BECAUSE WE NEVER WANT TO AUTOLOAD THE NEXT EPISODE
                                 val currentIdIndex = remoteMediaClient?.getItemIndex()
-
                                 val nextId = remoteMediaClient?.mediaQueue?.itemIds?.get(
                                     currentIdIndex?.plus(1) ?: 0
                                 )
+
                                 if (currentIdIndex == null && nextId != null) {
                                     awaitLinks(
                                         remoteMediaClient?.queueInsertAndPlayItem(
                                             MediaQueueItem.Builder(mediaItem).build(),
                                             nextId,
                                             startAt,
-                                            JSONObject()
+                                            JSONObject(),
                                         )
-                                    ) {
-                                        loadMirror(index + 1)
-                                    }
+                                    ) { loadMirror(index + 1) }
                                 } else {
                                     val mediaLoadOptions =
                                         MediaLoadOptions.Builder()
@@ -244,11 +215,9 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                             mediaItem,
                                             mediaLoadOptions
                                         )
-                                    ) {
-                                        loadMirror(index + 1)
-                                    }
+                                    ) { loadMirror(index + 1) }
                                 }
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                                 val mediaLoadOptions =
                                     MediaLoadOptions.Builder()
                                         .setPlayPosition(startAt)
@@ -259,8 +228,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 }
                             }
                         }
-                        loadMirror(which)
 
+                        loadMirror(which)
                         bottomSheetDialog.dismissSafe(activity)
                     }
                 }
@@ -270,23 +239,19 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
     private fun getCurrentMetaData(): MetadataHolder? {
         return try {
-            val data = remoteMediaClient?.mediaInfo?.customData?.toString()
-            data?.toKotlinObject()
-        } catch (e: Exception) {
+            val data = remoteMediaClient?.mediaInfo?.customData?.toString() ?: return null
+            parseJson<MetadataHolder>(data)
+        } catch (_: Exception) {
             null
         }
     }
 
     var isLoadingMore = false
-
-
     override fun onMediaStatusUpdated() {
         super.onMediaStatusUpdated()
         val meta = getCurrentMetaData()
+        view.visibility = if ((meta?.currentLinks?.size ?: 0) > 1) VISIBLE else INVISIBLE
 
-        view.visibility = if ((meta?.currentLinks?.size
-                ?: 0) > 1
-        ) VISIBLE else INVISIBLE
         try {
             if (meta != null && meta.episodes.size > meta.currentEpisodeIndex + 1) {
                 val currentIdIndex = remoteMediaClient?.getItemIndex() ?: return
@@ -303,7 +268,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                             currentPosition,
                             currentDuration,
                             epData,
-                            meta.episodes.getOrNull(index + 1)
+                            meta.episodes.getOrNull(index + 1),
                         )
                 } catch (t: Throwable) {
                     logError(t)
@@ -314,9 +279,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     ioSafe {
                         val currentLinks = mutableSetOf<ExtractorLink>()
                         val currentSubs = mutableSetOf<SubtitleData>()
-
                         val generator = RepoLinkGenerator(listOf(epData))
-
                         val isSuccessful = safeApiCall {
                             generator.generateLinks(
                                 clearCache = false,
@@ -329,7 +292,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                     currentSubs.add(it)
                                 },
                                 offset = 0,
-                                isCasting = true
+                                isCasting = true,
                             )
                         }
 
@@ -340,32 +303,18 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 val jsonCopy = meta.copy(
                                     currentLinks = sortedLinks,
                                     currentSubtitles = sortedSubs,
-                                    currentEpisodeIndex = index
+                                    currentEpisodeIndex = index,
                                 )
 
-                                val done =
-                                    JSONObject(jsonCopy.toJson())
-
+                                val done = JSONObject(jsonCopy.toJson())
                                 val mediaInfo = getMediaInfo(
                                     epData,
                                     jsonCopy,
                                     0,
                                     done,
-                                    sortedSubs
+                                    sortedSubs,
                                 )
 
-                                /*fun loadIndex(index: Int) {
-                                    println("LOAD INDEX::::: $index")
-                                    if (meta.currentLinks.size <= index) return
-                                    val info = getMediaInfo(
-                                        epData,
-                                        meta,
-                                        index,
-                                        done)
-                                    awaitLinks(remoteMediaClient?.load(info, true, 0)) {
-                                        loadIndex(index + 1)
-                                    }
-                                }*/
                                 activity.runOnUiThread {
                                     awaitLinks(
                                         remoteMediaClient?.queueAppendItem(
@@ -374,7 +323,6 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                         )
                                     ) {
                                         println("FAILED TO LOAD NEXT ITEM")
-                                        //  loadIndex(1)
                                     }
                                     isLoadingMore = false
                                 }
@@ -397,10 +345,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
 class SkipTimeController(val view: ImageView, forwards: Boolean) : UIController() {
     init {
-        //val settingsManager = PreferenceManager.getDefaultSharedPreferences()
-        //val time = settingsManager?.getInt("chromecast_tap_time", 30) ?: 30
         val time = 30
-        //view.setImageResource(if (forwards) R.drawable.netflix_skip_forward else R.drawable.netflix_skip_back)
         view.setImageResource(if (forwards) R.drawable.go_forward_30 else R.drawable.go_back_30)
         view.setOnClickListener {
             remoteMediaClient?.let {
