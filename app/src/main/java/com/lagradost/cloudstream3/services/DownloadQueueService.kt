@@ -1,8 +1,10 @@
 package com.lagradost.cloudstream3.services
 
+import android.Manifest
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
@@ -34,6 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
@@ -104,6 +107,10 @@ class DownloadQueueService : Service() {
 
 
     private fun updateNotification(context: Context, downloads: Int, queued: Int) {
+        if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) return
+
         val activeDownloads =
             resources.getQuantityString(R.plurals.downloads_active, downloads).format(downloads)
         val activeQueue =
@@ -180,6 +187,16 @@ class DownloadQueueService : Service() {
             debugAssert({ timeTaken == null }, { "Downloader startup should not time out" })
 
             totalDownloadFlow
+                .debounce { (instances, queue) ->
+                    // Filter away incorrect transient queue states.
+                    // For example when we pop the queue and add a download instance there exists a transient state where
+                    // there is no queue and no download instances (leading to an early exit)
+                    if (instances.isEmpty() && queue.isEmpty()) {
+                        500.milliseconds
+                    } else {
+                        0.milliseconds
+                    }
+                }
                 .takeWhile { (instances, queue) ->
                     // Stop if destroyed
                     isRunning

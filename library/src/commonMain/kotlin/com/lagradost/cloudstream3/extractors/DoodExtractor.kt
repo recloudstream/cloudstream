@@ -1,12 +1,13 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
-import java.net.URI
+import io.ktor.http.Url
 
 class Doodspro : DoodLaExtractor() {
     override var mainUrl = "https://doods.pro"
@@ -87,6 +88,10 @@ class MyVidPlay : DoodLaExtractor() {
     override var mainUrl = "https://myvidplay.com"
 }
 
+class Playmogo : DoodLaExtractor() {
+    override var mainUrl = "https://playmogo.com"
+}
+
 open class DoodLaExtractor : ExtractorApi() {
     override var name = "DoodStream"
     override var mainUrl = "https://dood.la"
@@ -106,7 +111,7 @@ open class DoodLaExtractor : ExtractorApi() {
         val response0 = req.text
         val md5 = host + (Regex("/pass_md5/[^']*").find(response0)?.value ?: return)
         val trueUrl = app.get(md5, referer = req.url).text + createHashTable() + "?token=" + md5.substringAfterLast("/")
-        val quality = Regex("\\d{3,4}p")
+        val quality = Regex("\\d{3,4}[pP]")
             .find(response0.substringAfter("<title>").substringBefore("</title>"))
             ?.groupValues
             ?.getOrNull(0)
@@ -132,8 +137,6 @@ open class DoodLaExtractor : ExtractorApi() {
     }
 
     private fun getBaseUrl(url: String): String {
-        return URI(url).let {
-            "${it.scheme}://${it.host}"
-        }
+        return Url(url).let { "${it.protocol.name}://${it.host}" }
     }
 }

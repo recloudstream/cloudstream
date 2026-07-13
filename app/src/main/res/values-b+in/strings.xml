@@ -169,10 +169,8 @@
     <string name="resume">Lanjutkan</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Ini akan secara permanen menghapus %s
-\nApakah anda yakin?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\ntersisa</string>
+    <string name="delete_message" formatted="true">Ini akan secara permanen menghapus %s \nApakah anda yakin?</string>
+    <string name="resume_time_left" formatted="true">%dm \ntersisa</string>
     <string name="status_ongoing">Masih Berlanjut</string>
     <string name="status_completed">Tamat</string>
     <string name="status">Status</string>
@@ -390,9 +388,7 @@
     <string name="plugins_updated" formatted="true">%d plugin diperbarui</string>
     <string name="view_public_repositories_button">Lihat repositori komunitas</string>
     <string name="view_public_repositories_button_short">Daftar publik</string>
-    <string name="blank_repo_message">CloudStream tidak memiliki situs yang terinstal secara default. Anda perlu menginstal situs-situs dari repositori.
-\n
-\nBergabunglah dengan Discord kami atau cari secara online.</string>
+    <string name="blank_repo_message">CloudStream tidak memiliki situs yang terinstal secara default. Anda perlu menginstal situs-situs dari repositori. \n \nBergabunglah dengan Discord kami atau cari secara online.</string>
     <string name="repository_url_hint">URL Repositori atau Kode Pendek</string>
     <string name="create_account">Buat Akun</string>
     <string name="error">Error</string>
@@ -467,7 +463,7 @@
     <string name="skip_type_ed">Sesi Akhir</string>
     <string name="skip_type_recap">Sinopsis</string>
     <string name="skip_type_mixed_ed">Sesi akhir ganda</string>
-    <string name="skip_type_creddits">Sesi Kredit</string>
+    <string name="skip_type_credits">Sesi Kredit</string>
     <string name="skip_type_intro">Sesi Intro</string>
     <string name="clipboard_too_large">Terlalu banyak teks. Tidak dapat menyalin ke papan klip.</string>
     <string name="confirm_exit_dialog">Yakin ingin keluar?</string>
@@ -487,8 +483,7 @@
     <string name="action_remove_from_watched">Hapus dari tontonan</string>
     <string name="browser">Peramban</string>
     <string name="select_library">Pilih pustaka</string>
-    <string name="empty_library_no_accounts_message">Yahh daftar pustaka kamu kosong :(
-\nMasuk ke akun pustaka atau tambah perlihatkan ke lokal pustaka kamu.</string>
+    <string name="empty_library_no_accounts_message">Yahh daftar pustaka kamu kosong :( \nMasuk ke akun pustaka atau tambah perlihatkan ke lokal pustaka kamu.</string>
     <string name="library">Pustaka</string>
     <string name="sort_by">Urutkan berdasarkan</string>
     <string name="sort">Urutkan</string>
@@ -500,8 +495,7 @@
     <string name="sort_alphabetical_z">Abjad (Z ke A)</string>
     <string name="open_with">Buka dengan</string>
     <string name="empty_library_logged_in_message">Yahh daftar ini kosong. Coba ganti ke yang lain.</string>
-    <string name="safe_mode_file">Mode aman file ditemukan!
-\nTidak memuat ekstensi pada startup sampai berkas dihapus.</string>
+    <string name="safe_mode_file">Mode aman file ditemukan! \nTidak memuat ekstensi pada startup sampai berkas dihapus.</string>
     <string name="android_tv_interface_off_seek_settings">Sembunyikan Pemutaran - Geser</string>
     <string name="android_tv_interface_on_seek_settings">Pemutar terlihat - Geser</string>
     <string name="android_tv_interface_on_seek_settings_summary">Geser untuk menghilangkan</string>
@@ -527,13 +521,7 @@
     <string name="watch_quality_pref_data">Kualitas nonton yang diinginkan (Data Seluler)</string>
     <string name="mobile_data">Data seluler</string>
     <string name="help">Bantuan</string>
-    <string name="quality_profile_help">Di sini anda dapat mengubah sumber yang diurutkan. Jika video memiliki prioritas lebih tinggi, video tersebut akan muncul lebih tinggi dalam pemilihan sumber. Jumlah prioritas sumber dan prioritas kualitas adalah prioritas video.
-\n
-\nSumber A: 3
-\nKualitas B: 7
-\nAkan memiliki prioritas video yang digabung 10.
-\n
-\nCATATAN: Jika jumlahnya 10 atau lebih, pemain akan melewatkan pemuatan secara otomatis saat tautan dimuat!</string>
+    <string name="quality_profile_help">Di sini anda dapat mengubah sumber yang diurutkan. Jika video memiliki prioritas lebih tinggi, video tersebut akan muncul lebih tinggi dalam pemilihan sumber. Jumlah prioritas sumber dan prioritas kualitas adalah prioritas video. \n \nSumber A: 3 \nKualitas B: 7 \nAkan memiliki prioritas video yang digabung 10. \n \nCATATAN: Jika jumlahnya 10 atau lebih, pemain akan melewatkan pemuatan secara otomatis saat tautan dimuat!</string>
     <string name="profile_number">Profil %d</string>
     <string name="wifi">Wifi</string>
     <string name="set_default">Pengaturan default</string>
@@ -593,8 +581,7 @@
     <string name="biometric_prompt_description">Setelah beberapa kali gagal, perintah akan ditutup. Cukup mulai ulang aplikasi untuk mencoba lagi.</string>
     <string name="unfavorite">Batalkan favorit</string>
     <string name="biometric_authentication_title">Buka kunci CloudStream</string>
-    <string name="resume_remaining" formatted="true">%s
-\ntersisa</string>
+    <string name="resume_remaining" formatted="true">%s \ntersisa</string>
     <string name="favorite">Favorit</string>
     <string name="biometric_setting">Kunci dengan Biometrik</string>
     <string name="repo_copy_label">Nama dan URL repositori</string>
@@ -605,9 +592,9 @@
     <string name="battery_dialog_title">Nonaktifkan optimasi baterai</string>
     <string name="app_unrestricted_toast">Pemakaian baterai untuk aplikasi ini sudah diatur menjadi tidak dibatasi</string>
     <string name="app_info_intent_error">Gagal membuka info aplikasi CloudStream.</string>
-    <string name="music_singlar">Musik</string>
+    <string name="music_singular">Musik</string>
     <string name="audio_book_singular">Buku Audio</string>
-    <string name="custom_media_singluar">Media</string>
+    <string name="custom_media_singular">Media</string>
     <string name="battery_dialog_message">Untuk memastikan unduhan dan pemberitahuan tanpa gangguan untuk acara TV berlangganan, CloudStream memerlukan izin untuk berjalan di latar belakang. Dengan menekan OK, Anda akan diperlihatkan dialog permintaan. Silakan tekan ‘Izinkan’.\n\nHarap dicatat, izin ini tidak berarti CS3 akan menguras baterai Anda. Aplikasi ini hanya akan beroperasi di latar belakang jika diperlukan, misalnya saat menerima notifikasi atau mengunduh video dari ekstensi resmi.</string>
     <string name="reset_btn">Mengatur ulang</string>
     <string name="next_season_episode_format" formatted="true">Musim %1$d Episode %2$d akan dirilis pada</string>
@@ -638,18 +625,10 @@
     <string name="select_all">Pilih Semua</string>
     <string name="deselect_all">Batal Pilih Semua</string>
     <string name="delete_files">Hapus File</string>
-    <string name="delete_message_multiple" formatted="true">Apakah Anda yakin ingin menghapus item berikut secara permanen?
-\n
-\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">Apakah Anda yakin ingin menghapus episode berikut di %1$s secara permanen?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">Anda juga akan menghapus semua episode dalam seri berikut secara permanen:
-\n
-\n%s</string>
-    <string name="delete_message_series_only" formatted="true">Apakah Anda yakin ingin menghapus semua episode dalam seri berikut secara permanen?
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">Apakah Anda yakin ingin menghapus item berikut secara permanen? \n \n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Apakah Anda yakin ingin menghapus episode berikut di %1$s secara permanen? \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Anda juga akan menghapus semua episode dalam seri berikut secara permanen: \n \n%s</string>
+    <string name="delete_message_series_only" formatted="true">Apakah Anda yakin ingin menghapus semua episode dalam seri berikut secara permanen? \n \n%s</string>
     <string name="delete_format" formatted="true">Hapus (%1$d | %2$s)</string>
     <string name="delete_plugin">Hapus plugin</string>
     <string name="device_pin_error_message">Tidak bisa mendapatkan kode PIN perangkat, coba autentikasi lokal</string>
@@ -662,8 +641,8 @@
     <string name="confirm_before_exiting_desc">Tampilkan dialog sebelum keluar dari aplikasi</string>
     <string name="dont_show">Jangan Tampilkan</string>
     <string name="show">Tampilkan</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="encoding_error">Pengkodean error</string>
     <string name="unsupported_error">Error yang tidak didukung</string>
     <string name="player_load_one_subtitle_online">Muat yang pertama tersedia</string>
@@ -764,4 +743,8 @@
     <string name="cancel_all">Batalkan semua</string>
     <string name="download_episode_range">Apakah kamu ingin mengunduh episode %s?</string>
     <string name="cancel_queue_message">Apakah kamu ingin membatalkan semua unduhan dalam antrean?</string>
+    <string name="show_player_metadata_overlay">Tampilkan overlay metadata pemutar</string>
+    <string name="player_is_live">Live</string>
+    <string name="video_singular">Video</string>
+    <string name="skip_type_preview">Pratinjau</string>
 </resources>

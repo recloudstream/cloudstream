@@ -21,6 +21,7 @@ import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
@@ -181,6 +182,13 @@ object VideoDownloadManager {
 
     /** the process failed due to some reason, so we retry and also try the next mirror */
     private val DOWNLOAD_FAILED = DownloadStatus(retrySame = true, tryNext = true, success = false)
+
+    /** The download only downloaded partial */
+    private val DOWNLOAD_PARTIAL_SUCCESS =
+        DownloadStatus(retrySame = true, tryNext = false, success = true)
+
+    /** 50MB minimum size */
+    const val DOWNLOAD_PARTIAL_MIN_SIZE = 1_048_576L * 50L
 
     /** bad config, skip all mirrors as every call to download will have the same bad config */
     private val DOWNLOAD_BAD_CONFIG =
@@ -523,6 +531,7 @@ object VideoDownloadManager {
     /** This class handles the notifications, as well as the relevant key */
     data class DownloadMetaData(
         private val id: Int?,
+        private val linkHash : Int,
         var bytesDownloaded: Long = 0,
         var bytesWritten: Long = 0,
 
@@ -534,7 +543,7 @@ object VideoDownloadManager {
         private val createNotificationCallback: (CreateNotificationMetadata) -> Unit,
 
         private var internalType: DownloadType = DownloadType.IsPending,
-
+        val isHLS : Boolean,
         // how many segments that we have downloaded
         var hlsProgress: Int = 0,
         // how many segments that exist
@@ -552,12 +561,16 @@ object VideoDownloadManager {
             lastDownloadedBytes = length
         }
 
+        /** Returns the appropriate failed status based on download progress */
+        fun failedStatus() = if (this.bytesWritten > DOWNLOAD_PARTIAL_MIN_SIZE)
+            DOWNLOAD_PARTIAL_SUCCESS
+        else
+            DOWNLOAD_FAILED
+
         val approxTotalBytes: Long
             get() = totalBytes ?: hlsTotal?.let { total ->
                 (bytesDownloaded * (total / hlsProgress.toFloat())).toLong()
             } ?: bytesDownloaded
-
-        private val isHLS get() = hlsTotal != null
 
         private var stopListener: (() -> Unit)? = null
 
@@ -593,11 +606,32 @@ object VideoDownloadManager {
         private fun updateFileInfo() {
             if (id == null) return
             downloadFileInfoTemplate?.let { template ->
+                /** This looks strange, but fixes an issue where we do an instant retry, and it fails immediately,
+                 * eg. by turning off wifi */
+                val totalBytesValue = if (approxTotalBytes <= bytesDownloaded) {
+                    val prevInfo = getKey<DownloadedFileInfo>(
+                        KEY_DOWNLOAD_INFO,
+                        id.toString()
+                    )
+
+                    /** If this link is the same as the last cached video link metadata */
+                    if (prevInfo != null && prevInfo.linkHash == linkHash) {
+                        /** Try to use totalBytes if it exists, otherwise the max of the prev data,
+                         * and download size to ensure total >= downloaded */
+                        totalBytes ?: maxOf(prevInfo.totalBytes, bytesDownloaded)
+                    } else {
+                        approxTotalBytes
+                    }
+                } else {
+                    approxTotalBytes
+                }
+
                 setKey(
                     KEY_DOWNLOAD_INFO,
                     id.toString(),
                     template.copy(
-                        totalBytes = approxTotalBytes,
+                        linkHash = linkHash,
+                        totalBytes = totalBytesValue,
                         extraInfo = if (isHLS) hlsWrittenProgress.toString() else null
                     )
                 )
@@ -770,6 +804,7 @@ object VideoDownloadManager {
         private suspend fun resolve(
             startByte: Long,
             endByte: Long?,
+            buffer: ByteArray,
             callback: (suspend CoroutineScope.(LazyStreamDownloadResponse) -> Unit)
         ): Long = withContext(Dispatchers.IO) {
             var currentByte: Long = startByte
@@ -788,7 +823,6 @@ object VideoDownloadManager {
             )
             val requestStream = request.body.byteStream()
 
-            val buffer = ByteArray(bufferSize)
             var read: Int
 
             try {
@@ -819,6 +853,7 @@ object VideoDownloadManager {
         suspend fun resolveSafe(
             index: Int,
             retries: Int = 3,
+            buffer: ByteArray,
             callback: (suspend CoroutineScope.(LazyStreamDownloadResponse) -> Unit)
         ): Boolean {
             var start = chuckStartByte.getOrNull(index) ?: return false
@@ -827,7 +862,7 @@ object VideoDownloadManager {
             for (i in 0 until retries) {
                 try {
                     // in case
-                    start = resolve(start, end, callback)
+                    start = resolve(start, end, buffer, callback)
                     // no end defined, so we don't care exactly where it ended
                     if (end == null) return true
                     // we have download more or exactly what we needed
@@ -982,6 +1017,8 @@ object VideoDownloadManager {
             bytesDownloaded = 0,
             createNotificationCallback = createNotificationCallback,
             id = parentId,
+            linkHash = link.url.hashCode(),
+            isHLS = false
         )
         try {
             // get the file path
@@ -1003,14 +1040,7 @@ object VideoDownloadManager {
                 startByte = stream.startAt,
                 headers = link.headers.appendAndDontOverride(
                     mapOf(
-                        "Accept-Encoding" to "identity",
-                        "accept" to "*/*",
                         "user-agent" to USER_AGENT,
-                        "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
-                        "sec-fetch-mode" to "navigate",
-                        "sec-fetch-dest" to "video",
-                        "sec-fetch-user" to "?1",
-                        "sec-ch-ua-mobile" to "?0",
                     )
                 )
             )
@@ -1129,13 +1159,29 @@ object VideoDownloadManager {
                             }
                         }
 
-                    // this will take up the first available job and resolve
+                    // Reuse a download buffer to decrease unnecessary alloc
+                    val buffer = ByteArray(items.bufferSize)
+
+                    // This will take up the first available job and resolve
                     while (true) {
                         if (!isActive) return@launch
+
+                        var isTooFarAhead = false
                         fileMutex.withLock {
                             if (metadata.type == DownloadType.IsStopped
                                 || metadata.type == DownloadType.IsFailed
                             ) return@launch
+
+                            // Limit RAM usage by throttling if too much data is downloaded but not yet written to disk
+                            // 50MB limit
+                            if (metadata.bytesDownloaded - metadata.bytesWritten > 50_000_000) {
+                                isTooFarAhead = true
+                            }
+                        }
+
+                        if (isTooFarAhead) {
+                            delay(500)
+                            continue
                         }
 
                         // mutex just in case, we never want this to fail due to multithreading
@@ -1146,7 +1192,7 @@ object VideoDownloadManager {
 
                         // in case something has gone wrong set to failed if the fail is not caused by
                         // user cancellation
-                        if (!items.resolveSafe(index, callback = callback)) {
+                        if (!items.resolveSafe(index, buffer = buffer, callback = callback)) {
                             fileMutex.withLock {
                                 if (metadata.type != DownloadType.IsStopped) {
                                     metadata.type = DownloadType.IsFailed
@@ -1171,7 +1217,7 @@ object VideoDownloadManager {
             if (!stream.exists) metadata.type = DownloadType.IsStopped
 
             if (metadata.type == DownloadType.IsFailed) {
-                return@withContext DOWNLOAD_FAILED
+                return@withContext metadata.failedStatus()
             }
 
             if (metadata.type == DownloadType.IsStopped) {
@@ -1201,11 +1247,11 @@ object VideoDownloadManager {
             throw e
         } catch (t: Throwable) {
             // some sort of network error, will error
-
+            logError(t)
             // note that when failing we don't want to delete the file,
             // only user interaction has that power
             metadata.type = DownloadType.IsFailed
-            return@withContext DOWNLOAD_FAILED
+            return@withContext metadata.failedStatus()
         } finally {
             fileStream?.closeQuietly()
             //requestStream?.closeQuietly()
@@ -1227,7 +1273,9 @@ object VideoDownloadManager {
 
         val metadata = DownloadMetaData(
             createNotificationCallback = createNotificationCallback,
-            id = parentId
+            id = parentId,
+            linkHash = link.url.hashCode(),
+            isHLS = true
         )
         var fileStream: OutputStream? = null
         try {
@@ -1265,8 +1313,6 @@ object VideoDownloadManager {
             val m3u8 = M3u8Helper.M3u8Stream(
                 link.url, link.quality, link.headers.appendAndDontOverride(
                     mapOf(
-                        "Accept-Encoding" to "identity",
-                        "accept" to "*/*",
                         "user-agent" to USER_AGENT,
                     ) + if (link.referer.isNotBlank()) mapOf("referer" to link.referer) else emptyMap()
                 )
@@ -1304,10 +1350,23 @@ object VideoDownloadManager {
                 launch(Dispatchers.IO) {
                     while (true) {
                         if (!isActive) return@launch
+
+                        var isTooFarAhead = false
                         fileMutex.withLock {
                             if (metadata.type == DownloadType.IsStopped
                                 || metadata.type == DownloadType.IsFailed
                             ) return@launch
+
+                            // Limit RAM usage by throttling if too much data is downloaded but not yet written to disk
+                            // 50MB limit
+                            if (metadata.bytesDownloaded - metadata.bytesWritten > 50_000_000) {
+                                isTooFarAhead = true
+                            }
+                        }
+
+                        if (isTooFarAhead) {
+                            delay(500)
+                            continue
                         }
 
                         // mutex just in case, we never want this to fail due to multithreading
@@ -1385,7 +1444,7 @@ object VideoDownloadManager {
             if (!stream.exists) metadata.type = DownloadType.IsStopped
 
             if (metadata.type == DownloadType.IsFailed) {
-                return@withContext DOWNLOAD_FAILED
+                return@withContext metadata.failedStatus()
             }
 
             if (metadata.type == DownloadType.IsStopped) {
@@ -1401,7 +1460,7 @@ object VideoDownloadManager {
         } catch (t: Throwable) {
             logError(t)
             metadata.type = DownloadType.IsFailed
-            return@withContext DOWNLOAD_FAILED
+            return@withContext metadata.failedStatus()
         } finally {
             fileStream?.closeQuietly()
             metadata.close()
@@ -1581,11 +1640,11 @@ object VideoDownloadManager {
     }
 
     fun getDownloadResumePackage(context: Context, id: Int): DownloadResumePackage? {
-        return context.getKey(KEY_RESUME_PACKAGES, id.toString())
+        return context.getKey<DownloadResumePackage>(KEY_RESUME_PACKAGES, id.toString())
     }
 
     fun getDownloadQueuePackage(context: Context, id: Int): DownloadQueueWrapper? {
-        return context.getKey(KEY_RESUME_IN_QUEUE, id.toString())
+        return context.getKey<DownloadQueueWrapper>(KEY_RESUME_IN_QUEUE, id.toString())
     }
 
     fun getDownloadEpisodeMetadata(
@@ -1696,6 +1755,10 @@ object VideoDownloadManager {
         companion object {
             private fun displayNotification(context: Context, id: Int, notification: Notification) {
                 safe {
+                    if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED
+                    ) return@safe
+
                     NotificationManagerCompat.from(context)
                         .notify(DOWNLOAD_NOTIFICATION_TAG, id, notification)
                 }
@@ -1967,6 +2030,8 @@ object VideoDownloadManager {
 
             linkLoadingJob = ioSafe {
                 generator.generateLinks(
+                    offset = 0,
+                    isCasting = false,
                     clearCache = false,
                     sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
                     callback = {
@@ -1983,7 +2048,8 @@ object VideoDownloadManager {
             linkLoadingJob?.join()
 
             // Remove link loading notification
-            NotificationManagerCompat.from(context).cancel(DOWNLOAD_NOTIFICATION_TAG, downloadItem.episode.id)
+            NotificationManagerCompat.from(context)
+                .cancel(DOWNLOAD_NOTIFICATION_TAG, downloadItem.episode.id)
 
             if (linkLoadingJob?.isCancelled == true) {
                 // Same as if no links, but no toast.
@@ -2009,8 +2075,10 @@ object VideoDownloadManager {
             }
 
             // Profiles should always contain a download type
-            val profile = QualityDataHelper.getProfiles().first { it.types.contains(
-                QualityDataHelper.QualityProfileType.Download)
+            val profile = QualityDataHelper.getProfiles().first {
+                it.types.contains(
+                    QualityDataHelper.QualityProfileType.Download
+                )
             }
 
             val sortedLinks = currentLinks.sortedBy { link ->

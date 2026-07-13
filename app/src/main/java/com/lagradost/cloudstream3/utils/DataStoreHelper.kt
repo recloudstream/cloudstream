@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.content.Context
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
@@ -31,6 +32,12 @@ import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.serializers.WriteOnlySerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KeepGeneratedSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
@@ -43,17 +50,18 @@ const val RESULT_WATCH_STATE = "result_watch_state"
 const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
 const val RESULT_SUBSCRIBED_STATE_DATA = "result_subscribed_state_data"
 const val RESULT_FAVORITES_STATE_DATA = "result_favorites_state_data"
-const val RESULT_RESUME_WATCHING = "result_resume_watching_2" // changed due to id changes
+const val RESULT_RESUME_WATCHING = "result_resume_watching_2" // Changed due to id changes
 const val RESULT_RESUME_WATCHING_OLD = "result_resume_watching"
 const val RESULT_RESUME_WATCHING_HAS_MIGRATED = "result_resume_watching_migrated"
 const val RESULT_EPISODE = "result_episode"
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 const val KEY_RESULT_SORT = "result_sort"
-const val USER_PINNED_PROVIDERS = "user_pinned_providers" //key for pinned user set
+const val USER_PINNED_PROVIDERS = "user_pinned_providers" // Key for pinned user set
 
 class UserPreferenceDelegate<T : Any>(
-    private val key: String, private val default: T //, private val klass: KClass<T>
+    private val key: String,
+    private val default: T,
 ) {
     private val klass: KClass<out T> = default::class
     private val realKey get() = "${DataStoreHelper.currentAccount}/$key"
@@ -63,7 +71,7 @@ class UserPreferenceDelegate<T : Any>(
     operator fun setValue(
         self: Any?,
         property: KProperty<*>,
-        t: T?
+        t: T?,
     ) {
         if (t == null) {
             removeKey(realKey)
@@ -82,7 +90,7 @@ object DataStoreHelper {
         R.drawable.profile_bg_pink,
         R.drawable.profile_bg_purple,
         R.drawable.profile_bg_red,
-        R.drawable.profile_bg_teal
+        R.drawable.profile_bg_teal,
     )
 
     private var searchPreferenceProvidersStrings: List<String> by UserPreferenceDelegate(
@@ -112,16 +120,17 @@ object DataStoreHelper {
     private var searchPreferenceTagsStrings: List<String> by UserPreferenceDelegate(
         "search_pref_tags",
         listOf(TvType.Movie, TvType.TvSeries).map { it.name })
+
     var searchPreferenceTags: List<TvType>
         get() = deserializeTv(searchPreferenceTagsStrings)
         set(value) {
             searchPreferenceTagsStrings = serializeTv(value)
         }
 
-
     private var homePreferenceStrings: List<String> by UserPreferenceDelegate(
         "home_pref_homepage",
         listOf(TvType.Movie, TvType.TvSeries).map { it.name })
+
     var homePreference: List<TvType>
         get() = deserializeTv(homePreferenceStrings)
         set(value) {
@@ -132,38 +141,38 @@ object DataStoreHelper {
         "home_bookmarked_last_list",
         IntArray(0)
     )
+
     var playBackSpeed: Float by UserPreferenceDelegate("playback_speed", 1.0f)
     var resizeMode: Int by UserPreferenceDelegate("resize_mode", 0)
     var librarySortingMode: Int by UserPreferenceDelegate(
         "library_sorting_mode",
         ListSorting.AlphabeticalA.ordinal
     )
+
     private var _resultsSortingMode: Int by UserPreferenceDelegate(
         "results_sorting_mode",
         EpisodeSortType.NUMBER_ASC.ordinal
     )
+
     var resultsSortingMode: EpisodeSortType
         get() = EpisodeSortType.entries.getOrNull(_resultsSortingMode) ?: EpisodeSortType.NUMBER_ASC
         set(value) {
             _resultsSortingMode = value.ordinal
         }
 
+    @Serializable
     data class Account(
-        @JsonProperty("keyIndex")
-        val keyIndex: Int,
-        @JsonProperty("name")
-        val name: String,
-        @JsonProperty("customImage")
-        val customImage: String? = null,
-        @JsonProperty("defaultImageIndex")
-        val defaultImageIndex: Int,
-        @JsonProperty("lockPin")
-        val lockPin: String? = null,
+        @JsonProperty("keyIndex") @SerialName("keyIndex") val keyIndex: Int,
+        @JsonProperty("name") @SerialName("name") val name: String,
+        @JsonProperty("customImage") @SerialName("customImage") val customImage: String? = null,
+        @JsonProperty("defaultImageIndex") @SerialName("defaultImageIndex") val defaultImageIndex: Int,
+        @JsonProperty("lockPin") @SerialName("lockPin") val lockPin: String? = null,
     ) {
-        val image
-            get() = customImage?.let { UiImage.Image(it) } ?: profileImages.getOrNull(
-                defaultImageIndex
-            )?.let { UiImage.Drawable(it) } ?: UiImage.Drawable(profileImages.first())
+        @get:JsonIgnore
+        val image get() = customImage?.let { UiImage.Image(it) } ?:
+            profileImages.getOrNull(defaultImageIndex)?.let {
+                UiImage.Drawable(it)
+            } ?: UiImage.Drawable(profileImages.first())
     }
 
     const val TAG = "data_store_helper"
@@ -176,7 +185,7 @@ object DataStoreHelper {
      * Setting this does not automatically reload the homepage.
      */
     var currentHomePage: String?
-        get() = getKey("$currentAccount/$USER_SELECTED_HOMEPAGE_API")
+        get() = getKey<String>("$currentAccount/$USER_SELECTED_HOMEPAGE_API")
         set(value) {
             val key = "$currentAccount/$USER_SELECTED_HOMEPAGE_API"
             if (value == null) {
@@ -188,7 +197,6 @@ object DataStoreHelper {
 
     fun setAccount(account: Account) {
         val homepage = currentHomePage
-
         selectedKeyIndex = account.keyIndex
         AccountManager.updateAccountIds()
         showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
@@ -206,7 +214,7 @@ object DataStoreHelper {
             currentAccounts.getOrNull(currentAccounts.indexOfFirst { it.keyIndex == 0 }) ?: Account(
                 keyIndex = 0,
                 name = context.getString(R.string.default_account),
-                defaultImageIndex = 0
+                defaultImageIndex = 0,
             )
         }
     }
@@ -232,18 +240,21 @@ object DataStoreHelper {
         }
     }
 
+    @Serializable
     data class PosDur(
-        @JsonProperty("position") val position: Long,
-        @JsonProperty("duration") val duration: Long
+        @JsonProperty("position") @SerialName("position") val position: Long,
+        @JsonProperty("duration") @SerialName("duration") val duration: Long,
     )
 
     fun PosDur.fixVisual(): PosDur {
         if (duration <= 0) return PosDur(0, duration)
         val percentage = position * 100 / duration
-        if (percentage <= 1) return PosDur(0, duration)
-        if (percentage <= 5) return PosDur(5 * duration / 100, duration)
-        if (percentage >= 95) return PosDur(duration, duration)
-        return this
+        return when {
+            percentage <= 1 -> PosDur(0, duration)
+            percentage <= 5 -> PosDur(5 * duration / 100, duration)
+            percentage >= 95 -> PosDur(duration, duration)
+            else -> this
+        }
     }
 
     fun Int.toYear(): Date =
@@ -251,28 +262,38 @@ object DataStoreHelper {
 
     /**
      * Used to display notifications on new episodes and posters in library.
-     **/
+     */
+    @Serializable
     abstract class LibrarySearchResponse(
-        @JsonProperty("id") override var id: Int?,
-        @JsonProperty("latestUpdatedTime") open val latestUpdatedTime: Long,
-        @JsonProperty("name") override val name: String,
-        @JsonProperty("url") override val url: String,
-        @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override var type: TvType?,
-        @JsonProperty("posterUrl") override var posterUrl: String?,
-        @JsonProperty("year") open val year: Int?,
-        @JsonProperty("syncData") open val syncData: Map<String, String>?,
-        @JsonProperty("quality") override var quality: SearchQuality?,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>?,
-        @JsonProperty("plot") open val plot: String? = null,
-        @JsonProperty("score") override var score: Score? = null,
-        @JsonProperty("tags") open val tags: List<String>? = null,
+       /**
+        * These fields are marked @Transient because this class is only ever serialized through
+        * through its subclasses, which redeclare each property with their own @SerialName
+        * annotations. Without @Transient here, kotlinx.serialization would try to
+        * generate a serializer for the abstract base class itself (or double-serialize
+        * these fields), which fails/conflicts since these are meant to be overridden,
+        * not serialized directly from the parent.
+        */
+        @Transient override var id: Int? = null,
+        @Transient open val latestUpdatedTime: Long = 0L,
+        @Transient override val name: String = "",
+        @Transient override val url: String = "",
+        @Transient override val apiName: String = "",
+        @Transient override var type: TvType? = null,
+        @Transient override var posterUrl: String? = null,
+        @Transient open val year: Int? = null,
+        @Transient open val syncData: Map<String, String>? = null,
+        @Transient override var quality: SearchQuality? = null,
+        @Transient override var posterHeaders: Map<String, String>? = null,
+        @Transient open val plot: String? = null,
+        @Transient override var score: Score? = null,
+        @Transient open val tags: List<String>? = null,
     ) : SearchResponse {
         @JsonProperty("rating", access = JsonProperty.Access.WRITE_ONLY)
+        @SerialName("rating")
         @Deprecated(
             "`rating` is the old scoring system, use score instead",
             replaceWith = ReplaceWith("score"),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.ERROR,
         )
         var rating: Int? = null
             set(value) {
@@ -283,23 +304,26 @@ object DataStoreHelper {
             }
     }
 
+    @OptIn(ExperimentalSerializationApi::class) // KeepGeneratedSerializer is an experimental annotation for now
+    @KeepGeneratedSerializer
+    @Serializable(with = SubscribedData.Serializer::class)
     data class SubscribedData(
-        @JsonProperty("subscribedTime") val subscribedTime: Long,
-        @JsonProperty("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?>,
-        override var id: Int?,
-        override val latestUpdatedTime: Long,
-        override val name: String,
-        override val url: String,
-        override val apiName: String,
-        override var type: TvType?,
-        override var posterUrl: String?,
-        override val year: Int?,
-        override val syncData: Map<String, String>? = null,
-        override var quality: SearchQuality? = null,
-        override var posterHeaders: Map<String, String>? = null,
-        override val plot: String? = null,
-        override var score: Score? = null,
-        override val tags: List<String>? = null,
+        @JsonProperty("subscribedTime") @SerialName("subscribedTime") val subscribedTime: Long,
+        @JsonProperty("lastSeenEpisodeCount") @SerialName("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?>,
+        @JsonProperty("id") @SerialName("id") override var id: Int?,
+        @JsonProperty("latestUpdatedTime") @SerialName("latestUpdatedTime") override val latestUpdatedTime: Long,
+        @JsonProperty("name") @SerialName("name") override val name: String,
+        @JsonProperty("url") @SerialName("url") override val url: String,
+        @JsonProperty("apiName") @SerialName("apiName") override val apiName: String,
+        @JsonProperty("type") @SerialName("type") override var type: TvType?,
+        @JsonProperty("posterUrl") @SerialName("posterUrl") override var posterUrl: String?,
+        @JsonProperty("year") @SerialName("year") override val year: Int?,
+        @JsonProperty("syncData") @SerialName("syncData") override val syncData: Map<String, String>? = null,
+        @JsonProperty("quality") @SerialName("quality") override var quality: SearchQuality? = null,
+        @JsonProperty("posterHeaders") @SerialName("posterHeaders") override var posterHeaders: Map<String, String>? = null,
+        @JsonProperty("plot") @SerialName("plot") override val plot: String? = null,
+        @JsonProperty("score") @SerialName("score") override var score: Score? = null,
+        @JsonProperty("tags") @SerialName("tags") override val tags: List<String>? = null,
     ) : LibrarySearchResponse(
         id,
         latestUpdatedTime,
@@ -314,8 +338,13 @@ object DataStoreHelper {
         posterHeaders,
         plot,
         score,
-        tags
+        tags,
     ) {
+        object Serializer : WriteOnlySerializer<SubscribedData>(
+            SubscribedData.generatedSerializer(),
+            setOf("rating"),
+        )
+
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -334,27 +363,30 @@ object DataStoreHelper {
                 this.id,
                 plot = this.plot,
                 score = this.score,
-                tags = this.tags
+                tags = this.tags,
             )
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class) // KeepGeneratedSerializer is an experimental annotation for now
+    @KeepGeneratedSerializer
+    @Serializable(with = BookmarkedData.Serializer::class)
     data class BookmarkedData(
-        @JsonProperty("bookmarkedTime") val bookmarkedTime: Long,
-        override var id: Int?,
-        override val latestUpdatedTime: Long,
-        override val name: String,
-        override val url: String,
-        override val apiName: String,
-        override var type: TvType?,
-        override var posterUrl: String?,
-        override val year: Int?,
-        override val syncData: Map<String, String>? = null,
-        override var quality: SearchQuality? = null,
-        override var posterHeaders: Map<String, String>? = null,
-        override val plot: String? = null,
-        override var score: Score? = null,
-        override val tags: List<String>? = null,
+        @JsonProperty("bookmarkedTime") @SerialName("bookmarkedTime") val bookmarkedTime: Long,
+        @JsonProperty("id") @SerialName("id") override var id: Int?,
+        @JsonProperty("latestUpdatedTime") @SerialName("latestUpdatedTime") override val latestUpdatedTime: Long,
+        @JsonProperty("name") @SerialName("name") override val name: String,
+        @JsonProperty("url") @SerialName("url") override val url: String,
+        @JsonProperty("apiName") @SerialName("apiName") override val apiName: String,
+        @JsonProperty("type") @SerialName("type") override var type: TvType?,
+        @JsonProperty("posterUrl") @SerialName("posterUrl") override var posterUrl: String?,
+        @JsonProperty("year") @SerialName("year") override val year: Int?,
+        @JsonProperty("syncData") @SerialName("syncData") override val syncData: Map<String, String>? = null,
+        @JsonProperty("quality") @SerialName("quality") override var quality: SearchQuality? = null,
+        @JsonProperty("posterHeaders") @SerialName("posterHeaders") override var posterHeaders: Map<String, String>? = null,
+        @JsonProperty("plot") @SerialName("plot") override val plot: String? = null,
+        @JsonProperty("score") @SerialName("score") override var score: Score? = null,
+        @JsonProperty("tags") @SerialName("tags") override val tags: List<String>? = null,
     ) : LibrarySearchResponse(
         id,
         latestUpdatedTime,
@@ -367,8 +399,13 @@ object DataStoreHelper {
         syncData,
         quality,
         posterHeaders,
-        plot
+        plot,
     ) {
+        object Serializer : WriteOnlySerializer<BookmarkedData>(
+            BookmarkedData.generatedSerializer(),
+            setOf("rating"),
+        )
+
         fun toLibraryItem(id: String): SyncAPI.LibraryItem {
             return SyncAPI.LibraryItem(
                 name,
@@ -387,27 +424,30 @@ object DataStoreHelper {
                 this.id,
                 plot = this.plot,
                 score = this.score,
-                tags = this.tags
+                tags = this.tags,
             )
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class) // KeepGeneratedSerializer is an experimental annotation for now
+    @KeepGeneratedSerializer
+    @Serializable(with = FavoritesData.Serializer::class)
     data class FavoritesData(
-        @JsonProperty("favoritesTime") val favoritesTime: Long,
-        override var id: Int?,
-        override val latestUpdatedTime: Long,
-        override val name: String,
-        override val url: String,
-        override val apiName: String,
-        override var type: TvType?,
-        override var posterUrl: String?,
-        override val year: Int?,
-        override val syncData: Map<String, String>? = null,
-        override var quality: SearchQuality? = null,
-        override var posterHeaders: Map<String, String>? = null,
-        override val plot: String? = null,
-        override var score: Score? = null,
-        override val tags: List<String>? = null,
+        @JsonProperty("favoritesTime") @SerialName("favoritesTime") val favoritesTime: Long,
+        @JsonProperty("id") @SerialName("id") override var id: Int?,
+        @JsonProperty("latestUpdatedTime") @SerialName("latestUpdatedTime") override val latestUpdatedTime: Long,
+        @JsonProperty("name") @SerialName("name") override val name: String,
+        @JsonProperty("url") @SerialName("url") override val url: String,
+        @JsonProperty("apiName") @SerialName("apiName") override val apiName: String,
+        @JsonProperty("type") @SerialName("type") override var type: TvType?,
+        @JsonProperty("posterUrl") @SerialName("posterUrl") override var posterUrl: String?,
+        @JsonProperty("year") @SerialName("year") override val year: Int?,
+        @JsonProperty("syncData") @SerialName("syncData") override val syncData: Map<String, String>? = null,
+        @JsonProperty("quality") @SerialName("quality") override var quality: SearchQuality? = null,
+        @JsonProperty("posterHeaders") @SerialName("posterHeaders") override var posterHeaders: Map<String, String>? = null,
+        @JsonProperty("plot") @SerialName("plot") override val plot: String? = null,
+        @JsonProperty("score") @SerialName("score") override var score: Score? = null,
+        @JsonProperty("tags") @SerialName("tags") override val tags: List<String>? = null,
     ) : LibrarySearchResponse(
         id,
         latestUpdatedTime,
@@ -420,8 +460,13 @@ object DataStoreHelper {
         syncData,
         quality,
         posterHeaders,
-        plot
+        plot,
     ) {
+        object Serializer : WriteOnlySerializer<FavoritesData>(
+            FavoritesData.generatedSerializer(),
+            setOf("rating"),
+        )
+
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -440,31 +485,32 @@ object DataStoreHelper {
                 this.id,
                 plot = this.plot,
                 score = this.score,
-                tags = this.tags
+                tags = this.tags,
             )
         }
     }
 
+    @Serializable
     data class ResumeWatchingResult(
-        @JsonProperty("name") override val name: String,
-        @JsonProperty("url") override val url: String,
-        @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override var type: TvType? = null,
-        @JsonProperty("posterUrl") override var posterUrl: String?,
-        @JsonProperty("watchPos") val watchPos: PosDur?,
-        @JsonProperty("id") override var id: Int?,
-        @JsonProperty("parentId") val parentId: Int?,
-        @JsonProperty("episode") val episode: Int?,
-        @JsonProperty("season") val season: Int?,
-        @JsonProperty("isFromDownload") val isFromDownload: Boolean,
-        @JsonProperty("quality") override var quality: SearchQuality? = null,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-        @JsonProperty("score") override var score: Score? = null,
+        @JsonProperty("name") @SerialName("name") override val name: String,
+        @JsonProperty("url") @SerialName("url") override val url: String,
+        @JsonProperty("apiName") @SerialName("apiName") override val apiName: String,
+        @JsonProperty("type") @SerialName("type") override var type: TvType? = null,
+        @JsonProperty("posterUrl") @SerialName("posterUrl") override var posterUrl: String?,
+        @JsonProperty("watchPos") @SerialName("watchPos") val watchPos: PosDur?,
+        @JsonProperty("id") @SerialName("id") override var id: Int?,
+        @JsonProperty("parentId") @SerialName("parentId") val parentId: Int?,
+        @JsonProperty("episode") @SerialName("episode") val episode: Int?,
+        @JsonProperty("season") @SerialName("season") val season: Int?,
+        @JsonProperty("isFromDownload") @SerialName("isFromDownload") val isFromDownload: Boolean,
+        @JsonProperty("quality") @SerialName("quality") override var quality: SearchQuality? = null,
+        @JsonProperty("posterHeaders") @SerialName("posterHeaders") override var posterHeaders: Map<String, String>? = null,
+        @JsonProperty("score") @SerialName("score") override var score: Score? = null,
     ) : SearchResponse
 
     /**
      * A datastore wide account for future implementations of a multiple account system
-     **/
+     */
 
     fun getAllWatchStateIds(): List<Int>? {
         val folder = "$currentAccount/$RESULT_WATCH_STATE"
@@ -500,7 +546,7 @@ object DataStoreHelper {
     }
 
     fun migrateResumeWatching() {
-        // if (getKey(RESULT_RESUME_WATCHING_HAS_MIGRATED, false) != true) {
+        // if (getKey<Boolean>(RESULT_RESUME_WATCHING_HAS_MIGRATED, false) != true) {
         setKey(RESULT_RESUME_WATCHING_HAS_MIGRATED, true)
         getAllResumeStateIdsOld()?.forEach { id ->
             getLastWatchedOld(id)?.let {
@@ -510,12 +556,12 @@ object DataStoreHelper {
                     it.episode,
                     it.season,
                     it.isFromDownload,
-                    it.updateTime
+                    it.updateTime,
                 )
                 removeLastWatchedOld(it.parentId)
             }
         }
-        //}
+        // }
     }
 
     fun setLastWatched(
@@ -536,7 +582,7 @@ object DataStoreHelper {
                 episode,
                 season,
                 updateTime ?: System.currentTimeMillis(),
-                isFromDownload
+                isFromDownload,
             )
         )
     }
@@ -553,7 +599,7 @@ object DataStoreHelper {
 
     fun getLastWatched(id: Int?): DownloadObjects.ResumeWatching? {
         if (id == null) return null
-        return getKey(
+        return getKey<DownloadObjects.ResumeWatching>(
             "$currentAccount/$RESULT_RESUME_WATCHING",
             id.toString(),
         )
@@ -561,7 +607,7 @@ object DataStoreHelper {
 
     private fun getLastWatchedOld(id: Int?): DownloadObjects.ResumeWatching? {
         if (id == null) return null
-        return getKey(
+        return getKey<DownloadObjects.ResumeWatching>(
             "$currentAccount/$RESULT_RESUME_WATCHING_OLD",
             id.toString(),
         )
@@ -575,18 +621,18 @@ object DataStoreHelper {
 
     fun getBookmarkedData(id: Int?): BookmarkedData? {
         if (id == null) return null
-        return getKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
+        return getKey<BookmarkedData>("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
     }
 
     fun getAllBookmarkedData(): List<BookmarkedData> {
         return getKeys("$currentAccount/$RESULT_WATCH_STATE_DATA")?.mapNotNull {
-            getKey(it)
+            getKey<BookmarkedData>(it)
         } ?: emptyList()
     }
 
     fun getAllSubscriptions(): List<SubscribedData> {
         return getKeys("$currentAccount/$RESULT_SUBSCRIBED_STATE_DATA")?.mapNotNull {
-            getKey(it)
+            getKey<SubscribedData>(it)
         } ?: emptyList()
     }
 
@@ -598,12 +644,12 @@ object DataStoreHelper {
 
     /**
      * Set new seen episodes and update time
-     **/
+     */
     fun updateSubscribedData(id: Int?, data: SubscribedData?, episodeResponse: EpisodeResponse?) {
         if (id == null || data == null || episodeResponse == null) return
         val newData = data.copy(
             latestUpdatedTime = unixTimeMS,
-            lastSeenEpisodeCount = episodeResponse.getLatestEpisodes()
+            lastSeenEpisodeCount = episodeResponse.getLatestEpisodes(),
         )
         setKey("$currentAccount/$RESULT_SUBSCRIBED_STATE_DATA", id.toString(), newData)
     }
@@ -616,12 +662,12 @@ object DataStoreHelper {
 
     fun getSubscribedData(id: Int?): SubscribedData? {
         if (id == null) return null
-        return getKey("$currentAccount/$RESULT_SUBSCRIBED_STATE_DATA", id.toString())
+        return getKey<SubscribedData>("$currentAccount/$RESULT_SUBSCRIBED_STATE_DATA", id.toString())
     }
 
     fun getAllFavorites(): List<FavoritesData> {
         return getKeys("$currentAccount/$RESULT_FAVORITES_STATE_DATA")?.mapNotNull {
-            getKey(it)
+            getKey<FavoritesData>(it)
         } ?: emptyList()
     }
 
@@ -639,7 +685,7 @@ object DataStoreHelper {
 
     fun getFavoritesData(id: Int?): FavoritesData? {
         if (id == null) return null
-        return getKey("$currentAccount/$RESULT_FAVORITES_STATE_DATA", id.toString())
+        return getKey<FavoritesData>("$currentAccount/$RESULT_FAVORITES_STATE_DATA", id.toString())
     }
 
     fun setViewPos(id: Int?, pos: Long, dur: Long) {
@@ -648,10 +694,10 @@ object DataStoreHelper {
         setKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), PosDur(pos, dur))
     }
 
-    /** Sets the position, duration, and resume data of an episode/movie,
-     *
-     * if nextEpisode is not specified it will not be able to set the next episode as resumable if progress > NEXT_WATCH_EPISODE_PERCENTAGE
-     * */
+    /**
+     * Sets the position, duration, and resume data of an episode/movie,
+     * If nextEpisode is not specified it will not be able to set the next episode as resumable if progress > NEXT_WATCH_EPISODE_PERCENTAGE
+     */
     fun setViewPosAndResume(id: Int?, position: Long, duration: Long, currentEpisode: Any?, nextEpisode: Any?) {
         setViewPos(id, position, duration)
         if (id != null) {
@@ -687,7 +733,7 @@ object DataStoreHelper {
                         resumeMeta.id,
                         resumeMeta.episode,
                         resumeMeta.season,
-                        isFromDownload = false
+                        isFromDownload = false,
                     )
                 }
 
@@ -697,7 +743,7 @@ object DataStoreHelper {
                         resumeMeta.id,
                         resumeMeta.episode,
                         resumeMeta.season,
-                        isFromDownload = true
+                        isFromDownload = true,
                     )
                 }
             }
@@ -706,17 +752,16 @@ object DataStoreHelper {
 
     fun getViewPos(id: Int?): PosDur? {
         if (id == null) return null
-        return getKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), null)
+        return getKey<PosDur>("$currentAccount/$VIDEO_POS_DUR", id.toString(), null)
     }
 
     fun getVideoWatchState(id: Int?): VideoWatchState? {
         if (id == null) return null
-        return getKey("$currentAccount/$VIDEO_WATCH_STATE", id.toString(), null)
+        return getKey<VideoWatchState>("$currentAccount/$VIDEO_WATCH_STATE", id.toString(), null)
     }
 
     fun setVideoWatchState(id: Int?, watchState: VideoWatchState) {
         if (id == null) return
-
         // None == No key
         if (watchState == VideoWatchState.None) {
             removeKey("$currentAccount/$VIDEO_WATCH_STATE", id.toString())
@@ -727,7 +772,7 @@ object DataStoreHelper {
 
     fun getDub(id: Int): DubStatus? {
         return DubStatus.entries
-            .getOrNull(getKey("$currentAccount/$RESULT_DUB", id.toString(), -1) ?: -1)
+            .getOrNull(getKey<Int>("$currentAccount/$RESULT_DUB", id.toString(), -1) ?: -1)
     }
 
     fun setDub(id: Int, status: DubStatus) {
@@ -748,13 +793,13 @@ object DataStoreHelper {
             getKey<Int>(
                 "$currentAccount/$RESULT_WATCH_STATE",
                 id.toString(),
-                null
+                null,
             )
         )
     }
 
     fun getResultSeason(id: Int): Int? {
-        return getKey("$currentAccount/$RESULT_SEASON", id.toString(), null)
+        return getKey<Int>("$currentAccount/$RESULT_SEASON", id.toString(), null)
     }
 
     fun setResultSeason(id: Int, value: Int?) {
@@ -762,7 +807,7 @@ object DataStoreHelper {
     }
 
     fun getResultEpisode(id: Int): Int? {
-        return getKey("$currentAccount/$RESULT_EPISODE", id.toString(), null)
+        return getKey<Int>("$currentAccount/$RESULT_EPISODE", id.toString(), null)
     }
 
     fun setResultEpisode(id: Int, value: Int?) {
@@ -775,12 +820,11 @@ object DataStoreHelper {
 
     fun getSync(id: Int, idPrefixes: List<String>): List<String?> {
         return idPrefixes.map { idPrefix ->
-            getKey("${idPrefix}_sync", id.toString())
+            getKey<String>("${idPrefix}_sync", id.toString())
         }
     }
 
     var pinnedProviders: Array<String>
-        get() = getKey(USER_PINNED_PROVIDERS) ?: emptyArray<String>()
+        get() = getKey<Array<String>>(USER_PINNED_PROVIDERS) ?: emptyArray<String>()
         set(value) = setKey(USER_PINNED_PROVIDERS, value)
-
 }

@@ -34,8 +34,7 @@
     <string name="preview_background_img_des">Предпросмотр фона</string>
     <string name="player_speed_text_format" formatted="true">Скорость (%.2fx)</string>
     <string name="rated_format" formatted="true">Оценили: %.1f</string>
-    <string name="new_update_format" formatted="true">Новое обновление найдено!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Новое обновление найдено! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Заполнитель</string>
     <string name="app_name">CloudStream</string>
     <string name="action_remove_from_bookmarks">Убрать</string>
@@ -172,10 +171,8 @@
     <string name="resume">Продолжить</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Это будет удалено безвозвратно%s
-\nВы уверены?</string>
-    <string name="resume_time_left" formatted="true">%d мин.
-\nосталось</string>
+    <string name="delete_message" formatted="true">Это будет удалено безвозвратно%s \nВы уверены?</string>
+    <string name="resume_time_left" formatted="true">%d мин. \nосталось</string>
     <string name="status_completed">Завершено</string>
     <string name="year">Год</string>
     <string name="rating">Рейтинг</string>
@@ -303,7 +300,7 @@
     <string name="app_not_found_error">Приложение не найдено</string>
     <string name="all_languages_preference">Все языки</string>
     <string name="skip_type_op">Вступление</string>
-    <string name="skip_type_creddits">Титры</string>
+    <string name="skip_type_credits">Титры</string>
     <string name="action_mark_as_watched">Отметить как просмотренное</string>
     <string name="limit_title_rez">Показывать информацию про видеоплеер</string>
     <string name="watch_quality_pref">Предпочтительное качество видео (WiFi)</string>
@@ -411,9 +408,7 @@
     <string name="trailer">Трейлер</string>
     <string name="single_plugin_disabled" formatted="true">%s (отключено)</string>
     <string name="next">Далее</string>
-    <string name="blank_repo_message">В CloudStream по умолчанию не установлены сайты. Вам необходимо установить сайты из репозиториев.
-\n
-\nПрисоединяйтесь к нашему Discord-серверу или найдите в интернете.</string>
+    <string name="blank_repo_message">В CloudStream по умолчанию не установлены сайты. Вам необходимо установить сайты из репозиториев. \n \nПрисоединяйтесь к нашему Discord-серверу или найдите в интернете.</string>
     <string name="error_invalid_data">Недопустимые данные</string>
     <string name="resolution_and_title">Разрешение и название</string>
     <string name="previous">Предыдущий</string>
@@ -526,13 +521,7 @@
     <string name="already_voted">Вы уже проголосовали</string>
     <string name="no_plugins_found_error">Никаких дополнений не обнаружено в источнике</string>
     <string name="set_default">Поставить обычный</string>
-    <string name="quality_profile_help">Здесь вы можете изменить порядок расположения источников. Если видео имеет более высокий приоритет, оно будет отображаться выше в списке источников. Сумма приоритета источника и приоритета качества составляет приоритет видео.
-\n
-\nИсточник А: 3
-\nКачество Б: 7
-\nБудет иметь общий приоритет видео 10.
-\n
-\nПРИМЕЧАНИЕ. Если сумма равна 10 или более, плеер автоматически пропустит загрузку при загрузке этой ссылки!</string>
+    <string name="quality_profile_help">Здесь вы можете изменить порядок расположения источников. Если видео имеет более высокий приоритет, оно будет отображаться выше в списке источников. Сумма приоритета источника и приоритета качества составляет приоритет видео. \n \nИсточник А: 3 \nКачество Б: 7 \nБудет иметь общий приоритет видео 10. \n \nПРИМЕЧАНИЕ. Если сумма равна 10 или более, плеер автоматически пропустит загрузку при загрузке этой ссылки!</string>
     <string name="links_reloaded_toast">Ссылки перезагружены</string>
     <string name="select_an_account">Выберите учётную запись</string>
     <string name="favorite_removed">%s убрано из любимых</string>
@@ -582,12 +571,11 @@
     <string name="app_unrestricted_toast">Использование батареи приложением уже настроено на неограниченное</string>
     <string name="app_info_intent_error">Не удаётся открыть информацию о приложении CloudStream.</string>
     <string name="biometric_setting">Заблокировать биометрией</string>
-    <string name="music_singlar">Музыка</string>
+    <string name="music_singular">Музыка</string>
     <string name="audio_book_singular">Аудиокнига</string>
-    <string name="custom_media_singluar">Медиа</string>
+    <string name="custom_media_singular">Медиа</string>
     <string name="biometric_setting_summary">Разблокируйте приложение с помощью отпечатка пальца, Face ID, ПИН-кода, шаблона и пароля.</string>
-    <string name="resume_remaining" formatted="true">%s
-\nосталось</string>
+    <string name="resume_remaining" formatted="true">%s \nосталось</string>
     <string name="battery_dialog_title">Отключить оптимизацию батареи</string>
     <string name="password_pin_authentication_title">Аутентификация по паролю/ПИН-коду</string>
     <string name="biometric_unsupported">Биометрическая аутентификация на этом устройстве не поддерживается</string>
@@ -617,9 +605,7 @@
     <string name="delete_message_series_only" formatted="true">Вы уверены, что хотите навсегда удалить все серии в данном сериале? \n \n%s</string>
     <string name="downloads_delete_select">Выберите элементы для удаления</string>
     <string name="delete_format" formatted="true">Удалить (%1$d | %2$s)</string>
-    <string name="delete_message_multiple" formatted="true">Вы уверены, что хотите навсегда удалить данный объект?
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">Вы уверены, что хотите навсегда удалить данный объект? \n \n%s</string>
     <string name="device_pin_error_message">Невозможно получить ПИН-код устройства, попробуйте локальную аутентификацию</string>
     <string name="device_pin_url_message">Откройте <b>%s</b> на вашем смартфоне или компьютере и введите данный код</string>
     <string name="cs3wiki">CloudStream Вики</string>
@@ -644,8 +630,8 @@
     <string name="encoding_error">Ошибка кодировки</string>
     <string name="unsupported_error">Не поддерживается</string>
     <string name="player_load_one_subtitle_online">Скачать первые доступные</string>
-    <string name="audio_singluar">Аудио</string>
-    <string name="podcast_singluar">Подкаст</string>
+    <string name="audio_singular">Аудио</string>
+    <string name="podcast_singular">Подкаст</string>
     <string name="sort_episodes_number_asc">Серия (по возрастанию)</string>
     <string name="subtitles_from_embedded">Встроенный</string>
     <string name="subtitles_from_online">Из сети</string>
@@ -749,4 +735,8 @@
     <string name="cancel_all">Отменить всё</string>
     <string name="download_episode_range">Вы хотите загрузить эпизод %s?</string>
     <string name="cancel_queue_message">Вы хотите отменить всё запланированные загрузки?</string>
+    <string name="show_player_metadata_overlay">Показывать наложения метаданных проигрывателя</string>
+    <string name="video_singular">Видео</string>
+    <string name="skip_type_preview">Предпросмотр</string>
+    <string name="player_is_live">Прямой эфир</string>
 </resources>

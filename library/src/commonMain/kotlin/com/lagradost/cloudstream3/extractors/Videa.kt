@@ -25,12 +25,18 @@ class Videa : ExtractorApi() {
     ) {
         var currentUrl = url
         var key = ""
-        var lastUrl: String? = null
         // Handle redirect loop until we get valid XML
-        while (true) {
+        val visitedUrls = mutableSetOf<String>()
+        var count = 10
+        while (!visitedUrls.contains(currentUrl) && count > 0) {
+            visitedUrls += currentUrl
+            count -= 1
+
             val webUrl = getXmlUrl(currentUrl) { cookie -> /* no-op, cookie not used */ } ?: return
             val response = app.get(webUrl)
-            val rawBytes = response.body.bytes()
+            val body = response.body
+            val rawBytes = body.bytes()
+            body.close()
 
             // Check if response starts with XML declaration
             val isXml = rawBytes.size >= 5 &&
@@ -41,7 +47,7 @@ class Videa : ExtractorApi() {
                     rawBytes[4] == 0x6C.toByte()     // 'l'
 
             val videaXml = if (isXml) {
-                String(rawBytes, Charsets.UTF_8)
+                rawBytes.decodeToString()
             } else {
                 // Handle encrypted XML response
                 val xsHeader = response.headers["X-Videa-Xs"] ?: return
@@ -53,7 +59,6 @@ class Videa : ExtractorApi() {
             val redirectMatch = """<error.*?"noembed".*>(.*)</error>""".toRegex().find(videaXml)
 
             if (redirectMatch != null && redirectMatch.groupValues[1] != currentUrl) {
-                lastUrl = currentUrl
                 currentUrl = redirectMatch.groupValues[1]
             } else {
                 parseVideoSources(videaXml, callback)
@@ -64,6 +69,12 @@ class Videa : ExtractorApi() {
 
     private suspend fun getXmlUrl(url: String, cookieCallback: (String) -> Unit = {}): String? {
         val response = app.get(url)
+        val size = response.size
+        /* OOM Protection */
+        if(size != null && size > 5_000_000) {
+            // You tried to use a video here
+            return null
+        }
         val html = response.text
 
         // Extract sl cookie if present
@@ -168,7 +179,7 @@ class Videa : ExtractorApi() {
         }
 
         val actualEncryptedBytes = if (isBase64) {
-            val base64String = String(encryptedBytes, Charsets.UTF_8)
+            val base64String = encryptedBytes.decodeToString()
                 .replace("\r", "")
                 .replace("\n", "")
                 .replace(" ", "")
@@ -178,7 +189,7 @@ class Videa : ExtractorApi() {
             encryptedBytes
         }
 
-        val keyBytes = key.toByteArray(Charsets.UTF_8)
+        val keyBytes = key.encodeToByteArray()
 
         // RC4 key-scheduling algorithm (KSA)
         val s = IntArray(256) { it }
@@ -200,6 +211,6 @@ class Videa : ExtractorApi() {
             result[k] = ((actualEncryptedBytes[k].toInt() and 0xFF) xor keyStreamByte).toByte()
         }
 
-        return String(result, Charsets.UTF_8)
+        return result.decodeToString()
     }
 }

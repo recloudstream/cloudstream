@@ -10,7 +10,6 @@ import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -21,11 +20,12 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.KitsuApi.Companion.KITSU_CACHED_LIST
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
-import com.lagradost.cloudstream3.utils.DataStore.mapper
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.setupStream
@@ -36,6 +36,8 @@ import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESU
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_PACKAGES
 import com.lagradost.safefile.MediaFileContentType
 import com.lagradost.safefile.SafeFile
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import okhttp3.internal.closeQuietly
 import java.io.IOException
 import java.io.OutputStream
@@ -47,6 +49,9 @@ import java.util.Locale
 
 object BackupUtils {
 
+    /**
+     * No sensitive or breaking data in the backup
+     */
     private val nonTransferableKeys = listOf(
         ANILIST_CACHED_LIST,
         MAL_CACHED_LIST,
@@ -59,8 +64,9 @@ object BackupUtils {
         AccountManager.ACCOUNT_TOKEN,
         AccountManager.ACCOUNT_IDS,
 
-        "biometric_key", 
-        "nginx_user", 
+        // TODO proper getter for string res keys to ensure that they are updated
+        "biometric_key", // can lock down users if backup is shared on a incompatible device
+        "nginx_user", // Nginx user key
 
         "download_path_key",
         "download_path_key_visual",
@@ -82,8 +88,10 @@ object BackupUtils {
         DOWNLOAD_EPISODE_CACHE_BACKUP,
         DOWNLOAD_EPISODE_CACHE,
         
-        //DOWNLOAD_HEADER_CACHE_BACKUP,
-        //DOWNLOAD_HEADER_CACHE,
+        // Download headers are unintuitively used in the resume watching system.
+        // We can therefore not prune download headers in backups.
+        // DOWNLOAD_HEADER_CACHE_BACKUP,
+        // DOWNLOAD_HEADER_CACHE,
         
 
      
@@ -92,7 +100,10 @@ object BackupUtils {
       
         KEY_RESUME_IN_QUEUE,
         KEY_RESUME_PACKAGES,
-        QUEUE_KEY
+        QUEUE_KEY,
+
+        // Prevent automatic plugin download after restoring backup
+        "auto_download_plugins_key2"
     )
 
 
@@ -108,19 +119,21 @@ object BackupUtils {
 
     private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
 
-
+    // Kinda hack, but I couldn't think of a better way
+    @Serializable
     data class BackupVars(
-        @JsonProperty("_Bool") val bool: Map<String, Boolean>?,
-        @JsonProperty("_Int") val int: Map<String, Int>?,
-        @JsonProperty("_String") val string: Map<String, String>?,
-        @JsonProperty("_Float") val float: Map<String, Float>?,
-        @JsonProperty("_Long") val long: Map<String, Long>?,
-        @JsonProperty("_StringSet") val stringSet: Map<String, Set<String>?>?,
+        @JsonProperty("_Bool") @SerialName("_Bool") val bool: Map<String, Boolean>?,
+        @JsonProperty("_Int") @SerialName("_Int") val int: Map<String, Int>?,
+        @JsonProperty("_String") @SerialName("_String") val string: Map<String, String>?,
+        @JsonProperty("_Float") @SerialName("_Float") val float: Map<String, Float>?,
+        @JsonProperty("_Long") @SerialName("_Long") val long: Map<String, Long>?,
+        @JsonProperty("_StringSet") @SerialName("_StringSet") val stringSet: Map<String, Set<String>?>?,
     )
 
+    @Serializable
     data class BackupFile(
-        @JsonProperty("datastore") val datastore: BackupVars,
-        @JsonProperty("settings") val settings: BackupVars
+        @JsonProperty("datastore") @SerialName("datastore") val datastore: BackupVars,
+        @JsonProperty("settings") @SerialName("settings") val settings: BackupVars,
     )
 
     @Suppress("UNCHECKED_CAST")
@@ -136,7 +149,7 @@ object BackupUtils {
             allData.filter { it.value is String } as? Map<String, String>,
             allData.filter { it.value is Float } as? Map<String, Float>,
             allData.filter { it.value is Long } as? Map<String, Long>,
-            allData.filter { it.value as? Set<String> != null } as? Map<String, Set<String>>
+            allData.filter { it.value as? Set<String> != null } as? Map<String, Set<String>>,
         )
 
         val allSettingsSorted = BackupVars(
@@ -145,12 +158,12 @@ object BackupUtils {
             allSettings.filter { it.value is String } as? Map<String, String>,
             allSettings.filter { it.value is Float } as? Map<String, Float>,
             allSettings.filter { it.value is Long } as? Map<String, Long>,
-            allSettings.filter { it.value as? Set<String> != null } as? Map<String, Set<String>>
+            allSettings.filter { it.value as? Set<String> != null } as? Map<String, Set<String>>,
         )
 
         return BackupFile(
             allDataSorted,
-            allSettingsSorted
+            allSettingsSorted,
         )
     }
 
@@ -159,7 +172,7 @@ object BackupUtils {
         context: Context?,
         backupFile: BackupFile,
         restoreSettings: Boolean,
-        restoreDataStore: Boolean
+        restoreDataStore: Boolean,
     ) {
         if (context == null) return
         if (restoreSettings) {
@@ -188,9 +201,9 @@ object BackupUtils {
 
     fun backup(context: Context?) = ioSafe {
         if (context == null) return@ioSafe
-
         var fileStream: OutputStream? = null
         var printStream: PrintWriter? = null
+
         try {
             if (!context.checkWrite()) {
                 showToast(R.string.backup_failed, Toast.LENGTH_LONG)
@@ -205,18 +218,14 @@ object BackupUtils {
 
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)
-            printStream.print(mapper.writeValueAsString(backupFile))
-
-            showToast(
-                R.string.backup_success,
-                Toast.LENGTH_LONG
-            )
+            printStream.print(backupFile.toJson())
+            showToast(R.string.backup_success, Toast.LENGTH_LONG)
         } catch (e: Exception) {
             logError(e)
             try {
                 showToast(
                     txt(R.string.backup_failed_error_format, e.toString()),
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 )
             } catch (e: Exception) {
                 logError(e)
@@ -235,7 +244,7 @@ object BackupUtils {
             name,
             folder = null,
             extension = ext,
-            tryResume = false
+            tryResume = false,
         )
     }
 
@@ -250,14 +259,14 @@ object BackupUtils {
                             val input = activity.contentResolver.openInputStream(uri)
                                 ?: return@ioSafe
 
-                            val restoredValue =
-                                mapper.readValue<BackupFile>(input)
+                            val text = input.bufferedReader().readText()
+                            val restoredValue = parseJson<BackupFile>(text)
 
                             restore(
                                 activity,
                                 restoredValue,
                                 restoreSettings = true,
-                                restoreDataStore = true
+                                restoreDataStore = true,
                             )
                             activity.runOnUiThread { activity.recreate() }
                         } catch (e: Exception) {
@@ -298,7 +307,7 @@ object BackupUtils {
 
     private fun <T> Context.restoreMap(
         map: Map<String, T>?,
-        isEditingAppSettings: Boolean = false
+        isEditingAppSettings: Boolean = false,
     ) {
         val editor = DataStore.editor(this, isEditingAppSettings)
         map?.forEach {
@@ -310,21 +319,27 @@ object BackupUtils {
     }
 
     /**
-     * Copy of [com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.basePathToFile], [com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDefaultDir] and [com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getBasePath]
-     * modded for backup specific paths
-     * */
-
+     * Copy of [com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getDefaultDir],
+     * modified for backup-specific paths.
+     */
     fun getDefaultBackupDir(context: Context): SafeFile? {
         return SafeFile.fromMedia(context, MediaFileContentType.Downloads)
     }
 
+    /**
+     * Copy of [com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath],
+     * modified for backup-specific paths.
+     */
     fun getCurrentBackupDir(context: Context): Pair<SafeFile?, String?> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-        val basePathSetting =
-            settingsManager.getString(context.getString(R.string.backup_path_key), null)
+        val basePathSetting = settingsManager.getString(context.getString(R.string.backup_path_key), null)
         return baseBackupPathToFile(context, basePathSetting) to basePathSetting
     }
 
+    /**
+     * Copy of [com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.basePathToFile],
+     * modified for backup-specific paths.
+     */
     private fun baseBackupPathToFile(context: Context, path: String?): SafeFile? {
         return when {
             path.isNullOrBlank() -> getDefaultBackupDir(context)

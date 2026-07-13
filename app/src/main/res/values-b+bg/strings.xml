@@ -16,8 +16,7 @@
     <string name="preview_background_img_des">Визуализация на фона</string>
     <string formatted="true" name="player_speed_text_format">Скорост (%.2fx)</string>
     <string formatted="true" name="rated_format">Оценка: %.1f</string>
-    <string formatted="true" name="new_update_format">Намерена е нова актуализация!
-\n%1$s -&gt; %2$s</string>
+    <string formatted="true" name="new_update_format">Намерена е нова актуализация! \n%1$s -&gt; %2$s</string>
     <string formatted="true" name="filler">Шаблон</string>
     <string formatted="true" name="duration_format">%d мин</string>
     <string name="app_name">CloudStream</string>
@@ -183,10 +182,8 @@
     <string name="resume">Продължи</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">30</string>
-    <string formatted="true" name="delete_message">Това ще изтрие за постоянно %s
-\nСигурни ли сте?</string>
-    <string formatted="true" name="resume_time_left">%dm
-\nостава</string>
+    <string formatted="true" name="delete_message">Това ще изтрие за постоянно %s \nСигурни ли сте?</string>
+    <string formatted="true" name="resume_time_left">%dm \nостава</string>
     <string name="status_ongoing">Продължава</string>
     <string name="status_completed">Завършен</string>
     <string name="status">Статус</string>
@@ -252,7 +249,7 @@
     <string name="update">Актуализация</string>
     <string name="watch_quality_pref">Предпочитано качество за гледане (през WiFi)</string>
     <string name="limit_title">Максимален брой знаци за заглавие във видеоплейъра</string>
-    <string name="limit_title_rez">Разделителна способност на видео плейъра</string>
+    <string name="limit_title_rez">Покажи информация за плейъра</string>
     <string name="video_buffer_size_settings">Размер на видео буфера</string>
     <string name="video_buffer_length_settings">Дължина на видео буфера</string>
     <string name="video_buffer_disk_settings">Видео кеш на диск</string>
@@ -405,13 +402,11 @@
     <string formatted="true" name="plugins_disabled">Деактивирано: %d</string>
     <string formatted="true" name="plugins_not_downloaded">Не е изтеглено: %d</string>
     <string formatted="true" name="plugins_updated">Актуализирани %d плъгини</string>
-    <string name="blank_repo_message">CloudStream няма инсталирани сайтове по подразбиране. Трябва да инсталирате сайтовете от хранилища.
-\n
-\nПрисъединете се към нашия Дискорд или потърсете онлайн.</string>
+    <string name="blank_repo_message">CloudStream няма инсталирани сайтове по подразбиране. Трябва да инсталирате сайтовете от хранилища. \n \nПрисъединете се към нашия Дискорд или потърсете онлайн.</string>
     <string name="view_public_repositories_button">Вижте хранилищата на общността</string>
     <string name="view_public_repositories_button_short">Публичен списък</string>
     <string name="uppercase_all_subtitles">Всички субтитри с главни букви</string>
-    <string name="download_all_plugins_from_repo">Предупреждение: CloudStream 3 не носи отговорност за използването на трети страни разширения и не предоставя поддръжка за тях!</string>
+    <string name="download_all_plugins_from_repo">Предупреждение: CloudStream не носи отговорност за използването на трети страни разширения и не предоставя поддръжка за тях!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Деактивиран)</string>
     <string name="tracks">Потоци</string>
     <string name="audio_tracks">Аудио потоци</string>
@@ -451,12 +446,12 @@
     <string name="update_notification_downloading">Изтегля се актуализация на приложението…</string>
     <string name="skip_type_mixed_op">Смесено отваряне</string>
     <string name="skip_type_mixed_ed">Смесено затваряне</string>
-    <string name="skip_type_creddits">Кредити</string>
+    <string name="skip_type_credits">Кредити</string>
     <string name="skip_type_intro">въведение</string>
     <string name="clear_history">Изчистване на историята</string>
     <string name="automatic_plugin_download_summary">Автоматично инсталиране на всички все още неинсталирани добавки от добавени хранилища.</string>
     <string name="apk_installer_settings">APK Инсталатор</string>
-    <string name="apk_installer_settings_des">Някои телефони не поддържат новия пакет за инсталиране. Опитайте предпоследената опция, ако актуализациите не се инсталират.</string>
+    <string name="apk_installer_settings_des">Някои устройства не поддържат новия пакет за инсталиране. Опитайте предпоследената опция, ако актуализациите не се инсталират.</string>
     <string name="play_trailer_button">Пусни трейлър</string>
     <string name="pref_category_links">Връзки</string>
     <string name="pref_category_app_updates">Актуализации на приложението</string>
@@ -519,12 +514,10 @@
     <string name="profile_number">Профил %d</string>
     <string name="sort_alphabetical_a">По азбучен ред (A до Z)</string>
     <string name="open_with">Отваряне с</string>
-    <string name="empty_library_no_accounts_message">Вашата библиотека е празна :(
-\nВпишете се в акаунт с библиотеки или добавете сериали в локалната Ви библиотека.</string>
+    <string name="empty_library_no_accounts_message">Вашата библиотека е празна :( \nВпишете се в акаунт с библиотеки или добавете сериали в локалната Ви библиотека.</string>
     <string name="use">Използване</string>
     <string name="subscription_episode_released">Епизод %d е публикуван!</string>
-    <string name="safe_mode_file">Намерен е файл за безопасен режим!
-\nНяма да се зареждат никакви разширения при стартиране, докато файлът не бъде премахнат.</string>
+    <string name="safe_mode_file">Намерен е файл за безопасен режим! \nНяма да се зареждат никакви разширения при стартиране, докато файлът не бъде премахнат.</string>
     <string name="already_voted">Вече сте гласували</string>
     <string name="set_default">Задаване по подразбиране</string>
     <string name="pin_error_length">ПИН трябва да е 4 символа</string>
@@ -551,23 +544,11 @@
     <string name="android_tv_interface_off_seek_settings">Скрит играч - сума за търсене</string>
     <string name="android_tv_interface_off_seek_settings_summary">Сумата за търсене, използвана, когато играчът е скрит</string>
     <string name="sort_updated_new">Актуализирано (от ново към старо)</string>
-    <string name="quality_profile_help">Тук можете да промените начина на подреждане на източниците. Ако даден видеоклип има по-висок приоритет, той ще се показва по-високо в избора на източник. Сборът от приоритета на източника и приоритета на качеството е приоритетът на видеото.
-\n
-\nИзточник A: 3
-\nКачество B: 7
-\nЩе има комбиниран видео приоритет от 10.
-\n
-\nЗАБЕЛЕЖКА: Ако сумата е 10 или повече, играчът автоматично ще пропусне зареждането, когато тази връзка се зареди!</string>
+    <string name="quality_profile_help">Тук можете да промените начина на подреждане на източниците. Ако даден видеоклип има по-висок приоритет, той ще се показва по-високо в избора на източник. Сборът от приоритета на източника и приоритета на качеството е приоритетът на видеото. \n \nИзточник A: 3 \nКачество B: 7 \nЩе има комбиниран видео приоритет от 10. \n \nЗАБЕЛЕЖКА: Ако сумата е 10 или повече, играчът автоматично ще пропусне зареждането, когато тази връзка се зареди!</string>
     <string name="duplicate_replace">Замени</string>
     <string name="duplicate_replace_all">Замени Всички</string>
-    <string name="duplicate_message_single" formatted="true">Изглежда, че потенциално дублиран елемент вече съществува във вашата библиотека: „%s“.
-\n
-\nИскате ли все пак да добавите този елемент, да замените съществуващия или да отмените действието?</string>
-    <string name="duplicate_message_multiple" formatted="true">Във вашата библиотека са намерени потенциални дублиращи се елементи:
-\n
-\n%s
-\n
-\nИскате ли все пак да добавите този елемент, да замените съществуващите или да отмените действието?</string>
+    <string name="duplicate_message_single" formatted="true">Изглежда, че потенциално дублиран елемент вече съществува във вашата библиотека: „%s“. \n \nИскате ли все пак да добавите този елемент, да замените съществуващия или да отмените действието?</string>
+    <string name="duplicate_message_multiple" formatted="true">Във вашата библиотека са намерени потенциални дублиращи се елементи: \n \n%s \n \nИскате ли все пак да добавите този елемент, да замените съществуващите или да отмените действието?</string>
     <string name="lock_profile">Заключи Профил</string>
     <string name="enter_current_pin">Вкарай Сегашен ПИН</string>
     <string name="manage_accounts">Управлявай Профили</string>
@@ -639,14 +620,14 @@
     <string name="no_plugins_updated_manually">Няма актуализирани плъгини.</string>
     <string name="delete_message_series_only" formatted="true">Are you sure you wСигурни ли сте, че искате трайно да изтриете всички епизоди от тази поредица?\n\n%s</string>
     <string name="torrent_not_accepted">Рестартирайте приложението и приемете изскачащото съобщение за Stream Torrent, за да продължите.</string>
-    <string name="software_decoding_desc">Софтуерното декодиране позволява на плейъра да възпроизвежда видео файлове, които не се поддържат от телефона ви, но може да причини забавяне или нестабилно възпроизвеждане при висока резолюция</string>
+    <string name="software_decoding_desc">Софтуерното декодиране позволява на плейъра да възпроизвежда видео файлове, които не се поддържат от устройството ви, но може да причини забавяне или нестабилно възпроизвеждане при висока резолюция</string>
     <string name="player_notification_channel_name">Известия на плейъра</string>
     <string name="sort_episodes_number_desc">Епизод (низходящо)</string>
     <string name="starting_plugin_update_manually">Започва процесът на актуализация на плъгините!</string>
     <string name="player_load_one_subtitle_online">Зареди първия наличен</string>
     <string name="no_subtitles_loaded">Няма заредени субтитри още</string>
-    <string name="audio_singluar">Звук</string>
-    <string name="podcast_singluar">Подкаст</string>
+    <string name="audio_singular">Звук</string>
+    <string name="podcast_singular">Подкаст</string>
     <string name="auth_locally">Автентикация локално</string>
     <string name="biometric_setting">Заключване с биометрия</string>
     <string name="open_downloaded_repo">Отвори хранилище</string>
@@ -654,7 +635,7 @@
     <string name="device_pin_expired_message">PIN кодът е изтекъл !</string>
     <string name="cs3wiki">CloudStream Уики</string>
     <string name="password_pin_authentication_title">Удостоверяване с парола/PIN</string>
-    <string name="custom_media_singluar">Медия</string>
+    <string name="custom_media_singular">Медия</string>
     <string name="audio_book_singular">Аудиокнига</string>
     <string name="dismiss">Отхвърли</string>
     <string name="biometric_setting_summary">Отключете приложението с отпечатък, Face ID, PIN, шаблон или парола.</string>
@@ -682,7 +663,7 @@
     <string name="device_pin_url_message">Посетете <b>%s</b> на вашия смартфон или компютър и въведете горния код</string>
     <string name="device_pin_counter_text">Кодът изтича след %1$dm %2$ds</string>
     <string name="player_settings_select_cast_device">Изберете устройство за излъчване</string>
-    <string name="music_singlar">Музика</string>
+    <string name="music_singular">Музика</string>
     <string name="favorite">Любим</string>
     <string name="battery_dialog_message">За да гарантираме непрекъснати изтегляния и известия за абонирани телевизионни шоута, CloudStream се нуждае от разрешение да работи в фонов режим. Като натиснете ДОБРЕ, ще видите диалогов прозорец с искане. Моля, натиснете \"Позволи\".\n\nМоля, имайте предвид, че това разрешение не означава, че CS3 ще изтощава батерията ви. То ще работи във фонов режим само когато е необходимо, като например при получаване на известия или изтегляне на видеоклипове от официални разширения.</string>
     <string name="qr_image">Изображение на QR код</string>
@@ -700,4 +681,56 @@
     <string name="player_settings_always_ask">Винаги изпращай запитване</string>
     <string name="speedup_summary">Задръжте, за да удвоите скоростта</string>
     <string name="speedup_title">Дълго задържане за смяна на скоростта</string>
+    <string name="download_queue">Опашка за изтегляне</string>
+    <string name="play_full_series_button">Пусни цялата поредица</string>
+    <string name="queue_empty_message">В момента няма изтегляния в опашката.</string>
+    <string name="extra_brightness_settings">Допълнителна яркост</string>
+    <string name="extra_brightness_settings_des">Активирай филтъра за яркост, когато яркостта на екрана надвиши 100%</string>
+    <string name="search_suggestions">Предложения за търсене</string>
+    <string name="search_suggestions_des">Показвай предложения за търсене по време на писане</string>
+    <string name="clear_suggestions">Изтрий предложения</string>
+    <string name="show_cast_in_details">Покажи панела за излъчване</string>
+    <string name="install_prerelease">Инсталирай предварителна версия</string>
+    <string name="prerelease_already_installed">Предварителна версия вече е изтеглена.</string>
+    <string name="prerelease_install_failed">Неуспешна инсталация на предварителната версия.</string>
+    <string name="show_rating">Етикет за рейтинг</string>
+    <string name="show_episode_text">Текст на епизода</string>
+    <string name="video_info">Информация за медията</string>
+    <string name="source_priority">Приоритет на източника</string>
+    <string name="source_priority_help">Определи как източниците на видеото да се сортират в плейъра</string>
+    <string name="no_account">Няма акаунт</string>
+    <string name="edit_profile_image_title">Редактирай профилната снимка</string>
+    <string name="edit_profile_image_hint">Въведи линк за профилна снимка</string>
+    <string name="edit_profile_image_error_empty">Няма намерен URL</string>
+    <string name="edit_profile_image_error_invalid">Невалиден URL или снимка</string>
+    <string name="edit_profile_image_success">Успешно актуализирана снимка</string>
+    <string name="action_mark_watched_up_to_this_episode">Маркирай като гледано до този епизод</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Премахни маркирането като гледано до този епизод</string>
+    <string name="action_reload">Презаредено</string>
+    <string name="reload_provider">Презареди доставчика</string>
+    <string name="name">Име</string>
+    <string name="source_name">Име на източника</string>
+    <string name="resolution_and_name">Резолюция и име</string>
+    <string name="download_all">Изтегли всички</string>
+    <string name="cancel_all">Откажи всички</string>
+    <string name="download_episode_range">Искаш ли да изтеглиш епизод %s?</string>
+    <string name="cancel_queue_message">Искаш ли да отмениш всички изтегляния в опашката?</string>
+    <string name="subs_subtitle_alignment">Подравняване на субтитрите</string>
+    <string name="bottom_left">Долу вляво</string>
+    <string name="bottom_center">Долу в центъра</string>
+    <string name="bottom_right">Долу вдясно</string>
+    <string name="middle_left">В средата вляво</string>
+    <string name="middle_center">В средата в центъра</string>
+    <string name="middle_right">В средата вдясно</string>
+    <string name="top_left">Горе вляво</string>
+    <string name="top_center">Горе в центъра</string>
+    <string name="top_right">Горе вдясно</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d активно изтегляне</item>
+        <item quantity="other">%d активни изтегляния</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d изтегляне в опашката</item>
+        <item quantity="other">%d изтегляния в опашката</item>
+    </plurals>
 </resources>

@@ -12,11 +12,10 @@ import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.AES
+import dev.whyoleg.cryptography.algorithms.MD5
 
 class Megacloud : Rabbitstream() {
     override val name = "Megacloud"
@@ -63,7 +62,6 @@ class Megacloud : Rabbitstream() {
 
         return indexPairs
     }
-
 }
 
 class Dokicloud : Rabbitstream() {
@@ -79,6 +77,10 @@ open class Rabbitstream : ExtractorApi() {
     override val requiresReferer = false
     open val embed = "ajax/embed-4"
     open val key = "https://raw.githubusercontent.com/eatmynerds/key/e4/key.txt"
+
+    private val aesCbc = CryptographyProvider.Default.get(AES.CBC)
+    @OptIn(DelicateCryptographyApi::class)
+    private val md5Hasher = CryptographyProvider.Default.get(MD5).hasher()
 
     override suspend fun getUrl(
         url: String,
@@ -123,8 +125,6 @@ open class Rabbitstream : ExtractorApi() {
                 )
             )
         }
-
-
     }
 
     open suspend fun extractRealKey(sources: String): Pair<String, String> {
@@ -133,21 +133,21 @@ open class Rabbitstream : ExtractorApi() {
         return extractedKey to sources
     }
 
-    private inline fun <reified T> decryptMapped(input: String, key: String): T? {
+    private inline suspend fun <reified T> decryptMapped(input: String, key: String): T? {
         val decrypt = decrypt(input, key)
         return AppUtils.tryParseJson(decrypt)
     }
 
-    private fun decrypt(input: String, key: String): String {
+    private suspend fun decrypt(input: String, key: String): String {
         return decryptSourceUrl(
             generateKey(
-                base64DecodeArray(input).copyOfRange(8, 16),
-                key.toByteArray()
+                salt = base64DecodeArray(input).copyOfRange(8, 16),
+                secret = key.encodeToByteArray()
             ), input
         )
     }
 
-    private fun generateKey(salt: ByteArray, secret: ByteArray): ByteArray {
+    private suspend fun generateKey(salt: ByteArray, secret: ByteArray): ByteArray {
         var key = md5(secret + salt)
         var currentKey = key
         while (currentKey.size < 48) {
@@ -157,21 +157,19 @@ open class Rabbitstream : ExtractorApi() {
         return currentKey
     }
 
-    private fun md5(input: ByteArray): ByteArray {
-        return MessageDigest.getInstance("MD5").digest(input)
-    }
+    private suspend fun md5(input: ByteArray): ByteArray =
+        md5Hasher.hash(input)
 
-    private fun decryptSourceUrl(decryptionKey: ByteArray, sourceUrl: String): String {
+    @OptIn(DelicateCryptographyApi::class)
+    private suspend fun decryptSourceUrl(decryptionKey: ByteArray, sourceUrl: String): String {
         val cipherData = base64DecodeArray(sourceUrl)
         val encrypted = cipherData.copyOfRange(16, cipherData.size)
-        val aesCBC = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        aesCBC.init(
-            Cipher.DECRYPT_MODE,
-            SecretKeySpec(decryptionKey.copyOfRange(0, 32), "AES"),
-            IvParameterSpec(decryptionKey.copyOfRange(32, decryptionKey.size))
-        )
-        val decryptedData = aesCBC?.doFinal(encrypted) ?: throw ErrorLoadingException("Cipher not found")
-        return String(decryptedData, StandardCharsets.UTF_8)
+        val keyBytes = decryptionKey.copyOfRange(0, 32)
+        val ivBytes = decryptionKey.copyOfRange(32, decryptionKey.size)
+
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, keyBytes)
+        val decryptedData = aesKey.cipher(padding = true).decryptWithIv(ivBytes, encrypted)
+        return decryptedData.decodeToString()
     }
 
     data class Tracks(
@@ -196,5 +194,4 @@ open class Rabbitstream : ExtractorApi() {
         @JsonProperty("encrypted") val encrypted: Boolean? = null,
         @JsonProperty("tracks") val tracks: List<Tracks?>? = emptyList(),
     )
-
 }

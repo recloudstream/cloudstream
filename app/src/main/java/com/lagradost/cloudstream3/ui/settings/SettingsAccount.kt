@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.databinding.AddAccountInputBinding
 import com.lagradost.cloudstream3.databinding.DeviceAuthBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.animeSkipApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.kitsuApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSubtitlesApi
@@ -36,6 +37,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subDlAp
 import com.lagradost.cloudstream3.syncproviders.AuthLoginResponse
 import com.lagradost.cloudstream3.syncproviders.AuthRepo
 import com.lagradost.cloudstream3.syncproviders.AuthUser
+import com.lagradost.cloudstream3.syncproviders.PlainAuthRepo
 import com.lagradost.cloudstream3.syncproviders.SubtitleRepo
 import com.lagradost.cloudstream3.syncproviders.SyncRepo
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
@@ -63,6 +65,8 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogTe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.hideProgress
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import qrcode.QRCode
@@ -346,6 +350,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                     email = if (req.email) binding.loginEmailInput.text?.toString() else null,
                     server = if (req.server) binding.loginServerInput.text?.toString() else null,
                 )
+                binding.applyBtt.showProgress()
                 ioSafe {
                     try {
                         if (api.login(loginData)) {
@@ -375,6 +380,8 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                                 api.name
                             )
                         )
+                    } finally {
+                        binding.applyBtt.hideProgress()
                     }
                 }
             }
@@ -468,6 +475,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                 R.string.simkl_key to SyncRepo(simklApi),
                 R.string.opensubtitles_key to SubtitleRepo(openSubtitlesApi),
                 R.string.subdl_key to SubtitleRepo(subDlApi),
+                R.string.animeskip_key to PlainAuthRepo(animeSkipApi),
             )
 
         for ((key, api) in syncApis) {

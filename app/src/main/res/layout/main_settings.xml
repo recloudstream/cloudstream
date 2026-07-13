@@ -135,8 +135,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:text="@string/commit_hash"
-                    android:textColor="?attr/textColor" />
+                    android:textColor="?attr/textColor"
+                    tools:text="1234567" />
 
                 <TextView
                     android:id="@+id/delimiter1"
@@ -153,7 +153,6 @@
                     android:textColor="?attr/textColor"
                     tools:text="21/03/2024 09:02 pm" />
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

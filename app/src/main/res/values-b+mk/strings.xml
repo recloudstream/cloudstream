@@ -126,8 +126,7 @@
     <string name="cancel">Откажи</string>
     <string name="pause">Паузирај</string>
     <string name="resume">Продолжи</string>
-    <string name="delete_message">Ова трајно ќе го избрише %s
-\nДали си сигурен?</string>
+    <string name="delete_message">Ова трајно ќе го избрише %s \nДали си сигурен?</string>
     <string name="status_ongoing">Во тек</string>
     <string name="status_completed">Изгледанo</string>
     <string name="status">Статус</string>
@@ -245,7 +244,7 @@
     <string name="quality_tc">TC</string>
     <string name="subscription_new">Претплатен на %s</string>
     <string name="pref_category_subtitles">Преводи</string>
-    <string name="download_all_plugins_from_repo">Предупредување: CloudStream 3 не презема никаква одговорност за користење на екстензии од трети страни и не обезбедува никаква поддршка за нив!</string>
+    <string name="download_all_plugins_from_repo">Предупредување: CloudStream не презема никаква одговорност за користење на екстензии од трети страни и не обезбедува никаква поддршка за нив!</string>
     <string name="backup_failed">Недостасуваат дозволи за складирање. Обиди се повторно.</string>
     <string name="sort_save">Зачувај</string>
     <string name="player_load_subtitles">Вчитај од датотека</string>
@@ -260,7 +259,7 @@
     <string name="sort">Подреди</string>
     <string name="player_settings_play_in_app">Внатрешен плеер</string>
     <string name="resolution">Резолуција</string>
-    <string name="skip_type_creddits">Кредити</string>
+    <string name="skip_type_credits">Кредити</string>
     <string name="search_hint_site" formatted="true">Пребарај %s…</string>
     <string name="plugin_deleted">Приклучокот е избришан</string>
     <string name="extension_status">Статус</string>
@@ -417,8 +416,7 @@
     <string name="batch_download_start_format" formatted="true">Почна да презема %1$d %2$s…</string>
     <string name="automatic_plugin_updates">Автоматски ажурирања на приклучоци</string>
     <string name="go_back_30">-30</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nпреостанува</string>
+    <string name="resume_time_left" formatted="true">%dm \nпреостанува</string>
     <string name="video_buffer_disk_settings">Видео кеш на дискот</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="setup_done">Готово</string>
@@ -447,7 +445,7 @@
     <string name="backup_failed_error_format">Грешка при правење резервна копија на %s</string>
     <string name="pref_filter_search_quality">Сокриј го избраниот квалитет на видеото во резултатите од пребарувањето</string>
     <string name="apk_installer_settings_des">Некои уреди не го поддржуваат новиот инсталатор на пакети. Испробај ја легаси(старата) опција, ако ажурирањата не се инсталираат.</string>
-    <string name="limit_title_rez">Резолуција на видео плеер</string>
+    <string name="limit_title_rez">Прикажи информации за плеерот</string>
     <string name="video_buffer_size_settings">Големина на видео баферот</string>
     <string name="pref_category_player_layout">Распоред</string>
     <string name="pref_category_defaults">Стандардно</string>
@@ -567,7 +565,7 @@
     <string name="unfavorite">Неомилен</string>
     <string name="favorite">Омилен</string>
     <string name="biometric_setting">Заклучување со биометрика</string>
-    <string name="music_singlar">Музика</string>
+    <string name="music_singular">Музика</string>
     <string name="subscribe_tooltip">Известување за нова епизода</string>
     <string name="result_search_tooltip">Пребарај во други екстензии</string>
     <string name="recommendations_tooltip">Прикажи препораки</string>
@@ -585,10 +583,9 @@
     <string name="biometric_authentication_title">Отклучи CloudStream</string>
     <string name="biometric_unsupported">Биометриската автентикација не е поддржана на овој уред</string>
     <string name="biometric_prompt_description">По неколку неуспешни обиди, известувањето ќе се затвори. Едноставно вклучи ја апликацијата повторно за да се обидеш повторно.</string>
-    <string name="custom_media_singluar">Медиуми</string>
+    <string name="custom_media_singular">Медиуми</string>
     <string name="episode_upcoming_format" formatted="true">Претстои во %s</string>
-    <string name="resume_remaining" formatted="true">%s
-\nпреостанати</string>
+    <string name="resume_remaining" formatted="true">%s \nпреостанати</string>
     <string name="battery_dialog_message">За да се обезбедат непрекинати преземања и известувања за претплатените ТВ серии, CloudStream треба дозвола за работа во позадина. Со притискање на „ОК“, ќе ви биде прикажан дијалог за барање дозвола. Ве молиме, притиснете „Дозволи“.\n\nИмајте предвид дека оваа дозвола не значи дека CS3 ќе ја троши вашата батерија. Ќе работи во позадина само кога е потребно, како на пример при примање известувања или преземање видеа од официјални екстензии.</string>
     <string name="clipboard_permission_error">Грешка при пристапот до таблата со исечоци, обиди се повторно.</string>
     <string name="clipboard_unknown_error">Грешка при копирање, молам копирај го логот и контактирај ја поддршката на апликацијата.</string>
@@ -633,8 +630,8 @@
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="delete_message_series_episodes" formatted="true">Дали си сигурен дека сакаш трајно да ги избришеш следните епизоди во %1$s?\n\n%2$s</string>
     <string name="device_pin_counter_text">Кодот истекува за %1$d минута/и и %2$d секунда/и</string>
-    <string name="audio_singluar">Аудио</string>
-    <string name="podcast_singluar">Поткаст</string>
+    <string name="audio_singular">Аудио</string>
+    <string name="podcast_singular">Поткаст</string>
     <string name="encoding_error">Грешка при кодирање на преводот</string>
     <string name="unsupported_error">Неподдржана грешка</string>
     <string name="player_load_one_subtitle_online">Вчитај прво достапно</string>
@@ -708,4 +705,37 @@
     <string name="top_center">Горе во центар</string>
     <string name="top_right">Горе на десно</string>
     <string name="play_full_series_button">Пушти ја целата серија</string>
+    <string name="download_queue">Редица за преземање</string>
+    <string name="queue_empty_message">Моментално нема преземања во редицата.</string>
+    <string name="extra_brightness_settings">Дополнителна осветленост</string>
+    <string name="extra_brightness_settings_des">Овозможи филтер за осветленост кога ќе се надмине 100% осветленост на екранот</string>
+    <string name="extra_brightness_key">овозможена_дополнителна_осветленост</string>
+    <string name="search_suggestions">Предлози за пребарување</string>
+    <string name="search_suggestions_des">Прикажувај предлози за пребарување додека пишуваш</string>
+    <string name="clear_suggestions">Исчисти предлози</string>
+    <string name="show_player_metadata_overlay">Прикажи преклоп со метаподатоци на плеерот</string>
+    <string name="show_cast_in_details">Прикажи панел за емитување</string>
+    <string name="install_prerelease">Инсталирај предиздавачка верзија</string>
+    <string name="prerelease_already_installed">Предиздавачката верзија е веќе инсталирана.</string>
+    <string name="prerelease_install_failed">Неуспешна инсталација на предиздавачката верзија.</string>
+    <string name="video_singular">Видео</string>
+    <string name="show_episode_text">Текст на епизода</string>
+    <string name="video_info">Информации за медиумот</string>
+    <string name="skip_type_preview">Преглед</string>
+    <string name="source_priority">Приоритет на извор</string>
+    <string name="source_priority_help">Одреди како ќе се подредуваат видео изворите во плеерот</string>
+    <string name="source_name">Име на изворот</string>
+    <string name="download_all">Преземи сѐ</string>
+    <string name="cancel_all">Откажи сѐ</string>
+    <string name="download_episode_range">Дали сакате да ја преземете епизодата %s?</string>
+    <string name="cancel_queue_message">Дали сакате да ги откажете сите преземања во редицата?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d активно преземање</item>
+        <item quantity="other">%d активни преземања</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d преземање во редицата</item>
+        <item quantity="other">%d преземања во редицата</item>
+    </plurals>
+    <string name="player_is_live">Во живо</string>
 </resources>

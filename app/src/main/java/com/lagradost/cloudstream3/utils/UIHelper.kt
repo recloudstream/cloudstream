@@ -65,9 +65,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
+import com.google.android.material.progressindicator.IndeterminateDrawable
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -259,10 +262,12 @@ object UIHelper {
     }
 
     // Open activities from an activity outside the nav graph
-    fun Context.openActivity(activity: Class<*>, args: Bundle? = null) {
+    fun Context.openActivity(activity: Class<*>, args: Bundle? = null, baseIntent: Intent? = null) {
         val tag = "NavComponent"
         try {
-            val intent = Intent(this, activity)
+            val intent = baseIntent ?: Intent()
+            intent.setClass(this, activity)
+
             if (args != null) {
                 intent.putExtras(args)
             }
@@ -580,6 +585,43 @@ object UIHelper {
             this.dismiss()
         }
     }
+
+    /**
+     * Source: https://stackoverflow.com/questions/70954321/circular-progress-indicator-inside-buttons-android-material-design
+     *
+     * Shows indeterminate progress bar on this button in place of where icon would be.
+     * By default the tint of progress bar is the same as iconTint.
+     *
+     * @param tintColor (@ColorInt Int) Sets custom progress bar tint color.
+     */
+    fun MaterialButton.showProgress(@ColorInt tintColor: Int = this.iconTint.defaultColor) =
+        // Use runOnMainThreadNative to allow process on io threads, to make the code a bit cleaner
+        runOnMainThreadNative {
+            // No need to set it again, as then it will reset the animation
+            if(this.icon is IndeterminateDrawable<*>) {
+                return@runOnMainThreadNative
+            }
+            val spec = CircularProgressIndicatorSpec(
+                context, null, 0,
+                com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
+            )
+
+            spec.indicatorColors = intArrayOf(tintColor)
+
+            val progressIndicatorDrawable =
+                IndeterminateDrawable.createCircularDrawable(context, spec)
+
+            this.icon = progressIndicatorDrawable
+            if (this.getTag(R.id.text1) == null)
+                this.setTag(R.id.text1, this.text)
+            this.text = ""
+        }
+
+    fun MaterialButton.hideProgress() =
+        runOnMainThreadNative {
+            this.text = this.getTag(R.id.text1) as? String
+            this.icon = null
+        }
 
     /**id, stringRes */
     @SuppressLint("RestrictedApi")

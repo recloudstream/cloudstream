@@ -40,7 +40,7 @@ class TestFragment : BaseFragment<FragmentTestingBinding>(
                 providerTest.setProgress(passed, failed, total)
             }
 
-            observeNullable(testViewModel.providerResults) {
+            observe(testViewModel.providerResults) {
                 safe {
                     val newItems = it.sortedBy { api -> api.first.name }
                     (providerTestRecyclerView.adapter as? TestResultAdapter)?.submitList(

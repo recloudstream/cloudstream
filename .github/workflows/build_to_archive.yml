@@ -9,6 +9,9 @@ on:
       - '**/wcokey.txt'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: "Archive-build"
   cancel-in-progress: true
@@ -61,13 +64,17 @@ jobs:
         cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
     - name: Run Gradle
-      run: ./gradlew assemblePrerelease
+      run: ./gradlew assemblePrereleaseRelease
       env:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
         SIGNING_STORE_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
         SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
         SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+        TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+        MDL_API_KEY: ${{ secrets.MDL_API_KEY }}
+        MAL_KEY: ${{ secrets.MAL_KEY }}
+        ANILIST_KEY: ${{ secrets.ANILIST_KEY }}
 
     - uses: actions/checkout@v6
       with:

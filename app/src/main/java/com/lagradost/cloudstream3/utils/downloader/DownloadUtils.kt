@@ -20,16 +20,17 @@ import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getFol
 import com.lagradost.cloudstream3.utils.txt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.ConcurrentHashMap
 
 /** Separate object with helper functions for the downloader */
 object DownloadUtils {
-    private val cachedBitmaps = hashMapOf<String, Bitmap>()
+    private val cachedBitmaps = ConcurrentHashMap<String, Bitmap>()
     internal fun Context.getImageBitmapFromUrl(
         url: String,
         headers: Map<String, String>? = null
     ): Bitmap? = safe {
-        if (cachedBitmaps.containsKey(url)) {
-            return@safe cachedBitmaps[url]
+        cachedBitmaps[url]?.let {
+            return@safe it
         }
 
         val imageLoader = SingletonImageLoader.get(this)
@@ -50,7 +51,7 @@ object DownloadUtils {
         }
 
         bitmap?.let {
-            cachedBitmaps[url] = it
+            cachedBitmaps.putIfAbsent(url, it)
         }
 
         return@safe bitmap
