@@ -9,11 +9,12 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.INFER_TYPE
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.collections.orEmpty
 
-@Prerelease
 object JwPlayerHelper {
     private val sourceRegex = Regex(""""?sources"?:\s*(\[.*?\])""")
     private val tracksRegex = Regex(""""?tracks"?:\s*(\[.*?\])""")
@@ -53,11 +54,12 @@ object JwPlayerHelper {
         }.toList()
 
         var extractedLinks = sourceMatches.flatMap { link ->
-            if (link.file.contains(".m3u8")) {
+            val cleanUrl = link.file.replace("\\/", "/")
+            if (cleanUrl.contains(".m3u8") || cleanUrl.contains(".txt")) {
                 try {
                     M3u8Helper.generateM3u8(
                         source = sourceName,
-                        streamUrl = link.file,
+                        streamUrl = cleanUrl,
                         referer = mainUrl,
                         headers = headers,
                     )
@@ -70,7 +72,7 @@ object JwPlayerHelper {
                     newExtractorLink(
                         source = sourceName,
                         name = sourceName,
-                        url = fixUrl(link.file, mainUrl),
+                        url = fixUrl(cleanUrl, mainUrl),
                     ) {
                         this.referer = url
                         this.headers = headers
@@ -99,11 +101,13 @@ object JwPlayerHelper {
          */
         if (extractedLinks.isEmpty()) {
             extractedLinks = m3u8Regex.findAll(script).toList().map { match ->
-                val link = match.groupValues[1]
+                val cleanUrl = match.groupValues[1].replace("\\/", "/")
+                val isM3u8 = cleanUrl.contains(".m3u8") || cleanUrl.contains(".txt")
                 newExtractorLink(
                     source = sourceName,
                     name = sourceName,
-                    url = fixUrl(link, mainUrl),
+                    url = fixUrl(cleanUrl, mainUrl),
+                    type = if (isM3u8) ExtractorLinkType.M3U8 else INFER_TYPE,
                 ) {
                     this.referer = url
                     this.headers = headers
