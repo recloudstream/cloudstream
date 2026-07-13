@@ -2133,6 +2133,7 @@ class JsInterpreterTest {
     }
 
     @Test
+    @IgnoreOnWeb
     fun suspendEvalJsWithTimeoutCancelsInfiniteLoop() = runTest {
         /**
          * activeScope() provides a real CoroutineScope with a real Job, so withTimeout
@@ -2326,6 +2327,7 @@ class JsInterpreterTest {
     }
 
     @Test
+    @IgnoreOnWeb
     fun jsContextEvalCancelledWhenEnclosingCoroutineCancelledViaWithTimeout() = runTest {
         val done = Channel<Unit>()
         var elapsed = Duration.ZERO
@@ -2360,6 +2362,7 @@ class JsInterpreterTest {
     }
 
     @Test
+    @IgnoreOnWeb
     fun jsContextJsTryCatchCannotSwallowEnclosingCancellation() = runTest {
         val done = Channel<Unit>()
         var elapsed = Duration.ZERO

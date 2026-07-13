@@ -761,18 +761,64 @@ fun MainAPI.fixUrl(url: String): String {
     }
 }
 
-/** Sort the urls based on quality
+/**
+ * Sort the urls based on quality
+ *
  * @param urls Set of [ExtractorLink]
- * */
+ */
 fun sortUrls(urls: Set<ExtractorLink>): List<ExtractorLink> {
     return urls.sortedBy { t -> -t.quality }
 }
 
-/** Capitalize the first letter of string.
+/**
+ * Splits the parameters of a [Url] into a map of key-value pairs.
+ *
+ * Unlike a manual `split("&")` / `split("=")` implementation, this relies on Ktor's
+ * built-in parameters parser ([Url.parameters]), which already handles URL-decoding,
+ * malformed pairs, and parameters without a value.
+ *
+ * Note: if a parameter key appears multiple times (e.g. `?a=1&a=2`), only the **first**
+ * value is kept, since the return type is `Map<String, String>`. Use [Url.parameters]
+ * directly if you need all values for repeated keys.
+ *
+ * @param url the [Url] whose parameters should be extracted.
+ * @return a map of decoded parameter names to their first decoded value.
+ *
+ * @sample
+ * splitUrlParameters(Url("https://example.com/path?foo=bar&baz=qux"))
+ * // returns {"foo": "bar", "baz": "qux"}
+ */
+@Prerelease
+fun splitUrlParameters(url: Url): Map<String, String> {
+    return url.parameters.entries().associate { (key, values) -> key to values.firstOrNull().orEmpty() }
+}
+
+/**
+ * Splits the parameters of a raw URL [String] into a map of key-value pairs.
+ *
+ * Convenience overload for callers that have a URL as plain text rather than a parsed
+ * [Url] instance. Internally parses [url] with Ktor's [Url] constructor and delegates
+ * to [splitUrlParameters].
+ *
+ * @param url the URL string whose parameters should be extracted.
+ * @return a map of decoded parameter names to their first decoded value.
+ *
+ * @sample
+ * splitUrlParameters("https://example.com/path?foo=bar&baz=qux")
+ * // returns {"foo": "bar", "baz": "qux"}
+ */
+@Prerelease
+fun splitUrlParameters(url: String): Map<String, String> {
+    return splitUrlParameters(Url(url))
+}
+
+/**
+ * Capitalize the first letter of string.
+ *
  * @param str String to be capitalized
  * @return non-nullable String
  * @see capitalizeStringNullable
- * */
+ */
 fun capitalizeString(str: String): String {
     return capitalizeStringNullable(str) ?: str
 }
