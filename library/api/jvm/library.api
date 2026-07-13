@@ -6,7 +6,7 @@ public final class com/lagradost/api/BuildConfig {
 
 public final class com/lagradost/api/ContextHelper_jvmKt {
 	public static final fun getContext ()Ljava/lang/Object;
-	public static final fun setContext (Ljava/lang/ref/WeakReference;)V
+	public static final fun setContext (Ljava/lang/Object;)V
 }
 
 public final class com/lagradost/api/Log {
