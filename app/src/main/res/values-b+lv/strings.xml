@@ -287,12 +287,12 @@
     <string name="pref_category_defaults">Parasts</string>
     <string name="pref_category_looks">Izskats</string>
     <string name="pref_category_ui_features">Funkcijas</string>
-    <string name="category_general">Ģenerāls</string>
+    <string name="category_general">Vispārīgie</string>
     <string name="random_button_settings">Randomā poga</string>
     <string name="random_button_settings_desc">Rādīt izlases pogu Sākums un Bibliotēka sadaļās</string>
     <string name="provider_lang_settings">Papildinājuma valodas</string>
     <string name="app_layout">Lietotnes izkārtojums</string>
-    <string name="preferred_media_settings">Izvēlētā media</string>
+    <string name="preferred_media_settings">Vēlamie multimediji</string>
     <string name="enable_nsfw_on_providers">Iespējot nepiedienīgu, izaicinošu saturu (NSFW) atbalstītajos papildinājumos</string>
     <string name="subtitles_encoding">Subtitru kodējums</string>
     <string name="category_providers">Devēji</string>
@@ -372,7 +372,7 @@
     <string name="error">Kļūda</string>
     <string name="subtitles_remove_captions">Noņemt slēgtos parakstus no subtitriem</string>
     <string name="subtitles_remove_bloat">Noņemt lieko no subtitriem (piemēram, reklāmu)</string>
-    <string name="subtitles_filter_lang">Filtrēt pēc vēlamās multivides valodas</string>
+    <string name="subtitles_filter_lang">Atlasīt pēc vēlamās multimediju valodas</string>
     <string name="extras">Ekstras</string>
     <string name="trailer">Treileris</string>
     <string name="network_adress_example">https://piemērs.com/piemērs.mp4</string>
@@ -382,7 +382,7 @@
     <string name="previous">Iepriekšējais</string>
     <string name="skip_setup">Izlaist uzstādīšanu</string>
     <string name="app_layout_subtext">Mainiet lietotnes izskatu, lai tā atbilstu savai ierīcei</string>
-    <string name="preferred_media_subtext">Ko tu vēlies redzēt</string>
+    <string name="preferred_media_subtext">Ko jūs vēlētos skatīt</string>
     <string name="setup_done">Pabeigts</string>
     <string name="extensions">Papildinājumi</string>
     <string name="add_repository">Pievienot repozitoriju</string>
@@ -607,4 +607,11 @@
     <string name="delete_message_series_only" formatted="true">Vai tiešām vēlaties neatgriezeniski dzēst visas šī seriāla, raidījuma epizodes?\n\n%s</string>
     <string name="queue_empty_message">Pašlaik nav nevienas rindā ievietotas lejupielādes.</string>
     <string name="open_local_video">Atvērt vietējo video</string>
+    <string name="custom_media_singular">Multimedija</string>
+    <string name="video_info">Multimediju informācija</string>
+    <string name="torrent_preferred_media">Iespējojiet torrentu Iestatījumi/Pakalpojumu sniedzēji/Vēlamie multimediji sadaļā</string>
+    <string name="subscribe_tooltip">Paziņojums par jaunu epizodi</string>
+    <string name="extra_brightness_settings">Papildu spilgtums</string>
+    <string name="extra_brightness_key">Papildu spilgtums iespējots</string>
+    <string name="search_suggestions">Meklēšanas ieteikumi</string>
 </resources>
