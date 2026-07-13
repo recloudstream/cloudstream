@@ -353,4 +353,5 @@
     <string name="play_from_beginning_img_des">শুরু থেকে চালু করুন</string>
     <string name="speech_recognition_unavailable">স্পিচ রিকগনিশন উপলব্ধ নেই</string>
     <string name="begin_speaking">কথা বলা শুরু করুন…</string>
+    <string name="download_queue">ডাউনলোড তালিকা</string>
 </resources>

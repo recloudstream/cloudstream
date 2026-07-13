@@ -9,6 +9,8 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import torrServer.TorrServer
 import java.io.File
 import java.net.ConnectException
@@ -32,14 +34,14 @@ object Torrent {
 
     /** Returns true if the server is up */
     private suspend fun echo(): Boolean {
-        if(TORRENT_SERVER_URL.isEmpty()) {
+        if (TORRENT_SERVER_URL.isEmpty()) {
             return false
         }
         return try {
             app.get(
                 "$TORRENT_SERVER_URL/echo",
             ).text.isNotEmpty()
-        } catch (e: ConnectException) {
+        } catch (_: ConnectException) {
             // `Failed to connect to /127.0.0.1:8090` if the server is down
             false
         } catch (t: Throwable) {
@@ -52,7 +54,7 @@ object Torrent {
     /** Gracefully shutdown the server.
      * should not be used because I am unable to start it again, and the stopTorrentServer() crashes the app */
     suspend fun shutdown(): Boolean {
-        if(TORRENT_SERVER_URL.isEmpty()) {
+        if (TORRENT_SERVER_URL.isEmpty()) {
             return false
         }
         return try {
@@ -68,7 +70,7 @@ object Torrent {
     /** Lists all torrents by the server */
     @Throws
     private suspend fun list(): Array<TorrentStatus> {
-        if(TORRENT_SERVER_URL.isEmpty()) {
+        if (TORRENT_SERVER_URL.isEmpty()) {
             throw ErrorLoadingException("Not initialized")
         }
         return app.post(
@@ -83,7 +85,7 @@ object Torrent {
 
     /** Drops a single torrent, (I think) this means closing the stream. Returns returns if it is successful */
     private suspend fun drop(hash: String): Boolean {
-        if(TORRENT_SERVER_URL.isEmpty()) {
+        if (TORRENT_SERVER_URL.isEmpty()) {
             return false
         }
         return try {
@@ -104,7 +106,7 @@ object Torrent {
 
     /** Removes a single torrent from the server registry */
     private suspend fun rem(hash: String): Boolean {
-        if(TORRENT_SERVER_URL.isEmpty()) {
+        if (TORRENT_SERVER_URL.isEmpty()) {
             return false
         }
         return try {
@@ -126,7 +128,7 @@ object Torrent {
 
     /** Removes all torrents from the server, and returns if it is successful */
     suspend fun clearAll(): Boolean {
-        if(TORRENT_SERVER_URL.isEmpty()) {
+        if (TORRENT_SERVER_URL.isEmpty()) {
             return true
         }
         return try {
@@ -164,10 +166,8 @@ object Torrent {
     /** Gets all the metadata of a torrent, will throw if that hash does not exists
      * https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/web/api/torrents.go#L126 */
     @Throws
-    suspend fun get(
-        hash: String,
-    ): TorrentStatus {
-        if(TORRENT_SERVER_URL.isEmpty()) {
+    suspend fun get(hash: String): TorrentStatus {
+        if (TORRENT_SERVER_URL.isEmpty()) {
             throw ErrorLoadingException("Not initialized")
         }
         return app.post(
@@ -184,7 +184,7 @@ object Torrent {
     /** Adds a torrent to the server, this is needed for us to get the hash for further modification, as well as start streaming it*/
     @Throws
     private suspend fun add(url: String): TorrentStatus {
-        if(TORRENT_SERVER_URL.isEmpty()) {
+        if (TORRENT_SERVER_URL.isEmpty()) {
             throw ErrorLoadingException("Not initialized")
         }
         return app.post(
@@ -204,7 +204,7 @@ object Torrent {
             return true
         }
         val port = TorrServer.startTorrentServer(dir, 0)
-        if(port < 0) {
+        if (port < 0) {
             return false
         }
         TORRENT_SERVER_URL = "http://127.0.0.1:$port"
@@ -278,94 +278,55 @@ object Torrent {
 
     // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/web/api/torrents.go#L18
     // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/main/web/api/route.go#L7
+    @Serializable
     data class TorrentRequest(
-        @JsonProperty("action")
-        val action: String,
-        @JsonProperty("hash")
-        val hash: String = "",
-        @JsonProperty("link")
-        val link: String = "",
-        @JsonProperty("title")
-        val title: String = "",
-        @JsonProperty("poster")
-        val poster: String = "",
-        @JsonProperty("data")
-        val data: String = "",
-        @JsonProperty("save_to_db")
-        val saveToDB: Boolean = false,
+        @JsonProperty("action") @SerialName("action") val action: String,
+        @JsonProperty("hash") @SerialName("hash") val hash: String = "",
+        @JsonProperty("link") @SerialName("link") val link: String = "",
+        @JsonProperty("title") @SerialName("title") val title: String = "",
+        @JsonProperty("poster") @SerialName("poster") val poster: String = "",
+        @JsonProperty("data") @SerialName("data") val data: String = "",
+        @JsonProperty("save_to_db") @SerialName("save_to_db") val saveToDB: Boolean = false,
     )
 
     // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/torr/state/state.go#L33
     // omitempty = nullable
+    @Serializable
     data class TorrentStatus(
-        @JsonProperty("title")
-        var title: String,
-        @JsonProperty("poster")
-        var poster: String,
-        @JsonProperty("data")
-        var data: String?,
-        @JsonProperty("timestamp")
-        var timestamp: Long,
-        @JsonProperty("name")
-        var name: String?,
-        @JsonProperty("hash")
-        var hash: String?,
-        @JsonProperty("stat")
-        var stat: Int,
-        @JsonProperty("stat_string")
-        var statString: String,
-        @JsonProperty("loaded_size")
-        var loadedSize: Long?,
-        @JsonProperty("torrent_size")
-        var torrentSize: Long?,
-        @JsonProperty("preloaded_bytes")
-        var preloadedBytes: Long?,
-        @JsonProperty("preload_size")
-        var preloadSize: Long?,
-        @JsonProperty("download_speed")
-        var downloadSpeed: Double?,
-        @JsonProperty("upload_speed")
-        var uploadSpeed: Double?,
-        @JsonProperty("total_peers")
-        var totalPeers: Int?,
-        @JsonProperty("pending_peers")
-        var pendingPeers: Int?,
-        @JsonProperty("active_peers")
-        var activePeers: Int?,
-        @JsonProperty("connected_seeders")
-        var connectedSeeders: Int?,
-        @JsonProperty("half_open_peers")
-        var halfOpenPeers: Int?,
-        @JsonProperty("bytes_written")
-        var bytesWritten: Long?,
-        @JsonProperty("bytes_written_data")
-        var bytesWrittenData: Long?,
-        @JsonProperty("bytes_read")
-        var bytesRead: Long?,
-        @JsonProperty("bytes_read_data")
-        var bytesReadData: Long?,
-        @JsonProperty("bytes_read_useful_data")
-        var bytesReadUsefulData: Long?,
-        @JsonProperty("chunks_written")
-        var chunksWritten: Long?,
-        @JsonProperty("chunks_read")
-        var chunksRead: Long?,
-        @JsonProperty("chunks_read_useful")
-        var chunksReadUseful: Long?,
-        @JsonProperty("chunks_read_wasted")
-        var chunksReadWasted: Long?,
-        @JsonProperty("pieces_dirtied_good")
-        var piecesDirtiedGood: Long?,
-        @JsonProperty("pieces_dirtied_bad")
-        var piecesDirtiedBad: Long?,
-        @JsonProperty("duration_seconds")
-        var durationSeconds: Double?,
-        @JsonProperty("bit_rate")
-        var bitRate: String?,
-        @JsonProperty("file_stats")
-        var fileStats: List<TorrentFileStat>?,
-        @JsonProperty("trackers")
-        var trackers: List<String>?,
+        @JsonProperty("title") @SerialName("title") var title: String,
+        @JsonProperty("poster") @SerialName("poster") var poster: String,
+        @JsonProperty("data") @SerialName("data") var data: String?,
+        @JsonProperty("timestamp") @SerialName("timestamp") var timestamp: Long,
+        @JsonProperty("name") @SerialName("name") var name: String?,
+        @JsonProperty("hash") @SerialName("hash") var hash: String?,
+        @JsonProperty("stat") @SerialName("stat") var stat: Int,
+        @JsonProperty("stat_string") @SerialName("stat_string") var statString: String,
+        @JsonProperty("loaded_size") @SerialName("loaded_size") var loadedSize: Long?,
+        @JsonProperty("torrent_size") @SerialName("torrent_size") var torrentSize: Long?,
+        @JsonProperty("preloaded_bytes") @SerialName("preloaded_bytes") var preloadedBytes: Long?,
+        @JsonProperty("preload_size") @SerialName("preload_size") var preloadSize: Long?,
+        @JsonProperty("download_speed") @SerialName("download_speed") var downloadSpeed: Double?,
+        @JsonProperty("upload_speed") @SerialName("upload_speed") var uploadSpeed: Double?,
+        @JsonProperty("total_peers") @SerialName("total_peers") var totalPeers: Int?,
+        @JsonProperty("pending_peers") @SerialName("pending_peers") var pendingPeers: Int?,
+        @JsonProperty("active_peers") @SerialName("active_peers") var activePeers: Int?,
+        @JsonProperty("connected_seeders") @SerialName("connected_seeders") var connectedSeeders: Int?,
+        @JsonProperty("half_open_peers") @SerialName("half_open_peers") var halfOpenPeers: Int?,
+        @JsonProperty("bytes_written") @SerialName("bytes_written") var bytesWritten: Long?,
+        @JsonProperty("bytes_written_data") @SerialName("bytes_written_data") var bytesWrittenData: Long?,
+        @JsonProperty("bytes_read") @SerialName("bytes_read") var bytesRead: Long?,
+        @JsonProperty("bytes_read_data") @SerialName("bytes_read_data") var bytesReadData: Long?,
+        @JsonProperty("bytes_read_useful_data") @SerialName("bytes_read_useful_data") var bytesReadUsefulData: Long?,
+        @JsonProperty("chunks_written") @SerialName("chunks_written") var chunksWritten: Long?,
+        @JsonProperty("chunks_read") @SerialName("chunks_read") var chunksRead: Long?,
+        @JsonProperty("chunks_read_useful") @SerialName("chunks_read_useful") var chunksReadUseful: Long?,
+        @JsonProperty("chunks_read_wasted") @SerialName("chunks_read_wasted") var chunksReadWasted: Long?,
+        @JsonProperty("pieces_dirtied_good") @SerialName("pieces_dirtied_good") var piecesDirtiedGood: Long?,
+        @JsonProperty("pieces_dirtied_bad") @SerialName("pieces_dirtied_bad") var piecesDirtiedBad: Long?,
+        @JsonProperty("duration_seconds") @SerialName("duration_seconds") var durationSeconds: Double?,
+        @JsonProperty("bit_rate") @SerialName("bit_rate") var bitRate: String?,
+        @JsonProperty("file_stats") @SerialName("file_stats") var fileStats: List<TorrentFileStat>?,
+        @JsonProperty("trackers") @SerialName("trackers") var trackers: List<String>?,
     ) {
         fun streamUrl(url: String): String {
             val fileName =
@@ -381,12 +342,10 @@ object Torrent {
         }
     }
 
+    @Serializable
     data class TorrentFileStat(
-        @JsonProperty("id")
-        val id: Int?,
-        @JsonProperty("path")
-        val path: String?,
-        @JsonProperty("length")
-        val length: Long?,
+        @JsonProperty("id") @SerialName("id") val id: Int?,
+        @JsonProperty("path") @SerialName("path") val path: String?,
+        @JsonProperty("length") @SerialName("length") val length: Long?,
     )
 }
