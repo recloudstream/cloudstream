@@ -9,6 +9,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.INFER_TYPE
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.collections.orEmpty
@@ -105,7 +107,7 @@ object JwPlayerHelper {
                     source = sourceName,
                     name = sourceName,
                     url = fixUrl(cleanUrl, mainUrl),
-                    type = if (isM3u8) com.lagradost.cloudstream3.utils.ExtractorLinkType.M3U8 else null,
+                    type = if (isM3u8) ExtractorLinkType.M3U8 else INFER_TYPE,
                 ) {
                     this.referer = url
                     this.headers = headers
