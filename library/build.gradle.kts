@@ -68,9 +68,6 @@ kotlin {
             implementation(libs.nicehttp) // HTTP Library
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.bundles.cryptography) // Cryptography
-
-            // Temp/deprecated; will be removed once extensions have time to migrate from using it
-            implementation("com.google.code.gson:gson:2.14.0")
         }
 
         commonTest.dependencies {
