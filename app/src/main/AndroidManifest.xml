@@ -22,6 +22,47 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
+    <queries>
+        <!-- 
+            QUERY_ALL_PACKAGES does not work on some devices running Android 11+ (like Google TV 14), 
+            so we must explicitly specify the packages and intent patterns we query to ensure visibility.
+        -->
+        <!-- For external video players -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="video/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/x-mpegURL" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/vnd.apple.mpegurl" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="magnet" />
+        </intent>
+
+        <!-- Common players supported in actions/temp -->
+        <package android:name="org.videolan.vlc" />
+        <package android:name="org.videolan.vlc.debug" />
+        <package android:name="is.xyz.mpv" />
+        <package android:name="is.xyz.mpv.ytdl" />
+        <package android:name="app.marlboroadvance.mpvex" />
+        <package android:name="live.mehiz.mpvkt" />
+        <package android:name="live.mehiz.mpvkt.preview" />
+        <package android:name="com.brouken.player" />
+        <package android:name="dev.anilbeesetti.nextplayer" />
+        <package android:name="com.instantbits.cast.webvideo" />
+        <package android:name="com.gianlu.aria2android" />
+        
+        <!-- Torrent clients -->
+        <package android:name="org.proninyaroslav.libretorrent" />
+        <package android:name="com.biglybt.android.client" />
+    </queries>
+
     <!-- Fixes android tv fuckery -->
     <uses-feature
         android:name="android.hardware.touchscreen"

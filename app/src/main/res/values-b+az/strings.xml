@@ -118,7 +118,7 @@
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Sənədli film</string>
     <string name="storage_error">Yükləmə xətası, yaddaş icazələrini yoxlayın</string>
-    <string name="custom_media_singluar">Media</string>
+    <string name="custom_media_singular">Media</string>
     <string name="encoding_error">Kodlama xətası</string>
     <string name="cartoons">Cizgi filmləri</string>
     <string name="anime">Anime-lər</string>
@@ -135,10 +135,10 @@
     <string name="live_singular">Canlı yayım</string>
     <string name="nsfw_singular">+18 məzmun</string>
     <string name="other_singular">Video</string>
-    <string name="music_singlar">Musiqi</string>
+    <string name="music_singular">Musiqi</string>
     <string name="audio_book_singular">Səsli Kitab</string>
-    <string name="audio_singluar">Səs</string>
-    <string name="podcast_singluar">Podkast</string>
+    <string name="audio_singular">Səs</string>
+    <string name="podcast_singular">Podkast</string>
     <string name="source_error">Mənbə xətası</string>
     <string name="remote_error">Server xətası</string>
     <string name="unsupported_error">Dəstəklənməyən xəta</string>

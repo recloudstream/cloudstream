@@ -5,4 +5,9 @@
 
     <!-- We don't care about MissingTranslation since it's handled by weblate. -->
     <issue id="MissingTranslation" severity="ignore" />
+
+    <!-- We only care about the source language here. -->
+    <issue id="StringFormatInvalid">
+        <ignore path="**/res/values-*/**" />
+    </issue>
 </lint>

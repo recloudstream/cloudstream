@@ -9,6 +9,9 @@ import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.NONE_ID
 import com.lagradost.cloudstream3.utils.txt
 
+/** General-purpose repo */
+class PlainAuthRepo(api: AuthAPI) : AuthRepo(api)
+
 /** Safe abstraction for AuthAPI that provides both a catching interface, and automatic token management. */
 abstract class AuthRepo(open val api: AuthAPI) {
     fun isValidRedirectUrl(url: String) = safe { api.isValidRedirectUrl(url) } ?: false

@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.dokka)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -104,8 +104,8 @@ android {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 68
-        versionName = "4.7.0"
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
@@ -126,6 +126,16 @@ android {
             "String",
             "SIMKL_CLIENT_SECRET",
             "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
+        )
+        buildConfigField(
+            "String",
+            "MAL_KEY",
+            "\"" + (System.getenv("MAL_KEY") ?: localProperties["mal.key"]) + "\""
+        )
+        buildConfigField(
+            "String",
+            "ANILIST_KEY",
+            "\"" + (System.getenv("ANILIST_KEY") ?: localProperties["anilist.key"]) + "\""
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -183,7 +193,6 @@ android {
     }
 
     lint {
-        abortOnError = false
         checkReleaseBuilds = false
     }
 
@@ -208,17 +217,22 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.json)
     androidTestImplementation(libs.core)
-    implementation(libs.junit.ktx)
-    androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.instancio.core)
+    androidTestImplementation(libs.junit.ktx)
+    androidTestImplementation(libs.kotlin.test)
 
     // Android Core & Lifecycle
     implementation(libs.core.ktx)
     implementation(libs.activity.ktx)
+    implementation(libs.annotation)
     implementation(libs.appcompat)
     implementation(libs.fragment.ktx)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.serialization.json) // JSON Parser
 
     // Design & UI
     implementation(libs.preference.ktx)
@@ -234,6 +248,9 @@ dependencies {
 
     // FFmpeg Decoding
     implementation(libs.bundles.nextlib)
+
+    // Anime-db for filler
+    implementation(libs.anime.db)
 
     // PlayBack
     implementation(libs.colorpicker) // Subtitle Color Picker
@@ -251,13 +268,16 @@ dependencies {
 
     // Extensions & Other Libs
     implementation(libs.jsoup) // HTML Parser
+    implementation(libs.ksoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
-    implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.jackson.module.kotlin) // JSON Parser
     implementation(libs.zipline)
+
+    // Deprecated; will be removed once extensions have time to migrate from using it
+    implementation("me.xdrop:fuzzywuzzy:1.4.0")
 
     // Torrent Support
     implementation(libs.torrentserver)
@@ -307,6 +327,7 @@ tasks.withType<KotlinJvmCompile> {
         optIn.addAll(
             "com.lagradost.cloudstream3.InternalAPI",
             "com.lagradost.cloudstream3.Prerelease",
+            "kotlin.uuid.ExperimentalUuidApi",
         )
     }
 }
@@ -314,8 +335,10 @@ tasks.withType<KotlinJvmCompile> {
 dokka {
     moduleName = "App"
     dokkaSourceSets {
-        main {
+        configureEach {
+            suppress = name != "prereleaseDebug"
             analysisPlatform = KotlinPlatform.JVM
+            displayName = "JVM"
             documentedVisibilities(
                 VisibilityModifier.Public,
                 VisibilityModifier.Protected

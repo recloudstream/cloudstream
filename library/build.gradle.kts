@@ -12,12 +12,15 @@ plugins {
     alias(libs.plugins.android.multiplatform.library)
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 
 kotlin {
     version = "1.0.1"
+
+    applyDefaultHierarchyTemplate()
 
     android {
         // If this is the same com.lagradost.cloudstream3.R stops working
@@ -53,14 +56,47 @@ kotlin {
         }
 
         commonMain.dependencies {
-            implementation(libs.nicehttp) // HTTP Lib
+            implementation(libs.annotation) // Annotations
             implementation(libs.jackson.module.kotlin) // JSON Parser
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.fuzzywuzzy) // Match Extractors
             implementation(libs.jsoup) // HTML Parser
+            implementation(libs.kotlinx.atomicfu)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.json) // JSON Parser
+            implementation(libs.ksoup) // HTML Parser
+            implementation(libs.ktor.http)
+            implementation(libs.nicehttp) // HTTP Library
             implementation(libs.rhino) // Run JavaScript
-            implementation(libs.newpipeextractor)
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
+            implementation(libs.bundles.cryptography) // Cryptography
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+        }
+
+        val jvmCommonMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.kotlin.reflect)
+                implementation(libs.newpipeextractor)
+            }
+        }
+
+        androidMain { dependsOn(jvmCommonMain) }
+        jvmMain { dependsOn(jvmCommonMain) }
+    }
+
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    // https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html
+    abiValidation {
+        enabled.set(true)
+        this.filters {
+            exclude {
+                annotatedWith.add("com.lagradost.cloudstream3.Prerelease")
+                annotatedWith.add("com.lagradost.cloudstream3.InternalAPI")
+            }
         }
     }
 }
@@ -82,6 +118,11 @@ buildkonfig {
             FieldSpec.Type.STRING,
             "MDL_API_KEY",
             (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]).toString()
+        )
+
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "TRAKT_CLIENT_ID", (System.getenv("TRAKT_CLIENT_ID") ?: localProperties["trakt.id"]).toString()
         )
     }
 }

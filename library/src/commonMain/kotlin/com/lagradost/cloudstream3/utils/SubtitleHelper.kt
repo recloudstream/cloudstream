@@ -1,14 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import me.xdrop.fuzzywuzzy.FuzzySearch
-import java.util.Locale
-
-// If you find a way to use SettingsGeneral getCurrentLocale()
-// instead of this function do it.
-fun getCurrentLocale(): String {
-    return Locale.getDefault().toLanguageTag()
-}
-
 @Suppress(
     "unused",
     "MemberVisibilityCanBePrivate"
@@ -48,23 +39,10 @@ object SubtitleHelper {
         val ISO_639_3: String,      // ISO 639-6 missing as it's intended to differentiate specific dialects and variants
         val openSubtitles: String, // inconsistent codes that do not conform ISO 639
     ) {
-        fun localizedName(localizedTo: String? = null): String {
-            // Use system locale to localize language name
-            val localeOfLangCode = Locale.forLanguageTag(this.IETF_tag)
-            val localeOfLocalizeTo = Locale.forLanguageTag(localizedTo ?: getCurrentLocale())
-            val sysLocalizedName = localeOfLangCode.getDisplayName(localeOfLocalizeTo)
-
-            val langCodeWithCountry = "${localeOfLangCode.language} (" // ${localeOfLangCode.country})"
-            val failedToLocalize =
-                sysLocalizedName.equals(this.IETF_tag, ignoreCase = true) ||
-                sysLocalizedName.contains(langCodeWithCountry, ignoreCase = true)
-
-            return if (failedToLocalize)
+        fun localizedName(localizedTo: String? = null): String =
+            localizedLanguageName(this.IETF_tag, localizedTo ?: getCurrentLocale())
                 // fallback to native language name
-                this.nativeName
-            else
-                sysLocalizedName
-        }
+                ?: this.nativeName
 
         fun nameNextToFlagEmoji(localizedTo: String? = null): String {
             // fallback to [A][A] -> [?] question mak flag
@@ -112,8 +90,8 @@ object SubtitleHelper {
 
             for (lang in languages) {
                 val score = maxOf(
-                    FuzzySearch.ratio(lowLangName, lang.languageName.lowercase()),
-                    FuzzySearch.ratio(
+                    Levenshtein.ratio(lowLangName, lang.languageName.lowercase()),
+                    Levenshtein.ratio(
                         lowLangName, lang.nativeName.lowercase()
                     )
                 )
@@ -315,10 +293,23 @@ object SubtitleHelper {
         val flagOffset = 0x1F1E6  // regional indicator "[A]"
         val offset = flagOffset - asciiOffset
 
-        val firstChar: Int = Character.codePointAt(countryLetters, 0) + offset
-        val secondChar: Int = Character.codePointAt(countryLetters, 1) + offset
+        /**
+         * Unicode surrogate pairs encode code points above U+FFFF (outside the Basic Multilingual Plane).
+         * The code point is offset by 0x10000, then split into two 10-bit halves:
+         * high surrogate: upper 10 bits, biased into the range 0xD800-0xDBFF
+         * low surrogate: lower 10 bits (masked with 0x3FF), biased into the range 0xDC00-0xDFFF
+         */
+        fun toSurrogatePair(codePoint: Int): String {
+            val high = ((codePoint - 0x10000) shr 10) + 0xD800
+            val low  = ((codePoint - 0x10000) and 0x3FF) + 0xDC00
+            return "${high.toChar()}${low.toChar()}"
+        }
 
-        return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
+        val upperLetters = countryLetters.uppercase()
+        val first  = upperLetters[0].code + offset
+        val second = upperLetters[1].code + offset
+
+        return toSurrogatePair(first) + toSurrogatePair(second)
     }
 
     // when (langTag = country) or (langTag contains country)

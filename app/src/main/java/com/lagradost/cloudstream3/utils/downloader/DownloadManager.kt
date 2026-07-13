@@ -804,6 +804,7 @@ object VideoDownloadManager {
         private suspend fun resolve(
             startByte: Long,
             endByte: Long?,
+            buffer: ByteArray,
             callback: (suspend CoroutineScope.(LazyStreamDownloadResponse) -> Unit)
         ): Long = withContext(Dispatchers.IO) {
             var currentByte: Long = startByte
@@ -822,7 +823,6 @@ object VideoDownloadManager {
             )
             val requestStream = request.body.byteStream()
 
-            val buffer = ByteArray(bufferSize)
             var read: Int
 
             try {
@@ -853,6 +853,7 @@ object VideoDownloadManager {
         suspend fun resolveSafe(
             index: Int,
             retries: Int = 3,
+            buffer: ByteArray,
             callback: (suspend CoroutineScope.(LazyStreamDownloadResponse) -> Unit)
         ): Boolean {
             var start = chuckStartByte.getOrNull(index) ?: return false
@@ -861,7 +862,7 @@ object VideoDownloadManager {
             for (i in 0 until retries) {
                 try {
                     // in case
-                    start = resolve(start, end, callback)
+                    start = resolve(start, end, buffer, callback)
                     // no end defined, so we don't care exactly where it ended
                     if (end == null) return true
                     // we have download more or exactly what we needed
@@ -1039,14 +1040,7 @@ object VideoDownloadManager {
                 startByte = stream.startAt,
                 headers = link.headers.appendAndDontOverride(
                     mapOf(
-                        "Accept-Encoding" to "identity",
-                        "accept" to "*/*",
                         "user-agent" to USER_AGENT,
-                        "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
-                        "sec-fetch-mode" to "navigate",
-                        "sec-fetch-dest" to "video",
-                        "sec-fetch-user" to "?1",
-                        "sec-ch-ua-mobile" to "?0",
                     )
                 )
             )
@@ -1165,13 +1159,29 @@ object VideoDownloadManager {
                             }
                         }
 
-                    // this will take up the first available job and resolve
+                    // Reuse a download buffer to decrease unnecessary alloc
+                    val buffer = ByteArray(items.bufferSize)
+
+                    // This will take up the first available job and resolve
                     while (true) {
                         if (!isActive) return@launch
+
+                        var isTooFarAhead = false
                         fileMutex.withLock {
                             if (metadata.type == DownloadType.IsStopped
                                 || metadata.type == DownloadType.IsFailed
                             ) return@launch
+
+                            // Limit RAM usage by throttling if too much data is downloaded but not yet written to disk
+                            // 50MB limit
+                            if (metadata.bytesDownloaded - metadata.bytesWritten > 50_000_000) {
+                                isTooFarAhead = true
+                            }
+                        }
+
+                        if (isTooFarAhead) {
+                            delay(500)
+                            continue
                         }
 
                         // mutex just in case, we never want this to fail due to multithreading
@@ -1182,7 +1192,7 @@ object VideoDownloadManager {
 
                         // in case something has gone wrong set to failed if the fail is not caused by
                         // user cancellation
-                        if (!items.resolveSafe(index, callback = callback)) {
+                        if (!items.resolveSafe(index, buffer = buffer, callback = callback)) {
                             fileMutex.withLock {
                                 if (metadata.type != DownloadType.IsStopped) {
                                     metadata.type = DownloadType.IsFailed
@@ -1303,8 +1313,6 @@ object VideoDownloadManager {
             val m3u8 = M3u8Helper.M3u8Stream(
                 link.url, link.quality, link.headers.appendAndDontOverride(
                     mapOf(
-                        "Accept-Encoding" to "identity",
-                        "accept" to "*/*",
                         "user-agent" to USER_AGENT,
                     ) + if (link.referer.isNotBlank()) mapOf("referer" to link.referer) else emptyMap()
                 )
@@ -1342,10 +1350,23 @@ object VideoDownloadManager {
                 launch(Dispatchers.IO) {
                     while (true) {
                         if (!isActive) return@launch
+
+                        var isTooFarAhead = false
                         fileMutex.withLock {
                             if (metadata.type == DownloadType.IsStopped
                                 || metadata.type == DownloadType.IsFailed
                             ) return@launch
+
+                            // Limit RAM usage by throttling if too much data is downloaded but not yet written to disk
+                            // 50MB limit
+                            if (metadata.bytesDownloaded - metadata.bytesWritten > 50_000_000) {
+                                isTooFarAhead = true
+                            }
+                        }
+
+                        if (isTooFarAhead) {
+                            delay(500)
+                            continue
                         }
 
                         // mutex just in case, we never want this to fail due to multithreading
@@ -1619,11 +1640,11 @@ object VideoDownloadManager {
     }
 
     fun getDownloadResumePackage(context: Context, id: Int): DownloadResumePackage? {
-        return context.getKey(KEY_RESUME_PACKAGES, id.toString())
+        return context.getKey<DownloadResumePackage>(KEY_RESUME_PACKAGES, id.toString())
     }
 
     fun getDownloadQueuePackage(context: Context, id: Int): DownloadQueueWrapper? {
-        return context.getKey(KEY_RESUME_IN_QUEUE, id.toString())
+        return context.getKey<DownloadQueueWrapper>(KEY_RESUME_IN_QUEUE, id.toString())
     }
 
     fun getDownloadEpisodeMetadata(
@@ -1734,6 +1755,10 @@ object VideoDownloadManager {
         companion object {
             private fun displayNotification(context: Context, id: Int, notification: Notification) {
                 safe {
+                    if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED
+                    ) return@safe
+
                     NotificationManagerCompat.from(context)
                         .notify(DOWNLOAD_NOTIFICATION_TAG, id, notification)
                 }
@@ -2005,6 +2030,8 @@ object VideoDownloadManager {
 
             linkLoadingJob = ioSafe {
                 generator.generateLinks(
+                    offset = 0,
+                    isCasting = false,
                     clearCache = false,
                     sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
                     callback = {

@@ -27,7 +27,7 @@ open class CloudMailRu : ExtractorApi() {
             "Origin" to mainUrl,
             "User-Agent" to USER_AGENT,
         )
-        val vidId      = url.substringAfter("public/").toByteArray()
+        val vidId      = url.substringAfter("public/").encodeToByteArray()
         val vidIdEnc   = base64Encode(vidId)
         val videoReq   = app.get(url, headers=headers).text
         val regex      = Regex(pattern = "videowl_view\":\\{\"count\":\"1\",\"url\":\"([^\"]*)\"\\}", options = setOf(RegexOption.IGNORE_CASE))
