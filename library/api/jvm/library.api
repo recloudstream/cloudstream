@@ -7524,8 +7524,9 @@ public final class com/lagradost/cloudstream3/utils/SubtitleHelper$LanguageMetad
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/lagradost/cloudstream3/utils/SubtitleHelperKt {
+public final class com/lagradost/cloudstream3/utils/SubtitleHelperPlatform_jvmKt {
 	public static final fun getCurrentLocale ()Ljava/lang/String;
+	public static final fun localizedLanguageName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 }
 
 public abstract class com/lagradost/cloudstream3/utils/serializers/NonEmptySerializer : kotlinx/serialization/json/JsonTransformingSerializer {
