@@ -798,10 +798,9 @@
     <string name="sync_push_summary">Save local data to Google Drive now</string>
     <string name="sync_pull_title">Download from Cloud</string>
     <string name="sync_pull_summary">Restore data from Google Drive now</string>
-    <string name="sync_auto_launch_title">Sync on app start</string>
-    <string name="sync_auto_launch_summary">Automatically pull from cloud when opening the app</string>
-    <string name="sync_auto_close_title">Sync on app close</string>
-    <string name="sync_auto_close_summary">Automatically push to cloud when closing the app</string>
+    <string name="sync_auto_title">Automatic cloud sync</string>
+    <string name="sync_auto_summary">Automatically pull on start and push on close</string>
+
     <string name="sync_plugins_title">Sync online plugins</string>
     <string name="sync_plugins_summary">Include the list of installed online plugins in the sync</string>
     <string name="sync_connected_toast">Google Drive connected</string>

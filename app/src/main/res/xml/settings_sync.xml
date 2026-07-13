@@ -41,15 +41,10 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
-            android:key="sync_auto_on_launch"
-            android:summary="@string/sync_auto_launch_summary"
-            android:title="@string/sync_auto_launch_title" />
+            android:key="sync_auto_enabled"
+            android:summary="@string/sync_auto_summary"
+            android:title="@string/sync_auto_title" />
 
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="sync_auto_on_close"
-            android:summary="@string/sync_auto_close_summary"
-            android:title="@string/sync_auto_close_title" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"

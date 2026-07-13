@@ -502,8 +502,10 @@ object PluginManager {
                 if (!newFile.exists() && currentData.url != null) {
                     Log.d(TAG, "Missing plugin file, downloading: ${currentData.internalName}")
                     val downloadedFile = downloadPluginToFile(
+                        context,
                         currentData.url,
-                        newFile
+                        newFile,
+                        null
                     )
                     if (downloadedFile == null) {
                         Log.e(TAG, "Failed to download plugin ${currentData.internalName}")

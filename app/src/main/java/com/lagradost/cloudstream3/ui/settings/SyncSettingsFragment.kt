@@ -151,7 +151,7 @@ class SyncSettingsFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>("sync_push_now")?.isEnabled = isConnected
         findPreference<Preference>("sync_pull_now")?.isEnabled = isConnected
-        findPreference<SwitchPreferenceCompat>("sync_auto_on_launch")?.isEnabled = isConnected
-        findPreference<SwitchPreferenceCompat>("sync_auto_on_close")?.isEnabled = isConnected
+        findPreference<SwitchPreferenceCompat>("sync_auto_enabled")?.isEnabled = isConnected
+
     }
 }

@@ -17,7 +17,7 @@ import com.lagradost.cloudstream3.utils.BackupUtils.isTransferable
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
-import com.lagradost.cloudstream3.utils.DataStore.mapper
+import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.RESULT_FAVORITES_STATE_DATA
 import com.lagradost.cloudstream3.utils.RESULT_SUBSCRIBED_STATE_DATA
