@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Green (Left) -->
+    <path
+        android:fillColor="#0F9D58"
+        android:pathData="M9.12,5 L2.06,17.25 L5.53,23.25 L12.59,11 Z" />
+    <!-- Blue (Bottom) -->
+    <path
+        android:fillColor="#4285F4"
+        android:pathData="M12.59,11 L5.53,23.25 L19.47,23.25 L22.94,17.25 Z" />
+    <!-- Yellow (Right) -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M9.12,5 L12.59,11 L22.94,17.25 L16,5 Z" />
+    
+    <!-- Connection Status Indicator (Border) -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M20,20 m-4.5,0 a4.5,4.5 0 1,1 9,0 a4.5,4.5 0 1,1 -9,0" />
+    <!-- Connection Status Indicator (Green Dot) -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M20,20 m-3.5,0 a3.5,3.5 0 1,1 7,0 a3.5,3.5 0 1,1 -7,0" />
+</vector>

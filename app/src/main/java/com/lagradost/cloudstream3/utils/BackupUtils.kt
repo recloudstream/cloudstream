@@ -108,7 +108,7 @@ object BackupUtils {
 
 
     fun String.isTransferable(context: Context): Boolean {
-        val prefs = context.getDefaultSharedPrefs()
+        val prefs = context.getSharedPreferences("cs3_sync_prefs", Context.MODE_PRIVATE)
         val pluginSyncEnabled = prefs.getBoolean("sync_plugins_enabled", false)
         val accountLoginSyncEnabled = prefs.getBoolean("sync_account_logins_enabled", false)
 
@@ -126,7 +126,11 @@ object BackupUtils {
         if (pluginSyncEnabled) excluded = excluded.filter { it != PLUGINS_KEY }
         if (accountLoginSyncEnabled) excluded = excluded.filter { it !in trackingKeys }
 
-        return !excluded.any { this.contains(it) }
+        val result = !excluded.any { this.contains(it) }
+        if (this == "PLUGINS_KEY" || this == "REPOSITORIES_KEY" || this.contains("home_api_used")) {
+            android.util.Log.d("BackupUtils", "isTransferable($this) = $result (pluginSyncEnabled=$pluginSyncEnabled, excluded contains PLUGINS_KEY=${excluded.contains(PLUGINS_KEY)})")
+        }
+        return result
     }
 
     private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null

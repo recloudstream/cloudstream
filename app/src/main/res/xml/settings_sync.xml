@@ -7,7 +7,7 @@
             android:key="sync_google_drive_connect"
             android:summary="@string/sync_connect_summary"
             android:title="@string/sync_connect_title"
-            android:icon="@drawable/ic_google_logo" />
+            android:icon="@drawable/ic_google_drive" />
 
         <Preference
             android:key="sync_status"

@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.common.api.Scope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.isTransferable
@@ -24,6 +25,15 @@ import com.lagradost.cloudstream3.utils.RESULT_SUBSCRIBED_STATE_DATA
 import com.lagradost.cloudstream3.utils.RESULT_WATCH_STATE
 import com.lagradost.cloudstream3.utils.RESULT_WATCH_STATE_DATA
 import com.lagradost.cloudstream3.utils.VIDEO_POS_DUR
+import com.lagradost.cloudstream3.utils.VIDEO_WATCH_STATE
+import com.lagradost.cloudstream3.utils.RESULT_RESUME_WATCHING
+import com.lagradost.cloudstream3.utils.RESULT_RESUME_WATCHING_OLD
+import com.lagradost.cloudstream3.utils.RESULT_RESUME_WATCHING_HAS_MIGRATED
+import com.lagradost.cloudstream3.utils.RESULT_EPISODE
+import com.lagradost.cloudstream3.utils.RESULT_SEASON
+import com.lagradost.cloudstream3.utils.RESULT_DUB
+import com.lagradost.cloudstream3.utils.KEY_RESULT_SORT
+import com.lagradost.cloudstream3.utils.USER_PINNED_PROVIDERS
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.AutoDownloadMode
@@ -113,7 +123,7 @@ object SyncManager {
     private suspend fun getAuthResult(context: Context): com.google.android.gms.auth.api.identity.AuthorizationResult? = withContext(Dispatchers.IO) {
         try {
             val authRequest = AuthorizationRequest.builder()
-                .setRequestedScopes(listOf(Scope(DRIVE_SCOPE_URL)))
+                .setRequestedScopes(listOf(Scope(DRIVE_SCOPE_URL), Scope("email")))
                 .build()
             val result = Identity.getAuthorizationClient(context)
                 .authorize(authRequest)
@@ -132,7 +142,14 @@ object SyncManager {
     }
 
     private suspend fun getAuthToken(context: Context): String? {
-        return getAuthResult(context)?.accessToken
+        val result = getAuthResult(context)
+        if (result?.accessToken != null) {
+            return result.accessToken
+        }
+        if (result?.hasResolution() == true && result.pendingIntent != null) {
+            _syncEvents.emit(SyncResult.NeedsAuth(result.pendingIntent!!))
+        }
+        return null
     }
 
     fun trySilentAuth(context: Context) = ioSafe {
@@ -151,21 +168,32 @@ object SyncManager {
                 RESULT_FAVORITES_STATE_DATA,
                 RESULT_SUBSCRIBED_STATE_DATA,
                 RESULT_WATCH_STATE,
-                VIDEO_POS_DUR
+                VIDEO_POS_DUR,
+                VIDEO_WATCH_STATE,
+                RESULT_RESUME_WATCHING,
+                RESULT_RESUME_WATCHING_OLD,
+                RESULT_RESUME_WATCHING_HAS_MIGRATED,
+                RESULT_EPISODE,
+                RESULT_SEASON,
+                RESULT_DUB,
+                KEY_RESULT_SORT
             )
             val datastorePrefs = context.getSharedPrefs()
             val datastoreMap = mutableMapOf<String, Any>()
-            datastoreKeys.forEach { folder ->
-                DataStore.run {
-                    context.getKeys("${DataStoreHelper.currentAccount}/$folder").forEach { key ->
-                        datastorePrefs.getString(key, null)?.let { datastoreMap[key] = it }
+            datastorePrefs.all.forEach { (key, value) ->
+                if (value != null && key.isTransferable(context)) {
+                    val isSyncFolderKey = datastoreKeys.any { folder -> key.contains("/$folder/") || key.startsWith("$folder/") || key.contains("/$folder") }
+                    val isAccountOrPluginKey = key.startsWith("auth_tokens") ||
+                            key.startsWith("data_store_helper") ||
+                            key.contains("home_api_used") ||
+                            key.contains("search_pref_providers") ||
+                            key.endsWith("_sync") ||
+                            key == "PLUGINS_KEY" ||
+                            key == "REPOSITORIES_KEY" ||
+                            key == USER_PINNED_PROVIDERS
+                    if (isSyncFolderKey || isAccountOrPluginKey) {
+                        datastoreMap[key] = value
                     }
-                }
-            }
-            
-            listOf("PLUGINS_KEY", "REPOSITORIES_KEY").forEach { key ->
-                if (key.isTransferable(context)) {
-                    datastorePrefs.getString(key, null)?.let { datastoreMap[key] = it }
                 }
             }
 
@@ -178,7 +206,7 @@ object SyncManager {
                 }
             }
 
-            Log.d(TAG, "Pushing shards: datastore(${datastoreMap.size} keys), settings(${settingsMap.size} keys)")
+            Log.d(TAG, "Pushing shards: datastore(${datastoreMap.size} keys: ${datastoreMap.keys}), settings(${settingsMap.size} keys)")
             val now = System.currentTimeMillis()
             GoogleDriveApi.upload(httpClient, token, SHARD_DATASTORE, mapper.writeValueAsString(Shard(1, datastoreMap)))
             GoogleDriveApi.upload(httpClient, token, SHARD_SETTINGS, mapper.writeValueAsString(Shard(1, settingsMap)))
@@ -197,9 +225,9 @@ object SyncManager {
         }
     }
 
-    fun pull(context: Context) = ioSafe {
+    fun pull(context: Context, force: Boolean = false) = ioSafe {
         val token = getAuthToken(context) ?: return@ioSafe
-        Log.d(TAG, "Starting pull...")
+        Log.d(TAG, "Starting pull... force=$force")
 
         try {
             val metaJson = GoogleDriveApi.download(httpClient, token, META_FILE)
@@ -226,7 +254,7 @@ object SyncManager {
                 .getLong(KEY_LAST_SYNC_TIME, 0L)
             
             Log.d(TAG, "Cloud update time: ${remoteMeta.updatedAt}, Local sync time: $lastSync")
-            if (remoteMeta.updatedAt <= lastSync) {
+            if (!force && remoteMeta.updatedAt <= lastSync) {
                 Log.d(TAG, "Local version is up to date")
                 _syncEvents.emit(SyncResult.Pull(isSuccess = true))
                 return@ioSafe
@@ -255,6 +283,13 @@ object SyncManager {
             context.getSharedPreferences(SYNC_PREFS, Context.MODE_PRIVATE)
                 .edit().putLong(KEY_LAST_SYNC_TIME, remoteMeta.updatedAt).apply()
             
+            withContext(Dispatchers.Main) {
+                MainActivity.reloadHomeEvent.invoke(true)
+                MainActivity.reloadLibraryEvent.invoke(true)
+                MainActivity.reloadAccountEvent.invoke(true)
+                MainActivity.bookmarksUpdatedEvent.invoke(true)
+            }
+
             _syncEvents.emit(SyncResult.Pull(isSuccess = true))
         } catch (e: Exception) {
             logError(e)
@@ -273,17 +308,30 @@ object SyncManager {
     }
 
     private fun applyShard(context: Context, shard: Shard, isDataStore: Boolean) {
-        val prefs = if (isDataStore) context.getSharedPreferences("rebuild_preference", Context.MODE_PRIVATE)
-                    else PreferenceManager.getDefaultSharedPreferences(context)
-        prefs.edit {
-            shard.data.forEach { (key, value) ->
-                when (value) {
-                    is Boolean -> putBoolean(key, value)
-                    is Int -> putInt(key, value)
-                    is Long -> putLong(key, value)
-                    is Float -> putFloat(key, value)
-                    is String -> putString(key, value)
-                    else -> putString(key, value.toString())
+        if (isDataStore) {
+            val prefs = context.getSharedPreferences("rebuild_preference", Context.MODE_PRIVATE)
+            prefs.edit {
+                shard.data.forEach { (key, value) ->
+                    Log.d(TAG, "Applying datastore key: $key")
+                    if (value is String) {
+                        putString(key, value)
+                    } else {
+                        putString(key, value.toString())
+                    }
+                }
+            }
+        } else {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            prefs.edit {
+                shard.data.forEach { (key, value) ->
+                    when (value) {
+                        is Boolean -> putBoolean(key, value)
+                        is Int -> putInt(key, value)
+                        is Long -> putLong(key, value)
+                        is Float -> putFloat(key, value)
+                        is String -> putString(key, value)
+                        else -> putString(key, value.toString())
+                    }
                 }
             }
         }

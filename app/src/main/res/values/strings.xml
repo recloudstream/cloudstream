@@ -817,5 +817,7 @@
     <string name="sync_status_cloud">Last Cloud Backup: %s</string>
     <string name="sync_status_cloud_fetching">Fetching cloud status...</string>
     <string name="sync_status_cloud_none">No cloud backup found</string>
+    <string name="sync_disconnect_confirm_title">Disconnect Google Drive</string>
+    <string name="sync_disconnect_confirm_message">Are you sure you want to disconnect Google Drive? This will stop automatic backup syncing.</string>
     <string name="player_is_live">Live</string>
 </resources>

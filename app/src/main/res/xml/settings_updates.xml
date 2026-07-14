@@ -36,7 +36,7 @@
         android:title="@string/pref_category_backup">
         
         <Preference
-            app:icon="@drawable/ic_google_logo"
+            app:icon="@drawable/ic_google_drive"
             app:iconSpaceReserved="true"
             android:key="@string/sync_category_account"
             android:title="@string/sync_category_account"

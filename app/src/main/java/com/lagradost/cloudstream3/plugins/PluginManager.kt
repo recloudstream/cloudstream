@@ -520,6 +520,7 @@ object PluginManager {
         }
 
         ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context)
+        afterPluginsLoadedEvent.invoke(false)
     }
 
     /**
