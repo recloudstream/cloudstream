@@ -44,27 +44,29 @@ class VidaraSo : Vidara() {
 }
 
 open class Vidara : ExtractorApi() {
-    override val name: String = "Vidara"
+    override val name = "Vidara"
     override val mainUrl = "https://vidara.to"
-    override val requiresReferer: Boolean = false
+    override val requiresReferer = false
 
     override suspend fun getUrl(
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
+        callback: (ExtractorLink) -> Unit,
     ) {
         val fileCode = url.substringAfterLast("/")
-        val fileInfo =
-            app.post("$mainUrl/api/stream", json = mapOf("filecode" to fileCode, "device" to "web"))
-                .parsed<StreamUpFileInfo>()
-
+        val fileInfo = app.post(
+            "$mainUrl/api/stream", json = mapOf(
+                "filecode" to fileCode,
+                "device" to "web"
+            )
+        ).parsed<StreamUpFileInfo>()
         callback.invoke(
             newExtractorLink(
                 source = name,
                 name = name,
                 url = fileInfo.streamingUrl,
-                type = ExtractorLinkType.M3U8
+                type = ExtractorLinkType.M3U8,
             )
         )
 
@@ -77,19 +79,15 @@ open class Vidara : ExtractorApi() {
 
     @Serializable
     private data class StreamUpFileInfo(
-        val title: String,
-        val thumbnail: String,
-        @SerialName("streaming_url")
-        @JsonProperty("streaming_url")
-        val streamingUrl: String,
-        val subtitles: List<StreamUpSubtitle>?
+        @JsonProperty("title") @SerialName("title") val title: String,
+        @JsonProperty("thumbnail") @SerialName("thumbnail") val thumbnail: String,
+        @JsonProperty("streaming_url") @SerialName("streaming_url") val streamingUrl: String,
+        @JsonProperty("subtitles") @SerialName("subtitles") val subtitles: List<StreamUpSubtitle>?,
     )
 
     @Serializable
     private data class StreamUpSubtitle(
-        @SerialName("file_path")
-        @JsonProperty("file_path")
-        val filePath: String,
-        val language: String,
+        @JsonProperty("file_path") @SerialName("file_path") val filePath: String,
+        @JsonProperty("language") @SerialName("language") val language: String,
     )
 }
