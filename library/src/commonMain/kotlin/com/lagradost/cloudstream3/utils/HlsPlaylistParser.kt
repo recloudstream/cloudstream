@@ -533,7 +533,7 @@ object HlsPlaylistParser {
         }
     }
 
-    object C {
+    private object C {
         /**
          * [Uuid] for the ClearKey DRM scheme.
          *

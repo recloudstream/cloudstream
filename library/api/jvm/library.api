@@ -7625,44 +7625,6 @@ public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser {
 	public final fun parse (Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$HlsMultivariantPlaylist;
 }
 
-public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$C {
-	public static final field CENC_TYPE_cbc1 Ljava/lang/String;
-	public static final field CENC_TYPE_cbcs Ljava/lang/String;
-	public static final field CENC_TYPE_cenc Ljava/lang/String;
-	public static final field CENC_TYPE_cens Ljava/lang/String;
-	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$C;
-	public static final field ROLE_FLAG_ALTERNATE I
-	public static final field ROLE_FLAG_CAPTION I
-	public static final field ROLE_FLAG_COMMENTARY I
-	public static final field ROLE_FLAG_DESCRIBES_MUSIC_AND_SOUND I
-	public static final field ROLE_FLAG_DESCRIBES_VIDEO I
-	public static final field ROLE_FLAG_DUB I
-	public static final field ROLE_FLAG_EASY_TO_READ I
-	public static final field ROLE_FLAG_EMERGENCY I
-	public static final field ROLE_FLAG_ENHANCED_DIALOG_INTELLIGIBILITY I
-	public static final field ROLE_FLAG_MAIN I
-	public static final field ROLE_FLAG_SIGN I
-	public static final field ROLE_FLAG_SUBTITLE I
-	public static final field ROLE_FLAG_SUPPLEMENTARY I
-	public static final field ROLE_FLAG_TRANSCRIBES_DIALOG I
-	public static final field ROLE_FLAG_TRICK_PLAY I
-	public static final field SELECTION_FLAG_AUTOSELECT I
-	public static final field SELECTION_FLAG_DEFAULT I
-	public static final field SELECTION_FLAG_FORCED I
-	public static final field TRACK_TYPE_AUDIO I
-	public static final field TRACK_TYPE_CAMERA_MOTION I
-	public static final field TRACK_TYPE_DEFAULT I
-	public static final field TRACK_TYPE_IMAGE I
-	public static final field TRACK_TYPE_METADATA I
-	public static final field TRACK_TYPE_NONE I
-	public static final field TRACK_TYPE_TEXT I
-	public static final field TRACK_TYPE_UNKNOWN I
-	public static final field TRACK_TYPE_VIDEO I
-	public final fun getCLEARKEY_UUID ()Lkotlin/uuid/Uuid;
-	public final fun getPLAYREADY_UUID ()Lkotlin/uuid/Uuid;
-	public final fun getWIDEVINE_UUID ()Lkotlin/uuid/Uuid;
-}
-
 public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$DrmInitData {
 	public fun <init> (Ljava/lang/String;[Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$SchemeData;)V
 	public final fun component1 ()Ljava/lang/String;
