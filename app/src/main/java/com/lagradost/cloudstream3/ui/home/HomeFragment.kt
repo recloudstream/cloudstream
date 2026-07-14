@@ -452,6 +452,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     val sortedApis = validAPIs
                         .filter {
                             val isPinned = pinnedphashset.contains(it.name)
+
+                            // Hide pinned NSFW when NSFW not selected. NSFW is distracting when not chosen.
                             if (isPinned && !preSelectedTypes.contains(TvType.NSFW)) {
                                 if (it.supportedTypes.all { type -> type == TvType.NSFW }) return@filter false
                             }
