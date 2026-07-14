@@ -41,10 +41,7 @@ kotlin {
     jvm()
 
     compilerOptions {
-        freeCompilerArgs.addAll(
-            "-Xexpect-actual-classes",
-            "-Xannotation-default-target=param-property"
-        )
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     sourceSets {
@@ -92,8 +89,7 @@ kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
     // https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html
     abiValidation {
-        enabled.set(true)
-        this.filters {
+        filters {
             exclude {
                 annotatedWith.add("com.lagradost.cloudstream3.Prerelease")
                 annotatedWith.add("com.lagradost.cloudstream3.InternalAPI")
