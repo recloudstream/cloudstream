@@ -2576,13 +2576,21 @@ constructor(
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
-    if (date == null) return
+    if (date.isNullOrBlank()) return
     this.date = runCatching {
         // First try standard ISO 8601 (e.g. "2026-01-01T12:30:00.000Z", "2026-05-17T14:35+02:00")
         runCatching { Instant.parse(date).toEpochMilliseconds() }
             .getOrElse {
                 val fmt = DateTimeComponents.Format { byUnicodePattern(format) }
-                val components = DateTimeComponents.parse(date, fmt)
+
+                // Try parsing the full date first then only parse the beginning of the string
+                // May lose time, but better than failing.
+                val components = runCatching {
+                    DateTimeComponents.parse(date, fmt)
+                }.recoverCatching {
+                    DateTimeComponents.parse(date.trimStart().take(format.length), fmt)
+                }.getOrThrow()
+
                 /**
                  * Try multiple conversions in order of precision for non-ISO-8601 formats,
                  * since the date string may or may not include time and/or timezone offset:
