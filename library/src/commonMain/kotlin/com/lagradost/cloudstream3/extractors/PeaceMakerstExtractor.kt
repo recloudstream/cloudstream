@@ -47,9 +47,11 @@ open class PeaceMakerst : ExtractorApi() {
         } else {
             val videoResponse = response.parsedSafe<PeaceResponse>() ?: throw ErrorLoadingException("peace response is null")
             val videoSources = videoResponse.videoSources
-            if (videoSources.isNotEmpty()) {
-                m3uLink = videoSources.lastOrNull()?.file
-            } else m3uLink = null
+            m3uLink = if (videoSources.isNotEmpty()) {
+                videoSources.lastOrNull()?.file
+            } else {
+                null
+            }
         }
 
         callback.invoke(
