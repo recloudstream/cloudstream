@@ -23,7 +23,9 @@ open class HDPlayerSystem : ExtractorApi() {
         val extRef = referer ?: ""
         val vidId = if (url.contains("video/")) {
             url.substringAfter("video/")
-        } else url.substringAfter("?data=")
+        } else {
+            url.substringAfter("?data=")
+        }
         val postUrl = "$mainUrl/player/index.php?data=$vidId&do=getVideo"
         val response = app.post(
             postUrl,
