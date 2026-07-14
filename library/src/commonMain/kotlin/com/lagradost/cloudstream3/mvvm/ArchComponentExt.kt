@@ -203,9 +203,9 @@ fun <T> throwAbleToResource(
 suspend fun <T> safeApiCall(
     @WorkerThread apiCall: suspend () -> T,
 ): Resource<T> {
-    return apiCall.ioWork {
+    return apiCall.ioWork { work ->
         try {
-            Resource.Success(it())
+            Resource.Success(work.invoke())
         } catch (throwable: Throwable) {
             logError(throwable)
             throwAbleToResource(throwable)
