@@ -404,20 +404,6 @@ class DownloadViewModel : ViewModel() {
 
     /**
      * Refreshes the Downloads screen in real time when a download is deleted/cancelled.
-     *
-     * Issue #1227: cancelling a download (or deleting it from the result page, the download
-     * queue, or a notification) fires [VideoDownloadManager.downloadDeleteEvent], but until
-     * now only the download *button* ([BaseFetchButton]) listened to it. The Downloads page
-     * itself never reacted, so the deleted episode/movie card stayed on screen until the user
-     * navigated away and back. We observe the same event here, at the activity-scoped (shared)
-     * ViewModel level, so both [DownloadFragment] (headers) and [DownloadChildFragment]
-     * (children) refresh.
-     *
-     * The header list is rebuilt from disk: deleting an *episode* fires the event with the
-     * child id, so the parent series header (download count, size) must be recomputed rather
-     * than filtered by id. The child list only needs the deleted id removed. The event is
-     * invoked on the downloader's background thread; everything below posts via thread-safe
-     * LiveData postValue.
      */
     private fun onDownloadDeleted(id: Int) {
         // Keep multi-select state consistent: forget the removed id if it was selected.
