@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalUuidApi::class)
-
 /*
  * Copyright (C) 2016 The Android Open Source Project
  *
@@ -26,7 +24,6 @@ import io.ktor.http.Url
 import kotlinx.io.Buffer
 import kotlinx.io.IOException
 import kotlinx.io.readByteArray
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @Suppress("unused")
