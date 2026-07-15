@@ -81,7 +81,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import java.util.Locale
 import java.util.concurrent.locks.ReentrantLock
 
@@ -159,10 +158,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
     }
 
     internal fun focusSearchInput() {
-        binding?.mainSearch?.apply {
-            requestFocusFromTouch()
-            post { showInputMethod(findFocus()) }
-        }
+        binding?.mainSearch?.requestFocusFromTouch()
     }
 
     var selectedSearchTypes = mutableListOf<TvType>()
