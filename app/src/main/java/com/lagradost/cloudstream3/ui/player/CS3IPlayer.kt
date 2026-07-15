@@ -112,7 +112,6 @@ import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
 import java.io.File
-import java.security.SecureRandom
 import java.util.UUID
 import java.util.concurrent.Executors
 import javax.net.ssl.HttpsURLConnection
@@ -1893,7 +1892,7 @@ class CS3IPlayer : IPlayer {
             if (ignoreSSL) {
                 // Disables ssl check
                 val sslContext: SSLContext = SSLContext.getInstance("TLS")
-                sslContext.init(null, arrayOf(SSLTrustManager()), SecureRandom())
+                sslContext.init(null, arrayOf(SSLTrustManager()), null)
                 sslContext.createSSLEngine()
                 HttpsURLConnection.setDefaultHostnameVerifier { _: String, _: SSLSession ->
                     true

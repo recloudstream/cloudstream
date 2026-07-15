@@ -34,12 +34,12 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
 import com.lagradost.cloudstream3.utils.serializers.NonEmptySerializer
 import com.lagradost.cloudstream3.utils.txt
+import dev.whyoleg.cryptography.random.CryptographyRandom
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.math.BigInteger
-import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
@@ -987,7 +987,7 @@ class SimklApi : SyncAPI() {
     }
 
     override fun loginRequest(): AuthLoginPage? {
-        val lastLoginState = BigInteger(130, SecureRandom()).toString(32)
+        val lastLoginState = BigInteger(130, CryptographyRandom.nextBytes(17)).toString(32)
         val url = "https://simkl.com/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$APP_STRING://$redirectUrlIdentifier&state=$lastLoginState"
         return AuthLoginPage(
             url = url,

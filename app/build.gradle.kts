@@ -232,6 +232,7 @@ dependencies {
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.io.core)
     implementation(libs.kotlinx.serialization.json) // JSON Parser
 
     // Design & UI
@@ -275,6 +276,7 @@ dependencies {
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.jackson.module.kotlin) // JSON Parser
     implementation(libs.zipline)
+    implementation(libs.bundles.cryptography) // Cryptography
 
     // Temp/deprecated; will be removed once extensions have time to migrate from using it
     implementation("com.google.code.gson:gson:2.11.0")
