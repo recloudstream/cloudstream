@@ -2,6 +2,8 @@ package com.lagradost.api
 
 actual object Log {
     actual fun d(tag: String, message: String) {
+        // There is no console.debug in Kotlin/JS (Yet)
+        // We will switch this when it is added.
         console.log("[$tag] $message")
     }
 
