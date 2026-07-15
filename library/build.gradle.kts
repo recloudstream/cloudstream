@@ -64,7 +64,6 @@ kotlin {
             implementation(libs.ktor.http)
             implementation(libs.nicehttp) // HTTP Library
             implementation(libs.rhino) // Run JavaScript
-            implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
             implementation(libs.bundles.cryptography) // Cryptography
         }
 

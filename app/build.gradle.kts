@@ -276,6 +276,8 @@ dependencies {
     implementation(libs.jackson.module.kotlin) // JSON Parser
     implementation(libs.zipline)
 
+    // Temp/deprecated; will be removed once extensions have time to migrate from using it
+    implementation("com.google.code.gson:gson:2.11.0")
     // Deprecated; will be removed once extensions have time to migrate from using it
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
 
