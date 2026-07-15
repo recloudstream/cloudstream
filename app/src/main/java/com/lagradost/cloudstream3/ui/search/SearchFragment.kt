@@ -160,7 +160,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
     internal fun focusSearchInput() {
         binding?.mainSearch?.apply {
-            requestFocus()
+            requestFocusFromTouch()
             post { showInputMethod(findFocus()) }
         }
     }
