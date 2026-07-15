@@ -59,6 +59,7 @@ kotlin {
             implementation(libs.kotlinx.atomicfu)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.io.core)
             implementation(libs.kotlinx.serialization.json) // JSON Parser
             implementation(libs.ksoup) // HTML Parser
             implementation(libs.ktor.http)
