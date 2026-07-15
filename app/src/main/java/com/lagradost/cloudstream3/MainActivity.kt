@@ -1707,6 +1707,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     navController
                 )
             }
+            setOnItemReselectedListener { item ->
+                if (item.itemId == R.id.navigation_search) {
+                    (navHostFragment.childFragmentManager.primaryNavigationFragment as? SearchFragment)
+                        ?.focusSearchInput()
+                }
+            }
 
         }
 
