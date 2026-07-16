@@ -82,8 +82,8 @@
             android:layout_height="5dp"
             android:layout_gravity="bottom"
             android:layout_marginBottom="-1.5dp"
-            android:progressBackgroundTint="?attr/white"
-            android:progressTint="?attr/white"
+            android:progressBackgroundTint="?attr/colorPrimary"
+            android:progressTint="?attr/colorPrimary"
             android:visibility="gone"
             tools:progress="50"
             tools:visibility="visible" />
