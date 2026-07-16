@@ -4293,85 +4293,6 @@ public final class com/lagradost/cloudstream3/extractors/Simpulumlamerop : com/l
 	public fun getName ()Ljava/lang/String;
 }
 
-public class com/lagradost/cloudstream3/extractors/Slmaxed : com/lagradost/cloudstream3/utils/ExtractorApi {
-	public fun <init> ()V
-	public final fun getEmbedRegex ()Lkotlin/text/Regex;
-	public fun getMainUrl ()Ljava/lang/String;
-	public fun getName ()Ljava/lang/String;
-	public fun getRequiresReferer ()Z
-	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class com/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse {
-	public static final field Companion Lcom/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse$Companion;
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Ljava/lang/String;
-	public final fun component4 ()Ljava/lang/String;
-	public final fun component5 ()Ljava/util/Map;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lcom/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMessage ()Ljava/lang/String;
-	public final fun getResult ()Ljava/util/Map;
-	public final fun getStatus ()Ljava/lang/String;
-	public final fun getToken ()Ljava/lang/String;
-	public final fun getType ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final synthetic class com/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse;)V
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
-}
-
-public final class com/lagradost/cloudstream3/extractors/Slmaxed$JsonResponse$Companion {
-	public final fun serializer ()Lkotlinx/serialization/KSerializer;
-}
-
-public final class com/lagradost/cloudstream3/extractors/Slmaxed$Result {
-	public static final field Companion Lcom/lagradost/cloudstream3/extractors/Slmaxed$Result$Companion;
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/extractors/Slmaxed$Result;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/extractors/Slmaxed$Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/extractors/Slmaxed$Result;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFile ()Ljava/lang/String;
-	public final fun getLabel ()Ljava/lang/String;
-	public final fun getType ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final synthetic class com/lagradost/cloudstream3/extractors/Slmaxed$Result$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public static final field INSTANCE Lcom/lagradost/cloudstream3/extractors/Slmaxed$Result$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/extractors/Slmaxed$Result;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/extractors/Slmaxed$Result;)V
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
-}
-
-public final class com/lagradost/cloudstream3/extractors/Slmaxed$Result$Companion {
-	public final fun serializer ()Lkotlinx/serialization/KSerializer;
-}
-
 public final class com/lagradost/cloudstream3/extractors/Smoothpre : com/lagradost/cloudstream3/extractors/VidHidePro {
 	public fun <init> ()V
 	public fun getMainUrl ()Ljava/lang/String;
@@ -4701,11 +4622,6 @@ public final class com/lagradost/cloudstream3/extractors/Streamhub2 : com/lagrad
 	public fun getName ()Ljava/lang/String;
 	public fun setMainUrl (Ljava/lang/String;)V
 	public fun setName (Ljava/lang/String;)V
-}
-
-public final class com/lagradost/cloudstream3/extractors/Streamlare : com/lagradost/cloudstream3/extractors/Slmaxed {
-	public fun <init> ()V
-	public fun getMainUrl ()Ljava/lang/String;
 }
 
 public class com/lagradost/cloudstream3/extractors/StreamoUpload : com/lagradost/cloudstream3/utils/ExtractorApi {
