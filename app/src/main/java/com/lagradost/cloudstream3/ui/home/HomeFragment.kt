@@ -451,7 +451,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     arrayAdapter.clear()
                     val sortedApis = validAPIs
                         .filter {
-                            it.hasMainPage && (pinnedphashset.contains(it.name) || it.supportedTypes.any(
+                            val isPinned = pinnedphashset.contains(it.name)
+
+                            // Hide pinned NSFW when NSFW not selected. NSFW is distracting when not chosen.
+                            if (isPinned && !preSelectedTypes.contains(TvType.NSFW)) {
+                                if (it.supportedTypes.all { type -> type == TvType.NSFW }) return@filter false
+                            }
+
+                            it.hasMainPage && (isPinned || it.supportedTypes.any(
                                 preSelectedTypes::contains
                             ))
                         }
@@ -665,7 +672,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     fromUI = true
                 )
                 showToast(R.string.action_reload, Toast.LENGTH_SHORT)
-                true
             }
 
             homePreviewSearchButton.setOnClickListener { _ ->
