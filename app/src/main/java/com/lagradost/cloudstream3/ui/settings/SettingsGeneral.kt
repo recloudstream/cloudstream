@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -25,7 +26,10 @@ import com.lagradost.cloudstream3.databinding.AddRemoveSitesBinding
 import com.lagradost.cloudstream3.databinding.AddSiteInputBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.network.currentVpnServer
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.network.resolveAndTestVpnServer
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -336,6 +340,117 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 {}) {
                 settingsManager.edit { putInt(getString(R.string.dns_pref), prefValues[it]) }
                 (context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+         // ── VPN SSL mode toggle ───────────────────────────────────────────────
+        val vpnSslPref = getPref(R.string.vpn_ssl_key) as? androidx.preference.SwitchPreference
+        vpnSslPref?.let { pref ->
+            // Restore persisted value into the in-memory flag on fragment start
+            val savedInsecure = settingsManager.getBoolean(getString(R.string.vpn_ssl_pref_key), false)
+            com.lagradost.cloudstream3.network.vpnAllowInsecure = savedInsecure
+            pref.isChecked = savedInsecure
+            pref.summary = if (savedInsecure)
+                getString(R.string.vpn_ssl_summary_on)
+            else
+                getString(R.string.vpn_ssl_summary_off)
+
+            pref.setOnPreferenceChangeListener { _, newValue ->
+                val insecure = newValue as Boolean
+                com.lagradost.cloudstream3.network.vpnAllowInsecure = insecure
+                settingsManager.edit { putBoolean(getString(R.string.vpn_ssl_pref_key), insecure) }
+                pref.summary = if (insecure)
+                    getString(R.string.vpn_ssl_summary_on)
+                else
+                    getString(R.string.vpn_ssl_summary_off)
+                // If a VPN is already active, rebuild the client so the SSL policy
+                // takes effect without requiring the user to re-select the VPN.
+                val appCtx = context ?: CloudStreamApp.context
+                if (com.lagradost.cloudstream3.network.currentVpnServer != null && appCtx != null) {
+                    app.initClient(appCtx)
+                }
+                true
+            }
+        }
+
+        getPref(R.string.vpn_key)?.setOnPreferenceClickListener {
+            val currentVpn = settingsManager.getString(getString(R.string.vpn_country_pref_key), "NONE") ?: "NONE"
+            showToast("Fetching available VPN regions...", android.widget.Toast.LENGTH_SHORT)
+
+            this.ioSafe {
+                val choices = com.lagradost.cloudstream3.network.getVpnCountryChoices()
+                val names = mutableListOf<String>("None")
+                val values = mutableListOf<String>("NONE")
+                for (choice in choices) {
+                    val code = choice.first
+                    val count = choice.second
+                    val name = if (code == "ANY") "Auto (\u200B$count)" else "$code (\u200B$count)"
+                    names.add(name)
+                    values.add(code)
+                }
+
+                activity?.runOnUiThread {
+                    activity?.showBottomDialog(
+                        names,
+                        values.indexOf(currentVpn).takeIf { it >= 0 } ?: 0,
+                        getString(R.string.vpn_pref),
+                        true,
+                        {}
+                    ) { selectedIndex ->
+                        val selectedValue = values[selectedIndex]
+                        val appCtx = context ?: CloudStreamApp.context
+
+                        if (selectedValue == "NONE") {
+                            // User selected "None" – clear proxy and re-init
+                            settingsManager.edit { putString(getString(R.string.vpn_country_pref_key), "NONE") }
+                            com.lagradost.cloudstream3.network.currentVpnServer = null
+                            appCtx?.let { app.initClient(it) }
+                        } else {
+                            // Save preference optimistically, then test the proxy
+                            settingsManager.edit { putString(getString(R.string.vpn_country_pref_key), selectedValue) }
+                            showToast(getString(R.string.vpn_connecting), android.widget.Toast.LENGTH_SHORT)
+
+                            if (appCtx != null) {
+                                this@SettingsGeneral.ioSafe {
+                                    try {
+                                        val server = com.lagradost.cloudstream3.network.resolveAndTestVpnServer(selectedValue)
+
+                                        if (server != null) {
+                                            // Proxy confirmed SOCKS5 – rebuild client with proxy
+                                            try {
+                                                settingsManager.edit { putString("vpn_last_server_json", com.lagradost.cloudstream3.mapper.writeValueAsString(server)) }
+                                            } catch (e: Exception) {
+                                                Log.e("VpnProviders", "Failed to save VPN server JSON", e)
+                                            }
+                                            app.initClient(appCtx)
+                                            showToast(
+                                                getString(R.string.vpn_connected).format(server.name),
+                                                android.widget.Toast.LENGTH_LONG
+                                            )
+                                        } else {
+                                            // Proxy test failed: revert the preference so the next
+                                            // buildDefaultClient won't try a broken proxy
+                                            settingsManager.edit { putString(getString(R.string.vpn_country_pref_key), "NONE") }
+                                            com.lagradost.cloudstream3.network.currentVpnServer = null
+                                            app.initClient(appCtx)
+                                            showToast(
+                                                getString(R.string.vpn_proxy_unavailable),
+                                                android.widget.Toast.LENGTH_LONG
+                                            )
+                                        }
+                                    } catch (e: Exception) {
+                                        logError(e)
+                                        settingsManager.edit { putString(getString(R.string.vpn_country_pref_key), "NONE") }
+                                        com.lagradost.cloudstream3.network.currentVpnServer = null
+                                        app.initClient(appCtx)
+                                        showToast(R.string.vpn_error, android.widget.Toast.LENGTH_SHORT)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
             return@setOnPreferenceClickListener true
         }

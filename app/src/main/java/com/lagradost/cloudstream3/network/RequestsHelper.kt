@@ -1,10 +1,12 @@
 package com.lagradost.cloudstream3.network
 
 import android.content.Context
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ignoreAllSSLErrors
@@ -63,6 +65,21 @@ fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClie
                 6 -> addQuad9Dns()
                 7 -> addDnsSbDns()
                 8 -> addCanadianShieldDns()
+            }
+        }
+        .apply {
+            val vpnPref = settingsManager.getString(context.getString(R.string.vpn_country_pref_key), "NONE") ?: "NONE"
+            if (vpnPref != "NONE") {
+                val server = currentVpnServer
+                if (server != null) {
+                    Log.d("RequestsHelper", "VPN_DEBUG buildDefaultClient: applying proxy ${server.host}:${server.proxyPort} [${server.proxyType}] insecure=${vpnAllowInsecure}")
+                    addVpnProxy(server)
+                    // When insecure mode is on and VPN is active, ignore SSL errors
+                    // so MITM-style proxies can forward HTTPS traffic without cert validation.
+                    if (vpnAllowInsecure) ignoreAllSSLErrors()
+                } else {
+                    Log.d("RequestsHelper", "VPN_DEBUG buildDefaultClient: vpnPref=$vpnPref but currentVpnServer=null — proxy NOT applied")
+                }
             }
         }
         // Needs to be build as otherwise the other builders will change this object

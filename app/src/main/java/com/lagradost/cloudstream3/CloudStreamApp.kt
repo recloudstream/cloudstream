@@ -84,6 +84,9 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
         }
 
         AppDebug.isDebug = BuildConfig.DEBUG
+
+        // Auto-restore VPN connection in the background if enabled
+        com.lagradost.cloudstream3.network.initializeVpn(this)
     }
 
     override fun attachBaseContext(base: Context?) {
