@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.app
 import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.DelicateCryptographyApi
@@ -24,7 +25,6 @@ class M3u8Helper {
             return M3u8Helper2.generateM3u8(source, streamUrl, referer, quality, headers, name)
         }
     }
-
 
     data class M3u8Stream(
         val streamUrl: String,
@@ -100,12 +100,33 @@ object M3u8Helper2 {
     }
 
     @OptIn(DelicateCryptographyApi::class)
+    @Prerelease
+    suspend fun getDecryptedBytes(
+        secretKey: ByteArray,
+        data: ByteArray,
+        iv: ByteArray = byteArrayOf(),
+        index: Int,
+    ): ByteArray {
+        val ivKey = if (iv.isEmpty()) defaultIv(index) else iv
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, secretKey)
+        return aesKey.cipher(padding = true).decryptWithIv(ivKey, data)
+    }
+
+    // Deprecate after next stable
+    /* @Deprecated(
+        message = "Renamed to getDecryptedBytes",
+        replaceWith = ReplaceWith("getDecryptedBytes(secretKey, data, iv, index)"),
+        level = DeprecationLevel.WARNING,
+    ) */
+    @OptIn(DelicateCryptographyApi::class)
     fun getDecrypted(
         secretKey: ByteArray,
         data: ByteArray,
         iv: ByteArray = byteArrayOf(),
         index: Int,
     ): ByteArray {
+        // After next stable, we can just make this a wrapper
+        // return runBlocking { getDecryptedBytes(secretKey, data, iv, index) }
         val ivKey = if (iv.isEmpty()) defaultIv(index) else iv
         val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, secretKey)
         return aesKey.cipher(padding = true).decryptWithIvBlocking(ivKey, data)
@@ -239,7 +260,7 @@ object M3u8Helper2 {
             if (tsData.size < 128 && tsData.all { it >= 0 }) throw ErrorLoadingException("ASCII found instead of data")
 
             return if (isEncrypted) {
-                getDecrypted(encryptionData, tsData, encryptionIv, index)
+                getDecryptedBytes(encryptionData, tsData, encryptionIv, index)
             } else {
                 tsData
             }
