@@ -811,6 +811,9 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                 // no failure?
                 resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 resultEpisodes.isVisible = episodes is Resource.Success
+                syncBinding?.resultSyncEpisodesHolder?.isVisible = true
+                syncBinding?.resultSyncEpisodesCounterHolder?.isVisible = true
+                syncBinding?.resultSyncEpisodesSlider?.isVisible = true
                 resultBatchDownloadButton.isVisible =
                     episodes is Resource.Success && episodes.value.isNotEmpty()
 
@@ -1114,32 +1117,44 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
 
 
         var currentSyncProgress = 0
-        fun setSyncMaxEpisodes(totalEpisodes: Int?) {
-            syncBinding?.resultSyncEpisodes?.max = (totalEpisodes ?: 0) * 1000
+
+        fun setSyncMaxEpisodes(currentEpisodes: Int?, totalEpisodes: Int?) {
 
             safe {
-                val ctx = syncBinding?.resultSyncEpisodes?.context
-                syncBinding?.resultSyncMaxEpisodes?.text =
-                    totalEpisodes?.let { episodes ->
-                        ctx?.getString(R.string.sync_total_episodes_some)?.format(episodes)
-                    } ?: run {
-                        ctx?.getString(R.string.sync_total_episodes_none)
+                //val ctx = syncBinding?.resultSyncEpisodes?.context
+
+                syncBinding?.resultSyncEpisodesText?.text = totalEpisodes?.let { episodes ->
+
+                    if (episodes != 0) {
+                        syncBinding?.resultSyncEpisodesSlider?.value = (currentEpisodes ?: 0).toFloat()
+                        syncBinding?.resultSyncEpisodesSlider?.valueTo = episodes.toFloat()
+                    } else {
+                        syncBinding?.resultSyncEpisodesHolder?.isVisible = false
                     }
+
+                    context?.getString(R.string.sync_total_episodes_format)?.format(currentEpisodes, episodes)
+
+                } ?: run {
+                    syncBinding?.resultSyncEpisodesHolder?.isVisible = false
+                    syncBinding?.resultSyncSetScore?.isClickable = false
+
+                    context?.getString(R.string.sync_total_episodes_format_none)
+                }
             }
         }
+
         observe(syncModel.metadata) { meta ->
             when (meta) {
                 is Resource.Success -> {
                     val d = meta.value
-                    syncBinding?.resultSyncEpisodes?.progress = currentSyncProgress * 1000
-                    setSyncMaxEpisodes(d.totalEpisodes)
+                    setSyncMaxEpisodes(null, d.totalEpisodes)
 
                     viewModel.setMeta(d, syncModel.getSyncs())
                 }
 
                 is Resource.Loading -> {
-                    syncBinding?.resultSyncMaxEpisodes?.text =
-                        syncBinding?.resultSyncMaxEpisodes?.context?.getString(R.string.sync_total_episodes_none)
+                    syncBinding?.resultSyncEpisodesText?.text =
+                        context?.getString(R.string.sync_total_episodes_none)
                 }
 
                 else -> {}
@@ -1181,16 +1196,9 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
 
                         d.maxEpisodes?.let {
                             // don't directly call it because we don't want to override metadata observe
-                            setSyncMaxEpisodes(it)
+                            setSyncMaxEpisodes(watchedEpisodes, it)
                         }
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            resultSyncEpisodes.setProgress(watchedEpisodes * 1000, true)
-                        } else {
-                            resultSyncEpisodes.progress = watchedEpisodes * 1000
-                        }
-                        resultSyncCurrentEpisodes.text =
-                            Editable.Factory.getInstance()?.newEditable(watchedEpisodes.toString())
                         safe { // format might fail
                             val text = d.score?.toFloat(10)?.roundToInt()?.let {
                                 context?.getString(R.string.sync_score_format)?.format(it)
@@ -1243,19 +1251,8 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                     if (fromUser) syncModel.setScore(Score.from(value, it.valueTo.roundToInt()))
                 }
 
-                resultSyncAddEpisode.setOnClickListener {
-                    syncModel.setEpisodesDelta(1)
-                }
-
-                resultSyncSubEpisode.setOnClickListener {
-                    syncModel.setEpisodesDelta(-1)
-                }
-
-                resultSyncCurrentEpisodes.doOnTextChanged { text, _, before, count ->
-                    if (count == before) return@doOnTextChanged
-                    text?.toString()?.toIntOrNull()?.let { ep ->
-                        syncModel.setEpisodes(ep)
-                    }
+                resultSyncEpisodesSlider.addOnChangeListener { it, value, fromUser ->
+                    if (fromUser) syncModel.setEpisodes(value.roundToInt())
                 }
             }
         }
