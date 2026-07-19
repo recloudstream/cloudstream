@@ -227,7 +227,6 @@ import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
 import com.lagradost.cloudstream3.extractors.Streamhub2
-import com.lagradost.cloudstream3.extractors.Streamlare
 import com.lagradost.cloudstream3.extractors.StreamoUpload
 import com.lagradost.cloudstream3.extractors.Streamplay
 import com.lagradost.cloudstream3.extractors.Streamsss
@@ -1202,7 +1201,6 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     YoutubeShortLinkExtractor(),
     YoutubeMobileExtractor(),
     YoutubeNoCookieExtractor(),
-    Streamlare(),
     PlayLtXyz(),
 
     Cda(),
