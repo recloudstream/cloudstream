@@ -1,78 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="10dp"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="10dp">
 
         <androidx.cardview.widget.CardView
-                android:id="@+id/account_main_profile_picture_holder"
-                app:cardCornerRadius="100dp"
-                android:layout_gravity="center_vertical"
-                android:layout_width="35dp"
-                android:layout_height="35dp">
+            android:id="@+id/account_main_profile_picture_holder"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            app:cardCornerRadius="100dp">
 
             <ImageView
-                    android:id="@+id/account_main_profile_picture"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:ignore="ContentDescription" />
+                android:id="@+id/account_main_profile_picture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="ContentDescription" />
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
+
+            <TextView
+                android:id="@+id/account_name"
+
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:textColor="?attr/textColor"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:text="MAL HelloWorld" />
 
             <TextView
-                    android:id="@+id/account_name"
-
-                    android:textStyle="bold"
-                    tools:text="MAL HelloWorld"
-                    android:textSize="20sp"
-                    android:textColor="?attr/textColor"
-                    android:layout_width="match_parent"
-                    android:layout_rowWeight="1"
-                    android:layout_height="wrap_content" />
-
-            <TextView
-                    android:id="@+id/account_site"
-                    android:layout_gravity="center_vertical"
-                    tools:text="MyAnimeList"
-                    android:textSize="15sp"
-                    android:textColor="?attr/grayTextColor"
-                    android:layout_width="match_parent"
-                    android:layout_rowWeight="1"
-                    android:layout_height="wrap_content" />
+                android:id="@+id/account_site"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_gravity="center_vertical"
+                android:textColor="?attr/grayTextColor"
+                android:textSize="15sp"
+                tools:text="MyAnimeList" />
         </LinearLayout>
 
     </LinearLayout>
 
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/account_support_scrobble_switch"
+        style="@style/SettingsItem"
+        android:focusable="true"
+        android:text="@string/supports_scrobble">
+    </com.google.android.material.materialswitch.MaterialSwitch>
+
     <TextView
         android:id="@+id/account_switch_account"
-        android:text="@string/switch_account"
         style="@style/SettingsItem"
-        android:focusable="true"/>
+        android:focusable="true"
+        android:text="@string/switch_account" />
 
     <TextView
         android:id="@+id/account_logout"
-        android:text="@string/logout"
         style="@style/SettingsItem"
-        android:focusable="true">
+        android:focusable="true"
+        android:text="@string/logout">
 
         <requestFocus />
     </TextView>
+
 </LinearLayout>

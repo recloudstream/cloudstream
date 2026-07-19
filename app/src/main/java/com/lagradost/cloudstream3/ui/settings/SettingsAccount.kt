@@ -61,6 +61,7 @@ import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.PreferenceDelegate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -72,8 +73,11 @@ import com.lagradost.cloudstream3.utils.txt
 import qrcode.QRCode
 
 class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
+
     companion object {
-        /** Used by nginx plugin too */
+        /**
+         * Used by nginx plugin too
+         */
         @SuppressLint("StringFormatInvalid")
         fun showLoginInfo(
             activity: FragmentActivity?,
@@ -92,6 +96,12 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
             binding.accountMainProfilePictureHolder.isVisible =
                 !info?.profilePicture.isNullOrEmpty()
             binding.accountMainProfilePicture.loadImage(info?.profilePicture)
+
+            binding.accountSupportScrobbleSwitch.isChecked = api.scrobbleEnabled
+            binding.accountSupportScrobbleSwitch.isVisible = api.supportScrobble
+            binding.accountSupportScrobbleSwitch.setOnCheckedChangeListener { _, isChecked ->
+                api.scrobbleEnabled = isChecked
+            }
 
             binding.accountLogout.isVisible = info != null
             binding.accountLogout.setOnClickListener {
@@ -117,7 +127,10 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
             }
 
             if (isLayout(TV or EMULATOR)) {
-                binding.accountSwitchAccount.requestFocus()
+                if (binding.accountSupportScrobbleSwitch.isVisible)
+                    binding.accountSupportScrobbleSwitch.requestFocus()
+                else
+                    binding.accountSwitchAccount.requestFocus()
             }
         }
 
