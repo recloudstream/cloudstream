@@ -134,7 +134,7 @@ class PluginDetailsFragment(val data: PluginViewData) : BaseBottomSheetDialogFra
         }
     }
 
-    private fun updateVoting(value: Int) {
+    private suspend fun updateVoting(value: Int) {
         val metadata = data.pluginWrapper.plugin
         binding?.apply {
             pluginVotes.text = value.toString()

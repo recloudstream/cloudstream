@@ -17,11 +17,13 @@ import com.lagradost.cloudstream3.syncproviders.PlainAuthRepo
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.MD5
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
-import java.security.MessageDigest
 
 class AnimeSkipAuth : AuthAPI() {
     override val name = "AnimeSkip"
@@ -31,9 +33,12 @@ class AnimeSkipAuth : AuthAPI() {
     override val hasInApp = true
     override val createAccountUrl = "https://anime-skip.com/account"
     val baseClientId = "as1JgiMbW4wKfmTLWXS79iTDQFll76pk"
-    fun md5(input: String): String {
-        val md = MessageDigest.getInstance("MD5")
-        return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
+
+    suspend fun md5(input: String): String {
+        @OptIn(DelicateCryptographyApi::class)
+        val digest = CryptographyProvider.Default.get(MD5)
+            .hasher().hash(input.encodeToByteArray())
+        return BigInteger(1, digest).toString(16).padStart(32, '0')
     }
 
     @Serializable
