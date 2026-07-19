@@ -55,6 +55,9 @@ tvprovider = "1.1.0"
 video = "1.0.0"
 workRuntimeKtx = "2.11.2"
 zipline = "1.27.0"
+playServicesAuth = "21.3.0"
+credentialsManager = "1.3.0"
+googleid = "1.1.1"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
@@ -98,6 +101,7 @@ kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "k
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIOCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
@@ -135,6 +139,10 @@ tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovi
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 zipline = { module = "app.cash.zipline:zipline-android", version.ref = "zipline" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+credentials = { module = "androidx.credentials:credentials", version.ref = "credentialsManager" }
+credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentialsManager" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

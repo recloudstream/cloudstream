@@ -129,6 +129,11 @@ android {
         )
         buildConfigField(
             "String",
+            "GOOGLE_CLIENT_ID",
+            "\"" + (localProperties["google.client_id"] ?: "") + "\""
+        )
+        buildConfigField(
+            "String",
             "MAL_KEY",
             "\"" + (System.getenv("MAL_KEY") ?: localProperties["mal.key"]) + "\""
         )
@@ -289,6 +294,13 @@ dependencies {
     implementation(libs.nicehttp) // HTTP Lib
 
     implementation(project(":library"))
+
+    // Google Drive Sync
+    implementation(libs.play.services.auth)          // AuthorizationClient for Drive token
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.kotlinx.coroutines.play.services) // .await() on GMS Tasks
 }
 
 tasks.register<Jar>("androidSourcesJar") {

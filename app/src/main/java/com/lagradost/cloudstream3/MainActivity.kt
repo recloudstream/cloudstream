@@ -100,6 +100,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STR
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.localListApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.google.SyncManager
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
@@ -518,6 +519,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             R.id.navigation_settings_extensions,
             R.id.navigation_settings_plugins,
             R.id.navigation_test_providers,
+            R.id.navigation_settings_sync,
         ).contains(destination.id)
 
 
@@ -637,6 +639,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        val prefs = getSharedPreferences("cs3_sync_prefs", Context.MODE_PRIVATE)
+        SyncManager.trySilentAuth(this)
+        if (prefs.getBoolean("sync_auto_enabled", false) && SyncManager.isEnabled(this)) {
+            SyncManager.pull(this)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         afterPluginsLoadedEvent += ::onAllPluginsLoaded
@@ -664,6 +675,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         } catch (e: Exception) {
             logError(e)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val prefs = getSharedPreferences("cs3_sync_prefs", Context.MODE_PRIVATE)
+        if (prefs.getBoolean("sync_auto_enabled", false) && SyncManager.isEnabled(this)) {
+            SyncManager.push(this)
         }
     }
 
