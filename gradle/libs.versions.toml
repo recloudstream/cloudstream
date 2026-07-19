@@ -8,7 +8,7 @@ annotation = "1.10.0"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha07"
 buildkonfigGradlePlugin = "0.21.2"
-coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
+coil = "3.5.0"
 colorpicker = "6b46b49"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
 constraintlayout = "2.2.1"
@@ -56,7 +56,7 @@ video = "1.0.0"
 workRuntimeKtx = "2.11.2"
 zipline = "1.27.0"
 
-jvmTarget = "1.8"
+jvmTarget = "11"
 jdkToolchain = "17"
 minSdk = "23"
 compileSdk = "37"
