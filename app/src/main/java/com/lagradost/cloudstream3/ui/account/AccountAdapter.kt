@@ -23,7 +23,8 @@ class AccountAdapter(
     private val accountSelectCallback: (DataStoreHelper.Account) -> Unit,
     private val accountCreateCallback: (DataStoreHelper.Account) -> Unit,
     private val accountEditCallback: (DataStoreHelper.Account) -> Unit,
-    private val accountDeleteCallback: (DataStoreHelper.Account) -> Unit
+    private val accountDeleteCallback: (DataStoreHelper.Account) -> Unit,
+    private val pickProfileImage: ((String) -> Unit) -> Unit,
 ) : NoStateAdapter<DataStoreHelper.Account>() {
 
     companion object {
@@ -74,6 +75,7 @@ class AccountAdapter(
                             context = root.context,
                             account = item,
                             isNewAccount = false,
+                            pickProfileImage = pickProfileImage,
                             accountEditCallback = { account ->
                                 accountEditCallback.invoke(
                                     account
@@ -127,6 +129,7 @@ class AccountAdapter(
                         context = root.context,
                         account = item,
                         isNewAccount = false,
+                        pickProfileImage = pickProfileImage,
                         accountEditCallback = { account -> accountEditCallback.invoke(account) },
                         accountDeleteCallback = { account ->
                             accountDeleteCallback.invoke(
@@ -168,6 +171,7 @@ class AccountAdapter(
                         defaultImageIndex = image
                     ),
                     isNewAccount = true,
+                    pickProfileImage = pickProfileImage,
                     accountEditCallback = { account -> accountCreateCallback.invoke(account) },
                     accountDeleteCallback = {}
                 )

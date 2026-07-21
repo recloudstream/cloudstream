@@ -3,12 +3,15 @@ package com.lagradost.cloudstream3.ui.account
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
@@ -42,11 +45,59 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 
+internal class ProfileImagePicker(private val context: Context) {
+    private var callback: ((String) -> Unit)? = null
+
+    fun launch(
+        launcher: ActivityResultLauncher<Array<String>>,
+        callback: (String) -> Unit,
+    ) {
+        this.callback = callback
+        try {
+            launcher.launch(arrayOf("image/*"))
+        } catch (error: Exception) {
+            this.callback = null
+            logError(error)
+            showToast(R.string.edit_profile_image_error_invalid, Toast.LENGTH_SHORT)
+        }
+    }
+
+    fun onImagePicked(uri: Uri?) {
+        val callback = callback ?: return
+        this.callback = null
+        if (uri == null) return
+
+        try {
+            context.contentResolver.takePersistableUriPermission(
+                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        } catch (error: Exception) {
+            logError(error)
+            showToast(R.string.edit_profile_image_error_invalid)
+            return
+        }
+
+        ImageLoader(context).enqueue(
+            ImageRequest.Builder(context).data(uri)
+                .allowHardware(false).size(512, 512).listener(
+                    onSuccess = { _, _ ->
+                        callback(uri.toString())
+                        showToast(R.string.edit_profile_image_success, Toast.LENGTH_SHORT)
+                    },
+                    onError = { _, _ ->
+                        showToast(R.string.edit_profile_image_error_invalid)
+                    }
+                ).build()
+        )
+    }
+}
+
 object AccountHelper {
     fun showAccountEditDialog(
         context: Context,
         account: DataStoreHelper.Account,
         isNewAccount: Boolean,
+        pickProfileImage: ((String) -> Unit) -> Unit,
         accountEditCallback: (DataStoreHelper.Account) -> Unit,
         accountDeleteCallback: (DataStoreHelper.Account) -> Unit
     ) {
@@ -166,7 +217,7 @@ object AccountHelper {
 
         canSetPin = true
 
-        binding.editProfilePhotoButton.setOnClickListener {
+        val showProfileImageUrlDialog = { callback: (String) -> Unit ->
             val bottomSheetDialog = BottomSheetDialog(context)
             val sheetBinding = BottomInputDialogBinding.inflate(LayoutInflater.from(context))
             bottomSheetDialog.setContentView(sheetBinding.root)
@@ -189,8 +240,7 @@ object AccountHelper {
                         .allowHardware(false)
                         .listener(
                             onSuccess = { _, _ ->
-                                currentEditAccount = currentEditAccount.copy(customImage = url)
-                                binding.accountImage.loadImage(url)
+                                callback(url)
                                 showToast(
                                     R.string.edit_profile_image_success,
                                     Toast.LENGTH_SHORT
@@ -215,6 +265,29 @@ object AccountHelper {
                     bottomSheetDialog.dismissSafe()
                 }
             }
+        }
+
+        binding.editProfilePhotoButton.setOnClickListener {
+            AlertDialog.Builder(context)
+                .setTitle(R.string.edit_profile_image_title)
+                .setItems(arrayOf(
+                    context.getString(R.string.edit_profile_image_from_file),
+                    context.getString(R.string.edit_profile_image_hint),
+                )) { _, selection ->
+                    if (selection == 0) {
+                        pickProfileImage { image ->
+                            if (!dialog.isShowing) return@pickProfileImage
+                            currentEditAccount = currentEditAccount.copy(customImage = image)
+                            binding.accountImage.loadImage(image)
+                        }
+                    } else {
+                        showProfileImageUrlDialog { image ->
+                            currentEditAccount = currentEditAccount.copy(customImage = image)
+                            binding.accountImage.loadImage(image)
+                        }
+                    }
+                }
+                .show()
         }
     }
 
@@ -404,7 +477,8 @@ object AccountHelper {
                 },
                 accountCreateCallback = { viewModel.handleAccountUpdate(it, activity) },
                 accountEditCallback = { viewModel.handleAccountUpdate(it, activity) },
-                accountDeleteCallback = { viewModel.handleAccountDelete(it, activity) }
+                accountDeleteCallback = { viewModel.handleAccountDelete(it, activity) },
+                pickProfileImage = activity::pickProfileImage,
             ).apply {
                 submitList(liveAccounts)
             }

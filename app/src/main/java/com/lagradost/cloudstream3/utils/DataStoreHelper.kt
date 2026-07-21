@@ -169,7 +169,10 @@ object DataStoreHelper {
         @JsonProperty("lockPin") @SerialName("lockPin") val lockPin: String? = null,
     ) {
         @get:JsonIgnore
-        val image get() = customImage?.let { UiImage.Image(it) } ?:
+        val image get() = customImage?.takeUnless { image ->
+            image.startsWith("content://") && context?.contentResolver?.persistedUriPermissions
+                ?.none { it.uri.toString() == image } != false
+        }?.let { UiImage.Image(it) } ?:
             profileImages.getOrNull(defaultImageIndex)?.let {
                 UiImage.Drawable(it)
             } ?: UiImage.Drawable(profileImages.first())
