@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.account
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
 import androidx.activity.viewModels
 import androidx.preference.PreferenceManager
@@ -43,6 +44,16 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
     }
 
     val accountViewModel: AccountViewModel by viewModels()
+
+    private val profileImagePicker = ProfileImagePicker(this)
+    private val profileImageLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+        profileImagePicker::onImagePicked,
+    )
+
+    private fun pickProfileImage(callback: (String) -> Unit) {
+        profileImagePicker.launch(profileImageLauncher, callback)
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,7 +154,8 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
                         navigateToMainActivity()
                     }
                 },
-                accountDeleteCallback = { accountViewModel.handleAccountDelete(it, this) }
+                accountDeleteCallback = { accountViewModel.handleAccountDelete(it, this) },
+                pickProfileImage = ::pickProfileImage,
             ).apply {
                 submitList(liveAccounts)
             }

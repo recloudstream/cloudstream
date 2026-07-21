@@ -64,7 +64,8 @@ import com.lagradost.cloudstream3.ui.setRecycledViewPool
 
 class HomeParentItemAdapterPreview(
     private val viewModel: HomeViewModel,
-    private val accountViewModel: AccountViewModel
+    private val accountViewModel: AccountViewModel,
+    private val pickProfileImage: ((String) -> Unit) -> Unit,
 ) : ParentItemAdapter(
     id = "HomeParentItemAdapterPreview".hashCode(),
     clickCallback = {
@@ -104,7 +105,7 @@ class HomeParentItemAdapterPreview(
             )
         }
 
-        return HeaderViewHolder(binding, viewModel, accountViewModel)
+        return HeaderViewHolder(binding, viewModel, accountViewModel, pickProfileImage)
     }
 
     override fun onBindHeader(holder: ViewHolderState<Bundle>) {
@@ -131,6 +132,7 @@ class HomeParentItemAdapterPreview(
         val binding: ViewBinding,
         val viewModel: HomeViewModel,
         accountViewModel: AccountViewModel,
+        private val pickProfileImage: ((String) -> Unit) -> Unit,
     ) :
         ViewHolderState<Bundle>(binding) {
 
@@ -558,6 +560,7 @@ class HomeParentItemAdapterPreview(
                         context = context,
                         account = currentAccount,
                         isNewAccount = false,
+                        pickProfileImage = pickProfileImage,
                         accountEditCallback = { accountViewModel.handleAccountUpdate(it, context) },
                         accountDeleteCallback = {
                             accountViewModel.handleAccountDelete(
