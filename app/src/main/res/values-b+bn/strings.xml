@@ -3,7 +3,7 @@
     <string name="result_poster_img_des">পোস্টার</string>
     <string name="play_with_app_name">ক্লাউডস্ট্রিম দিয়ে চালান</string>
     <string name="title_home">হোম</string>
-    <string name="cast_format" formatted="true">অভিনয়েঃ %s</string>
+    <string name="cast_format" formatted="true">অভিনয়ে: %s</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dদিন %2$dঘন্টা %3$dমিনিট</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dঘন্টা %2$dমিনিট</string>
     <string name="next_episode_time_min_format" formatted="true">%d মিনিট</string>
@@ -22,7 +22,7 @@
     <string name="title_search">খুঁজুন</string>
     <string name="title_downloads">ডাউনলোডসমূহ</string>
     <string name="title_settings">সেটিংস</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s এপি %2$d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s পর্ব %2$d</string>
     <string name="next_episode_format" formatted="true">পর্ব %d মুক্তির তারিখ</string>
     <string name="result_share">শেয়ার</string>
     <string name="result_open_in_browser">ব্রাউজারে খুলুন</string>
@@ -131,8 +131,8 @@
     <string name="backup_failed">স্টোরেজ এর অনুমতি অনুপস্থিত। দয়া করে আবার চেষ্টা করুন।</string>
     <string name="settings_info">তথ্য</string>
     <string name="show_trailers_settings">ট্রেইলার প্রদর্শন করুন</string>
-    <string name="kitsu_settings">কিটসু হতে পোস্টারসমূহ প্রদর্শন করুন</string>
-    <string name="automatic_plugin_updates">স্বয়ংক্রিয়ভাবে প্লাগিন এর হালনাগাদ</string>
+    <string name="kitsu_settings">Kitsu থেকে পোস্টারসমূহ প্রদর্শন করুন</string>
+    <string name="automatic_plugin_updates">স্বয়ংক্রিয় প্লাগইন আপডেট</string>
     <string name="automatic_plugin_download">স্বয়ংক্রিয়ভাবে প্লাগিনসমুহের ডাউনলোড</string>
     <string name="category_updates">হালনাগাদ ও ব্যাকআপ</string>
     <string name="updates_settings">অ্যাপ এর হালনাগাদ দেখান</string>
@@ -148,9 +148,9 @@
     <string name="double_tap_to_seek_settings_des">সামনে বা পিছনের দিকে যেতে ডান বা বাম দিকে দুবার আলতো চাপুন</string>
     <string name="delete_file">ফাইল ডিলিট</string>
     <string name="subs_default_reset_toast">মান ডিফল্ট এ রিসেট করুন</string>
-    <string name="updates_settings_des">স্টার্টআপে নতুন আপডেটের জন্য স্বয়ংক্রিয়ভাবে অনুসন্ধান করুন</string>
+    <string name="updates_settings_des">স্টার্টআপে নতুন আপডেটের জন্য স্বয়ংক্রিয়ভাবে অনুসন্ধান করুন যোগ।</string>
     <string name="movies_singular">সিনেমা</string>
-    <string name="show_fillers_settings">এনিমে এর ফিলার পর্ব দেখায়</string>
+    <string name="show_fillers_settings">অ্যানিমে ফিলার পর্ব প্রদর্শন</string>
     <string name="tv_series">টিভি সিরিজ</string>
     <string name="no_links_found_toast">লিংক পাওয়া যায়নি</string>
     <string name="benene_des">চা খাওয়ানো হয়েছে</string>
@@ -204,7 +204,7 @@
     <string name="anim">আমাদের তৈরি Anime দেখার অ্যাপ্লিকেশন</string>
     <string name="nsfw">18+</string>
     <string name="anime">এনিমে</string>
-    <string name="pref_filter_search_quality">অনুসন্ধান ফলাফলে নির্বাচিত ভিডিও কুয়ালিটি লুকান</string>
+    <string name="pref_filter_search_quality">অনুসন্ধানের ফলে নির্বাচিত ভিডিওর মান লুকান</string>
     <string name="app_storage">অ্যাপ</string>
     <string name="livestreams">লাইভস্ট্রিম</string>
     <string name="apk_installer_settings">APK ইনস্টলার</string>
@@ -354,4 +354,26 @@
     <string name="speech_recognition_unavailable">স্পিচ রিকগনিশন উপলব্ধ নেই</string>
     <string name="begin_speaking">কথা বলা শুরু করুন…</string>
     <string name="download_queue">ডাউনলোড তালিকা</string>
+    <string name="play_full_series_button">সম্পূর্ণ সিরিজ প্লে করুন</string>
+    <string name="torrent_info">এই ভিডিওটি একটি টরেন্ট, অর্থাৎ আপনার ভিডিও অ্যাক্টিভিটি ট্র্যাক করা সম্ভব।\nএগোনোর আগে টরেন্টিং সম্পর্কে ভালোভাবে বুঝে নিন।</string>
+    <string name="downloads_delete_select">ডিলিট করার জন্য আইটেম সিলেক্ট করুন</string>
+    <string name="downloads_empty">বর্তমানে কোনো ডাউনলোড নেই।</string>
+    <string name="queue_empty_message">বর্তমানে কোনো ডাউনলোড কিউতে নেই।</string>
+    <string name="offline_file">অফলাইনে দেখার জন্য উপলব্ধ</string>
+    <string name="select_all">সব সিলেক্ট করুন</string>
+    <string name="deselect_all">সব ডিসিলেক্ট করুন</string>
+    <string name="open_local_video">লোকাল ভিডিও খুলুন</string>
+    <string name="extra_brightness_settings">অতিরিক্ত ব্রাইটনেস</string>
+    <string name="extra_brightness_settings_des">ডিসপ্লে ব্রাইটনেস ১০০% ছাড়িয়ে গেলে ব্রাইটনেস ফিল্টার চালু করুন</string>
+    <string name="search_suggestions">সার্চ সাজেশন</string>
+    <string name="search_suggestions_des">টাইপ করার সময় সার্চ সাজেশন দেখান</string>
+    <string name="clear_suggestions">সাজেশন মুছে ফেলুন</string>
+    <string name="show_player_metadata_overlay">প্লেয়ার মেটাডেটা ওভারলে প্রদর্শন</string>
+    <string name="show_cast_in_details">কাস্ট প্যানেল প্রদর্শন</string>
+    <string name="install_prerelease">প্রাক-মুক্তি সংস্করণ ইনস্টলেশন</string>
+    <string name="prerelease_already_installed">প্রাক-মুক্তি সংস্করণ ইতোমধ্যে ইনস্টল রয়েছে।</string>
+    <string name="prerelease_install_failed">প্রাক-মুক্তি সংস্করণ ইনস্টল করতে সমস্যা হয়েছে।</string>
+    <string name="delete_format" formatted="true">(%1$d | %2$s) মুছুন</string>
+    <string name="test_warning">সাবধান</string>
+    <string name="delete_message_multiple" formatted="true">আপনি কি নিম্নলিখিত আইটেমগুলো স্থায়ীভাবে মুছতে চান?\n\n%s</string>
 </resources>
