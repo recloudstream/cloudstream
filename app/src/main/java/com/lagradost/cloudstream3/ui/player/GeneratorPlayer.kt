@@ -47,7 +47,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp
-import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
@@ -96,7 +95,6 @@ import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
 import com.lagradost.cloudstream3.utils.AppContextUtils.getShortSeasonText
@@ -185,25 +183,22 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var isNextEpisode: Boolean = false // this is used to reset the watch time
 
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
+    private var subtitlesDisabledByUser = false
 
     private data class EpisodePlaybackSelection(
-        val sourceName: String?,
-        val subtitle: SubtitleData?,
+        val source: EpisodeSourceSelection?,
+        val subtitle: EpisodeSubtitleSelection?,
     )
 
     private fun rememberEpisodePlaybackSelection() {
+        val subtitle = player.getCurrentPreferredSubtitle() ?: currentSelectedSubtitles
         nextEpisodeSelection = EpisodePlaybackSelection(
-            sourceName = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name,
-            subtitle = player.getCurrentPreferredSubtitle() ?: currentSelectedSubtitles,
+            source = currentSelectedLink?.toEpisodeSourceSelection(),
+            subtitle = createEpisodeSubtitleSelection(
+                subtitle,
+                subtitlesDisabled = subtitlesDisabledByUser,
+            ),
         )
-    }
-
-    private fun findRememberedSubtitle(subtitles: Set<SubtitleData>): SubtitleData? {
-        val remembered = nextEpisodeSelection?.subtitle ?: return null
-        return subtitles.firstOrNull {
-            it.originalName == remembered.originalName &&
-                    it.nameSuffix == remembered.nameSuffix
-        }
     }
 
     private val allMeta: List<ResultEpisode>?
@@ -218,20 +213,10 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun setSubtitles(subtitle: SubtitleData?, userInitiated: Boolean): Boolean {
         if (userInitiated) {
             nextEpisodeSelection = null
+            subtitlesDisabledByUser = subtitle == null
         }
-        // If subtitle is changed and user initiated -> Save the language
-        if (subtitle != currentSelectedSubtitles && userInitiated) {
-            val subtitleLanguageTagIETF = if (subtitle == null) {
-                "" // -> No Subtitles
-            } else {
-                subtitle.getIETF_tag()
-            }
-
-            if (subtitleLanguageTagIETF != null) {
-                Log.i(TAG, "Set SUBTITLE_AUTO_SELECT_KEY to '$subtitleLanguageTagIETF'")
-                setKey(SUBTITLE_AUTO_SELECT_KEY, subtitleLanguageTagIETF)
-                preferredAutoSelectSubtitles = subtitleLanguageTagIETF
-            }
+        if (subtitle != null) {
+            subtitlesDisabledByUser = false
         }
 
         currentSelectedSubtitles = subtitle
@@ -548,16 +533,20 @@ class GeneratorPlayer : FullScreenPlayer() {
         context?.let { ctx ->
             val (url, uri) = link
             val subtitles = viewModel.state.subtitles
-            val rememberedSubtitle = findRememberedSubtitle(subtitles)
-            val subtitlesDisabled = nextEpisodeSelection?.let { it.subtitle == null } == true
-            val preferredSubtitle = when {
-                sameEpisode -> currentSelectedSubtitles
-                subtitlesDisabled -> null
-                rememberedSubtitle != null -> rememberedSubtitle
-                else -> getAutoSelectSubtitle(subtitles, settings = true, downloads = true)
+            val subtitleSelection = nextEpisodeSelection?.subtitle
+            val subtitleResolution = resolveEpisodeSubtitle(subtitles, subtitleSelection) {
+                getAutoSelectSubtitle(subtitles, settings = true, downloads = true)
+            }
+            val preferredSubtitle =
+                if (sameEpisode) currentSelectedSubtitles else subtitleResolution.subtitle
+            if (!sameEpisode) {
+                subtitlesDisabledByUser = subtitleResolution.subtitlesDisabled
             }
             currentSelectedSubtitles = preferredSubtitle
-            if (!sameEpisode && (rememberedSubtitle != null || subtitlesDisabled)) {
+            if (!sameEpisode &&
+                (subtitleSelection !is EpisodeSubtitleSelection.Selected ||
+                        subtitleResolution.selectionMatched)
+            ) {
                 nextEpisodeSelection = null
             }
             player.loadPlayer(
@@ -1610,11 +1599,9 @@ class GeneratorPlayer : FullScreenPlayer() {
             return
         }
 
-        val preferredSourceName = nextEpisodeSelection?.sourceName
-        val preferredLink = preferredSourceName?.let { name ->
-            links.firstOrNull { (link, uri) -> link?.name == name || uri?.name == name }
-        }
-        if (preferredSourceName != null &&
+        val preferredSource = nextEpisodeSelection?.source
+        val preferredLink = findEpisodeSource(links, preferredSource)
+        if (preferredSource != null &&
             preferredLink == null &&
             viewModel.state.loading is Resource.Loading
         ) {
@@ -1622,7 +1609,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             return
         }
 
-        nextEpisodeSelection = nextEpisodeSelection?.copy(sourceName = null)
+        nextEpisodeSelection = nextEpisodeSelection?.copy(source = null)
         loadLink(preferredLink ?: links.first(), false)
         showPlayerMetadata()
     }
@@ -1860,12 +1847,19 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun autoSelectFromPreviousEpisode(): Boolean {
         if (!isPlayerActive.get()) return false
         val selection = nextEpisodeSelection ?: return false
-        if (selection.subtitle == null) {
+        if (selection.subtitle == EpisodeSubtitleSelection.Disabled) {
             nextEpisodeSelection = null
             return true
         }
-
-        val subtitle = findRememberedSubtitle(viewModel.state.subtitles) ?: return false
+        val subtitle = findEpisodeSubtitle(
+            viewModel.state.subtitles,
+            selection.subtitle,
+        ) ?: run {
+            if (selection.subtitle == null) {
+                nextEpisodeSelection = null
+            }
+            return false
+        }
         nextEpisodeSelection = null
         context?.let { ctx ->
             if (setSubtitles(subtitle, false)) {
@@ -1880,7 +1874,10 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun autoSelectSubtitles() {
         //Log.i(TAG, "autoSelectSubtitles")
         safe {
-            if (!autoSelectFromPreviousEpisode() && !autoSelectFromSettings()) {
+            if (!subtitlesDisabledByUser &&
+                !autoSelectFromPreviousEpisode() &&
+                !autoSelectFromSettings()
+            ) {
                 autoSelectFromDownloads()
             }
         }
