@@ -74,6 +74,7 @@ import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
@@ -235,6 +236,57 @@ class GeneratorPlayer : FullScreenPlayer() {
         if (player.getIsPlaying()) {
             viewModel.forceClearCache = false
         }
+        reportPlaybackStatusToSync()
+    }
+
+    private var lastSyncPlaybackStatus: CSPlayerLoading? = null
+    private var lastSyncEpisodeKey: Pair<Int?, Int?>? = null
+    private var lastSyncPosition: Long = 0L
+    private var lastSyncDuration: Long = 0L
+
+    private fun reportPlaybackStatusToSync() {
+        val status = currentPlayerStatus
+        val episode = currentMeta as? ResultEpisode
+        val episodeKey = episode?.season to episode?.episode
+        val type = episode?.tvType
+
+        val episodeChanged = lastSyncEpisodeKey != null && episodeKey != lastSyncEpisodeKey
+        if (episodeChanged && lastSyncPlaybackStatus != CSPlayerLoading.IsEnded) {
+            val (oldSeason, oldEpisode) = lastSyncEpisodeKey!!
+
+            sync.updatePlaybackStatus(
+                status = SyncAPI.PlaybackStatus.Stopped,
+                season = oldSeason,
+                episode = oldEpisode,
+                type = type,
+                positionMs = lastSyncPosition,
+                durationMs = lastSyncDuration,
+            )
+        }
+
+        if (status == lastSyncPlaybackStatus && !episodeChanged) return
+
+        lastSyncPlaybackStatus = status
+        lastSyncEpisodeKey = episodeKey
+
+        val playbackStatus = when (status) {
+            CSPlayerLoading.IsPlaying -> SyncAPI.PlaybackStatus.Started
+            CSPlayerLoading.IsPaused -> SyncAPI.PlaybackStatus.Paused
+            CSPlayerLoading.IsEnded -> SyncAPI.PlaybackStatus.Stopped
+            else -> return //Ignore IsBuffering
+        }
+
+        lastSyncPosition = player.getPosition() ?: return
+        lastSyncDuration = player.getDuration() ?: return
+
+        sync.updatePlaybackStatus(
+            status = playbackStatus,
+            season = episode?.season,
+            episode = episode?.episode,
+            type = type,
+            positionMs = lastSyncPosition,
+            durationMs = lastSyncDuration,
+        )
     }
 
     private fun noSubtitles(): Boolean {
@@ -1665,6 +1717,24 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun onDestroy() {
         ResultFragment.updateUI()
         currentVerifyLink?.cancel()
+
+        if (lastSyncPlaybackStatus != CSPlayerLoading.IsEnded) {
+            val position = player.getPosition()
+            val duration = player.getDuration()
+            if (position != null && duration != null) {
+                val episode = currentMeta as? ResultEpisode
+
+                sync.updatePlaybackStatus(
+                    status = SyncAPI.PlaybackStatus.Stopped,
+                    season = episode?.season,
+                    episode = episode?.episode,
+                    type = episode?.tvType,
+                    positionMs = position,
+                    durationMs = duration
+                )
+            }
+        }
+
         super.onDestroy()
     }
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.lagradost.cloudstream3.Score
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -305,5 +306,33 @@ class SyncViewModel : ViewModel() {
         Log.i(TAG, "updateMetaAndUser")
         updateMetadata()
         updateUserData()
+    }
+
+    /**
+     * Triggers on every player event (Start/Pause/Stop/Ended)
+     * */
+    fun updatePlaybackStatus(
+        status: SyncAPI.PlaybackStatus,
+        season: Int?,
+        episode: Int?,
+        type: TvType?,
+        positionMs: Long,
+        durationMs: Long,
+    ) = ioSafe {
+        syncs.amap { (prefix, id) ->
+            repos.firstOrNull {
+                it.idPrefix == prefix && it.supportScrobble && it.scrobbleEnabled
+            }?.onPlaybackStatus(
+                progress = SyncAPI.PlaybackProgress(
+                    id = id,
+                    season = season,
+                    episode = episode,
+                    type = type,
+                    positionMs = positionMs,
+                    durationMs = durationMs
+                ),
+                status = status
+            )
+        }
     }
 }
