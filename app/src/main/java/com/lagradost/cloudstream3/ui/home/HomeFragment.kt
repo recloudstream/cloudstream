@@ -24,6 +24,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
@@ -43,6 +45,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.plugins.Plugin
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.BaseFragment
@@ -424,11 +427,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             .inflate(R.layout.sort_bottom_single_provider_choice, parent, false)
                         val titleText = view.findViewById<TextView>(R.id.text1)
                         val pinIcon = view.findViewById<ImageView>(R.id.pinicon)
+                        val settingsIcon = view.findViewById<ImageView>(R.id.action_settings)
+
                         val name = getItem(position)
                         titleText?.text = name
+                        val providerApi = currentValidApis[position]
                         val isPinned =
-                            pinnedphashset.contains(currentValidApis[position].name)
+                            pinnedphashset.contains(providerApi.name)
                         pinIcon.visibility = if (isPinned) View.VISIBLE else View.GONE
+
+                        val pluginInstance = providerApi.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                        val isDownloadedPluginWithSettings = pluginInstance?.openSettings != null && !isLayout(TV)
+
+                        settingsIcon.visibility = if (isDownloadedPluginWithSettings) View.VISIBLE else View.GONE
+                        if (isDownloadedPluginWithSettings) {
+                            settingsIcon.setOnClickListener {
+                                try {
+                                    val activityContext = it.context.getActivity() ?: it.context
+                                    pluginInstance.openSettings?.invoke(activityContext)
+                                } catch (e: Throwable) {
+                                    logError(e)
+                                }
+                            }
+                        }
+
                         return view
                     }
                 }
