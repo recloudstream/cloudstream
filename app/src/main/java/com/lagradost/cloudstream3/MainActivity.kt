@@ -24,7 +24,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.IdRes
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
@@ -105,7 +104,6 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
-import com.lagradost.cloudstream3.ui.account.ProfileImagePicker
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
@@ -442,15 +440,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    private val profileImagePicker = ProfileImagePicker(this)
-    private val profileImageLauncher = registerForActivityResult(
-        ActivityResultContracts.OpenDocument(),
-        profileImagePicker::onImagePicked,
-    )
-
-    internal fun pickProfileImage(callback: (String) -> Unit) {
-        profileImagePicker.launch(profileImageLauncher, callback)
-    }
 
     var lastPopup: SearchResponse? = null
     var lastPopupJob: Job? = null

@@ -11,9 +11,9 @@ import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -21,10 +21,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil3.ImageLoader
+import coil3.request.Disposable
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
+import com.lagradost.cloudstream3.CommonActivity.cancelProfileImagePick
+import com.lagradost.cloudstream3.CommonActivity.pickProfileImage
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -45,50 +48,19 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 
-internal class ProfileImagePicker(private val context: Context) {
-    private var callback: ((String) -> Unit)? = null
+private class ProfileImageUrlAttempt(val owner: Any) {
+    var validation: Disposable? = null
+    var isValid = true
 
-    fun launch(
-        launcher: ActivityResultLauncher<Array<String>>,
-        callback: (String) -> Unit,
-    ) {
-        this.callback = callback
-        try {
-            launcher.launch(arrayOf("image/*"))
-        } catch (error: Exception) {
-            this.callback = null
-            logError(error)
-            showToast(R.string.edit_profile_image_error_invalid, Toast.LENGTH_SHORT)
-        }
+    fun invalidate() {
+        isValid = false
+        validation?.dispose()
+        validation = null
     }
 
-    fun onImagePicked(uri: Uri?) {
-        val callback = callback ?: return
-        this.callback = null
-        if (uri == null) return
-
-        try {
-            context.contentResolver.takePersistableUriPermission(
-                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-        } catch (error: Exception) {
-            logError(error)
-            showToast(R.string.edit_profile_image_error_invalid)
-            return
-        }
-
-        ImageLoader(context).enqueue(
-            ImageRequest.Builder(context).data(uri)
-                .allowHardware(false).size(512, 512).listener(
-                    onSuccess = { _, _ ->
-                        callback(uri.toString())
-                        showToast(R.string.edit_profile_image_success, Toast.LENGTH_SHORT)
-                    },
-                    onError = { _, _ ->
-                        showToast(R.string.edit_profile_image_error_invalid)
-                    }
-                ).build()
-        )
+    fun complete() {
+        isValid = false
+        validation = null
     }
 }
 
@@ -97,7 +69,6 @@ object AccountHelper {
         context: Context,
         account: DataStoreHelper.Account,
         isNewAccount: Boolean,
-        pickProfileImage: ((String) -> Unit) -> Unit,
         accountEditCallback: (DataStoreHelper.Account) -> Unit,
         accountDeleteCallback: (DataStoreHelper.Account) -> Unit
     ) {
@@ -106,7 +77,36 @@ object AccountHelper {
             .setView(binding.root)
 
         var currentEditAccount = account
+        var pendingProfileImageUri: Uri? = null
+        var imageSelectionId = 0
+        var profileImageUrlAttempt: ProfileImageUrlAttempt? = null
+        var profileImageUrlDialog: BottomSheetDialog? = null
+
+        fun cancelProfileImageUrlAttempt(owner: Any? = null) {
+            val cancelledAttempt = profileImageUrlAttempt
+            if (owner != null && cancelledAttempt?.owner !== owner) return
+            profileImageUrlAttempt = null
+            cancelledAttempt?.invalidate()
+        }
+
+        fun completeProfileImageUrlAttempt(
+            completedAttempt: ProfileImageUrlAttempt
+        ): Boolean {
+            if (profileImageUrlAttempt !== completedAttempt || !completedAttempt.isValid) {
+                return false
+            }
+            profileImageUrlAttempt = null
+            completedAttempt.complete()
+            return true
+        }
+
         val dialog = builder.show()
+        dialog.setOnDismissListener {
+            cancelProfileImagePick()
+            cancelProfileImageUrlAttempt()
+            profileImageUrlDialog?.dismissSafe()
+            profileImageUrlDialog = null
+        }
 
         if (!isNewAccount) binding.title.setText(R.string.edit_account)
 
@@ -153,10 +153,74 @@ object AccountHelper {
         binding.accountImage.loadImage(account.image)
         binding.accountImage.setOnClickListener {
             // Roll the image forwards once
+            imageSelectionId++
+            cancelProfileImagePick()
+            cancelProfileImageUrlAttempt()
+            pendingProfileImageUri = null
             currentEditAccount = currentEditAccount.copy(customImage = null)
             currentEditAccount =
                 currentEditAccount.copy(defaultImageIndex = (currentEditAccount.defaultImageIndex + 1) % DataStoreHelper.profileImages.size)
             binding.accountImage.loadImage(currentEditAccount.image)
+        }
+
+        fun applyAccountChanges() {
+            val uri = pendingProfileImageUri?.takeIf {
+                currentEditAccount.customImage == it.toString()
+            }
+            val resolver = context.applicationContext.contentResolver
+            var acquiredReadPermission = false
+
+            if (uri != null) {
+                try {
+                    val hadReadPermission = resolver.persistedUriPermissions.any {
+                        it.uri == uri && it.isReadPermission
+                    }
+                    if (!hadReadPermission) {
+                        resolver.takePersistableUriPermission(
+                            uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        )
+                        acquiredReadPermission = true
+                    }
+                } catch (error: Exception) {
+                    logError(error)
+                    showToast(R.string.edit_profile_image_error_invalid)
+                    return
+                }
+            }
+
+            try {
+                accountEditCallback.invoke(currentEditAccount)
+            } catch (error: Throwable) {
+                logError(error)
+            }
+
+            val durableAccounts = try {
+                DataStoreHelper.accounts.toList()
+            } catch (error: Throwable) {
+                logError(error)
+                emptyList()
+            }
+            val accountWasStored = durableAccounts.any { it == currentEditAccount }
+
+            if (uri != null && acquiredReadPermission &&
+                durableAccounts.none { it.customImage == uri.toString() }
+            ) {
+                try {
+                    resolver.releasePersistableUriPermission(
+                        uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (error: Exception) {
+                    logError(error)
+                }
+            }
+
+            if (!accountWasStored) {
+                showToast(R.string.edit_profile_image_error_invalid)
+                return
+            }
+
+            pendingProfileImageUri = null
+            dialog.dismissSafe()
         }
 
         // Handle applying changes
@@ -166,13 +230,11 @@ object AccountHelper {
                 showPinInputDialog(context, currentEditAccount.lockPin, false) { pin ->
                     if (pin == null) return@showPinInputDialog
                     // PIN is correct, proceed to update the account
-                    accountEditCallback.invoke(currentEditAccount)
-                    dialog.dismissSafe()
+                    applyAccountChanges()
                 }
             } else {
                 // No lock PIN set, proceed to update the account
-                accountEditCallback.invoke(currentEditAccount)
-                dialog.dismissSafe()
+                applyAccountChanges()
             }
         }
 
@@ -217,10 +279,21 @@ object AccountHelper {
 
         canSetPin = true
 
-        val showProfileImageUrlDialog = { callback: (String) -> Unit ->
+        val showProfileImageUrlDialog = { callback: (String) -> Boolean ->
+            cancelProfileImageUrlAttempt()
+            profileImageUrlDialog?.dismissSafe()
+
             val bottomSheetDialog = BottomSheetDialog(context)
+            val owner = Any()
             val sheetBinding = BottomInputDialogBinding.inflate(LayoutInflater.from(context))
             bottomSheetDialog.setContentView(sheetBinding.root)
+            profileImageUrlDialog = bottomSheetDialog
+            bottomSheetDialog.setOnDismissListener {
+                cancelProfileImageUrlAttempt(owner)
+                if (profileImageUrlDialog === bottomSheetDialog) {
+                    profileImageUrlDialog = null
+                }
+            }
             bottomSheetDialog.show()
 
             sheetBinding.apply {
@@ -233,6 +306,9 @@ object AccountHelper {
                         showToast(R.string.edit_profile_image_error_empty, Toast.LENGTH_SHORT)
                         return@setOnClickListener
                     }
+                    cancelProfileImageUrlAttempt()
+                    val attempt = ProfileImageUrlAttempt(owner)
+                    profileImageUrlAttempt = attempt
                     applyBtt.showProgress()
                     val imageLoader = ImageLoader(context)
                     val request = ImageRequest.Builder(context)
@@ -240,14 +316,21 @@ object AccountHelper {
                         .allowHardware(false)
                         .listener(
                             onSuccess = { _, _ ->
-                                callback(url)
-                                showToast(
-                                    R.string.edit_profile_image_success,
-                                    Toast.LENGTH_SHORT
-                                )
+                                if (!completeProfileImageUrlAttempt(attempt)) {
+                                    return@listener
+                                }
+                                if (callback(url)) {
+                                    showToast(
+                                        R.string.edit_profile_image_success,
+                                        Toast.LENGTH_SHORT
+                                    )
+                                }
                                 bottomSheetDialog.dismissSafe()
                             },
                             onError = { _, _ ->
+                                if (!completeProfileImageUrlAttempt(attempt)) {
+                                    return@listener
+                                }
                                 showToast(
                                     R.string.edit_profile_image_error_invalid,
                                     Toast.LENGTH_SHORT
@@ -255,11 +338,19 @@ object AccountHelper {
                                 applyBtt.hideProgress()
                             },
                             onCancel = {
+                                if (!completeProfileImageUrlAttempt(attempt)) {
+                                    return@listener
+                                }
                                 applyBtt.hideProgress()
                             }
                         )
                         .build()
-                    imageLoader.enqueue(request)
+                    val validation = imageLoader.enqueue(request)
+                    attempt.validation = validation
+                    if (profileImageUrlAttempt !== attempt || !attempt.isValid) {
+                        attempt.validation = null
+                        validation.dispose()
+                    }
                 }
                 sheetBinding.cancelBtt.setOnClickListener {
                     bottomSheetDialog.dismissSafe()
@@ -275,15 +366,33 @@ object AccountHelper {
                     context.getString(R.string.edit_profile_image_hint),
                 )) { _, selection ->
                     if (selection == 0) {
+                        cancelProfileImageUrlAttempt()
+                        val selectionId = ++imageSelectionId
                         pickProfileImage { image ->
-                            if (!dialog.isShowing) return@pickProfileImage
-                            currentEditAccount = currentEditAccount.copy(customImage = image)
-                            binding.accountImage.loadImage(image)
+                            if (!dialog.isShowing || selectionId != imageSelectionId) {
+                                false
+                            } else {
+                                pendingProfileImageUri = image.toUri()
+                                currentEditAccount =
+                                    currentEditAccount.copy(customImage = image)
+                                binding.accountImage.loadImage(image)
+                                true
+                            }
                         }
                     } else {
+                        cancelProfileImagePick()
+                        cancelProfileImageUrlAttempt()
+                        val selectionId = ++imageSelectionId
                         showProfileImageUrlDialog { image ->
-                            currentEditAccount = currentEditAccount.copy(customImage = image)
-                            binding.accountImage.loadImage(image)
+                            if (!dialog.isShowing || selectionId != imageSelectionId) {
+                                false
+                            } else {
+                                pendingProfileImageUri = null
+                                currentEditAccount =
+                                    currentEditAccount.copy(customImage = image)
+                                binding.accountImage.loadImage(image)
+                                true
+                            }
                         }
                     }
                 }
@@ -477,8 +586,7 @@ object AccountHelper {
                 },
                 accountCreateCallback = { viewModel.handleAccountUpdate(it, activity) },
                 accountEditCallback = { viewModel.handleAccountUpdate(it, activity) },
-                accountDeleteCallback = { viewModel.handleAccountDelete(it, activity) },
-                pickProfileImage = activity::pickProfileImage,
+                accountDeleteCallback = { viewModel.handleAccountDelete(it, activity) }
             ).apply {
                 submitList(liveAccounts)
             }
