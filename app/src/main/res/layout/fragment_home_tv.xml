@@ -169,7 +169,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxWidth="600dp"
-            android:textAlignment="viewEnd"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:visibility="visible"
@@ -177,7 +176,7 @@
             android:format24Hour="HH:mm"
             android:fontFamily="@font/google_sans"
             android:textStyle="bold"
-            android:gravity="end"
+            android:gravity="start"
             android:layout_gravity="center_horizontal"
             android:layout_margin="17dp" />
 
