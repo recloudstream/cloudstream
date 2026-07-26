@@ -177,8 +177,8 @@
             android:fontFamily="@font/google_sans"
             android:textStyle="bold"
             android:gravity="start"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="17dp" />
+            android:layout_gravity="start"
+            android:layout_margin="10dp" />
 
     <LinearLayout
         android:id="@+id/home_api_holder"
