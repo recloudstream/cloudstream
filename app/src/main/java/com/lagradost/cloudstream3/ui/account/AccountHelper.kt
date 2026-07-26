@@ -37,8 +37,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.hideProgress
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 
 object AccountHelper {
     fun showAccountEditDialog(
@@ -164,7 +166,7 @@ object AccountHelper {
 
         canSetPin = true
 
-        binding.editProfilePhotoButton.setOnClickListener({
+        binding.editProfilePhotoButton.setOnClickListener {
             val bottomSheetDialog = BottomSheetDialog(context)
             val sheetBinding = BottomInputDialogBinding.inflate(LayoutInflater.from(context))
             bottomSheetDialog.setContentView(sheetBinding.root)
@@ -174,42 +176,46 @@ object AccountHelper {
                 text1.text = context.getString(R.string.edit_profile_image_title)
                 nginxTextInput.hint = context.getString(R.string.edit_profile_image_hint)
 
-                applyBtt.setOnClickListener({
+                applyBtt.setOnClickListener {
                     val url = sheetBinding.nginxTextInput.text.toString()
-                    if (url.isNotEmpty()) {
-                        val imageLoader = ImageLoader(context)
-                        val request = ImageRequest.Builder(context)
-                            .data(url)
-                            .allowHardware(false)
-                            .listener(
-                                onSuccess = { _, _ ->
-                                    currentEditAccount = currentEditAccount.copy(customImage = url)
-                                    binding.accountImage.loadImage(url)
-                                    showToast(
-                                        R.string.edit_profile_image_success,
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    bottomSheetDialog.dismiss()
-                                },
-                                onError = { _, _ ->
-                                    showToast(
-                                        R.string.edit_profile_image_error_invalid,
-                                        Toast.LENGTH_SHORT
-                                    )
-                                }
-                            )
-                            .build()
-                        imageLoader.enqueue(request)
-                    } else {
+                    if (url.isEmpty()) {
                         showToast(R.string.edit_profile_image_error_empty, Toast.LENGTH_SHORT)
+                        return@setOnClickListener
                     }
+                    applyBtt.showProgress()
+                    val imageLoader = ImageLoader(context)
+                    val request = ImageRequest.Builder(context)
+                        .data(url)
+                        .allowHardware(false)
+                        .listener(
+                            onSuccess = { _, _ ->
+                                currentEditAccount = currentEditAccount.copy(customImage = url)
+                                binding.accountImage.loadImage(url)
+                                showToast(
+                                    R.string.edit_profile_image_success,
+                                    Toast.LENGTH_SHORT
+                                )
+                                bottomSheetDialog.dismissSafe()
+                            },
+                            onError = { _, _ ->
+                                showToast(
+                                    R.string.edit_profile_image_error_invalid,
+                                    Toast.LENGTH_SHORT
+                                )
+                                applyBtt.hideProgress()
+                            },
+                            onCancel = {
+                                applyBtt.hideProgress()
+                            }
+                        )
+                        .build()
+                    imageLoader.enqueue(request)
+                }
+                sheetBinding.cancelBtt.setOnClickListener {
                     bottomSheetDialog.dismissSafe()
-                })
-                sheetBinding.cancelBtt.setOnClickListener({
-                    bottomSheetDialog.dismissSafe()
-                })
+                }
             }
-        })
+        }
     }
 
     fun showPinInputDialog(

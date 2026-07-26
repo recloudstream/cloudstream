@@ -42,7 +42,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Callable
 import java.util.concurrent.FutureTask
-import kotlin.reflect.jvm.jvmName
 
 object VideoClickActionHolder {
     val allVideoClickActions = atomicListOf(
@@ -161,7 +160,7 @@ abstract class VideoClickAction {
         }
     }
 
-    fun uniqueId() = "$sourcePlugin:${this::class.jvmName}"
+    fun uniqueId() = "$sourcePlugin:${this::class.qualifiedName}"
 
     @Throws
     abstract fun shouldShow(context: Context?, video: ResultEpisode?): Boolean

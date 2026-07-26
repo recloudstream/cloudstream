@@ -23,7 +23,7 @@ class JsHunter(private val hunterJS: String) {
      */
     fun dehunt(): String? {
         try {
-            val regex = Regex("""\}\("([^"]+)",[^,]+,\s*"([^"]+)",\s*(\d+),\s*(\d+)""", RegexOption.DOT_MATCHES_ALL)
+            val regex = Regex("""(?s)\}\("([^"]+)",[^,]+,\s*"([^"]+)",\s*(\d+),\s*(\d+)""")
             val match = regex.find(hunterJS)
             if (match != null && match.groupValues.size == 5) {
                 val h = match.groupValues[1]

@@ -8,36 +8,40 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.AES
 import io.ktor.http.Url
 import io.ktor.http.decodeURLPart
-import javax.crypto.Cipher
-import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.SecretKeySpec
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-class Bysezejataos  : ByseSX() {
-    override var name = "Bysezejataos"
-    override var mainUrl = "https://bysezejataos.com"
+class Bysezejataos : ByseSX() {
+    override val name = "Bysezejataos"
+    override val mainUrl = "https://bysezejataos.com"
 }
 
 class ByseBuho : ByseSX() {
-    override var name = "ByseBuho"
-    override var mainUrl = "https://bysebuho.com"
+    override val name = "ByseBuho"
+    override val mainUrl = "https://bysebuho.com"
 }
 
 class ByseVepoin : ByseSX() {
-    override var name = "ByseVepoin"
-    override var mainUrl = "https://bysevepoin.com"
+    override val name = "ByseVepoin"
+    override val mainUrl = "https://bysevepoin.com"
 }
 
 class ByseQekaho : ByseSX() {
-    override var name = "ByseQekaho"
-    override var mainUrl = "https://byseqekaho.com"
+    override val name = "ByseQekaho"
+    override val mainUrl = "https://byseqekaho.com"
 }
 
 open class ByseSX : ExtractorApi() {
-    override var name = "Byse"
-    override var mainUrl = "https://byse.sx"
+    override val name = "Byse"
+    override val mainUrl = "https://byse.sx"
     override val requiresReferer = true
+
+    private val aesGcm = CryptographyProvider.Default.get(AES.GCM)
 
     private fun b64UrlDecode(s: String): ByteArray {
         val fixed = s.replace('-', '+').replace('_', '/')
@@ -83,23 +87,22 @@ open class ByseSX : ExtractorApi() {
         return p1 + p2
     }
 
-    private fun decryptPlayback(playback: Playback): String? {
+    @OptIn(DelicateCryptographyApi::class)
+    private suspend fun decryptPlayback(playback: Playback): String? {
         val keyBytes = buildAesKey(playback)
         val ivBytes = b64UrlDecode(playback.iv)
         val cipherBytes = b64UrlDecode(playback.payload)
 
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        val spec = GCMParameterSpec(128, ivBytes)
-        val secretKey = SecretKeySpec(keyBytes, "AES")
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
+        val aesKey = aesGcm.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, keyBytes)
+        // 128-bit GCM tag (default)
+        val cipher = aesKey.cipher()
+        val plainBytes = cipher.decryptWithIv(ivBytes, cipherBytes)
 
-        val plainBytes = cipher.doFinal(cipherBytes)
         var jsonStr = plainBytes.decodeToString()
-
         if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1)
 
         val root = try {
-            tryParseJson<PlaybackDecrypt>((jsonStr))
+            tryParseJson<PlaybackDecrypt>(jsonStr)
         } catch (_: Exception) {
             return null
         }
@@ -107,81 +110,73 @@ open class ByseSX : ExtractorApi() {
         return root?.sources?.firstOrNull()?.url
     }
 
-
     override suspend fun getUrl(
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
+        callback: (ExtractorLink) -> Unit,
     ) {
         val refererUrl = getBaseUrl(url)
         val playbackRoot = getPlayback(url) ?: return
-        val streamUrl  = decryptPlayback(playbackRoot.playback) ?: return
-
+        val streamUrl = decryptPlayback(playbackRoot.playback) ?: return
 
         val headers = mapOf("Referer" to refererUrl)
         M3u8Helper.generateM3u8(
             name,
             streamUrl,
             mainUrl,
-            headers = headers
+            headers = headers,
         ).forEach(callback)
     }
 }
 
+@Serializable
 data class DetailsRoot(
-    val id: Long,
-    val code: String,
-    val title: String,
-    @JsonProperty("poster_url")
-    val posterUrl: String,
-    val description: String,
-    @JsonProperty("created_at")
-    val createdAt: String,
-    @JsonProperty("owner_private")
-    val ownerPrivate: Boolean,
-    @JsonProperty("embed_frame_url")
-    val embedFrameUrl: String,
+    @JsonProperty("id") @SerialName("id") val id: Long,
+    @JsonProperty("code") @SerialName("code") val code: String,
+    @JsonProperty("title") @SerialName("title") val title: String,
+    @JsonProperty("poster_url") @SerialName("poster_url") val posterUrl: String,
+    @JsonProperty("description") @SerialName("description") val description: String,
+    @JsonProperty("created_at") @SerialName("created_at") val createdAt: String,
+    @JsonProperty("owner_private") @SerialName("owner_private") val ownerPrivate: Boolean,
+    @JsonProperty("embed_frame_url") @SerialName("embed_frame_url") val embedFrameUrl: String,
 )
 
+@Serializable
 data class PlaybackRoot(
-    val playback: Playback,
+    @JsonProperty("playback") @SerialName("playback") val playback: Playback,
 )
 
+@Serializable
 data class Playback(
-    val algorithm: String,
-    val iv: String,
-    val payload: String,
-    @JsonProperty("key_parts")
-    val keyParts: List<String>,
-    @JsonProperty("expires_at")
-    val expiresAt: String,
-    @JsonProperty("decrypt_keys")
-    val decryptKeys: DecryptKeys,
-    val iv2: String,
-    val payload2: String,
+    @JsonProperty("algorithm") @SerialName("algorithm") val algorithm: String,
+    @JsonProperty("iv") @SerialName("iv") val iv: String,
+    @JsonProperty("payload") @SerialName("payload") val payload: String,
+    @JsonProperty("key_parts") @SerialName("key_parts") val keyParts: List<String>,
+    @JsonProperty("expires_at") @SerialName("expires_at") val expiresAt: String,
+    @JsonProperty("decrypt_keys") @SerialName("decrypt_keys") val decryptKeys: DecryptKeys,
+    @JsonProperty("iv2") @SerialName("iv2") val iv2: String,
+    @JsonProperty("payload2") @SerialName("payload2") val payload2: String,
 )
 
+@Serializable
 data class DecryptKeys(
-    @JsonProperty("edge_1")
-    val edge1: String,
-    @JsonProperty("edge_2")
-    val edge2: String,
-    @JsonProperty("legacy_fallback")
-    val legacyFallback: String,
+    @JsonProperty("edge_1") @SerialName("edge_1") val edge1: String,
+    @JsonProperty("edge_2") @SerialName("edge_2") val edge2: String,
+    @JsonProperty("legacy_fallback") @SerialName("legacy_fallback") val legacyFallback: String,
 )
 
+@Serializable
 data class PlaybackDecrypt(
-    val sources: List<PlaybackDecryptSource>,
+    @JsonProperty("sources") @SerialName("sources") val sources: List<PlaybackDecryptSource>,
 )
 
+@Serializable
 data class PlaybackDecryptSource(
-    val quality: String,
-    val label: String,
-    @JsonProperty("mime_type")
-    val mimeType: String,
-    val url: String,
-    @JsonProperty("bitrate_kbps")
-    val bitrateKbps: Long,
-    val height: Any?,
+    @JsonProperty("quality") @SerialName("quality") val quality: String,
+    @JsonProperty("label") @SerialName("label") val label: String,
+    @JsonProperty("mime_type") @SerialName("mime_type") val mimeType: String,
+    @JsonProperty("url") @SerialName("url") val url: String,
+    @JsonProperty("bitrate_kbps") @SerialName("bitrate_kbps") val bitrateKbps: Long,
+    @JsonProperty("height") @SerialName("height") val height: Int?,
 )

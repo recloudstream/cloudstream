@@ -2,11 +2,11 @@ package com.lagradost.cloudstream3.extractors.helper
 
 import com.lagradost.cloudstream3.base64DecodeArray
 import com.lagradost.cloudstream3.base64Encode
-import java.security.MessageDigest
-import java.security.SecureRandom
-import javax.crypto.Cipher
-import javax.crypto.spec.SecretKeySpec
-import javax.crypto.spec.IvParameterSpec
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.AES
+import dev.whyoleg.cryptography.algorithms.MD5
+import dev.whyoleg.cryptography.random.CryptographyRandom
 import kotlin.math.min
 
 /**
@@ -15,37 +15,36 @@ import kotlin.math.min
 // see https://gist.github.com/thackerronak/554c985c3001b16810af5fc0eb5c358f
 @Suppress("unused", "FunctionName", "SameParameterValue")
 object CryptoJS {
-
-    private const val KEY_SIZE    = 256
-    private const val IV_SIZE     = 128
-    private const val HASH_CIPHER = "AES/CBC/PKCS7Padding"
-    private const val AES         = "AES"
-    private const val KDF_DIGEST  = "MD5"
+    private const val KEY_SIZE = 256
+    private const val IV_SIZE = 128
 
     // Seriously crypto-js, what's wrong with you?
-    private const val APPEND      = "Salted__"
+    private const val APPEND = "Salted__"
+
+    private val provider = CryptographyProvider.Default
+    private val aesCbc = provider.get(AES.CBC)
+    @OptIn(DelicateCryptographyApi::class)
+    private val md5Hasher = provider.get(MD5).hasher()
 
     /**
      * Encrypt
      * @param password passphrase
      * @param plainText plain string
      */
+    @OptIn(DelicateCryptographyApi::class)
     fun encrypt(password: String, plainText: String): String {
         val saltBytes = generateSalt(8)
-        val key       = ByteArray(KEY_SIZE / 8)
-        val iv        = ByteArray(IV_SIZE / 8)
-        evpkdf(password.toByteArray(), KEY_SIZE, IV_SIZE, saltBytes, key, iv)
+        val key = ByteArray(KEY_SIZE / 8)
+        val iv = ByteArray(IV_SIZE / 8)
+        evpkdf(password.encodeToByteArray(), KEY_SIZE, IV_SIZE, saltBytes, 1, key, iv)
 
-        val keyS   = SecretKeySpec(key, AES)
-        val cipher = Cipher.getInstance(HASH_CIPHER)
-        val ivSpec = IvParameterSpec(iv)
-        cipher.init(Cipher.ENCRYPT_MODE, keyS, ivSpec)
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, key)
+        val cipher = aesKey.cipher(padding = true)
+        val cipherText = cipher.encryptWithIvBlocking(iv, plainText.encodeToByteArray())
 
-        val cipherText = cipher.doFinal(plainText.toByteArray())
-        // Thanks kientux for this: https://gist.github.com/kientux/bb48259c6f2133e628ad
-        // Create CryptoJS-like encrypted!
-        val sBytes     = APPEND.toByteArray()
-        val b          = ByteArray(sBytes.size + saltBytes.size + cipherText.size)
+        // Create CryptoJS-like encrypted: "Salted__" || salt || ciphertext
+        val sBytes = APPEND.encodeToByteArray()
+        val b = ByteArray(sBytes.size + saltBytes.size + cipherText.size)
         sBytes.copyInto(destination = b, destinationOffset = 0)
         saltBytes.copyInto(destination = b, destinationOffset = sBytes.size)
         cipherText.copyInto(destination = b, destinationOffset = sBytes.size + saltBytes.size)
@@ -59,53 +58,52 @@ object CryptoJS {
      * @param password passphrase
      * @param cipherText encrypted string
      */
+    @OptIn(DelicateCryptographyApi::class)
     fun decrypt(password: String, cipherText: String): String {
-        val ctBytes         = base64DecodeArray(cipherText)
-        val saltBytes       = ctBytes.copyOfRange(8, 16)
+        val ctBytes = base64DecodeArray(cipherText)
+        val saltBytes = ctBytes.copyOfRange(8, 16)
         val cipherTextBytes = ctBytes.copyOfRange(16, ctBytes.size)
 
         val key = ByteArray(KEY_SIZE / 8)
-        val iv  = ByteArray(IV_SIZE / 8)
-        evpkdf(password.toByteArray(), KEY_SIZE, IV_SIZE, saltBytes, key, iv)
+        val iv = ByteArray(IV_SIZE / 8)
+        evpkdf(password.encodeToByteArray(), KEY_SIZE, IV_SIZE, saltBytes, 1, key, iv)
 
-        val cipher = Cipher.getInstance(HASH_CIPHER)
-        val keyS   = SecretKeySpec(key, AES)
-        cipher.init(Cipher.DECRYPT_MODE, keyS, IvParameterSpec(iv))
-
-        val plainText = cipher.doFinal(cipherTextBytes)
-        return String(plainText)
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, key)
+        val cipher = aesKey.cipher(padding = true)
+        val plainText = cipher.decryptWithIvBlocking(iv, cipherTextBytes)
+        return plainText.decodeToString()
     }
 
-    private fun evpkdf(password: ByteArray, keySize: Int, ivSize: Int, salt: ByteArray, resultKey: ByteArray, resultIv: ByteArray): ByteArray {
-        return evpkdf(password, keySize, ivSize, salt, 1, KDF_DIGEST, resultKey, resultIv)
-    }
-
-    @Suppress("NAME_SHADOWING")
-    private fun evpkdf(password: ByteArray, keySize: Int, ivSize: Int, salt: ByteArray, iterations: Int, hashAlgorithm: String, resultKey: ByteArray, resultIv: ByteArray): ByteArray {
-        val keySize              = keySize / 32
-        val ivSize               = ivSize / 32
-        val targetKeySize        = keySize + ivSize
-        val derivedBytes         = ByteArray(targetKeySize * 4)
+    private fun evpkdf(
+        password: ByteArray,
+        keySize: Int,
+        ivSize: Int,
+        salt: ByteArray,
+        iterations: Int,
+        resultKey: ByteArray,
+        resultIv: ByteArray,
+    ): ByteArray {
+        val keySize = keySize / 32
+        val ivSize = ivSize / 32
+        val targetKeySize = keySize + ivSize
+        val derivedBytes = ByteArray(targetKeySize * 4)
         var numberOfDerivedWords = 0
-        var block: ByteArray?    = null
-        val hash                 = MessageDigest.getInstance(hashAlgorithm)
+        var block: ByteArray? = null
 
         while (numberOfDerivedWords < targetKeySize) {
-            if (block != null) {
-                hash.update(block)
-            }
+            val hashFn = md5Hasher.createHashFunction()
+            if (block != null) hashFn.update(block)
+            hashFn.update(password)
+            hashFn.update(salt)
+            block = hashFn.hashToByteArray()
 
-            hash.update(password)
-            block = hash.digest(salt)
-            hash.reset()
-
-            // Iterations
             for (i in 1 until iterations) {
-                block = hash.digest(block!!)
-                hash.reset()
+                val iterFn = md5Hasher.createHashFunction()
+                iterFn.update(block!!)
+                block = iterFn.hashToByteArray()
             }
 
-            block!!.copyInto(
+            block.copyInto(
                 destination = derivedBytes,
                 destinationOffset = numberOfDerivedWords * 4,
                 startIndex = 0,
@@ -116,14 +114,10 @@ object CryptoJS {
         }
 
         derivedBytes.copyInto(destination = resultKey, destinationOffset = 0, startIndex = 0, endIndex = keySize * 4)
-        derivedBytes.copyInto(destination = resultIv, destinationOffset = 0, startIndex = keySize * 4, endIndex = (keySize * 4) + (ivSize * 4))
-
+        derivedBytes.copyInto(destination = resultIv, destinationOffset = 0, startIndex = keySize * 4, endIndex = (keySize + ivSize) * 4)
         return derivedBytes // key + iv
     }
 
-    private fun generateSalt(length: Int): ByteArray {
-        return ByteArray(length).apply {
-            SecureRandom().nextBytes(this)
-        }
-    }
+    private fun generateSalt(length: Int): ByteArray =
+        CryptographyRandom.nextBytes(length)
 }

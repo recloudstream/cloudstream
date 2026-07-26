@@ -55,7 +55,7 @@ object QualityDataHelper {
 
     fun getSourcePriority(profile: Int, name: String?): Int {
         if (name == null) return DEFAULT_SOURCE_PRIORITY
-        return getKey(
+        return getKey<Int>(
             "$currentAccount/$VIDEO_SOURCE_PRIORITY/$profile",
             name,
             DEFAULT_SOURCE_PRIORITY
@@ -94,7 +94,7 @@ object QualityDataHelper {
     }
 
     fun getQualityPriority(profile: Int, quality: Qualities): Int {
-        return getKey(
+        return getKey<Int>(
             "$currentAccount/$VIDEO_QUALITY_PRIORITY/$profile",
             quality.value.toString(),
             quality.defaultPriority

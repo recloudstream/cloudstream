@@ -182,6 +182,7 @@ class SyncViewModel : ViewModel() {
     fun publishUserData() = ioSafe {
         Log.i(TAG, "publishUserData")
         val user = userData.value
+        _userDataResponse.postValue(Resource.Loading())
         if (user is Resource.Success) {
             syncs.forEach { (prefix, id) ->
                 repos.firstOrNull { it.idPrefix == prefix }?.updateStatus(id, user.value)

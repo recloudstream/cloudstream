@@ -171,13 +171,17 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.safefile.SafeFile
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -187,10 +191,8 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
+import kotlin.reflect.full.createInstance
 import kotlin.system.exitProcess
-import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -784,7 +786,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         }
 
-
         val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
             .setEnterAnim(R.anim.enter_anim)
             .setExitAnim(R.anim.exit_anim)
@@ -815,22 +816,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     try {
                         getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
                             list.forEach { custom ->
-                                allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                                    ?.let {
-                                        allProviders.add(
-                                            it.javaClass.getDeclaredConstructor().newInstance()
-                                                .apply {
-                                                    name = custom.name
-                                                    lang = custom.lang
-                                                    mainUrl = custom.url.trimEnd('/')
-                                                    canBeOverridden = false
-                                                })
-                                    }
+                                allProviders.firstOrNull {
+                                    it::class.simpleName == custom.parentClassName
+                                }?.let {
+                                    allProviders.add(
+                                        it::class.createInstance().apply {
+                                            name = custom.name
+                                            lang = custom.lang
+                                            mainUrl = custom.url.trimEnd('/')
+                                            canBeOverridden = false
+                                        }
+                                    )
+                                }
                             }
                         }
                         // it.hashCode() is not enough to make sure they are distinct
-                        apis =
-                            allProviders.distinctBy { it.lang + it.name + it.mainUrl + it.javaClass.name }
+                        apis = allProviders.distinctBy {
+                            it.lang + it.name + it.mainUrl + it::class.qualifiedName
+                        }
                         APIHolder.apiMap = null
                     } catch (e: Exception) {
                         logError(e)
@@ -1212,7 +1215,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
         safe {
             val appVer = BuildConfig.VERSION_NAME
-            val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
+            val lastAppAutoBackup: String = getKey<String>("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
                 if (lastAppAutoBackup.isEmpty()) return@safe
@@ -1426,8 +1429,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
                     else -> {
                         resultviewPreviewBookmark.isEnabled = false
-                        resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
-                        resultviewPreviewBookmark.setText(R.string.loading)
+                        resultviewPreviewBookmark.showProgress()
+                        //resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
+                        //resultviewPreviewBookmark.setText(R.string.loading)
                     }
                 }
             }
@@ -2014,7 +2018,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
 
         try {
-            if (getKey(HAS_DONE_SETUP_KEY, false) != true) {
+            if (getKey<Boolean>(HAS_DONE_SETUP_KEY, false) != true) {
                 navController.navigate(R.id.navigation_setup_language)
                 // If no plugins bring up extensions screen
             } else if (PluginManager.getPluginsOnline().isEmpty()
