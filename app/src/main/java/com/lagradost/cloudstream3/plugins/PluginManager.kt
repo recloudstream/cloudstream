@@ -473,6 +473,56 @@ object PluginManager {
         }
     }
 
+    @Suppress("FunctionName", "DEPRECATION_ERROR")
+    @Throws
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_restoreSyncPlugins(context: Context) {
+        assertNonRecursiveCallstack()
+        Log.d(TAG, "Restoring synced plugins...")
+        
+        val onlinePlugins = getPluginsOnline().toList()
+        Log.d(TAG, "Found ${onlinePlugins.size} plugins in sync list")
+
+        var pluginsChanged = false
+
+        val updatedPlugins = onlinePlugins.amap { savedData ->
+            val oldFile = File(savedData.filePath)
+            val parentName = oldFile.parentFile?.name
+            val fileName = oldFile.name
+            var currentData = savedData
+
+            if (parentName != null) {
+                val newFile = File(context.filesDir, "$ONLINE_PLUGINS_FOLDER/$parentName/$fileName")
+                Log.d(TAG, "Mapping plugin: ${savedData.internalName} -> ${newFile.absolutePath}")
+                
+                if (savedData.filePath != newFile.absolutePath) {
+                    currentData = currentData.copy(filePath = newFile.absolutePath)
+                    pluginsChanged = true
+                }
+
+                if (!newFile.exists() && currentData.url != null) {
+                    Log.d(TAG, "Missing plugin file, downloading: ${currentData.internalName}")
+                    val downloadedFile = downloadPluginToFile(
+                        context,
+                        currentData.url,
+                        newFile,
+                        null
+                    )
+                    if (downloadedFile == null) {
+                        Log.e(TAG, "Failed to download plugin ${currentData.internalName}")
+                    }
+                }
+            }
+            currentData
+        }
+
+        if (pluginsChanged) {
+            setKey(PLUGINS_KEY, updatedPlugins.toTypedArray())
+        }
+
+        ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context)
+        afterPluginsLoadedEvent.invoke(false)
+    }
+
     /**
      * Reloads all local plugins and forces a page update, used for hot reloading with deployWithAdb
      *
@@ -520,42 +570,31 @@ object PluginManager {
         }
 
         val sortedPlugins = dir.listFiles()
-        // Always sort plugins alphabetically for reproducible results
+        Log.d(TAG, "Found ${sortedPlugins?.size ?: 0} local files in $LOCAL_PLUGINS_PATH")
+
 
         Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
 
-        // Use app-specific external files directory and copy the file there.
-        // We have to do this because on Android 14+, it otherwise gives SecurityException
-        // due to dex files and setReadOnly seems to have no effect unless it it here.
         val pluginDirectory = File(context.getExternalFilesDir(null), "plugins")
         if (!pluginDirectory.exists()) {
-            pluginDirectory.mkdirs() // Ensure the plugins directory exists
+            pluginDirectory.mkdirs()
         }
 
-        // Make sure all local plugins are fully refreshed.
         removeKey(PLUGINS_KEY_LOCAL)
 
         sortedPlugins?.sortedBy { it.name }?.amap { file ->
+            Log.d(TAG, "Processing local file: ${file.name}")
             try {
                 val destinationFile = File(pluginDirectory, file.name)
 
-                // Only copy the file if the destination file doesn't exist or if it
-                // has been modified (check file length and modification time).
                 if (!destinationFile.exists() ||
                     destinationFile.length() != file.length() ||
                     destinationFile.lastModified() != file.lastModified()
                 ) {
-
-                    // Copy the file to the app-specific plugin directory
                     file.copyTo(destinationFile, overwrite = true)
-
-                    // After copying, set the destination file's modification time
-                    // to match the source file. We do this for performance so that we
-                    // can check the modification time and not make redundant writes.
                     destinationFile.setLastModified(file.lastModified())
                 }
 
-                // Load the plugin after it has been copied
                 maybeLoadPlugin(context, destinationFile)
             } catch (t: Throwable) {
                 Log.e(TAG, "Failed to copy the file")
@@ -572,11 +611,8 @@ object PluginManager {
         return checkSafeModeFile() || lastError != null
     }
 
-    /**
-     * This can be used to override any extension loading to fix crashes!
-     * @return true if safe mode file is present
-     **/
     fun checkSafeModeFile(): Boolean {
+
         return safe {
             val folder = File(CLOUD_STREAM_FOLDER)
             if (!folder.exists()) return@safe false
@@ -587,9 +623,7 @@ object PluginManager {
         } ?: false
     }
 
-    /**
-     * @return True if successful, false if not
-     * */
+
     private suspend fun loadPlugin(context: Context, file: File, data: PluginData): Boolean {
         val fileName = file.nameWithoutExtension
         val filePath = file.absolutePath

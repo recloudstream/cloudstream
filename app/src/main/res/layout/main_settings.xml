@@ -107,6 +107,7 @@
                 android:nextFocusUp="@id/settings_credits"
                 android:text="@string/extensions" />
 
+
             <LinearLayout
                 android:id="@+id/app_version_info"
                 android:layout_width="wrap_content"

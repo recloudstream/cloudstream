@@ -57,7 +57,7 @@ object BackupUtils {
         MAL_CACHED_LIST,
         KITSU_CACHED_LIST,
 
-        // The plugins themselves are not backed up
+        
         PLUGINS_KEY,
         PLUGINS_KEY_LOCAL,
 
@@ -68,14 +68,11 @@ object BackupUtils {
         "biometric_key", // can lock down users if backup is shared on a incompatible device
         "nginx_user", // Nginx user key
 
-        // No access rights after restore data from backup
         "download_path_key",
         "download_path_key_visual",
         "backup_path_key",
         "backup_dir_path_key",
 
-        // When sharing backup we do not want to transfer what is essentially the password
-        // Note that this is deprecated, and can be removed after all tokens have expired
         "anilist_token",
         "anilist_user",
         "mal_user",
@@ -87,10 +84,7 @@ object BackupUtils {
         "simkl_token",
 
 
-        // Downloads can not be restored from backups.
-        // The download path URI can not be transferred.
-        // In the future we may potentially write metadata to files in the download directory
-        // and make it possible to restore download folders using that metadata.
+      
         DOWNLOAD_EPISODE_CACHE_BACKUP,
         DOWNLOAD_EPISODE_CACHE,
         
@@ -100,10 +94,10 @@ object BackupUtils {
         // DOWNLOAD_HEADER_CACHE,
         
 
-        // This may overwrite valid local data with invalid data
+     
         KEY_DOWNLOAD_INFO,
 
-        // Prevent backups from automatically starting downloads
+      
         KEY_RESUME_IN_QUEUE,
         KEY_RESUME_PACKAGES,
         QUEUE_KEY,
@@ -112,9 +106,31 @@ object BackupUtils {
         "auto_download_plugins_key2"
     )
 
-    /** false if key should not be contained in backup */
-    private fun String.isTransferable(): Boolean {
-        return !nonTransferableKeys.any { this.contains(it) }
+
+    fun String.isTransferable(context: Context): Boolean {
+        val prefs = context.getSharedPreferences("cs3_sync_prefs", Context.MODE_PRIVATE)
+        val pluginSyncEnabled = prefs.getBoolean("sync_plugins_enabled", false)
+        val accountLoginSyncEnabled = prefs.getBoolean("sync_account_logins_enabled", false)
+
+        val trackingKeys = listOf(
+            AccountManager.ACCOUNT_TOKEN,
+            AccountManager.ACCOUNT_IDS,
+            "anilist_token", "anilist_user",
+            "mal_user", "mal_token", "mal_refresh_token", "mal_unixtime",
+            "open_subtitles_user",
+            "subdl_user",
+            "simkl_token",
+        )
+
+        var excluded: List<String> = nonTransferableKeys
+        if (pluginSyncEnabled) excluded = excluded.filter { it != PLUGINS_KEY }
+        if (accountLoginSyncEnabled) excluded = excluded.filter { it !in trackingKeys }
+
+        val result = !excluded.any { this.contains(it) }
+        if (this == "PLUGINS_KEY" || this == "REPOSITORIES_KEY" || this.contains("home_api_used")) {
+            android.util.Log.d("BackupUtils", "isTransferable($this) = $result (pluginSyncEnabled=$pluginSyncEnabled, excluded contains PLUGINS_KEY=${excluded.contains(PLUGINS_KEY)})")
+        }
+        return result
     }
 
     private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
@@ -137,9 +153,11 @@ object BackupUtils {
     )
 
     @Suppress("UNCHECKED_CAST")
-    private fun getBackup(context: Context): BackupFile {
-        val allData = context.getSharedPrefs().all.filter { it.key.isTransferable() }
-        val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
+    internal fun getBackup(context: Context?): BackupFile? {
+        if (context == null) return null
+
+        val allData = context.getSharedPrefs().all.filter { it.key.isTransferable(context) }
+        val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable(context) }
 
         val allDataSorted = BackupVars(
             allData.filter { it.value is Boolean } as? Map<String, Boolean>,
@@ -211,7 +229,7 @@ object BackupUtils {
 
             val date = SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.getDefault()).format(Date(currentTimeMillis()))
             val displayName = "CS3_Backup_${date}"
-            val backupFile = getBackup(context)
+            val backupFile = getBackup(context) ?: return@ioSafe
             val stream = setupBackupStream(context, displayName)
 
             fileStream = stream.openNew()
@@ -309,7 +327,7 @@ object BackupUtils {
     ) {
         val editor = DataStore.editor(this, isEditingAppSettings)
         map?.forEach {
-            if (it.key.isTransferable()) {
+            if (it.key.isTransferable(this)) {
                 editor.setKeyRaw(it.key, it.value)
             }
         }

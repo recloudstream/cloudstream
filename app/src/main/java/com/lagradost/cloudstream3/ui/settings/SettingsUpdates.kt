@@ -41,6 +41,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream3.syncproviders.google.SyncManager
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStream
@@ -73,6 +74,11 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_updates, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+        getPref(R.string.sync_category_account)?.setOnPreferenceClickListener {
+            findNavController().navigate(R.id.action_navigation_global_to_navigation_settings_sync)
+            return@setOnPreferenceClickListener true
+        }
 
         getPref(R.string.backup_key)?.setOnPreferenceClickListener {
             BackupUtils.backup(activity)
@@ -282,6 +288,12 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
             }
             return@setOnPreferenceClickListener true // Return true for the listener
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val isConnected = context?.let { SyncManager.getConnectedEmail(it) } != null
+        getPref(R.string.sync_category_account)?.setIcon(if (isConnected) R.drawable.ic_google_drive_connected else R.drawable.ic_google_drive)
     }
 
     private fun getBackupDirsForDisplay(): List<String> {
