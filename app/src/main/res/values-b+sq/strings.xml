@@ -127,7 +127,7 @@
     <string name="continue_watching">Vazhdo shikimin</string>
     <string name="action_remove_watching">Hiq</string>
     <string name="action_open_watching">Më shumë informacion</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Një VPN mund të nevojitet që ky ofrues të funksionojë në rregull</string>
     <string name="vpn_torrent">Ky ofrues është Torrent, rekomandohet një VPN</string>
     <string name="provider_info_meta">Metadata nuk ofrohet nga kjo faqe, ngarkimi i videos do të dështojë nëse nuk ekziston në këtë faqe.</string>
