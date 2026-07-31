@@ -1215,7 +1215,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
         safe {
             val appVer = BuildConfig.VERSION_NAME
-            val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
+            val lastAppAutoBackup: String = getKey<String>("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
                 if (lastAppAutoBackup.isEmpty()) return@safe
@@ -2018,7 +2018,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
 
         try {
-            if (getKey(HAS_DONE_SETUP_KEY, false) != true) {
+            if (getKey<Boolean>(HAS_DONE_SETUP_KEY, false) != true) {
                 navController.navigate(R.id.navigation_setup_language)
                 // If no plugins bring up extensions screen
             } else if (PluginManager.getPluginsOnline().isEmpty()

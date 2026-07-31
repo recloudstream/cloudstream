@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
-@Prerelease
 open class Streamcash: ExtractorApi() {
     override val name: String = "Streamcash"
     override val mainUrl: String = "https://streamcash.to"

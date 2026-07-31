@@ -677,4 +677,9 @@
     <string name="confirm_before_exiting_title">Bevestig voor afsluiten</string>
     <string name="confirm_before_exiting_desc">Toon dialoogvenster voordat de app wordt afgesloten</string>
     <string name="subs_edge_size">Randgrote</string>
+    <string name="show_player_metadata_overlay">Laat Speler Metadata Overlay zien</string>
+    <string name="device_pin_error_message">Kon de apparaat PIN niet vinden, probeer locale authenticatie</string>
+    <string name="torrent_preferred_media">Zet torrent aan in Instellingen/Providers/Media voorkeur</string>
+    <string name="torrent_not_accepted">Herstart de app en accepteer de Stream Torrent pop-up om verder te gaan.</string>
+    <string name="update_plugins_manually">Handmatige Update Knop</string>
 </resources>

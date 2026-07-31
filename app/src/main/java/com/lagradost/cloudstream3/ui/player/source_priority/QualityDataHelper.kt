@@ -64,7 +64,7 @@ object QualityDataHelper {
     fun getSourcePriority(profile: Int, name: String?): Int {
         if (name == null) return DEFAULT_SOURCE_PRIORITY
 
-        return sourcePriorityCache[profile]?.get(name) ?: (getKey(
+        return sourcePriorityCache[profile]?.get(name) ?: (getKey<Int>(
             "$currentAccount/$VIDEO_SOURCE_PRIORITY/$profile",
             name,
             DEFAULT_SOURCE_PRIORITY
@@ -110,7 +110,7 @@ object QualityDataHelper {
     // Map profile and quality to priority
     val qualityPriorityCache: ConcurrentHashMap<Int, EnumMap<Qualities, Int>> = ConcurrentHashMap()
     fun getQualityPriority(profile: Int, quality: Qualities): Int {
-        return qualityPriorityCache[profile]?.get(quality) ?: (getKey(
+        return qualityPriorityCache[profile]?.get(quality) ?: (getKey<Int>(
             "$currentAccount/$VIDEO_QUALITY_PRIORITY/$profile",
             quality.value.toString(),
             quality.defaultPriority

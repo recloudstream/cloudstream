@@ -39,7 +39,7 @@ object GogoHelper {
     // https://github.com/saikou-app/saikou/blob/45d0a99b8a72665a29a1eadfb38c506b842a29d7/app/src/main/java/ani/saikou/parsers/anime/extractors/GogoCDN.kt#L97
     // No Licence on the function
     @OptIn(DelicateCryptographyApi::class)
-    private fun cryptoHandler(
+    private suspend fun cryptoHandler(
         string: String,
         iv: String,
         secretKeyString: String,
@@ -47,14 +47,14 @@ object GogoHelper {
     ): String {
         val ivBytes = iv.encodeToByteArray()
         val keyBytes = secretKeyString.encodeToByteArray()
-        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, keyBytes)
         val cipher = aesKey.cipher(padding = true)
 
         return if (!encrypt) {
-            val plainBytes = cipher.decryptWithIvBlocking(ivBytes, base64DecodeArray(string))
+            val plainBytes = cipher.decryptWithIv(ivBytes, base64DecodeArray(string))
             plainBytes.decodeToString()
         } else {
-            base64Encode(cipher.encryptWithIvBlocking(ivBytes, string.encodeToByteArray()))
+            base64Encode(cipher.encryptWithIv(ivBytes, string.encodeToByteArray()))
         }
     }
 

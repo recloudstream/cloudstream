@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils.serializers
 
 import android.net.Uri
+import com.lagradost.cloudstream3.InternalAPI
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -26,6 +27,7 @@ import kotlinx.serialization.encoding.Encoder
  *       val uri: Uri,
  *   )
  */
+@InternalAPI
 object UriSerializer : KSerializer<Uri> {
     override val descriptor: SerialDescriptor = 
         PrimitiveSerialDescriptor("Uri", PrimitiveKind.STRING)

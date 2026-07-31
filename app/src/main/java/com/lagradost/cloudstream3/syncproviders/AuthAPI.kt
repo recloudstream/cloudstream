@@ -6,13 +6,12 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.base64Encode
+import com.lagradost.cloudstream3.splitUrlParameters
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
-import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
-import java.net.URI
 import java.security.SecureRandom
 
 data class AuthLoginPage(
@@ -172,10 +171,8 @@ abstract class AuthAPI {
             get() = unixTimeMS
 
         fun splitRedirectUrl(redirectUrl: String): Map<String, String> {
-            return splitQuery(
-                URI(
-                    redirectUrl.replace(APP_STRING, "https").replace("/#", "?")
-                ).toURL()
+            return splitUrlParameters(
+                redirectUrl.replace(APP_STRING, "https").replace("/#", "?")
             )
         }
 

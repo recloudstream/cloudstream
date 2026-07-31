@@ -101,7 +101,7 @@ class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBindi
         }
 
         fun getCurrentSavedStyle(): SaveChromeCaptionStyle {
-            return getKey(CHROME_SUBTITLE_KEY) ?: defaultState
+            return getKey<SaveChromeCaptionStyle>(CHROME_SUBTITLE_KEY) ?: defaultState
         }
 
         private val defaultState = SaveChromeCaptionStyle()

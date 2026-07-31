@@ -359,7 +359,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
             } ?: emptyList()
         }
 
-        settingsManager.edit { putBoolean(getString(R.string.jsdelivr_proxy_key), getKey(getString(R.string.jsdelivr_proxy_key), false) ?: false) }
+        settingsManager.edit { putBoolean(getString(R.string.jsdelivr_proxy_key), getKey<Boolean>(getString(R.string.jsdelivr_proxy_key), false) ?: false) }
         getPref(R.string.jsdelivr_proxy_key)?.setOnPreferenceChangeListener { _, newValue ->
             setKey(getString(R.string.jsdelivr_proxy_key), newValue)
             return@setOnPreferenceChangeListener true
