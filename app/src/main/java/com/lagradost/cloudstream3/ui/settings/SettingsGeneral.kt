@@ -132,6 +132,9 @@ val appLanguages = arrayListOf(
     Pair("日本語 (にほんご)", "ja"),
     Pair("正體中文(臺灣)", "zh-TW"),
     Pair("한국어", "ko"),
+    Pair("беларуская мова", "be"),
+    Pair("català", "ca"),
+    Pair("Shqip мова", "sq"),
 /* end language list */
 ).sortedBy { it.first.lowercase(Locale.ROOT) } // ye, we go alphabetical, so ppl don't put their lang on top
 
