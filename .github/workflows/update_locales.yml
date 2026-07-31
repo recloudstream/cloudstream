@@ -19,16 +19,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Generate access token
-      id: generate_token
-      uses: tibdex/github-app-token@v2
+      id: app-token
+      uses: actions/create-github-app-token@v3
       with:
-        app_id: ${{ secrets.GH_APP_ID }}
-        private_key: ${{ secrets.GH_APP_KEY }}
-        repository: "recloudstream/cloudstream"
+        client-id: ${{ vars.APP_CLIENT_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+        permission-contents: write
+
+    - name: Get GitHub App User ID
+      id: get-user-id
+      run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+      env:
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
     - uses: actions/checkout@v6
       with:
-        token: ${{ steps.generate_token.outputs.token }}
+        token: ${{ steps.app-token.outputs.token }}
 
     - name: Install dependencies
       run: pip3 install lxml requests
@@ -38,8 +44,8 @@ jobs:
 
     - name: Commit to the repo
       run: |
-        git config --local user.email "111277985+recloudstream[bot]@users.noreply.github.com"
-        git config --local user.name "recloudstream[bot]"
+        git config --local user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+        git config --local user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
         git add .
         # "echo" returns true so the build succeeds, even if no changed files
         git commit -m 'chore(locales): fix locale issues' || echo

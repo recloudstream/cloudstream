@@ -18,24 +18,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate access token
-        id: generate_token
-        uses: tibdex/github-app-token@v2
+        id: app-token
+        uses: actions/create-github-app-token@v3
         with:
-          app_id: ${{ secrets.GH_APP_ID }}
-          private_key: ${{ secrets.GH_APP_KEY }}
-          repository: "recloudstream/dokka"
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-contents: write
+          repositories: dokka
+
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          path: "src"
+          path: src
 
       - name: Checkout dokka
         uses: actions/checkout@v6
         with:
-          repository: "recloudstream/dokka"
-          path: "dokka"
-          token: ${{ steps.generate_token.outputs.token }}
+          repository: ${{ github.repository_owner }}/dokka
+          token: ${{ steps.app-token.outputs.token }}
+          path: dokka
 
       - name: Clean old builds
         run: |
@@ -67,8 +75,8 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/dokka
           touch .nojekyll
-          git config --local user.email "111277985+recloudstream[bot]@users.noreply.github.com"
-          git config --local user.name "recloudstream[bot]"
+          git config --local user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+          git config --local user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
           git add .
-          git commit --amend -m "Generate dokka for recloudstream/cloudstream@${GITHUB_SHA}" || exit 0   # do not error if nothing to commit
+          git commit -m "Generate dokka for ${GITHUB_REPOSITORY}@${GITHUB_SHA}" || exit 0   # do not error if nothing to commit
           git push --force
