@@ -115,6 +115,9 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                 )
             }
 
+            view.clipToPadding = false
+            view.clipChildren = false
+
             // we default to 25sp, this is needed as RoundedBackgroundColorSpan breaks on override sizes
             val size = data.fixedTextSize ?: 25.0f
             view.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, size)
