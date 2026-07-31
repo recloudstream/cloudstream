@@ -53,11 +53,12 @@ jobs:
       uses: gradle/actions/setup-gradle@v5
       with:
         cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+        cache-read-only: false
 
     - name: Run Gradle
       run: ./gradlew assemblePrereleaseRelease androidSourcesJar makeJar
       env:
-        SIGNING_KEY_ALIAS: "key0"
+        SIGNING_KEY_ALIAS: key0
         SIGNING_KEY_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
         SIGNING_STORE_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
         SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
@@ -67,13 +68,24 @@ jobs:
         MAL_KEY: ${{ secrets.MAL_KEY }}
         ANILIST_KEY: ${{ secrets.ANILIST_KEY }}
 
+    - name: Generate release notes
+      id: notes
+      run: python .github/generate_changelog.py --previous-tag=pre-release
+      env:
+        GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+
+    - name: Delete existing pre-release
+      run: gh release delete pre-release --yes --cleanup-tag || true
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
     - name: Create pre-release
-      uses: marvinpinto/action-automatic-releases@latest
+      uses: softprops/action-gh-release@v3
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "pre-release"
+        tag_name: pre-release
+        name: Pre-release Build
         prerelease: true
-        title: "Pre-release Build"
+        body: ${{ steps.notes.outputs.changelog }}
         files: |
           app/build/outputs/apk/prerelease/release/*.apk
           app/build/libs/app-sources.jar
