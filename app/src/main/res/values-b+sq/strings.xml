@@ -735,4 +735,11 @@
         <item quantity="other">%d shkarkime në radhë</item>
     </plurals>
     <string name="player_is_live">Live</string>
+    <string name="profile_settings">Cilësimet e profil-it</string>
+    <string name="profile_hide_negative_sources">Fshih burimet me prioritet negativ</string>
+    <string name="profile_hide_error_sources">Fshih burimet me error-e</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d link i fshehur</item>
+        <item quantity="other">%d linqe të fshehura</item>
+    </plurals>
 </resources>

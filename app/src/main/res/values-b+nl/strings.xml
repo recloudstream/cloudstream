@@ -682,4 +682,17 @@
     <string name="torrent_preferred_media">Zet torrent aan in Instellingen/Providers/Media voorkeur</string>
     <string name="torrent_not_accepted">Herstart de app en accepteer de Stream Torrent pop-up om verder te gaan.</string>
     <string name="update_plugins_manually">Handmatige Update Knop</string>
+    <string name="biometric_setting_summary">Open de app met Vingerafdruk, Face ID, PIN, Pattern en Wachtwoord.</string>
+    <string name="preview_seekbar">Seekbar preview</string>
+    <string name="preview_seekbar_desc">Zet preview thumbnail aan op seekbar</string>
+    <string name="software_decoding">Software decodering</string>
+    <string name="software_decoding_desc">Software decodering staat de mogelijkheid toe om de speler videobestanden af te laten spelen op jouw apparaat, maar het kan een haperige of onstabiele kijkervaring zorgen op hoge resolutie.</string>
+    <string name="volume_exceeded_100">Volume heeft de 100% overschreden</string>
+    <string name="update_plugins">Update Plugins</string>
+    <string name="no_plugins_updated_manually">Geen plugins zijn geupdate.</string>
+    <string name="player_notification_channel_name">Speler meldingen</string>
+    <string name="player_notification_channel_description">De speler melding om de kijkervaring van de achtergrond de besturen</string>
+    <string name="subtitles_from_online">Online</string>
+    <string name="download_parallel_settings_des">Hoeveel verschillende items kunnen in parallel gedownload worden</string>
+    <string name="parallel_downloads">Parallel downloads</string>
 </resources>
