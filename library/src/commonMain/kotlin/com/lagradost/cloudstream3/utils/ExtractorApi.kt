@@ -178,6 +178,7 @@ import com.lagradost.cloudstream3.extractors.PlayLtXyz
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.PlayerVoxzer
 import com.lagradost.cloudstream3.extractors.Playerwish
+import com.lagradost.cloudstream3.extractors.Playmate
 import com.lagradost.cloudstream3.extractors.Playmogo
 import com.lagradost.cloudstream3.extractors.Rabbitstream
 import com.lagradost.cloudstream3.extractors.RapidVid
@@ -1320,6 +1321,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Flyfile(),
     Firestream(),
     Vids(),
+    Playmate()
 )
 
 
