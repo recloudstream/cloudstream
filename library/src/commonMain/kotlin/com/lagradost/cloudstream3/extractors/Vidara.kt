@@ -95,7 +95,9 @@ open class Vidara : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit,
     ) {
-        val fileCode = url.substringAfterLast("/")
+        // URLs sometimes contain a mirror selector query parameter, e.g. "https://vidara.to/xkNOuHSrCNMj?24"
+        // that is not part of the file code and hence we must remove it
+        val fileCode = url.substringAfterLast("/").substringBefore("?")
         val fileInfo = app.post(
             "$mainUrl/api/stream", json = mapOf(
                 "filecode" to fileCode,
