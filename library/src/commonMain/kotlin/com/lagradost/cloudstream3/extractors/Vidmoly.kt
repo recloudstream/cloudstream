@@ -35,14 +35,13 @@ open class Vidmoly : ExtractorApi() {
             "Sec-Fetch-Dest" to "iframe"
         )
         
-        val newUrl = if (url.contains("/w/")) 
-            url.replaceFirst("/w/", "/embed-") + ".html" 
-            else url
+        val vidmolyId=url.removeSuffix("/").substringAfterLast("/")
+        val newUrl ="https://vidmoly.biz/embed-${vidmolyId}.html"
 
         val script = app.get(newUrl, headers = headers, referer = referer)
             .document.select("script")
-            .firstOrNull { it.data().contains("sources:") }
-            ?.data()
+            .map { it.data().replace("'", "\"") }
+            .firstOrNull { it.contains("sources:") }
 
         // Extracts and parses videoData
         JwPlayerHelper.extractStreamLinks(script.orEmpty(), name, mainUrl, callback, subtitleCallback)
