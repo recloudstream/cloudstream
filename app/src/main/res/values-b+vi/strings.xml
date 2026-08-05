@@ -748,4 +748,12 @@
     <string name="player_is_live">Trực tiếp</string>
     <string name="video_singular">Video</string>
     <string name="skip_type_preview">Xem trước</string>
+    <string name="tv_layout_clock_settings">Hiển thị đồng hồ thời gian thực</string>
+    <string name="tv_layout_clock_settings_des">Hiển thị đồng hồ thời gian thực ở phía trên màn hình. Áp dụng cho trang chủ và trình phát</string>
+    <string name="profile_settings">Cài đặt hồ sơ</string>
+    <string name="profile_hide_negative_sources">Ẩn nguồn có độ ưu tiên âm</string>
+    <string name="profile_hide_error_sources">Ẩn nguồn có lỗi</string>
+    <plurals name="links_hidden">
+        <item quantity="other">%d liên kết bị ẩn</item>
+    </plurals>
 </resources>
