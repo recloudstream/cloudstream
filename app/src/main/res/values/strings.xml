@@ -631,7 +631,6 @@
         <item quantity="one">%d hidden link</item>
         <item quantity="other">%d hidden links</item>
     </plurals>
-
     <string name="wifi">Wi-Fi</string>
     <string name="mobile_data">Mobile data</string>
     <string name="set_default">Set default</string>
@@ -734,7 +733,7 @@
     <!--Manual Update Button-->
     <string name="update_plugins_manually">Update plugins manually</string>
     <string name="starting_plugin_update_manually">Starting plugin update process!</string>
-    <string name="plugins_updated_manually">Successfully updated %d plugin(s)!</string>
+    <string name="plugins_updated_manually">Successfully updated %d plugin(s)</string>
     <string name="no_plugins_updated_manually">No plugins were updated.</string>
     <string name="player_notification_channel_name">Player notifications</string>
     <string name="player_notification_channel_description">The player notification for controlling the playback from the background</string>
