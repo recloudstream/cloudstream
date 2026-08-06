@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.newSubtitleFile
@@ -43,6 +44,46 @@ class VidaraSo : Vidara() {
     override val mainUrl = "https://vidara.so"
 }
 
+@Prerelease
+class Odysseusa : Vidara() {
+    override val mainUrl = "https://odysseusa.cc"
+}
+
+@Prerelease
+class Handfacesnap : Vidara() {
+    override val mainUrl = "https://handfacesnap.cc"
+}
+
+@Prerelease
+class Namefacesnap : Vidara() {
+    override val mainUrl = "https://namefacesnap.cc"
+}
+
+@Prerelease
+class Thebesthostertv : Vidara() {
+    override val mainUrl = "https://thebesthosterv.com"
+}
+
+@Prerelease
+class Vidmatrixa : Vidara() {
+    override val mainUrl = "https://vidmatrixa.com"
+}
+
+@Prerelease
+class VidChampions : Vidara() {
+    override val mainUrl = "https://vidchampions.com/"
+}
+
+@Prerelease
+class Antarcticadocs : Vidara() {
+    override val mainUrl = "https://antarcticadocs.com"
+}
+
+@Prerelease
+class Nameitweb : Vidara() {
+    override val mainUrl = "https://nameitweb.com"
+}
+
 open class Vidara : ExtractorApi() {
     override val name = "Vidara"
     override val mainUrl = "https://vidara.to"
@@ -54,7 +95,9 @@ open class Vidara : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit,
     ) {
-        val fileCode = url.substringAfterLast("/")
+        // URLs sometimes contain a mirror selector query parameter, e.g. "https://vidara.to/xkNOuHSrCNMj?24"
+        // that is not part of the file code and hence we must remove it
+        val fileCode = url.substringAfterLast("/").substringBefore("?")
         val fileInfo = app.post(
             "$mainUrl/api/stream", json = mapOf(
                 "filecode" to fileCode,

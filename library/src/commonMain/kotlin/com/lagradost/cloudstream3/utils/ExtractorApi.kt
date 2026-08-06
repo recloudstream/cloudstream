@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.Acefile
 import com.lagradost.cloudstream3.extractors.Ahvsh
 import com.lagradost.cloudstream3.extractors.Aico
+import com.lagradost.cloudstream3.extractors.Antarcticadocs
 import com.lagradost.cloudstream3.extractors.Asnwish
 import com.lagradost.cloudstream3.extractors.Auvexiug
 import com.lagradost.cloudstream3.extractors.Awish
@@ -109,6 +110,7 @@ import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
 import com.lagradost.cloudstream3.extractors.HDStreamAble
 import com.lagradost.cloudstream3.extractors.Habetar
+import com.lagradost.cloudstream3.extractors.Handfacesnap
 import com.lagradost.cloudstream3.extractors.Haxloppd
 import com.lagradost.cloudstream3.extractors.Hgcloudto
 import com.lagradost.cloudstream3.extractors.HglinkTo
@@ -158,6 +160,8 @@ import com.lagradost.cloudstream3.extractors.Multimovies
 import com.lagradost.cloudstream3.extractors.Mvidoo
 import com.lagradost.cloudstream3.extractors.MyVidPlay
 import com.lagradost.cloudstream3.extractors.Mwish
+import com.lagradost.cloudstream3.extractors.Namefacesnap
+import com.lagradost.cloudstream3.extractors.Nameitweb
 import com.lagradost.cloudstream3.extractors.NathanFromSubject
 import com.lagradost.cloudstream3.extractors.Nekostream
 import com.lagradost.cloudstream3.extractors.Nekowish
@@ -165,6 +169,7 @@ import com.lagradost.cloudstream3.extractors.Neonime7n
 import com.lagradost.cloudstream3.extractors.Neonime8n
 import com.lagradost.cloudstream3.extractors.Obeywish
 import com.lagradost.cloudstream3.extractors.Odnoklassniki
+import com.lagradost.cloudstream3.extractors.Odysseusa
 import com.lagradost.cloudstream3.extractors.OkRuHTTP
 import com.lagradost.cloudstream3.extractors.OkRuHTTPMobile
 import com.lagradost.cloudstream3.extractors.OkRuSSL
@@ -178,6 +183,7 @@ import com.lagradost.cloudstream3.extractors.PlayLtXyz
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.PlayerVoxzer
 import com.lagradost.cloudstream3.extractors.Playerwish
+import com.lagradost.cloudstream3.extractors.Playmate
 import com.lagradost.cloudstream3.extractors.Playmogo
 import com.lagradost.cloudstream3.extractors.Rabbitstream
 import com.lagradost.cloudstream3.extractors.RapidVid
@@ -269,6 +275,8 @@ import com.lagradost.cloudstream3.extractors.VidHidePro6
 import com.lagradost.cloudstream3.extractors.VidHideHub
 import com.lagradost.cloudstream3.extractors.Ryderjet
 import com.lagradost.cloudstream3.extractors.Streamcash
+import com.lagradost.cloudstream3.extractors.Thebesthostertv
+import com.lagradost.cloudstream3.extractors.VidChampions
 import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -295,6 +303,7 @@ import com.lagradost.cloudstream3.extractors.Vidaraw
 import com.lagradost.cloudstream3.extractors.Vidarax
 import com.lagradost.cloudstream3.extractors.Vidavaca
 import com.lagradost.cloudstream3.extractors.Vide0Net
+import com.lagradost.cloudstream3.extractors.Vidmatrixa
 import com.lagradost.cloudstream3.extractors.Vids
 import com.lagradost.cloudstream3.extractors.Vidsonic
 import com.lagradost.cloudstream3.extractors.VkExtractor
@@ -1181,6 +1190,14 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Vidaratem(),
     VidaaraxCom(),
     VidaaraxNet(),
+    Odysseusa(),
+    Handfacesnap(),
+    Namefacesnap(),
+    Thebesthostertv(),
+    Vidmatrixa(),
+    VidChampions(),
+    Antarcticadocs(),
+    Nameitweb(),
 
     GamoVideo(),
     Gdriveplayerapi(),
@@ -1320,6 +1337,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Flyfile(),
     Firestream(),
     Vids(),
+    Playmate()
 )
 
 
