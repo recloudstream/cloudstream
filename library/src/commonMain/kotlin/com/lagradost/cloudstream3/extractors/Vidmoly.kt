@@ -23,16 +23,14 @@ open class Vidmoly : ExtractorApi() {
     override val name = "Vidmoly"
     override val mainUrl = "https://vidmoly.net"
     override val requiresReferer = true
-    @Prerelease
-    val downloadUrl = "https://vidmoly.biz"
 
-    @Prerelease
     override suspend fun getUrl(
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
+        val downloadUrl = "https://vidmoly.biz"
         val headers = mapOf(
             "user-agent" to USER_AGENT,
             "Sec-Fetch-Dest" to "iframe"
