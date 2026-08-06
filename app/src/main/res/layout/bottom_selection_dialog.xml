@@ -37,6 +37,7 @@
         android:paddingTop="10dp"
         android:dividerHeight="1dp"
         android:requiresFadingEdge="vertical"
+        android:paddingBottom="32dp"
         android:nextFocusRight="@id/cancel_btt"
         android:nextFocusLeft="@id/apply_btt"
         tools:listitem="@layout/sort_bottom_single_choice" />
