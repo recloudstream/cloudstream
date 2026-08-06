@@ -1,0 +1,17 @@
+<resources>
+    <string name="category_accounts">Accounts and Security</string>
+    <string name="category_accounts_subtitle">Sync services &amp; profiles</string>
+    <string name="category_extensions">Extensions</string>
+    <string name="category_extensions_subtitle">Repositories &amp; plugins</string>
+    <string name="category_general">General</string>
+    <string name="category_general_subtitle">Language, downloads &amp; network</string>
+    <string name="category_layout">Layout</string>
+    <string name="category_layout_subtitle">Theme, colors &amp; layout</string>
+    <string name="category_player">Player</string>
+    <string name="category_player_subtitle">Playback, subtitles &amp; gestures</string>
+    <string name="category_providers">Providers</string>
+    <string name="category_providers_subtitle">Content language &amp; media type</string>
+    <string name="category_updates">Updates and Backup</string>
+    <string name="category_updates_subtitle">Updates, backup &amp; restore</string>
+    <string name="profile_picture_desc">Profile picture</string>
+</resources>
