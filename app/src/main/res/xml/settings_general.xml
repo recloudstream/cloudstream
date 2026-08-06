@@ -71,6 +71,20 @@
 
         <SwitchPreference
             android:defaultValue="false"
+            android:icon="@drawable/ic_baseline_vpn_key_24"
+            android:key="@string/vpn_ssl_key"
+            android:summaryOff="@string/vpn_ssl_summary_off"
+            android:summaryOn="@string/vpn_ssl_summary_on"
+            android:title="@string/vpn_ssl_title" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_vpn_key_24"
+            android:key="@string/vpn_key"
+            android:summary="@string/vpn_pref_summary"
+            android:title="@string/vpn_pref" />
+
+        <SwitchPreference
+            android:defaultValue="false"
             android:icon="@drawable/ic_github_logo"
             android:key="@string/jsdelivr_proxy_key"
             android:summary="@string/jsdelivr_proxy_summary"
