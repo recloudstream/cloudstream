@@ -37,9 +37,9 @@ open class Vidmoly : ExtractorApi() {
         )
         
         val vidmolyId=url.removeSuffix("/").substringAfterLast("/")
-        val newUrl ="${downloadUrl}/embed-${vidmolyId}.html"
+        val iframeUrl ="${downloadUrl}/embed-${vidmolyId}.html"
 
-        val script = app.get(newUrl, headers = headers, referer = referer)
+        val script = app.get(iframeUrl, headers = headers, referer = referer)
             .document.select("script")
             .map { it.data().replace("'", "\"") }
             .firstOrNull { it.contains("sources:") }
