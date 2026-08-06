@@ -641,7 +641,7 @@
     <string name="sort_button_rating">Note %s</string>
     <string name="sort_button_date">Date %s</string>
     <string name="update_plugins">Mettre à jour les plugins</string>
-    <string name="plugins_updated_manually">%d plugin(s) mis à jour avec succès !</string>
+    <string name="plugins_updated_manually">%d plugin(s) mis à jour avec succès</string>
     <string name="no_plugins_updated_manually">Aucun plugin n\'a été mis à jour.</string>
     <string name="sort_episodes_rating_high_low">Note (Plus Haute)</string>
     <string name="update_plugins_manually">Mettre à jour les plugins manuellement</string>
@@ -738,4 +738,14 @@
     <string name="video_singular">Vidéo</string>
     <string name="skip_type_preview">Prévisualisation</string>
     <string name="player_is_live">Direct</string>
+    <string name="profile_hide_negative_sources">Cache les sources avec une priorité négative</string>
+    <string name="tv_layout_clock_settings">Afficher l\'heure en temps réel</string>
+    <string name="tv_layout_clock_settings_des">Afficher une horloge en temps réel en haut de l\'écran. S\'applique à la page d\'accueil et au joueur</string>
+    <string name="profile_settings">Paramètres de profil</string>
+    <string name="profile_hide_error_sources">Cacher les sources avec des erreurs</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d lien caché</item>
+        <item quantity="many">%d liens cachés</item>
+        <item quantity="other">%d liens cachés</item>
+    </plurals>
 </resources>
