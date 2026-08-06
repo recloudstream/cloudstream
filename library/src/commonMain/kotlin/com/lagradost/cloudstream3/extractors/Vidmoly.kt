@@ -19,6 +19,7 @@ class Vidmolybiz : Vidmoly() {
     override val mainUrl = "https://vidmoly.biz"
 }
 
+@Prerelease
 open class Vidmoly : ExtractorApi() {
     override val name = "Vidmoly"
     override val mainUrl = "https://vidmoly.net"
