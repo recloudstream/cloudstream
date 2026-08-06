@@ -7,28 +7,26 @@ import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 
-@Prerelease
 class Vidmolyme : Vidmoly() {
     override val mainUrl = "https://vidmoly.me"
 }
 
-@Prerelease
 class Vidmolyto : Vidmoly() {
     override val mainUrl = "https://vidmoly.to"
 }
 
-@Prerelease
 class Vidmolybiz : Vidmoly() {
     override val mainUrl = "https://vidmoly.biz"
 }
 
-@Prerelease
 open class Vidmoly : ExtractorApi() {
     override val name = "Vidmoly"
     override val mainUrl = "https://vidmoly.net"
     override val requiresReferer = true
+    @Prerelease
     val downloadUrl = "https://vidmoly.biz"
 
+    @Prerelease
     override suspend fun getUrl(
         url: String,
         referer: String?,
