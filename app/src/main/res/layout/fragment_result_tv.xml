@@ -38,24 +38,25 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             tools:src="@drawable/profile_bg_dark_blue" />
 
         <ImageView
-            android:layout_marginBottom="-1dp"
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_gravity="bottom"
-            android:src="@drawable/background_shadow" />
+            android:layout_marginBottom="-1dp"
+            android:src="@drawable/background_shadow"
+            tools:ignore="contentDescription"/>
 
         <ImageView
             android:id="@+id/background_poster_watermark_badge_holder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="220dp"
-            android:maxHeight="72dp"
             android:layout_gravity="bottom|start"
             android:layout_marginStart="@dimen/result_padding"
             android:layout_marginBottom="56dp"
             android:adjustViewBounds="true"
-            android:scaleType="fitStart"
-            android:contentDescription="@null" />
+            android:contentDescription="@null"
+            android:maxWidth="220dp"
+            android:maxHeight="72dp"
+            android:scaleType="fitStart" />
 
     </FrameLayout>
 
@@ -238,43 +239,44 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:id="@+id/result_resume_progress_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:orientation="horizontal"
-                    android:layout_marginTop="10dp"
                     android:visibility="gone"
                     tools:visibility="visible">
+
                     <TextView
                         android:id="@+id/result_resume_series_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:textColor="?attr/textColor"
                         android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:paddingEnd="10dp"
+                        android:textColor="?attr/textColor"
                         android:textSize="17sp"
                         android:textStyle="bold"
-                        tools:text="S1E1 Episode 1"
                         android:visibility="visible"
-                        tools:visibility="visible"
-                        android:paddingEnd="10dp"/>
+                        tools:text="S1E1 Episode 1"
+                        tools:visibility="visible" />
                     <!--https://github.com/material-components/material-components-android/blob/master/docs/components/ProgressIndicator.md-->
-<!--                    <com.google.android.material.progressindicator.LinearProgressIndicator-->
-<!--                        android:id="@+id/result_resume_series_progress"-->
+                    <!--                    <com.google.android.material.progressindicator.LinearProgressIndicator-->
+                    <!--                        android:id="@+id/result_resume_series_progress"-->
 
-<!--                        style="@style/RoundProgressbar"-->
+                    <!--                        style="@style/RoundProgressbar"-->
 
-<!--                        android:layout_width="100dp"-->
-<!--                        android:layout_height="20dp"-->
-<!--                        android:layout_gravity="end|center_vertical"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:indeterminate="false"-->
-<!--                        android:max="100"-->
-<!--                        android:paddingEnd="10dp"-->
-<!--                        android:progress="0"-->
+                    <!--                        android:layout_width="100dp"-->
+                    <!--                        android:layout_height="20dp"-->
+                    <!--                        android:layout_gravity="end|center_vertical"-->
+                    <!--                        android:layout_weight="1"-->
+                    <!--                        android:indeterminate="false"-->
+                    <!--                        android:max="100"-->
+                    <!--                        android:paddingEnd="10dp"-->
+                    <!--                        android:progress="0"-->
 
-<!--                        android:scrollbarStyle="outsideInset"-->
-<!--                        tools:ignore="RtlSymmetry"-->
-<!--                        tools:progress="25"-->
-<!--                        tools:visibility="visible" />-->
+                    <!--                        android:scrollbarStyle="outsideInset"-->
+                    <!--                        tools:ignore="RtlSymmetry"-->
+                    <!--                        tools:progress="25"-->
+                    <!--                        tools:visibility="visible" />-->
                     <FrameLayout
                         android:id="@+id/watch_progress_container"
                         android:layout_width="wrap_content"
@@ -283,7 +285,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
                         <ImageView
                             android:id="@+id/episode_play_icon"
-                            style="@style/ContinueWatchingPlayUnderlayProgress"/>
+                            style="@style/ContinueWatchingPlayUnderlayProgress"
+                            tools:ignore="contentDescription"/>
 
                         <com.google.android.material.progressindicator.CircularProgressIndicator
                             android:id="@+id/result_resume_series_progress"
@@ -295,11 +298,11 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_resume_series_progress_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"
                         android:maxLines="2"
                         android:textColor="?attr/grayTextColor"
                         tools:ignore="RtlSymmetry"
-                        android:gravity="center"
-                        android:layout_gravity="center_vertical"
                         tools:text="69m\nremaining" />
                 </LinearLayout>
             </LinearLayout>
@@ -514,6 +517,30 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/result_sync"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/result_sync_Button"
+                        style="@style/ResultSmallButtonTV"
+                        android:focusable="true"
+                        android:nextFocusUp="@id/result_sync_Button"
+                        android:nextFocusDown="@id/result_description"
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/bookmark_star_24px"
+                        app:iconPadding="0dp" />
+
+                    <TextView
+                        android:id="@+id/result_sync_text"
+                        style="@style/ResultMarqueeButtonText"
+                        android:text="@string/upload_sync" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/result_episodes_show"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -709,11 +736,72 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
     </androidx.core.widget.NestedScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sync_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        tools:visibility="visible">
+
+
+        <!--a
+         These two shadow spaces are used to create a view which always x% bigger
+         than the episode_holder_tv. This is required for creating a consistent shadow.
+        -->
+        <Space
+            android:id="@+id/sync_shadow_space_1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@+id/result_sync_ui"
+            app:layout_constraintStart_toStartOf="@+id/result_sync_ui" />
+
+        <!--
+        The dimension ratio should and episodes_shadow centerX should add up to
+        100% for the best results. For example (100:80 + 0.2) or (100:70 + 0.3).
+        Bigger centerX => Larger fade distance.
+         -->
+        <Space
+            android:id="@+id/sync_shadow_space_2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="100:80"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/sync_shadow_space_1" />
+
+        <ImageView
+            android:id="@+id/sync_shadow_background"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:importantForAccessibility="no"
+            android:src="@drawable/episodes_shadow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/sync_shadow_space_2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/result_sync_ui"
+            android:layout_width="400dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            layout="@layout/result_sync" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/episodes_shadow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:visibility="gone"
         tools:visibility="invisible">
 
 
