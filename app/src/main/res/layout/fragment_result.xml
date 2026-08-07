@@ -311,7 +311,9 @@
                             android:paddingBottom="4dp"
                             android:adjustViewBounds="true"
                             android:scaleType="fitStart"
-                            android:contentDescription="@null" />
+                            android:focusable="true"
+                            android:foreground="@drawable/outline_drawable"
+                            android:contentDescription="@string/result_logo_img_des" />
 
                     </FrameLayout>
                 </FrameLayout>
@@ -366,6 +368,7 @@
                                 android:textColor="?attr/textColor"
                                 android:textSize="20sp"
                                 android:textStyle="bold"
+                                android:foreground="@drawable/outline_drawable"
                                 tools:text="The Perfect Run The Perfect Run" />
 
                             <com.lagradost.cloudstream3.widget.FlowLayout
