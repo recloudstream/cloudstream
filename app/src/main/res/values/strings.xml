@@ -532,6 +532,13 @@
     <string name="download_all_plugins_from_repo">Warning: CloudStream does not take any responsibility for using third-party extensions and does not provide any support for them!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
     <string name="tracks">Tracks</string>
+    <string name="compressor">Compressor</string>
+    <string name="compressor_enable">Enable</string>
+    <string name="compressor_threshold_label">Threshold: %d dB</string>
+    <string name="compressor_ratio_label">Ratio: %d:1</string>
+    <string name="compressor_attack_label">Attack: %d ms</string>
+    <string name="compressor_release_label">Release: %d ms</string>
+    <string name="compressor_makeup_label">Makeup Gain: +%d dB</string>
     <string name="audio_tracks">Audio tracks</string>
     <string name="video_tracks">Video tracks</string>
     <string name="apply_on_restart">Restart the app to see changes.</string>
