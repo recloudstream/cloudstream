@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.ActivityInfo
@@ -150,6 +152,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
         }
     protected var selectSubtitlesDialog: Dialog? = null
+    protected var selectCompressorDialog: Dialog? = null
         set(value) {
             val prevField = field
             field = value
@@ -164,6 +167,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 || selectTrackDialog?.isShowing == true
                 || selectSpeedDialog?.isShowing == true
                 || selectSubtitlesDialog?.isShowing == true
+                || selectCompressorDialog?.isShowing == true
                 || isShowingEpisodeOverlay
 
     private fun scheduleMetadataVisibility() {
@@ -695,6 +699,108 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         this.selectSpeedDialog = dialog
         dialog.show()
         //}
+    }
+
+    private var compressorSettingsRestored = false
+
+    private fun showCompressorDialog() {
+        val act = activity ?: return
+        val compressor = (player as? CS3IPlayer)?.compressor ?: return
+
+        // Restore persisted settings on first open
+        if (!compressorSettingsRestored) {
+            compressorSettingsRestored = true
+            restoreCompressorSettings()
+        }
+
+        val binding = com.lagradost.cloudstream3.databinding.CompressorDialogBinding.inflate(android.view.LayoutInflater.from(act))
+
+        fun updateLabels() {
+            binding.compressorThresholdLabel.text =
+                act.getString(R.string.compressor_threshold_label, compressor.threshold.toInt())
+            binding.compressorRatioLabel.text =
+                act.getString(R.string.compressor_ratio_label, compressor.ratio.toInt())
+            binding.compressorAttackLabel.text =
+                act.getString(R.string.compressor_attack_label, compressor.attackMs.toInt())
+            binding.compressorReleaseLabel.text =
+                act.getString(R.string.compressor_release_label, compressor.releaseMs.toInt())
+            binding.compressorMakeupLabel.text =
+                act.getString(R.string.compressor_makeup_label, compressor.makeupGain.toInt())
+        }
+
+        // Restore current state
+        binding.compressorEnableSwitch.isChecked = compressor.enabled
+        binding.compressorThresholdBar.value  = compressor.threshold.coerceIn(-30f, 0f)
+        binding.compressorRatioBar.value      = compressor.ratio.coerceIn(1f, 20f)
+        binding.compressorAttackBar.value     = compressor.attackMs.coerceIn(1f, 400f)
+        binding.compressorReleaseBar.value    = compressor.releaseMs.coerceIn(2f, 800f)
+        binding.compressorMakeupBar.value     = compressor.makeupGain.coerceIn(0f, 24f)
+        updateLabels()
+
+        binding.compressorEnableSwitch.setOnCheckedChangeListener { _, checked ->
+            compressor.enabled = checked
+            setKey(COMPRESSOR_ENABLED_KEY, checked)
+        }
+
+        fun addSliderListener(
+            slider: com.google.android.material.slider.Slider,
+            set: (Float) -> Unit
+        ) {
+            slider.addOnChangeListener { _, value, fromUser ->
+                if (fromUser) {
+                    set(value)
+                    updateLabels()
+                    saveCompressorSettings(compressor)
+                }
+            }
+        }
+
+        addSliderListener(binding.compressorThresholdBar) { compressor.threshold  = it }
+        addSliderListener(binding.compressorRatioBar)     { compressor.ratio      = it }
+        addSliderListener(binding.compressorAttackBar)    { compressor.attackMs   = it }
+        addSliderListener(binding.compressorReleaseBar)   { compressor.releaseMs  = it }
+        addSliderListener(binding.compressorMakeupBar)    { compressor.makeupGain = it }
+
+        binding.compressorResetBtt.setOnClickListener {
+            compressor.threshold  = -14f;  binding.compressorThresholdBar.value  = -14f
+            compressor.ratio      = 4f;    binding.compressorRatioBar.value      = 4f
+            compressor.attackMs   = 10f;   binding.compressorAttackBar.value     = 10f
+            compressor.releaseMs  = 50f;   binding.compressorReleaseBar.value    = 50f
+            compressor.makeupGain = 6f;    binding.compressorMakeupBar.value     = 6f
+            updateLabels()
+            saveCompressorSettings(compressor)
+        }
+
+        val dismiss = android.content.DialogInterface.OnDismissListener {
+            activity?.hideSystemUI()
+            selectCompressorDialog = null
+        }
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(act, R.style.AlertDialogCustom)
+            .setView(binding.root)
+            .setOnDismissListener(dismiss)
+            .create()
+        selectCompressorDialog = dialog
+        dialog.show()
+    }
+
+    private fun saveCompressorSettings(c: DynamicRangeCompressor) {
+        setKey(COMPRESSOR_ENABLED_KEY,   c.enabled)
+        setKey(COMPRESSOR_THRESHOLD_KEY, c.threshold)
+        setKey(COMPRESSOR_RATIO_KEY,     c.ratio)
+        setKey(COMPRESSOR_ATTACK_KEY,    c.attackMs)
+        setKey(COMPRESSOR_RELEASE_KEY,   c.releaseMs)
+        setKey(COMPRESSOR_MAKEUP_KEY,    c.makeupGain)
+    }
+
+    protected fun restoreCompressorSettings() {
+        val c = (player as? CS3IPlayer)?.compressor ?: return
+        c.enabled     = getKey(COMPRESSOR_ENABLED_KEY)   ?: false
+        c.threshold   = getKey(COMPRESSOR_THRESHOLD_KEY) ?: -14f
+        c.ratio       = getKey(COMPRESSOR_RATIO_KEY)     ?: 4f
+        c.attackMs    = getKey(COMPRESSOR_ATTACK_KEY)    ?: 10f
+        c.releaseMs   = getKey(COMPRESSOR_RELEASE_KEY)   ?: 50f
+        c.makeupGain  = getKey(COMPRESSOR_MAKEUP_KEY)    ?: 6f
     }
 
     private fun onClickChange() {
@@ -1265,6 +1371,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             playerTracksBtt.setOnClickListener {
                 showTracksDialogue()
+            }
+
+            playerCompressorBtt.setOnClickListener {
+                autoHide()
+                showCompressorDialog()
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
