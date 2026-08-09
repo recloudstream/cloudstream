@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="500dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Enable toggle -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/compressor_enable"
+            android:textSize="16sp" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/compressor_enable_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:nextFocusDown="@id/compressor_threshold_bar" />
+    </LinearLayout>
+
+    <!-- Threshold -->
+    <TextView
+        android:id="@+id/compressor_threshold_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="Threshold: -14 dB" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/compressor_threshold_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nextFocusUp="@id/compressor_enable_switch"
+        android:nextFocusDown="@id/compressor_ratio_bar"
+        android:valueFrom="-30"
+        android:valueTo="0"
+        android:stepSize="1"
+        android:value="-14"
+        app:labelStyle="@style/BlackLabel"
+        app:thumbColor="?attr/white"
+        app:tickVisible="false"
+        app:trackColorActive="?attr/white"
+        app:trackColorInactive="?attr/primaryGrayBackground" />
+
+    <!-- Ratio -->
+    <TextView
+        android:id="@+id/compressor_ratio_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="Ratio: 4:1" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/compressor_ratio_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nextFocusUp="@id/compressor_threshold_bar"
+        android:nextFocusDown="@id/compressor_attack_bar"
+        android:valueFrom="1"
+        android:valueTo="20"
+        android:stepSize="1"
+        android:value="4"
+        app:labelStyle="@style/BlackLabel"
+        app:thumbColor="?attr/white"
+        app:tickVisible="false"
+        app:trackColorActive="?attr/white"
+        app:trackColorInactive="?attr/primaryGrayBackground" />
+
+    <!-- Attack -->
+    <TextView
+        android:id="@+id/compressor_attack_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="Attack: 10 ms" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/compressor_attack_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nextFocusUp="@id/compressor_ratio_bar"
+        android:nextFocusDown="@id/compressor_release_bar"
+        android:valueFrom="1"
+        android:valueTo="400"
+        android:stepSize="1"
+        android:value="10"
+        app:labelStyle="@style/BlackLabel"
+        app:thumbColor="?attr/white"
+        app:tickVisible="false"
+        app:trackColorActive="?attr/white"
+        app:trackColorInactive="?attr/primaryGrayBackground" />
+
+    <!-- Release -->
+    <TextView
+        android:id="@+id/compressor_release_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="Release: 50 ms" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/compressor_release_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nextFocusUp="@id/compressor_attack_bar"
+        android:nextFocusDown="@id/compressor_makeup_bar"
+        android:valueFrom="2"
+        android:valueTo="800"
+        android:stepSize="1"
+        android:value="50"
+        app:labelStyle="@style/BlackLabel"
+        app:thumbColor="?attr/white"
+        app:tickVisible="false"
+        app:trackColorActive="?attr/white"
+        app:trackColorInactive="?attr/primaryGrayBackground" />
+
+    <!-- Makeup Gain -->
+    <TextView
+        android:id="@+id/compressor_makeup_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="Makeup Gain: +6 dB" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/compressor_makeup_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nextFocusUp="@id/compressor_release_bar"
+        android:nextFocusDown="@id/compressor_reset_btt"
+        android:valueFrom="0"
+        android:valueTo="24"
+        android:stepSize="1"
+        android:value="6"
+        app:labelStyle="@style/BlackLabel"
+        app:thumbColor="?attr/white"
+        app:tickVisible="false"
+        app:trackColorActive="?attr/white"
+        app:trackColorInactive="?attr/primaryGrayBackground" />
+
+    <!-- Reset button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/compressor_reset_btt"
+        style="@style/BlackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="12dp"
+        android:nextFocusUp="@id/compressor_makeup_bar"
+        android:text="@string/reset_btn" />
+
+</LinearLayout>
