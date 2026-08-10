@@ -3,10 +3,9 @@ package com.lagradost.cloudstream3.ui.player
 import android.content.Context
 import android.os.Looper
 import androidx.annotation.OptIn
+import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.Renderer
-import androidx.media3.exoplayer.audio.AudioProcessor
 import androidx.media3.exoplayer.audio.AudioSink
 import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.text.TextOutput
@@ -16,7 +15,6 @@ import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 @UnstableApi
 class FixedNextRenderersFactory(
     context: Context,
-    /** Shared compressor instance, injected into the audio sink. Null = bypass. */
     private val compressor: DynamicRangeCompressor? = null,
 ) : NextRenderersFactory(context) {
 
@@ -41,10 +39,9 @@ class FixedNextRenderersFactory(
         context: Context,
         enableFloatOutput: Boolean,
         enableAudioTrackPlaybackParams: Boolean
-    ): AudioSink? {
-        @Suppress("UNCHECKED_CAST")
-        val processors: Array<AudioProcessor> = if (compressor != null)
-            arrayOf<AudioProcessor>(compressor) else emptyArray()
+    ): AudioSink {
+        val processors: Array<AudioProcessor> =
+            if (compressor != null) arrayOf(compressor) else emptyArray()
         return DefaultAudioSink.Builder(context)
             .setEnableFloatOutput(enableFloatOutput)
             .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
