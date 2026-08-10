@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
+  <!-- Left tall bar (loud input) -->
+  <path android:fillColor="@android:color/white"
+      android:pathData="M2,4 h2 v16 h-2 z"/>
+  <!-- Left medium bar -->
+  <path android:fillColor="@android:color/white"
+      android:pathData="M5,7 h2 v10 h-2 z"/>
+  <!-- Arrow pointing right (compression) -->
+  <path android:fillColor="@android:color/white"
+      android:pathData="M9,10 l3,-3 v2 h2 v2 h-2 v2 z"/>
+  <!-- Right medium bar (compressed output) -->
+  <path android:fillColor="@android:color/white"
+      android:pathData="M15,8 h2 v8 h-2 z"/>
+  <!-- Right small bar -->
+  <path android:fillColor="@android:color/white"
+      android:pathData="M18,9 h2 v6 h-2 z"/>
+  <!-- dB line -->
+  <path android:fillColor="@android:color/white"
+      android:pathData="M1,12 h22 v0.5 h-22 z"
+      android:strokeColor="@android:color/white"
+      android:strokeWidth="0.5"/>
+</vector>
