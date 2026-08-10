@@ -46,8 +46,8 @@ import androidx.media3.exoplayer.DecoderCounters
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.DefaultLivePlaybackSpeedControl
 import androidx.media3.exoplayer.DefaultLoadControl
-import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.common.audio.AudioProcessor
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
@@ -163,10 +163,7 @@ class CS3IPlayer : IPlayer {
     private var ignoreSSL: Boolean = true
     private var playBackSpeed: Float = 1.0f
 
-    /**
-     * Shared compressor instance — created once, injected into the audio sink,
-     * and its parameters are updated live from the dialog without a player reload.
-     */
+    /** Shared compressor — created once, injected into the audio sink, params updated live. */
     val compressor = DynamicRangeCompressor()
 
     private var lastMuteVolume: Float = 1.0f
@@ -1130,7 +1127,7 @@ class CS3IPlayer : IPlayer {
                     } else {
                         // no nextlib = EXTENSION_RENDERER_MODE_OFF
                         object : DefaultRenderersFactory(context) {
-                            @OptIn(UnstableApi::class)
+                            @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
                             override fun buildAudioSink(
                                 ctx: Context,
                                 enableFloatOutput: Boolean,
