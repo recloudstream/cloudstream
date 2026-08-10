@@ -30,6 +30,10 @@ import kotlin.math.pow
 @OptIn(UnstableApi::class)
 class DynamicRangeCompressor : AudioProcessor {
 
+    companion object {
+        private val EMPTY: ByteBuffer = ByteBuffer.allocate(0).order(ByteOrder.nativeOrder())
+    }
+
     // ── Parameters (all @Volatile so UI thread writes are seen immediately) ──
 
     @Volatile var enabled: Boolean = false
@@ -65,7 +69,7 @@ class DynamicRangeCompressor : AudioProcessor {
     private var lastReleaseMs = -1f
     private var lastSampleRate = -1
 
-    private var outputBuffer = AudioProcessor.EMPTY_BUFFER
+    private var outputBuffer: ByteBuffer = EMPTY
     private var inputEnded = false
 
     // ── AudioProcessor ────────────────────────────────────────────────────────
@@ -127,14 +131,14 @@ class DynamicRangeCompressor : AudioProcessor {
 
     override fun getOutput(): ByteBuffer {
         val out = outputBuffer
-        outputBuffer = AudioProcessor.EMPTY_BUFFER
+        outputBuffer = EMPTY
         return out
     }
 
-    override fun isEnded(): Boolean = inputEnded && outputBuffer === AudioProcessor.EMPTY_BUFFER
+    override fun isEnded(): Boolean = inputEnded && outputBuffer === EMPTY
 
     override fun flush() {
-        outputBuffer = AudioProcessor.EMPTY_BUFFER
+        outputBuffer = EMPTY
         inputEnded = false
         envelope = FloatArray(channelCount) // reset envelope on seek/flush
     }
