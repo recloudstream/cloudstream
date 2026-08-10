@@ -69,13 +69,13 @@ import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import kotlin.math.roundToInt
 
-// Compressor settings keys — stored via setKey/getKey
 private const val COMPRESSOR_ENABLED_KEY   = "player_compressor_enabled"
 private const val COMPRESSOR_THRESHOLD_KEY = "player_compressor_threshold"
 private const val COMPRESSOR_RATIO_KEY     = "player_compressor_ratio"
 private const val COMPRESSOR_ATTACK_KEY    = "player_compressor_attack"
 private const val COMPRESSOR_RELEASE_KEY   = "player_compressor_release"
 private const val COMPRESSOR_MAKEUP_KEY    = "player_compressor_makeup"
+
 
 private const val SUBTITLE_DELAY_BUNDLE_KEY = "subtitle_delay"
 
@@ -715,78 +715,58 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         val act = activity ?: return
         val compressor = (player as? CS3IPlayer)?.compressor ?: return
 
-        // Restore persisted settings on first open
         if (!compressorSettingsRestored) {
             compressorSettingsRestored = true
             restoreCompressorSettings()
         }
 
-        val binding = com.lagradost.cloudstream3.databinding.CompressorDialogBinding.inflate(android.view.LayoutInflater.from(act))
+        val binding = com.lagradost.cloudstream3.databinding.CompressorDialogBinding
+            .inflate(android.view.LayoutInflater.from(act))
 
         fun updateLabels() {
-            binding.compressorThresholdLabel.text =
-                act.getString(R.string.compressor_threshold_label, compressor.threshold.toInt())
-            binding.compressorRatioLabel.text =
-                act.getString(R.string.compressor_ratio_label, compressor.ratio.toInt())
-            binding.compressorAttackLabel.text =
-                act.getString(R.string.compressor_attack_label, compressor.attackMs.toInt())
-            binding.compressorReleaseLabel.text =
-                act.getString(R.string.compressor_release_label, compressor.releaseMs.toInt())
-            binding.compressorMakeupLabel.text =
-                act.getString(R.string.compressor_makeup_label, compressor.makeupGain.toInt())
+            binding.compressorThresholdLabel.text = act.getString(R.string.compressor_threshold_label, compressor.threshold.toInt())
+            binding.compressorRatioLabel.text     = act.getString(R.string.compressor_ratio_label,     compressor.ratio.toInt())
+            binding.compressorAttackLabel.text    = act.getString(R.string.compressor_attack_label,    compressor.attackMs.toInt())
+            binding.compressorReleaseLabel.text   = act.getString(R.string.compressor_release_label,   compressor.releaseMs.toInt())
+            binding.compressorMakeupLabel.text    = act.getString(R.string.compressor_makeup_label,    compressor.makeupGain.toInt())
         }
 
-        // Restore current state
-        binding.compressorEnableSwitch.isChecked = compressor.enabled
-        binding.compressorThresholdBar.value  = compressor.threshold.coerceIn(-30f, 0f)
-        binding.compressorRatioBar.value      = compressor.ratio.coerceIn(1f, 20f)
-        binding.compressorAttackBar.value     = compressor.attackMs.coerceIn(1f, 400f)
-        binding.compressorReleaseBar.value    = compressor.releaseMs.coerceIn(2f, 800f)
-        binding.compressorMakeupBar.value     = compressor.makeupGain.coerceIn(0f, 24f)
+        binding.compressorEnableSwitch.isChecked      = compressor.enabled
+        binding.compressorThresholdBar.value          = compressor.threshold.coerceIn(-30f, 0f)
+        binding.compressorRatioBar.value              = compressor.ratio.coerceIn(1f, 20f)
+        binding.compressorAttackBar.value             = compressor.attackMs.coerceIn(1f, 400f)
+        binding.compressorReleaseBar.value            = compressor.releaseMs.coerceIn(2f, 800f)
+        binding.compressorMakeupBar.value             = compressor.makeupGain.coerceIn(0f, 24f)
         updateLabels()
 
         binding.compressorEnableSwitch.setOnCheckedChangeListener { _, checked ->
             compressor.enabled = checked
-            setKey(COMPRESSOR_ENABLED_KEY, checked)
-        }
-
-        fun addSliderListener(
-            slider: com.google.android.material.slider.Slider,
-            set: (Float) -> Unit
-        ) {
-            slider.addOnChangeListener { _, value, fromUser ->
-                if (fromUser) {
-                    set(value)
-                    updateLabels()
-                    saveCompressorSettings(compressor)
-                }
-            }
-        }
-
-        addSliderListener(binding.compressorThresholdBar) { compressor.threshold  = it }
-        addSliderListener(binding.compressorRatioBar)     { compressor.ratio      = it }
-        addSliderListener(binding.compressorAttackBar)    { compressor.attackMs   = it }
-        addSliderListener(binding.compressorReleaseBar)   { compressor.releaseMs  = it }
-        addSliderListener(binding.compressorMakeupBar)    { compressor.makeupGain = it }
-
-        binding.compressorResetBtt.setOnClickListener {
-            compressor.threshold  = -14f;  binding.compressorThresholdBar.value  = -14f
-            compressor.ratio      = 4f;    binding.compressorRatioBar.value      = 4f
-            compressor.attackMs   = 10f;   binding.compressorAttackBar.value     = 10f
-            compressor.releaseMs  = 50f;   binding.compressorReleaseBar.value    = 50f
-            compressor.makeupGain = 6f;    binding.compressorMakeupBar.value     = 6f
-            updateLabels()
             saveCompressorSettings(compressor)
         }
 
-        val dismiss = android.content.DialogInterface.OnDismissListener {
-            activity?.hideSystemUI()
-            selectCompressorDialog = null
+        fun addSlider(slider: com.google.android.material.slider.Slider, set: (Float) -> Unit) {
+            slider.addOnChangeListener { _, value, fromUser ->
+                if (fromUser) { set(value); updateLabels(); saveCompressorSettings(compressor) }
+            }
+        }
+        addSlider(binding.compressorThresholdBar) { compressor.threshold  = it }
+        addSlider(binding.compressorRatioBar)     { compressor.ratio      = it }
+        addSlider(binding.compressorAttackBar)    { compressor.attackMs   = it }
+        addSlider(binding.compressorReleaseBar)   { compressor.releaseMs  = it }
+        addSlider(binding.compressorMakeupBar)    { compressor.makeupGain = it }
+
+        binding.compressorResetBtt.setOnClickListener {
+            compressor.threshold = -14f; binding.compressorThresholdBar.value  = -14f
+            compressor.ratio     = 4f;   binding.compressorRatioBar.value      = 4f
+            compressor.attackMs  = 10f;  binding.compressorAttackBar.value     = 10f
+            compressor.releaseMs = 50f;  binding.compressorReleaseBar.value    = 50f
+            compressor.makeupGain= 6f;   binding.compressorMakeupBar.value     = 6f
+            updateLabels(); saveCompressorSettings(compressor)
         }
 
         val dialog = androidx.appcompat.app.AlertDialog.Builder(act, R.style.AlertDialogCustom)
             .setView(binding.root)
-            .setOnDismissListener(dismiss)
+            .setOnDismissListener { activity?.hideSystemUI(); selectCompressorDialog = null }
             .create()
         selectCompressorDialog = dialog
         dialog.show()
