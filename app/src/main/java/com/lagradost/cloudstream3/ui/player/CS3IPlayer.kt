@@ -47,6 +47,7 @@ import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.DefaultLivePlaybackSpeedControl
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
@@ -1137,7 +1138,7 @@ class CS3IPlayer : IPlayer {
                             ) = DefaultAudioSink.Builder(ctx)
                                 .setEnableFloatOutput(enableFloatOutput)
                                 .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
-                                .setAudioProcessors(arrayOf(compressor))
+                                .setAudioProcessors(arrayOf<AudioProcessor>(compressor))
                                 .build()
                         }
                     }
