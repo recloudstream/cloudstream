@@ -69,6 +69,14 @@ import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import kotlin.math.roundToInt
 
+// Compressor settings keys — stored via setKey/getKey
+private const val COMPRESSOR_ENABLED_KEY   = "player_compressor_enabled"
+private const val COMPRESSOR_THRESHOLD_KEY = "player_compressor_threshold"
+private const val COMPRESSOR_RATIO_KEY     = "player_compressor_ratio"
+private const val COMPRESSOR_ATTACK_KEY    = "player_compressor_attack"
+private const val COMPRESSOR_RELEASE_KEY   = "player_compressor_release"
+private const val COMPRESSOR_MAKEUP_KEY    = "player_compressor_makeup"
+
 private const val SUBTITLE_DELAY_BUNDLE_KEY = "subtitle_delay"
 
 // All the UI Logic for the player
