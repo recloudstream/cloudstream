@@ -161,6 +161,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
     protected var selectSubtitlesDialog: Dialog? = null
     protected var selectCompressorDialog: Dialog? = null
+    protected var playBackCompressorEnabled = false
         set(value) {
             val prevField = field
             field = value
@@ -724,23 +725,39 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             .inflate(android.view.LayoutInflater.from(act))
 
         fun updateLabels() {
-            binding.compressorThresholdLabel.text = act.getString(R.string.compressor_threshold_label, compressor.threshold.toInt())
-            binding.compressorRatioLabel.text     = act.getString(R.string.compressor_ratio_label,     compressor.ratio.toInt())
-            binding.compressorAttackLabel.text    = act.getString(R.string.compressor_attack_label,    compressor.attackMs.toInt())
-            binding.compressorReleaseLabel.text   = act.getString(R.string.compressor_release_label,   compressor.releaseMs.toInt())
-            binding.compressorMakeupLabel.text    = act.getString(R.string.compressor_makeup_label,    compressor.makeupGain.toInt())
+            binding.compressorThresholdLabel.text =
+                act.getString(R.string.compressor_threshold_label, compressor.threshold.toInt())
+            binding.compressorRatioLabel.text =
+                act.getString(R.string.compressor_ratio_label, compressor.ratio.toInt())
+            binding.compressorAttackLabel.text =
+                act.getString(R.string.compressor_attack_label, compressor.attackMs.toInt())
+            binding.compressorReleaseLabel.text =
+                act.getString(R.string.compressor_release_label, compressor.releaseMs.toInt())
+            binding.compressorMakeupLabel.text =
+                act.getString(R.string.compressor_makeup_label, compressor.makeupGain.toInt())
         }
 
-        binding.compressorEnableSwitch.isChecked      = compressor.enabled
-        binding.compressorThresholdBar.value          = compressor.threshold.coerceIn(-30f, 0f)
-        binding.compressorRatioBar.value              = compressor.ratio.coerceIn(1f, 20f)
-        binding.compressorAttackBar.value             = compressor.attackMs.coerceIn(1f, 400f)
-        binding.compressorReleaseBar.value            = compressor.releaseMs.coerceIn(2f, 800f)
-        binding.compressorMakeupBar.value             = compressor.makeupGain.coerceIn(0f, 24f)
+        binding.compressorThresholdBar.value = compressor.threshold.coerceIn(-30f, 0f)
+        binding.compressorRatioBar.value      = compressor.ratio.coerceIn(1f, 20f)
+        binding.compressorAttackBar.value     = compressor.attackMs.coerceIn(1f, 400f)
+        binding.compressorReleaseBar.value    = compressor.releaseMs.coerceIn(2f, 800f)
+        binding.compressorMakeupBar.value     = compressor.makeupGain.coerceIn(0f, 24f)
         updateLabels()
 
-        binding.compressorEnableSwitch.setOnCheckedChangeListener { _, checked ->
-            compressor.enabled = checked
+        fun syncEnableButtons() {
+            binding.compressorEnableBtt.alpha  = if (compressor.enabled) 1f else 0.4f
+            binding.compressorDisableBtt.alpha = if (compressor.enabled) 0.4f else 1f
+        }
+        syncEnableButtons()
+
+        binding.compressorEnableBtt.setOnClickListener {
+            compressor.enabled = true
+            syncEnableButtons()
+            saveCompressorSettings(compressor)
+        }
+        binding.compressorDisableBtt.setOnClickListener {
+            compressor.enabled = false
+            syncEnableButtons()
             saveCompressorSettings(compressor)
         }
 
@@ -756,11 +773,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         addSlider(binding.compressorMakeupBar)    { compressor.makeupGain = it }
 
         binding.compressorResetBtt.setOnClickListener {
-            compressor.threshold = -14f; binding.compressorThresholdBar.value  = -14f
-            compressor.ratio     = 4f;   binding.compressorRatioBar.value      = 4f
-            compressor.attackMs  = 10f;  binding.compressorAttackBar.value     = 10f
-            compressor.releaseMs = 50f;  binding.compressorReleaseBar.value    = 50f
-            compressor.makeupGain= 6f;   binding.compressorMakeupBar.value     = 6f
+            compressor.threshold  = -14f;  binding.compressorThresholdBar.value  = -14f
+            compressor.ratio      = 4f;    binding.compressorRatioBar.value      = 4f
+            compressor.attackMs   = 10f;   binding.compressorAttackBar.value     = 10f
+            compressor.releaseMs  = 50f;   binding.compressorReleaseBar.value    = 50f
+            compressor.makeupGain = 6f;    binding.compressorMakeupBar.value     = 6f
             updateLabels(); saveCompressorSettings(compressor)
         }
 
@@ -1233,6 +1250,10 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                     ctx.getString(R.string.playback_speed_enabled_key),
                     false
                 )
+                playBackCompressorEnabled = settingsManager.getBoolean(
+                    ctx.getString(R.string.compressor_enabled_key),
+                    false
+                )
                 playerRotateEnabled = settingsManager.getBoolean(
                     ctx.getString(R.string.rotate_video_key),
                     false
@@ -1259,6 +1280,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
             playerBinding?.apply {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
+                playerCompressorBtt.isVisible = playBackCompressorEnabled
                 playerResizeBtt.isVisible = playerResizeEnabled
                 playerRotateBtt.isVisible =
                     if (isLayout(TV or EMULATOR)) false else playerRotateEnabled
@@ -1320,6 +1342,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 showSpeedDialog()
             }
 
+            playerCompressorBtt.setOnClickListener {
+                autoHide()
+                showCompressorDialog()
+            }
+
             playerSkipOp.setOnClickListener {
                 autoHide()
                 skipOp()
@@ -1359,11 +1386,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             playerTracksBtt.setOnClickListener {
                 showTracksDialogue()
-            }
-
-            playerCompressorBtt.setOnClickListener {
-                autoHide()
-                showCompressorDialog()
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
