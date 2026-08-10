@@ -533,7 +533,12 @@
     <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
     <string name="tracks">Tracks</string>
     <string name="compressor">Compressor</string>
-    <string name="compressor_enable">Enable</string>
+    <string name="compressor_setting">Dynamic Range Compressor</string>
+    <string name="compressor_setting_summary">Show compressor controls in the player (helps balance loud/quiet audio)</string>
+    <string name="compressor_enabled_key" translatable="false">compressor_button_enabled</string>
+    <string name="compressor_enable">Enabled</string>
+    <string name="compressor_on">On</string>
+    <string name="compressor_off">Off</string>
     <string name="compressor_threshold_label">Threshold: %d dB</string>
     <string name="compressor_ratio_label">Ratio: %d:1</string>
     <string name="compressor_attack_label">Attack: %d ms</string>
