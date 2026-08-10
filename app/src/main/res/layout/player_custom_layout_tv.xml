@@ -1134,7 +1134,7 @@
                             android:nextFocusUp="@id/player_pause_play"
                             android:nextFocusDown="@id/player_skip_op"
                             android:text="@string/compressor"
-                            app:icon="@drawable/ic_baseline_equalizer_24" />
+                            app:icon="@drawable/ic_compressor_24" />
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
