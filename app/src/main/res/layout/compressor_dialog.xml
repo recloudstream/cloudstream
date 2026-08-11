@@ -1,246 +1,318 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Full-screen layout matching R.style.DialogFullscreenPlayer.
-     Content area has layout_marginBottom="60dp" to clear the pinned
-     bottom bar. The bottom bar uses layout_marginTop="-60dp" to pin
-     itself at the bottom — the same trick as player_select_source_priority.xml. -->
+<!--
+    Full-screen player dialog — matches the subtitle_offset.xml pattern exactly.
+    Left side: scrollable content (visual + preset hint).
+    Right side: all controls + Apply/Reset/Cancel at bottom.
+    Every interactive element has explicit nextFocus* chains for TV D-pad navigation.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
-    <!-- Scrollable content — marginBottom leaves room for pinned bottom bar -->
+    <!-- Left panel: scrollable info / visual -->
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginBottom="60dp"
-        android:fillViewport="true"
-        android:scrollbars="vertical">
+        android:layout_weight="1"
+        android:paddingVertical="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-            android:paddingBottom="16dp">
+            android:paddingHorizontal="20dp">
 
-            <!-- Title -->
+            <TextView
+                style="@style/WatchHeaderText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingBottom="6dp"
+                android:text="@string/compressor" />
+
+            <!-- Status label (On / Off) — updated programmatically -->
+            <TextView
+                android:id="@+id/compressor_status_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="?attr/grayTextColor"
+                android:paddingBottom="20dp"
+                tools:text="Off" />
+
+            <!-- Preset hint -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:paddingBottom="8dp"
-                android:text="@string/compressor_setting"
-                android:textColor="?attr/textColor"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:gravity="center_horizontal"
+                android:alpha="0.6"
+                android:textSize="13sp"
+                android:paddingBottom="6dp"
+                android:text="@string/compressor_preset_label" />
 
-            <!-- Enable / Disable row -->
+            <!-- Preset buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="12dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/compressor_enable_btt"
+                    android:id="@+id/compressor_preset_light"
                     style="@style/BlackButton"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:nextFocusRight="@id/compressor_disable_btt"
-                    android:nextFocusDown="@id/compressor_threshold_bar"
-                    android:text="@string/compressor_on" />
+                    android:nextFocusRight="@id/compressor_preset_dialog"
+                    android:nextFocusDown="@id/compressor_preset_dialog"
+                    android:text="@string/compressor_preset_light" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/compressor_disable_btt"
+                    android:id="@+id/compressor_preset_dialog"
                     style="@style/BlackButton"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:nextFocusLeft="@id/compressor_enable_btt"
-                    android:nextFocusDown="@id/compressor_threshold_bar"
-                    android:text="@string/compressor_off" />
+                    android:nextFocusLeft="@id/compressor_preset_light"
+                    android:nextFocusRight="@id/compressor_preset_heavy"
+                    android:nextFocusDown="@id/compressor_preset_heavy"
+                    android:text="@string/compressor_preset_dialog" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/compressor_preset_heavy"
+                    style="@style/BlackButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:nextFocusLeft="@id/compressor_preset_dialog"
+                    android:nextFocusDown="@id/compressor_preset_dialog"
+                    android:text="@string/compressor_preset_heavy" />
 
             </LinearLayout>
-
-            <!-- Threshold -->
-            <TextView
-                android:id="@+id/compressor_threshold_label"
-                style="@style/WatchHeaderText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                tools:text="Threshold: -24 dB" />
-
-            <com.google.android.material.slider.Slider
-                android:id="@+id/compressor_threshold_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nextFocusUp="@id/compressor_enable_btt"
-                android:nextFocusDown="@id/compressor_ratio_bar"
-                android:valueFrom="-30"
-                android:valueTo="0"
-                android:stepSize="1"
-                android:value="-24"
-                app:labelStyle="@style/BlackLabel"
-                app:thumbColor="?attr/white"
-                app:tickVisible="false"
-                app:trackColorActive="?attr/white"
-                app:trackColorInactive="?attr/primaryGrayBackground" />
-
-            <!-- Ratio -->
-            <TextView
-                android:id="@+id/compressor_ratio_label"
-                style="@style/WatchHeaderText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:paddingTop="8dp"
-                tools:text="Ratio: 8:1" />
-
-            <com.google.android.material.slider.Slider
-                android:id="@+id/compressor_ratio_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nextFocusUp="@id/compressor_threshold_bar"
-                android:nextFocusDown="@id/compressor_attack_bar"
-                android:valueFrom="1"
-                android:valueTo="20"
-                android:stepSize="1"
-                android:value="8"
-                app:labelStyle="@style/BlackLabel"
-                app:thumbColor="?attr/white"
-                app:tickVisible="false"
-                app:trackColorActive="?attr/white"
-                app:trackColorInactive="?attr/primaryGrayBackground" />
-
-            <!-- Attack -->
-            <TextView
-                android:id="@+id/compressor_attack_label"
-                style="@style/WatchHeaderText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:paddingTop="8dp"
-                tools:text="Attack: 5 ms" />
-
-            <com.google.android.material.slider.Slider
-                android:id="@+id/compressor_attack_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nextFocusUp="@id/compressor_ratio_bar"
-                android:nextFocusDown="@id/compressor_release_bar"
-                android:valueFrom="1"
-                android:valueTo="400"
-                android:stepSize="1"
-                android:value="5"
-                app:labelStyle="@style/BlackLabel"
-                app:thumbColor="?attr/white"
-                app:tickVisible="false"
-                app:trackColorActive="?attr/white"
-                app:trackColorInactive="?attr/primaryGrayBackground" />
-
-            <!-- Release -->
-            <TextView
-                android:id="@+id/compressor_release_label"
-                style="@style/WatchHeaderText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:paddingTop="8dp"
-                tools:text="Release: 400 ms" />
-
-            <com.google.android.material.slider.Slider
-                android:id="@+id/compressor_release_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nextFocusUp="@id/compressor_attack_bar"
-                android:nextFocusDown="@id/compressor_makeup_bar"
-                android:valueFrom="2"
-                android:valueTo="800"
-                android:stepSize="1"
-                android:value="400"
-                app:labelStyle="@style/BlackLabel"
-                app:thumbColor="?attr/white"
-                app:tickVisible="false"
-                app:trackColorActive="?attr/white"
-                app:trackColorInactive="?attr/primaryGrayBackground" />
-
-            <!-- Makeup Gain -->
-            <TextView
-                android:id="@+id/compressor_makeup_label"
-                style="@style/WatchHeaderText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:paddingTop="8dp"
-                tools:text="Makeup Gain: +12 dB" />
-
-            <com.google.android.material.slider.Slider
-                android:id="@+id/compressor_makeup_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nextFocusUp="@id/compressor_release_bar"
-                android:nextFocusDown="@id/save_btt"
-                android:valueFrom="0"
-                android:valueTo="24"
-                android:stepSize="1"
-                android:value="12"
-                app:labelStyle="@style/BlackLabel"
-                app:thumbColor="?attr/white"
-                app:tickVisible="false"
-                app:trackColorActive="?attr/white"
-                app:trackColorInactive="?attr/primaryGrayBackground" />
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- Pinned bottom bar — matches source dialog pattern exactly -->
+    <!-- Right panel: sliders + buttons -->
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="-60dp"
-        android:background="?attr/primaryBlackBackground"
-        android:orientation="horizontal">
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/compressor_reset_btt"
-            style="@style/BlackButton"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:nextFocusUp="@id/compressor_makeup_bar"
-            android:nextFocusRight="@id/save_btt"
-            android:text="@string/reset_btn" />
+        <!-- Scrollable sliders area -->
+        <ScrollView
+            android:layout_width="410dp"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:paddingHorizontal="12dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/save_btt"
-            style="@style/WhiteButton"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:nextFocusUp="@id/compressor_makeup_bar"
-            android:nextFocusLeft="@id/compressor_reset_btt"
-            android:nextFocusRight="@id/close_btt"
-            android:text="@string/sort_save" />
+                <!-- Enable / Disable -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:orientation="horizontal">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/close_btt"
-            style="@style/BlackButton"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:nextFocusUp="@id/compressor_makeup_bar"
-            android:nextFocusLeft="@id/save_btt"
-            android:text="@string/sort_close" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/compressor_enable_btt"
+                        style="@style/WhiteButton"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:nextFocusRight="@id/compressor_disable_btt"
+                        android:nextFocusDown="@id/compressor_threshold_bar"
+                        android:text="@string/compressor_on" />
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/compressor_disable_btt"
+                        style="@style/BlackButton"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:nextFocusLeft="@id/compressor_enable_btt"
+                        android:nextFocusDown="@id/compressor_threshold_bar"
+                        android:text="@string/compressor_off" />
+
+                </LinearLayout>
+
+                <!-- Threshold -->
+                <TextView
+                    android:id="@+id/compressor_threshold_label"
+                    style="@style/WatchHeaderText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    tools:text="Threshold: -14 dB" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/compressor_threshold_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nextFocusUp="@id/compressor_enable_btt"
+                    android:nextFocusDown="@id/compressor_ratio_bar"
+                    android:valueFrom="-30"
+                    android:valueTo="0"
+                    android:stepSize="1"
+                    android:value="-14"
+                    app:labelStyle="@style/BlackLabel"
+                    app:thumbColor="?attr/white"
+                    app:tickVisible="false"
+                    app:trackColorActive="?attr/white"
+                    app:trackColorInactive="?attr/primaryGrayBackground" />
+
+                <!-- Ratio -->
+                <TextView
+                    android:id="@+id/compressor_ratio_label"
+                    style="@style/WatchHeaderText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="4dp"
+                    tools:text="Ratio: 4:1" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/compressor_ratio_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nextFocusUp="@id/compressor_threshold_bar"
+                    android:nextFocusDown="@id/compressor_attack_bar"
+                    android:valueFrom="1"
+                    android:valueTo="20"
+                    android:stepSize="1"
+                    android:value="4"
+                    app:labelStyle="@style/BlackLabel"
+                    app:thumbColor="?attr/white"
+                    app:tickVisible="false"
+                    app:trackColorActive="?attr/white"
+                    app:trackColorInactive="?attr/primaryGrayBackground" />
+
+                <!-- Attack -->
+                <TextView
+                    android:id="@+id/compressor_attack_label"
+                    style="@style/WatchHeaderText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="4dp"
+                    tools:text="Attack: 10 ms" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/compressor_attack_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nextFocusUp="@id/compressor_ratio_bar"
+                    android:nextFocusDown="@id/compressor_release_bar"
+                    android:valueFrom="1"
+                    android:valueTo="400"
+                    android:stepSize="1"
+                    android:value="10"
+                    app:labelStyle="@style/BlackLabel"
+                    app:thumbColor="?attr/white"
+                    app:tickVisible="false"
+                    app:trackColorActive="?attr/white"
+                    app:trackColorInactive="?attr/primaryGrayBackground" />
+
+                <!-- Release -->
+                <TextView
+                    android:id="@+id/compressor_release_label"
+                    style="@style/WatchHeaderText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="4dp"
+                    tools:text="Release: 300 ms" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/compressor_release_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nextFocusUp="@id/compressor_attack_bar"
+                    android:nextFocusDown="@id/compressor_makeup_bar"
+                    android:valueFrom="2"
+                    android:valueTo="800"
+                    android:stepSize="1"
+                    android:value="300"
+                    app:labelStyle="@style/BlackLabel"
+                    app:thumbColor="?attr/white"
+                    app:tickVisible="false"
+                    app:trackColorActive="?attr/white"
+                    app:trackColorInactive="?attr/primaryGrayBackground" />
+
+                <!-- Makeup Gain -->
+                <TextView
+                    android:id="@+id/compressor_makeup_label"
+                    style="@style/WatchHeaderText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="4dp"
+                    tools:text="Makeup Gain: +10 dB" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/compressor_makeup_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nextFocusUp="@id/compressor_release_bar"
+                    android:nextFocusDown="@id/apply_btt"
+                    android:valueFrom="0"
+                    android:valueTo="24"
+                    android:stepSize="1"
+                    android:value="10"
+                    app:labelStyle="@style/BlackLabel"
+                    app:thumbColor="?attr/white"
+                    app:tickVisible="false"
+                    app:trackColorActive="?attr/white"
+                    app:trackColorInactive="?attr/primaryGrayBackground" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Apply / Reset / Cancel — pinned to bottom, matches subtitle_offset pattern -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/apply_btt"
+                style="@style/WhiteButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:nextFocusLeft="@id/cancel_btt"
+                android:nextFocusRight="@id/reset_btt"
+                android:nextFocusUp="@id/compressor_makeup_bar"
+                android:text="@string/sort_apply">
+                <requestFocus />
+            </com.google.android.material.button.MaterialButton>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/reset_btt"
+                style="@style/BlackButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusUp="@id/compressor_makeup_bar"
+                android:text="@string/reset_btn" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_btt"
+                style="@style/BlackButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:nextFocusLeft="@id/reset_btt"
+                android:nextFocusUp="@id/compressor_makeup_bar"
+                android:text="@string/sort_cancel" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
