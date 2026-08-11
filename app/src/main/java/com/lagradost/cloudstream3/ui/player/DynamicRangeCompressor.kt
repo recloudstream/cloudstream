@@ -78,66 +78,57 @@ class DynamicRangeCompressor : AudioProcessor {
 
     override fun queueInput(inputBuffer: ByteBuffer) {
         if (!inputBuffer.hasRemaining()) return
-
         val remaining = inputBuffer.remaining()
         val out = replaceOutputBuffer(remaining)
-
-        // Passthrough when disabled — raw byte copy, zero processing overhead.
-        if (!enabled) {
-            out.put(inputBuffer)
-            out.flip()
-            return
-        }
-
+        if (!enabled) { out.put(inputBuffer); out.flip(); return }
         updateCoefficients()
-
         val makeupLinear = dbToLinear(makeupGain)
         val threshLinear = dbToLinear(threshold)
         val bytesPerSample = if (isFloat) 4 else 2
         val frameCount = remaining / (channelCount * bytesPerSample)
+        if (isFloat) processFloat(inputBuffer, out, frameCount, threshLinear, makeupLinear)
+        else processShort(inputBuffer, out, frameCount, threshLinear, makeupLinear)
+        out.flip()
+    }
 
-        if (isFloat) {
-            repeat(frameCount) {
-                // Pass 1: find peak across all channels this frame
-                val frameStart = inputBuffer.position()
-                var peak = 0f
-                repeat(channelCount) {
-                    val s = inputBuffer.getFloat()
-                    val abs = if (s < 0f) -s else s
-                    if (abs > peak) peak = abs
-                }
+    /** Processes PCM_FLOAT frames. Two-pass: peak detection then gain application. */
+    private fun processFloat(
+        input: ByteBuffer, out: ByteBuffer,
+        frameCount: Int, threshLinear: Float, makeupLinear: Float
+    ) {
+        repeat(frameCount) {
+            val frameStart = input.position()
+            var peak = 0f
+            repeat(channelCount) { val s = input.getFloat(); val a = if (s < 0f) -s else s; if (a > peak) peak = a }
+            advanceEnvelope(peak)
+            val gain = computeGain(threshLinear) * makeupLinear
+            input.position(frameStart)
+            repeat(channelCount) { out.putFloat(input.getFloat() * gain) }
+        }
+    }
 
-                // Update single shared envelope and compute gain once
-                val coeff = if (peak > envelope) attackCoeff else releaseCoeff
-                envelope = peak + coeff * (envelope - peak)
-                val gain = computeGain(threshLinear) * makeupLinear
-
-                // Pass 2: apply same gain to all channels
-                inputBuffer.position(frameStart)
-                repeat(channelCount) { out.putFloat(inputBuffer.getFloat() * gain) }
-            }
-        } else {
-            repeat(frameCount) {
-                val frameStart = inputBuffer.position()
-                var peak = 0f
-                repeat(channelCount) {
-                    val s = inputBuffer.getShort() / 32768f
-                    val abs = if (s < 0f) -s else s
-                    if (abs > peak) peak = abs
-                }
-
-                val coeff = if (peak > envelope) attackCoeff else releaseCoeff
-                envelope = peak + coeff * (envelope - peak)
-                val gain = computeGain(threshLinear) * makeupLinear
-
-                inputBuffer.position(frameStart)
-                repeat(channelCount) {
-                    val s = inputBuffer.getShort() / 32768f
-                    out.putShort((s * gain).coerceIn(-1f, 1f).let { (it * 32768f).toInt().toShort() })
-                }
+    /** Processes PCM_16BIT frames. Two-pass: peak detection then gain application. */
+    private fun processShort(
+        input: ByteBuffer, out: ByteBuffer,
+        frameCount: Int, threshLinear: Float, makeupLinear: Float
+    ) {
+        repeat(frameCount) {
+            val frameStart = input.position()
+            var peak = 0f
+            repeat(channelCount) { val s = input.getShort() / 32768f; val a = if (s < 0f) -s else s; if (a > peak) peak = a }
+            advanceEnvelope(peak)
+            val gain = computeGain(threshLinear) * makeupLinear
+            input.position(frameStart)
+            repeat(channelCount) {
+                val s = input.getShort() / 32768f
+                out.putShort((s * gain).coerceIn(-1f, 1f).let { (it * 32768f).toInt().toShort() })
             }
         }
-        out.flip()
+    }
+
+    private fun advanceEnvelope(peak: Float) {
+        val coeff = if (peak > envelope) attackCoeff else releaseCoeff
+        envelope = peak + coeff * (envelope - peak)
     }
 
     override fun queueEndOfStream() { inputEnded = true }
