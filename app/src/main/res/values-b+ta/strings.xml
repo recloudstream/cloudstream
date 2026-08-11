@@ -609,7 +609,7 @@
     <string name="confirm_before_exiting_desc">பயன்பாட்டிலிருந்து வெளியேறுவதற்கு முன் உரையாடலைக் காட்டு</string>
     <string name="auth_locally">உள்நாட்டில் அங்கீகரிக்கவும்</string>
     <string name="dismiss">தள்ளுபடி</string>
-    <string name="device_pin_url_message">உங்கள் ச்மார்ட்போன் அல்லது கணினியில் <b>%s </b> ஐப் பார்வையிட்டு மேலே உள்ள குறியீட்டை உள்ளிடவும்</string>
+    <string name="device_pin_url_message">உங்கள் ச்மார்ட்போன் அல்லது கணினியில் <b>%s</b> ஐப் பார்வையிட்டு மேலே உள்ள குறியீட்டை உள்ளிடவும்</string>
     <string name="device_pin_error_message">சாதன முள் குறியீட்டைப் பெற முடியாது, உள்ளக அங்கீகாரத்தை முயற்சிக்கவும்</string>
     <string name="device_pin_expired_message">முள் குறியீடு இப்போது காலாவதியானது!</string>
     <string name="subs_edge_size">விளிம்பு அளவு</string>
@@ -652,7 +652,7 @@
     <string name="update_plugins">செருகுநிரல்களைப் புதுப்பிக்கவும்</string>
     <string name="update_plugins_manually">செருகுநிரல்களை கைமுறையாக புதுப்பிக்கவும்</string>
     <string name="starting_plugin_update_manually">சொருகி புதுப்பிப்பு செயல்முறையைத் தொடங்குகிறது!</string>
-    <string name="plugins_updated_manually">வெற்றிகரமாக புதுப்பிக்கப்பட்டது %d சொருகி (கள்)!</string>
+    <string name="plugins_updated_manually">%d செருகுநிரல்(கள்) வெற்றிகரமாக புதுப்பிக்கப்பட்டது</string>
     <string name="no_plugins_updated_manually">செருகுநிரல்கள் எதுவும் புதுப்பிக்கப்படவில்லை.</string>
     <string name="player_notification_channel_name">பிளேயர் அறிவிப்புகள்</string>
     <string name="player_notification_channel_description">பின்னணியில் இருந்து பின்னணியைக் கட்டுப்படுத்துவதற்கான பிளேயர் அறிவிப்பு</string>
@@ -731,4 +731,17 @@
         <item quantity="one">%d பதிவிறக்கம் வரிசையில் உள்ளது</item>
         <item quantity="other">%d பதிவிறக்கங்கள் வரிசையில் உள்ளன</item>
     </plurals>
+    <string name="show_player_metadata_overlay">பிளேயர் மேனிலை தரவு மேலடுக்கைக் காட்டு</string>
+    <string name="video_singular">ஒளிதோற்றம்</string>
+    <string name="tv_layout_clock_settings">உண்மையான நேர கடிகாரத்தைக் காட்டு</string>
+    <string name="tv_layout_clock_settings_des">திரையின் மேற்புறத்தில் நிகழ் நேர கடிகாரத்தைக் காட்டு. முகப்புப்பக்கம் மற்றும் பிளேயருக்குப் பொருந்தும்</string>
+    <string name="skip_type_preview">முன்னோட்டம்</string>
+    <string name="profile_settings">சுயவிவர அமைப்புகள்</string>
+    <string name="profile_hide_negative_sources">எதிர்மறையான முன்னுரிமையுடன் ஆதாரங்களை மறை</string>
+    <string name="profile_hide_error_sources">பிழைகளுடன் ஆதாரங்களை மறைக்கவும்</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d மறைக்கப்பட்ட இணைப்பு</item>
+        <item quantity="other">%d மறைக்கப்பட்ட இணைப்புகள்</item>
+    </plurals>
+    <string name="player_is_live">வாழ்க</string>
 </resources>

@@ -735,4 +735,13 @@
     <string name="video_singular">Video</string>
     <string name="skip_type_preview">Förhandsvisning</string>
     <string name="player_is_live">Live</string>
+    <string name="tv_layout_clock_settings">Visa realtidsklocka</string>
+    <string name="tv_layout_clock_settings_des">Visa en realtidsklocka högst upp på skärmen. Gäller startsidan och spelaren</string>
+    <string name="profile_settings">Profilinställningar</string>
+    <string name="profile_hide_negative_sources">Dölj källor med negativ prioritet</string>
+    <string name="profile_hide_error_sources">Dölj källor med fel</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d dold länk</item>
+        <item quantity="other">%d dolda länkar</item>
+    </plurals>
 </resources>

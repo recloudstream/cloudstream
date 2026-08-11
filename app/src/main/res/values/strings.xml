@@ -374,6 +374,8 @@
     <string name="pref_category_looks">Looks</string>
     <string name="pref_category_ui_features">Features</string>
     <string name="category_general">General</string>
+    <string name="tv_layout_clock_settings">Show real time clock</string>
+    <string name="tv_layout_clock_settings_des">Show a real time clock at the top of the screen. Applies to the homepage and player</string>
     <string name="random_button_settings">Random Button</string>
     <string name="random_button_settings_desc">Show random button on Homepage and Library</string>
     <string name="provider_lang_settings">Extension languages</string>
@@ -622,6 +624,13 @@
     <string name="action_subscribe">Subscribe</string>
     <string name="action_unsubscribe">Unsubscribe</string>
     <string name="profile_number">Profile %d</string>
+    <string name="profile_settings">Profile settings</string>
+    <string name="profile_hide_negative_sources">Hide sources with a negative priority</string>
+    <string name="profile_hide_error_sources">Hide sources with errors</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d hidden link</item>
+        <item quantity="other">%d hidden links</item>
+    </plurals>
     <string name="wifi">Wi-Fi</string>
     <string name="mobile_data">Mobile data</string>
     <string name="set_default">Set default</string>
@@ -724,7 +733,7 @@
     <!--Manual Update Button-->
     <string name="update_plugins_manually">Update plugins manually</string>
     <string name="starting_plugin_update_manually">Starting plugin update process!</string>
-    <string name="plugins_updated_manually">Successfully updated %d plugin(s)!</string>
+    <string name="plugins_updated_manually">Successfully updated %d plugin(s)</string>
     <string name="no_plugins_updated_manually">No plugins were updated.</string>
     <string name="player_notification_channel_name">Player notifications</string>
     <string name="player_notification_channel_description">The player notification for controlling the playback from the background</string>
@@ -783,5 +792,4 @@
         <item quantity="other">%d downloads queued</item>
     </plurals>
     <string name="player_is_live">Live</string>
-
 </resources>
