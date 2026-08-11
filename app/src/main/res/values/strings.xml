@@ -539,6 +539,10 @@
     <string name="compressor_enable">Enabled</string>
     <string name="compressor_on">On</string>
     <string name="compressor_off">Off</string>
+    <string name="compressor_preset_label">Presets</string>
+    <string name="compressor_preset_light">Light</string>
+    <string name="compressor_preset_dialog">Dialogue Boost</string>
+    <string name="compressor_preset_heavy">Heavy</string>
     <string name="compressor_threshold_label">Threshold: %d dB</string>
     <string name="compressor_ratio_label">Ratio: %d:1</string>
     <string name="compressor_attack_label">Attack: %d ms</string>
