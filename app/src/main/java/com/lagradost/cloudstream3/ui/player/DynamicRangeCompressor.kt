@@ -15,35 +15,40 @@ import kotlin.math.pow
  * Real-time dynamic range compressor ported from VLC's compressor.c
  * (LGPL, Steve Harris / Ronald Wright).
  *
- * Handles both PCM_16BIT (shorts) and PCM_FLOAT (floats) — ExoPlayer
- * delivers PCM_16BIT by default unless float output is explicitly enabled.
- * Getting the encoding wrong causes crackling on skips and corrupted audio.
+ * Designed for the "MCU problem": action scenes too loud, dialogue too quiet.
+ * Uses a SINGLE peak envelope across all channels so L/R gain is always
+ * identical — independent per-channel envelopes destroy stereo image and
+ * cause crackling when L and R volumes differ (e.g. panned action audio).
  *
- * Parameters are @Volatile so the UI thread can update them live.
+ * Handles both PCM_16BIT and PCM_FLOAT. Always stays active when configured
+ * so enable/disable works instantly mid-stream via passthrough copy.
  *
- * Defaults: threshold -14 dB, ratio 4:1, attack 10 ms, release 50 ms,
- * makeup +6 dB — the recommended dialogue-boost / action-limiter preset.
+ * Defaults tuned for movie dialogue boost:
+ *   threshold -24 dB, ratio 8:1, attack 5 ms, release 400 ms, makeup +12 dB
  */
 @OptIn(UnstableApi::class)
 class DynamicRangeCompressor : AudioProcessor {
 
-    @Volatile var enabled: Boolean = false
-    @Volatile var threshold: Float = -14f    // dB, -30..0
-    @Volatile var ratio: Float = 4f          // n:1, 1..20
-    @Volatile var attackMs: Float = 10f      // ms,  1..400
-    @Volatile var releaseMs: Float = 50f     // ms,  2..800
-    @Volatile var makeupGain: Float = 6f     // dB,  0..24
+    @Volatile var enabled: Boolean  = false
+    @Volatile var threshold: Float  = -24f   // dB, -30..0
+    @Volatile var ratio: Float      = 8f     // n:1, 1..20
+    @Volatile var attackMs: Float   = 5f     // ms,  1..400
+    @Volatile var releaseMs: Float  = 400f   // ms,  2..800
+    @Volatile var makeupGain: Float = 12f    // dB,  0..24
 
-    private var format = AudioFormat.NOT_SET
-    private var isFloat = false
-    private var sampleRate = 44100
+    private var format       = AudioFormat.NOT_SET
+    private var isFloat      = false
+    private var sampleRate   = 44100
     private var channelCount = 2
 
-    private var envelope = FloatArray(0)
-    private var attackCoeff = 0f
-    private var releaseCoeff = 0f
-    private var lastAttackMs = -1f
-    private var lastReleaseMs = -1f
+    // Single shared envelope across all channels — keeps L/R gain identical
+    // so stereo image is preserved and no crackling from gain mismatch.
+    private var envelope = 0f
+
+    private var attackCoeff    = 0f
+    private var releaseCoeff   = 0f
+    private var lastAttackMs   = -1f
+    private var lastReleaseMs  = -1f
     private var lastSampleRate = -1
 
     private var outputBuffer: ByteBuffer = AudioProcessor.EMPTY_BUFFER
@@ -52,36 +57,32 @@ class DynamicRangeCompressor : AudioProcessor {
     // ── AudioProcessor ────────────────────────────────────────────────────────
 
     override fun configure(inputAudioFormat: AudioFormat): AudioFormat {
-        // Only accept PCM_16BIT or PCM_FLOAT — pass everything else through.
         if (inputAudioFormat.encoding != C.ENCODING_PCM_16BIT &&
             inputAudioFormat.encoding != C.ENCODING_PCM_FLOAT) {
-            return inputAudioFormat
+            return inputAudioFormat  // pass unsupported formats through unchanged
         }
         format       = inputAudioFormat
         isFloat      = inputAudioFormat.encoding == C.ENCODING_PCM_FLOAT
         sampleRate   = inputAudioFormat.sampleRate
         channelCount = inputAudioFormat.channelCount
-        envelope     = FloatArray(channelCount)
+        envelope     = 0f
         return inputAudioFormat
     }
 
+    // Always active when format is set — toggling isActive() mid-stream has no
+    // effect in media3 (only checked at configure() time). We do passthrough
+    // in queueInput() instead so enable/disable works immediately.
     override fun isActive(): Boolean =
         format != AudioFormat.NOT_SET &&
         (format.encoding == C.ENCODING_PCM_16BIT || format.encoding == C.ENCODING_PCM_FLOAT)
-    // NOTE: we always stay active when the format is valid and passthrough when disabled.
-    // Toggling isActive() mid-stream has no effect in media3 — ExoPlayer only re-checks
-    // isActive() when configure() is called (i.e. on a new audio track/source), so
-    // disabling would silently have no effect until the next source loads.
-    // Instead we keep the processor active and copy samples unchanged when disabled.
 
     override fun queueInput(inputBuffer: ByteBuffer) {
         if (!inputBuffer.hasRemaining()) return
 
-        val bytesPerSample = if (isFloat) 4 else 2
         val remaining = inputBuffer.remaining()
         val out = replaceOutputBuffer(remaining)
 
-        // Passthrough when disabled — copy bytes unchanged.
+        // Passthrough when disabled — raw byte copy, zero processing overhead.
         if (!enabled) {
             out.put(inputBuffer)
             out.flip()
@@ -92,25 +93,47 @@ class DynamicRangeCompressor : AudioProcessor {
 
         val makeupLinear = dbToLinear(makeupGain)
         val threshLinear = dbToLinear(threshold)
+        val bytesPerSample = if (isFloat) 4 else 2
         val frameCount = remaining / (channelCount * bytesPerSample)
 
         if (isFloat) {
             repeat(frameCount) {
-                repeat(channelCount) { ch ->
-                    val sample = inputBuffer.getFloat()
-                    val gain = computeGain(ch, sample, threshLinear)
-                    out.putFloat(sample * gain * makeupLinear)
+                // Pass 1: find peak across all channels this frame
+                val frameStart = inputBuffer.position()
+                var peak = 0f
+                repeat(channelCount) {
+                    val s = inputBuffer.getFloat()
+                    val abs = if (s < 0f) -s else s
+                    if (abs > peak) peak = abs
                 }
+
+                // Update single shared envelope and compute gain once
+                val coeff = if (peak > envelope) attackCoeff else releaseCoeff
+                envelope = peak + coeff * (envelope - peak)
+                val gain = computeGain(threshLinear) * makeupLinear
+
+                // Pass 2: apply same gain to all channels
+                inputBuffer.position(frameStart)
+                repeat(channelCount) { out.putFloat(inputBuffer.getFloat() * gain) }
             }
         } else {
             repeat(frameCount) {
-                repeat(channelCount) { ch ->
-                    val rawShort = inputBuffer.getShort()
-                    val sample = rawShort / 32768f
-                    val gain = computeGain(ch, sample, threshLinear)
-                    val result = (sample * gain * makeupLinear * 32768f)
-                        .coerceIn(-32768f, 32767f).toInt().toShort()
-                    out.putShort(result)
+                val frameStart = inputBuffer.position()
+                var peak = 0f
+                repeat(channelCount) {
+                    val s = inputBuffer.getShort() / 32768f
+                    val abs = if (s < 0f) -s else s
+                    if (abs > peak) peak = abs
+                }
+
+                val coeff = if (peak > envelope) attackCoeff else releaseCoeff
+                envelope = peak + coeff * (envelope - peak)
+                val gain = computeGain(threshLinear) * makeupLinear
+
+                inputBuffer.position(frameStart)
+                repeat(channelCount) {
+                    val s = inputBuffer.getShort() / 32768f
+                    out.putShort((s * gain).coerceIn(-1f, 1f).let { (it * 32768f).toInt().toShort() })
                 }
             }
         }
@@ -129,9 +152,9 @@ class DynamicRangeCompressor : AudioProcessor {
         inputEnded && outputBuffer === AudioProcessor.EMPTY_BUFFER
 
     override fun flush() {
-        // Called on every seek — reset envelope to silence so there's no
-        // burst of incorrect gain reduction after seeking (causes crackling).
-        envelope = FloatArray(channelCount)
+        // Called on every seek. Reset envelope so there's no gain burst
+        // from stale state — which is what caused crackling after skipping.
+        envelope = 0f
         outputBuffer = AudioProcessor.EMPTY_BUFFER
         inputEnded = false
     }
@@ -140,19 +163,15 @@ class DynamicRangeCompressor : AudioProcessor {
         flush()
         format = AudioFormat.NOT_SET
         isFloat = false
-        envelope = FloatArray(0)
     }
 
-    // ── Internals ─────────────────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private fun computeGain(ch: Int, sample: Float, threshLinear: Float): Float {
-        val abs = if (sample < 0f) -sample else sample
-        val coeff = if (abs > envelope[ch]) attackCoeff else releaseCoeff
-        envelope[ch] = abs + coeff * (envelope[ch] - abs)
-        return if (envelope[ch] <= threshLinear) {
+    private fun computeGain(threshLinear: Float): Float {
+        return if (envelope <= threshLinear) {
             1f
         } else {
-            val overDb = linearToDb(envelope[ch]) - threshold
+            val overDb = linearToDb(envelope) - threshold
             dbToLinear(-(overDb * (1f - 1f / ratio)))
         }
     }
@@ -167,8 +186,12 @@ class DynamicRangeCompressor : AudioProcessor {
     }
 
     private fun updateCoefficients() {
-        if (attackMs == lastAttackMs && releaseMs == lastReleaseMs && sampleRate == lastSampleRate) return
-        lastAttackMs = attackMs; lastReleaseMs = releaseMs; lastSampleRate = sampleRate
+        if (attackMs  == lastAttackMs  &&
+            releaseMs == lastReleaseMs &&
+            sampleRate == lastSampleRate) return
+        lastAttackMs   = attackMs
+        lastReleaseMs  = releaseMs
+        lastSampleRate = sampleRate
         attackCoeff  = exp(-1.0 / (sampleRate * attackMs  / 1000.0)).toFloat()
         releaseCoeff = exp(-1.0 / (sampleRate * releaseMs / 1000.0)).toFloat()
     }
