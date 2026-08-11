@@ -710,17 +710,15 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         //}
     }
 
-    private var compressorSettingsRestored = false
-
     private fun showCompressorDialog() {
         val act = activity ?: return
         val compressor = (player as? CS3IPlayer)?.compressor ?: return
 
-        // Restore persisted settings on first open this session
-        if (!compressorSettingsRestored) {
-            compressorSettingsRestored = true
-            restoreCompressorSettings()
-        }
+        // Always restore persisted settings when opening the dialog.
+        // CS3IPlayer is recreated on every video (releasePlayer() → new CS3IPlayer()),
+        // so the compressor object is fresh with enabled=false after each video switch.
+        // A lazy "restore once" flag would leave subsequent videos with compression off.
+        restoreCompressorSettings()
 
         // Snapshot current state so Cancel can revert
         data class Snapshot(
@@ -1344,6 +1342,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             playerBinding?.apply {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
                 playerCompressorBtt.isVisible = playBackCompressorEnabled
+                // Restore compressor settings each time the player UI loads.
+                // CS3IPlayer is recreated between videos so the compressor
+                // object is always fresh — without this the compressor stays
+                // disabled on every video after the first.
+                if (playBackCompressorEnabled) restoreCompressorSettings()
                 playerResizeBtt.isVisible = playerResizeEnabled
                 playerRotateBtt.isVisible =
                     if (isLayout(TV or EMULATOR)) false else playerRotateEnabled
