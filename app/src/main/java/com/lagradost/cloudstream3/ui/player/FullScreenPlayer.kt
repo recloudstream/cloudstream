@@ -884,7 +884,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         dialog.show()
     }
 
-        private fun saveCompressorSettings(c: DynamicRangeCompressor) {
+    private fun saveCompressorSettings(c: DynamicRangeCompressor) {
         setKey(COMPRESSOR_ENABLED_KEY,   c.enabled)
         setKey(COMPRESSOR_THRESHOLD_KEY, c.threshold)
         setKey(COMPRESSOR_RATIO_KEY,     c.ratio)
@@ -896,11 +896,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     protected fun restoreCompressorSettings() {
         val c = (player as? CS3IPlayer)?.compressor ?: return
         c.enabled     = getKey(COMPRESSOR_ENABLED_KEY)   ?: false
-        c.threshold   = getKey(COMPRESSOR_THRESHOLD_KEY) ?: -14f
-        c.ratio       = getKey(COMPRESSOR_RATIO_KEY)     ?: 4f
-        c.attackMs    = getKey(COMPRESSOR_ATTACK_KEY)    ?: 10f
-        c.releaseMs   = getKey(COMPRESSOR_RELEASE_KEY)   ?: 50f
-        c.makeupGain  = getKey(COMPRESSOR_MAKEUP_KEY)    ?: 6f
+        c.threshold   = getKey(COMPRESSOR_THRESHOLD_KEY) ?: -24f
+        c.ratio       = getKey(COMPRESSOR_RATIO_KEY)     ?: 8f
+        c.attackMs    = getKey(COMPRESSOR_ATTACK_KEY)    ?: 5f
+        c.releaseMs   = getKey(COMPRESSOR_RELEASE_KEY)   ?: 400f
+        c.makeupGain  = getKey(COMPRESSOR_MAKEUP_KEY)    ?: 12f
     }
 
     private fun onClickChange() {
