@@ -12,10 +12,7 @@ import kotlin.math.ln
 import kotlin.math.pow
 
 /**
- * Real-time dynamic range compressor ported from VLC's compressor.c
- * (LGPL, Steve Harris / Ronald Wright).
- *
- * Designed for the "MCU problem": action scenes too loud, dialogue too quiet.
+ * Real-time dynamic range compressor ported from VLC's compressor.
  * Uses a SINGLE peak envelope across all channels so L/R gain is always
  * identical — independent per-channel envelopes destroy stereo image and
  * cause crackling when L and R volumes differ (e.g. panned action audio).
