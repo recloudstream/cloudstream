@@ -30,6 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -701,6 +702,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeViewModel.queryTextSubmit("")
             }
 
+            homePreviewSettingsButton.setOnClickListener { view ->
+                val apiName = homeViewModel.apiName.value
+                val plugin = APIHolder.getApiFromNameNull(apiName)
+                    ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                val openSettings = plugin?.openSettings
+                if (openSettings != null) {
+                    try {
+                        val activityContext = view.context.getActivity() ?: view.context
+                        openSettings.invoke(activityContext)
+                    } catch (e: Throwable) {
+                        logError(e)
+                    }
+                }
+            }
+
             // Load value for toggling Tv layout real time clock. Hide by default at startup
             // set visibility first, to apply a scroll effect later
             context?.let {
@@ -795,6 +811,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeChangeApi.text = apiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
                 homePreviewSearchButton.isGone = (apiName == noneApi.name)
+                if (isLayout(TV)) {
+                    val plugin = APIHolder.getApiFromNameNull(apiName)
+                        ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                    homePreviewSettingsButton.isVisible = plugin?.openSettings != null
+                }
             }
         }
 
