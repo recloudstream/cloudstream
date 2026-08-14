@@ -811,10 +811,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeChangeApi.text = apiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
                 homePreviewSearchButton.isGone = (apiName == noneApi.name)
-                if (isLayout(TV)) {
+                if (isLayout(TV or EMULATOR)) {
                     val plugin = APIHolder.getApiFromNameNull(apiName)
                         ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
-                    homePreviewSettingsButton.isVisible = plugin?.openSettings != null
+                    homePreviewSettingsButton.isGone = plugin?.openSettings == null
                 }
             }
         }
