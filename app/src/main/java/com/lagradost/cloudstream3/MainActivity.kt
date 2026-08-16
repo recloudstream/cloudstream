@@ -763,7 +763,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             // navigation to home for the second time as onNavDestinationSelected will not get called
             // when first loading up the app
 
-            R.id.navigation_home -> R.id.home_change_api
+            // R.id.navigation_home -> R.id.home_preview_change_api
             R.id.navigation_search -> R.id.main_search
             R.id.navigation_library -> R.id.main_search
             R.id.navigation_downloads -> R.id.download_appbar
@@ -1680,6 +1680,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             if (navDestination.matchDestination(R.id.navigation_home)) {
                 attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
+                }
+                // Re-point nav rail focus at the provider button on every arrival
+                // (rail button, back stack pop, first load), so D-pad right always
+                // reaches the "None" / provider selector button.
+                if (isLayout(TV or EMULATOR)) {
+                    val fromView = binding?.navRailView
+                    if (fromView != null) {
+                        fromView.nextFocusRightId = R.id.home_change_api
+                        for (focusView in arrayOf(
+                            R.id.navigation_downloads,
+                            R.id.navigation_home,
+                            R.id.navigation_search,
+                            R.id.navigation_library,
+                            R.id.navigation_settings,
+                        )) {
+                            fromView.findViewById<View?>(focusView)?.nextFocusRightId = R.id.home_change_api
+                        }
+                    }
                 }
             } else detachBackPressedCallback("MainActivity")
         }
