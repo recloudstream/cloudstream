@@ -763,7 +763,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             // navigation to home for the second time as onNavDestinationSelected will not get called
             // when first loading up the app
 
-            // R.id.navigation_home -> R.id.home_preview_change_api
+            R.id.navigation_home -> R.id.home_change_api
             R.id.navigation_search -> R.id.main_search
             R.id.navigation_library -> R.id.main_search
             R.id.navigation_downloads -> R.id.download_appbar
