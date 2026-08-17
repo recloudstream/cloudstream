@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
@@ -371,13 +372,18 @@ class PlayerGeneratorViewModel : ViewModel() {
             return true
         }
 
-        /** Only filter out subtitles fetched online */
-        if (subtitle.origin != SubtitleOrigin.URL) {
+        if (langFilterList.contains(AllLanguagesName)) {
             return true
         }
 
+        if (subtitle.origin == SubtitleOrigin.DOWNLOADED_FILE) {
+            return true
+        }
+
+        val subtitleTag = subtitle.getIETF_tag()?.lowercase() ?: return true
+
         return langFilterList.any { lang ->
-            subtitle.originalName.contains(lang, ignoreCase = true)
+            subtitleTag == lang || subtitleTag.substringBefore('-') == lang.substringBefore('-')
         }
     }
 
