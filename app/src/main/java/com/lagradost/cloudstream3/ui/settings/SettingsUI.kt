@@ -228,6 +228,8 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.tv_layout_clock_key)?.hideOn(PHONE or EMULATOR)
+
         getPref(R.string.confirm_exit_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.confirm_exit)
             val prefValues = resources.getIntArray(R.array.confirm_exit_values)

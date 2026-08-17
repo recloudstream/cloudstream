@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.actions.VideoClickAction
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import kotlin.Throws
 
-
 abstract class Plugin : BasePlugin() {
     /**
      * Called when your Plugin is loaded
@@ -26,9 +25,7 @@ abstract class Plugin : BasePlugin() {
     fun registerVideoClickAction(element: VideoClickAction) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} VideoClickAction")
         element.sourcePlugin = this.filename
-        synchronized(VideoClickActionHolder.allVideoClickActions) {
-            VideoClickActionHolder.allVideoClickActions.add(element)
-        }
+        VideoClickActionHolder.allVideoClickActions.add(element)
     }
 
     /**

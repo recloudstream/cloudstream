@@ -111,10 +111,10 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
 
         getPref(R.string.provider_lang_key)?.setOnPreferenceClickListener {
             activity?.getApiProviderLangSettings()?.let { currentLangTags ->
-                val languagesTagName = synchronized(APIHolder.apis) {
-                    listOf( Pair(AllLanguagesName, getString(R.string.all_languages_preference)) ) +
-                    APIHolder.apis.map { Pair(it.lang, getNameNextToFlagEmoji(it.lang) ?: it.lang) }
-                        .toSet().sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                val languagesTagName = APIHolder.apis.withLock {
+                    listOf(Pair(AllLanguagesName, getString(R.string.all_languages_preference))) +
+                        APIHolder.apis.map { Pair(it.lang, getNameNextToFlagEmoji(it.lang) ?: it.lang) }
+                            .toSet().sortedBy { it.second.substringAfter("\u00a0").lowercase() }
                 }
 
                 val currentIndexList = currentLangTags.map { langTag ->

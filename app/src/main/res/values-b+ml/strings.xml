@@ -83,9 +83,9 @@
     <!-- <string name="player_subtitles_settings">Subtitles</string> -->
     <string name="player_subtitles_settings_des">പ്ലേയർ സബ്‌ടൈറ്റിലുകളുടെ സെറ്റിങ്‌സ്</string>
     <!-- <string name="swipe_to_seek_setthings">Swipe to seek</string> -->
-    <string name="swipe_to_seek_settings_des">വീഡിയോപ്ലേയറിൽ സമയം നിയന്ത്രിക്കാൻ ഇടത്തോട്ടോ വലത്തോട്ടോ സ്വൈപ്പുചെയ്യുക</string>
+    <string name="swipe_to_seek_settings_des">വീഡിയോയിൽ ഇരുവശങ്ങളിലേക്കും സ്വൈപ്പ് ചെയ്താൽ സ്ഥാനത്തെ നിയന്ത്രിക്കാം</string>
     <!-- <string name="swipe_to_change_settings">Swipe to change settings</string> -->
-    <string name="swipe_to_change_settings_des">തെളിച്ചം അല്ലെങ്കിൽ വോളിയം മാറ്റാൻ ഇടത്തോട്ടോ വലത്തോട്ടോ സ്വൈപ്പുചെയ്യുക</string>
+    <string name="swipe_to_change_settings_des">തെളിച്ചം അല്ലെങ്കിൽ വോളിയം മാറ്റാൻ ഇടത്തോട്ടോ വലത്തോട്ടോ നീക്കുക</string>
     <!-- <string name="double_tap_to_seek_setthings">Double tap to seek</string> -->
     <string name="double_tap_to_seek_settings_des">മുന്നോട്ട് അല്ലെങ്കിൽ പിന്നിലേക്ക് നീങ്ങാൻ വലത്തോട്ടോ ഇടത്തോട്ടോ രണ്ടുതവണ ടാപ്പുചെയ്യുക</string>
     <string name="search">തിരയുക</string>
@@ -186,7 +186,7 @@
     <string name="loading">ലോഡിംഗ്…</string>
     <string name="browser">ബ്രൗസർ</string>
     <string name="type_re_watching">വീണ്ടും കാണുക</string>
-    <string name="stream">സ്ട്രീം</string>
+    <string name="stream">നെറ്റ്‌വർക്ക് സ്ട്രീം</string>
     <string name="subs_import_text" formatted="true">%s ൽ ഫോൻ്റ്‌സ് വെച്ചു കൊണ്ട് ഇംപോർട്ട് ചെയ്യുക</string>
     <string name="safe_mode_description">പ്രശ്‌നമുണ്ടാക്കുന്ന ഒന്ന് കണ്ടെത്താൻ നിങ്ങളെ സഹായിക്കുന്നതിന് ഒരു ക്രാഷ് കാരണം എല്ലാ വിപുലീകരണങ്ങളും ഓഫാക്കി.</string>
     <string name="view_public_repositories_button_short">പൊതു പട്ടിക</string>
@@ -267,4 +267,50 @@
     <string name="subs_edge_type">എഡ്ജ് തരം</string>
     <string name="subs_outline_color">ഔട്ട്ലൈൻ നിറം</string>
     <string name="subs_background_color">പശ്ചാത്തല നിറം</string>
+    <string name="next_season_episode_format" formatted="true">സീസൺ %1$d എപ്പിസോഡ് %2$d റിലീസ് ചെയ്യുന്ന സമയം</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="play_from_beginning_img_des">തുടക്കം മുതൽ പ്ലേ ചെയ്യുക</string>
+    <string name="download_queue">ഡൗൺലോഡ് ക്യൂ</string>
+    <string name="speech_recognition_unavailable">സ്പീച്ച് റെക്കഗ്നിഷൻ ലഭ്യമല്ല</string>
+    <string name="begin_speaking">സംസാരിക്കാൻ തുടങ്ങുക…</string>
+    <string name="play_full_series_button">മുഴുനീള പരമ്പരയും പ്ലേ ചെയ്യുക</string>
+    <string name="torrent_info">ഈ വീഡിയോ ഒരു ടോറന്റ് ആണ്, അതായത് നിങ്ങളുടെ വീഡിയോ ആക്റ്റിവിറ്റി ട്രാക്ക് ചെയ്യപ്പെടാൻ സാധ്യതയുണ്ട്.\nതുടരുന്നതിന് മുൻപ് ടോറന്റിംഗിനെക്കുറിച്ച് നിങ്ങൾക്ക് കൃത്യമായി അറിയാമെന്ന് ഉറപ്പാക്കുക.</string>
+    <string name="downloads_delete_select">ഡിലീറ്റ് ചെയ്യേണ്ടവ തിരഞ്ഞെടുക്കുക</string>
+    <string name="downloads_empty">നിലവിൽ ഡൗൺലോഡുകൾ ഒന്നും തന്നെയില്ല.</string>
+    <string name="queue_empty_message">നിലവിൽ ക്യൂവിലുള്ള ഡൗൺലോഡുകൾ ഒന്നും തന്നെയില്ല.</string>
+    <string name="offline_file">ഓഫ്‌ലൈനായി കാണാൻ ലഭ്യമാണ്</string>
+    <string name="select_all">എല്ലാം തിരഞ്ഞെടുക്കുക</string>
+    <string name="deselect_all">തിരഞ്ഞെടുത്തവയെല്ലാം ഒഴിവാക്കു</string>
+    <string name="open_local_video">ലോക്കൽ വീഡിയോ തുറക്കുക</string>
+    <string name="sort_save">സേവ് ചെയ്യുക</string>
+    <string name="subs_subtitle_elevation">സബ്‌ടൈറ്റിൽ ഉയരം</string>
+    <string name="subs_font">ഫോണ്ട്</string>
+    <string name="subs_font_size">ഫോണ്ട് വലുപ്പം</string>
+    <string name="subs_auto_select_language">സ്വയം തിരഞ്ഞെടുത്ത ഭാഷ</string>
+    <string name="subs_download_languages">ഭാഷകൾ ഡൗൺലോഡ് ചെയ്യുക</string>
+    <string name="subs_subtitle_languages">സബ്ടൈറ്റിൽ ഭാഷ</string>
+    <string name="provider_info_meta">സൈറ്റിൽ വിവരങ്ങൾ ലഭ്യമല്ല, ആയതിനാൽ വീഡിയോ ലോഡ് ആവുകയില്ല.</string>
+    <string name="player_size_settings">പ്ലേയറിന്റെ വലുപ്പം മാറ്റുന്ന ബട്ടൻ</string>
+    <string name="player_subtitles_settings">സബ്ടൈട്ടിൽസ്</string>
+    <string name="chromecast_subtitles_settings">ക്രോംകാസ്റ്റ് സബ്ടൈട്ടിൽസ്</string>
+    <string name="chromecast_subtitles_settings_des">ക്രോംകാസ്റ്റ് സബ്ടൈട്ടിൽസ് ക്രമീകരണങ്ങൾ</string>
+    <string name="eigengraumode_settings">പ്ലേ ചെയ്യുന്ന വേഗത</string>
+    <string name="speed_setting_summary">പ്ലേയറിൽ വേഗതയ്ക്കുള്ള ഓപ്ഷൻ ചേർക്കുന്നു</string>
+    <string name="swipe_to_seek_settings">മുന്നോട്ടും പിന്നോട്ടും പോകുവാൻ സ്വൈപ്പ് ചെയ്യുക</string>
+    <string name="swipe_to_change_settings">ക്രമീകരണങ്ങൾ മാറ്റുവാൻ സ്വൈപ്പ് ചെയ്യുക</string>
+    <string name="name">നാമം</string>
+    <string name="source_name">ഉറവിട നാമം</string>
+    <string name="resolution_and_name">ദൃശ്യമേന്മയും നാമവും</string>
+    <string name="download_all">എല്ലാം ഡൗൺലോഡ് ചെയ്യുക</string>
+    <string name="autoplay_next_settings">അടുത്ത ഭാഗം സ്വയം പ്ലേ ചെയ്യുക</string>
+    <string name="autoplay_next_settings_des">ഇപ്പോളത്തെ ഭാഗം കഴിഞ്ഞയുടനെ അടുത്തത് ആരംഭിക്കുക</string>
+    <string name="player_is_live">തൽസമയം</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="double_tap_to_seek_settings">രണ്ടുവട്ടം ടാപ്പ് ചെയ്താൽ സ്ഥാനം നിയന്ത്രിക്കാം</string>
+    <string name="double_tap_to_pause_settings">രണ്ടുവട്ടം ടാപ്പ് ചെയ്താൽ താൽകാലികമായി നിർത്തിവെക്കാം</string>
+    <string name="double_tap_to_seek_amount_settings">പ്ലേയറിലെ സ്ഥാനനിയന്ത്രണ അളവ് (സെക്കണ്ടസ്)</string>
+    <string name="double_tap_to_pause_settings_des">നടുവിൽ രണ്ട് തവണ ടാപ്പ് ചെയ്താൽ താൽകാലികമായി നിർത്തിവെക്കാം</string>
+    <string name="use_system_brightness_settings">സിസ്റ്റത്തിന്റെ വെളിച്ചക്രമീകരണം ഉപയോഗിക്കുക</string>
 </resources>

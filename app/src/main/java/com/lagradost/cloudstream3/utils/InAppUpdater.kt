@@ -27,6 +27,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
@@ -42,38 +44,43 @@ object InAppUpdater {
     private const val PRERELEASE_PACKAGE_NAME = "com.lagradost.cloudstream3.prerelease"
     private const val LOG_TAG = "InAppUpdater"
 
+    @Serializable
     private data class GithubAsset(
-        @JsonProperty("name") val name: String,
-        @JsonProperty("size") val size: Int, // Size in bytes
-        @JsonProperty("browser_download_url") val browserDownloadUrl: String,
-        @JsonProperty("content_type") val contentType: String, // application/vnd.android.package-archive
+        @JsonProperty("name") @SerialName("name") val name: String,
+        @JsonProperty("size") @SerialName("size") val size: Int, // Size in bytes
+        @JsonProperty("browser_download_url") @SerialName("browser_download_url") val browserDownloadUrl: String,
+        @JsonProperty("content_type") @SerialName("content_type") val contentType: String, // application/vnd.android.package-archive
     )
 
+    @Serializable
     private data class GithubRelease(
-        @JsonProperty("tag_name") val tagName: String, // Version code
-        @JsonProperty("body") val body: String, // Description
-        @JsonProperty("assets") val assets: List<GithubAsset>,
-        @JsonProperty("target_commitish") val targetCommitish: String, // Branch
-        @JsonProperty("prerelease") val prerelease: Boolean,
-        @JsonProperty("node_id") val nodeId: String,
+        @JsonProperty("tag_name") @SerialName("tag_name") val tagName: String, // Version code
+        @JsonProperty("body") @SerialName("body") val body: String, // Description
+        @JsonProperty("assets") @SerialName("assets") val assets: List<GithubAsset>,
+        @JsonProperty("target_commitish") @SerialName("target_commitish") val targetCommitish: String, // Branch
+        @JsonProperty("prerelease") @SerialName("prerelease") val prerelease: Boolean,
+        @JsonProperty("node_id") @SerialName("node_id") val nodeId: String,
     )
 
+    @Serializable
     private data class GithubObject(
-        @JsonProperty("sha") val sha: String, // SHA-256 hash
-        @JsonProperty("type") val type: String,
-        @JsonProperty("url") val url: String,
+        @JsonProperty("sha") @SerialName("sha") val sha: String, // SHA-256 hash
+        @JsonProperty("type") @SerialName("type") val type: String,
+        @JsonProperty("url") @SerialName("url") val url: String,
     )
 
+    @Serializable
     private data class GithubTag(
-        @JsonProperty("object") val githubObject: GithubObject,
+        @JsonProperty("object") @SerialName("object") val githubObject: GithubObject,
     )
 
+    @Serializable
     private data class Update(
-        @JsonProperty("shouldUpdate") val shouldUpdate: Boolean,
-        @JsonProperty("updateURL") val updateURL: String?,
-        @JsonProperty("updateVersion") val updateVersion: String?,
-        @JsonProperty("changelog") val changelog: String?,
-        @JsonProperty("updateNodeId") val updateNodeId: String?,
+        @JsonProperty("shouldUpdate") @SerialName("shouldUpdate") val shouldUpdate: Boolean,
+        @JsonProperty("updateURL") @SerialName("updateURL") val updateURL: String?,
+        @JsonProperty("updateVersion") @SerialName("updateVersion") val updateVersion: String?,
+        @JsonProperty("changelog") @SerialName("changelog") val changelog: String?,
+        @JsonProperty("updateNodeId") @SerialName("updateNodeId") val updateNodeId: String?,
     )
 
     private suspend fun Activity.getAppUpdate(installPrerelease: Boolean): Update {
@@ -93,9 +100,9 @@ object InAppUpdater {
     private suspend fun Activity.getReleaseUpdate(): Update {
         val url = "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/releases"
         val headers = mapOf("Accept" to "application/vnd.github.v3+json")
-        val response = parseJson<List<GithubRelease>>(
+        val response = parseJson<Array<GithubRelease>>(
             app.get(url, headers = headers).text
-        )
+        ).toList()
 
         val versionRegex = Regex("""(.*?((\d+)\.(\d+)\.(\d+))\.apk)""")
         val versionRegexLocal = Regex("""(.*?((\d+)\.(\d+)\.(\d+)).*)""")
@@ -103,9 +110,7 @@ object InAppUpdater {
             !rel.prerelease
         }.sortedWith(compareBy { release ->
             release.assets.firstOrNull { it.contentType == "application/vnd.android.package-archive" }?.name?.let { it1 ->
-                versionRegex.find(
-                    it1
-                )?.groupValues?.let {
+                versionRegex.find(it1)?.groupValues?.let {
                     it[3].toInt() * 100_000_000 + it[4].toInt() * 10_000 + it[5].toInt()
                 }
             }
@@ -150,9 +155,9 @@ object InAppUpdater {
             "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/git/ref/tags/pre-release"
         val releaseUrl = "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/releases"
         val headers = mapOf("Accept" to "application/vnd.github.v3+json")
-        val response = parseJson<List<GithubRelease>>(
+        val response = parseJson<Array<GithubRelease>>(
             app.get(releaseUrl, headers = headers).text
-        )
+        ).toList()
 
         val found = response.lastOrNull { rel ->
             rel.prerelease || rel.tagName == "pre-release"

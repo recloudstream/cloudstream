@@ -36,10 +36,10 @@ class SetupFragmentProviderLanguage : BaseFragment<FragmentSetupProviderLanguage
 
             val currentLangTags = ctx.getApiProviderLangSettings()
 
-            val languagesTagName = synchronized(APIHolder.apis) {
-                listOf( Pair(AllLanguagesName, getString(R.string.all_languages_preference)) ) +
+            val languagesTagName = APIHolder.apis.withLock {
+                listOf(Pair(AllLanguagesName, getString(R.string.all_languages_preference))) +
                 APIHolder.apis.map { Pair(it.lang, getNameNextToFlagEmoji(it.lang) ?: it.lang) }
-                    .toSet().sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                    .toSet().sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
             }
 
             val currentIndexList = currentLangTags.map { langTag ->

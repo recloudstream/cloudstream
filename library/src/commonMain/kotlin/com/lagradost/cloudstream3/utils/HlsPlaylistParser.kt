@@ -19,12 +19,12 @@
  */
 package com.lagradost.cloudstream3.utils
 
-import java.io.IOException
-import java.net.URI
-import java.nio.ByteBuffer
-import java.util.UUID
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+import com.lagradost.cloudstream3.base64DecodeArray
+import io.ktor.http.Url
+import kotlinx.io.Buffer
+import kotlinx.io.IOException
+import kotlinx.io.readByteArray
+import kotlin.uuid.Uuid
 
 @Suppress("unused")
 object HlsPlaylistParser {
@@ -187,13 +187,13 @@ object HlsPlaylistParser {
 
     data class SchemeData(
         /**
-         * The {@link UUID} of the DRM scheme, or {@link C#UUID_NIL} if the data is universal (i.e.
+         * The [Uuid] of the DRM scheme, or [C.UUID_NIL] if the data is universal (i.e.
          * applies to all schemes).
          */
-        val uuid: UUID,
+        val uuid: Uuid,
         /** The URL of the server to which license requests should be made. May be null if unknown. */
         val licenseServerUrl: String? = null,
-        /** The mimeType of {@link #data}. */
+        /** The mimeType of [data]. */
         val mimeType: String,
         /** The initialization data. May be null for scheme support checks only. */
         val data: ByteArray
@@ -276,29 +276,29 @@ object HlsPlaylistParser {
         }
     }
 
-    object UriUtil {
-        fun resolveToUri(baseUri: String?, referenceUri: String?): URI {
-            return URI.create(resolve(baseUri, referenceUri))
+    object UrlUtil {
+        fun resolveToUrl(baseUrl: String?, referenceUrl: String?): Url {
+            return Url(resolve(baseUrl, referenceUrl))
         }
 
 
-        /** The length of arrays returned by [.getUriIndices].  */
+        /** The length of arrays returned by [.getUrlIndices].  */
         private
         const val INDEX_COUNT: Int = 4
 
         /**
-         * An index into an array returned by [.getUriIndices].
+         * An index into an array returned by [.getUrlIndices].
          *
          *
          * The value at this position in the array is the index of the ':' after the scheme. Equals -1
-         * if the URI is a relative reference (no scheme). The hier-part starts at (schemeColon + 1),
-         * including when the URI has no scheme.
+         * if the URL is a relative reference (no scheme). The hier-part starts at (schemeColon + 1),
+         * including when the URL has no scheme.
          */
         private
         const val SCHEME_COLON: Int = 0
 
         /**
-         * An index into an array returned by [.getUriIndices].
+         * An index into an array returned by [.getUrlIndices].
          *
          *
          * The value at this position in the array is the index of the path part. Equals (schemeColon +
@@ -310,7 +310,7 @@ object HlsPlaylistParser {
         const val PATH: Int = 1
 
         /**
-         * An index into an array returned by [.getUriIndices].
+         * An index into an array returned by [.getUrlIndices].
          *
          *
          * The value at this position in the array is the index of the query part, including the '?'
@@ -321,87 +321,87 @@ object HlsPlaylistParser {
         const val QUERY: Int = 2
 
         /**
-         * An index into an array returned by [.getUriIndices].
+         * An index into an array returned by [.getUrlIndices].
          *
          *
          * The value at this position in the array is the index of the fragment part, including the '#'
-         * before the fragment. Equal to the length of the URI if no fragment part, and (length - 1) if
+         * before the fragment. Equal to the length of the URL if no fragment part, and (length - 1) if
          * the fragment part is a single '#' with no data.
          */
         private
         const val FRAGMENT: Int = 3
 
         /**
-         * Performs relative resolution of a `referenceUri` with respect to a `baseUri`.
+         * Performs relative resolution of a `referenceUrl` with respect to a `baseUrl`.
          *
          *
          * The resolution is performed as specified by RFC-3986.
          *
-         * @param baseUri The base URI.
-         * @param referenceUri The reference URI to resolve.
+         * @param baseUrl The base URL.
+         * @param referenceUrl The reference URL to resolve.
          */
-        private fun resolve(baseUri: String?, referenceUri: String?): String {
-            var baseUri = baseUri
-            var referenceUri = referenceUri
-            val uri = StringBuilder()
+        private fun resolve(baseUrl: String?, referenceUrl: String?): String {
+            var baseUrl = baseUrl
+            var referenceUrl = referenceUrl
+            val url = StringBuilder()
 
             // Map null onto empty string, to make the following logic simpler.
-            baseUri = baseUri ?: ""
-            referenceUri = referenceUri ?: ""
+            baseUrl = baseUrl ?: ""
+            referenceUrl = referenceUrl ?: ""
 
-            val refIndices: IntArray = getUriIndices(referenceUri)
+            val refIndices: IntArray = getUrlIndices(referenceUrl)
             if (refIndices[SCHEME_COLON] != -1) {
-                // The reference is absolute. The target Uri is the reference.
-                uri.append(referenceUri)
-                removeDotSegments(uri, refIndices[PATH], refIndices[QUERY])
-                return uri.toString()
+                // The reference is absolute. The target Url is the reference.
+                url.append(referenceUrl)
+                removeDotSegments(url, refIndices[PATH], refIndices[QUERY])
+                return url.toString()
             }
 
-            val baseIndices: IntArray = getUriIndices(baseUri)
+            val baseIndices: IntArray = getUrlIndices(baseUrl)
             if (refIndices[FRAGMENT] == 0) {
-                // The reference is empty or contains just the fragment part, then the target Uri is the
-                // concatenation of the base Uri without its fragment, and the reference.
-                return uri.append(baseUri, 0, baseIndices[FRAGMENT]).append(referenceUri).toString()
+                // The reference is empty or contains just the fragment part, then the target Url is the
+                // concatenation of the base Url without its fragment, and the reference.
+                return url.append(baseUrl, 0, baseIndices[FRAGMENT]).append(referenceUrl).toString()
             }
 
             if (refIndices[QUERY] == 0) {
                 // The reference starts with the query part. The target is the base up to (but excluding) the
                 // query, plus the reference.
-                return uri.append(baseUri, 0, baseIndices[QUERY]).append(referenceUri).toString()
+                return url.append(baseUrl, 0, baseIndices[QUERY]).append(referenceUrl).toString()
             }
 
             if (refIndices[PATH] != 0) {
                 // The reference has authority. The target is the base scheme plus the reference.
                 val baseLimit = baseIndices[SCHEME_COLON] + 1
-                uri.append(baseUri, 0, baseLimit).append(referenceUri)
+                url.append(baseUrl, 0, baseLimit).append(referenceUrl)
                 return removeDotSegments(
-                    uri,
+                    url,
                     baseLimit + refIndices[PATH],
                     baseLimit + refIndices[QUERY]
                 )
             }
 
-            if (referenceUri[refIndices[PATH]] == '/') {
+            if (referenceUrl[refIndices[PATH]] == '/') {
                 // The reference path is rooted. The target is the base scheme and authority (if any), plus
                 // the reference.
-                uri.append(baseUri, 0, baseIndices[PATH]).append(referenceUri)
+                url.append(baseUrl, 0, baseIndices[PATH]).append(referenceUrl)
                 return removeDotSegments(
-                    uri,
+                    url,
                     baseIndices[PATH],
                     baseIndices[PATH] + refIndices[QUERY]
                 )
             }
 
-            // The target Uri is the concatenation of the base Uri up to (but excluding) the last segment,
+            // The target Url is the concatenation of the base Url up to (but excluding) the last segment,
             // and the reference. This can be split into 2 cases:
             if (baseIndices[SCHEME_COLON] + 2 < baseIndices[PATH]
                 && baseIndices[PATH] == baseIndices[QUERY]
             ) {
                 // Case 1: The base hier-part is just the authority, with an empty path. An additional '/' is
                 // needed after the authority, before appending the reference.
-                uri.append(baseUri, 0, baseIndices[PATH]).append('/').append(referenceUri)
+                url.append(baseUrl, 0, baseIndices[PATH]).append('/').append(referenceUrl)
                 return removeDotSegments(
-                    uri,
+                    url,
                     baseIndices[PATH],
                     baseIndices[PATH] + refIndices[QUERY] + 1
                 )
@@ -410,22 +410,22 @@ object HlsPlaylistParser {
                 // it. If base hier-part has no '/', it could only mean that it is completely empty or
                 // contains only one segment, in which case the whole hier-part is excluded and the reference
                 // is appended right after the base scheme colon without an added '/'.
-                val lastSlashIndex = baseUri.lastIndexOf('/', baseIndices[QUERY] - 1)
+                val lastSlashIndex = baseUrl.lastIndexOf('/', baseIndices[QUERY] - 1)
                 val baseLimit = if (lastSlashIndex == -1) baseIndices[PATH] else lastSlashIndex + 1
-                uri.append(baseUri, 0, baseLimit).append(referenceUri)
-                return removeDotSegments(uri, baseIndices[PATH], baseLimit + refIndices[QUERY])
+                url.append(baseUrl, 0, baseLimit).append(referenceUrl)
+                return removeDotSegments(url, baseIndices[PATH], baseLimit + refIndices[QUERY])
             }
         }
 
         /**
-         * Removes dot segments from the path of a URI.
+         * Removes dot segments from the path of a URL.
          *
-         * @param uri A [StringBuilder] containing the URI.
-         * @param offset The index of the start of the path in `uri`.
-         * @param limit The limit (exclusive) of the path in `uri`.
+         * @param url A [StringBuilder] containing the URL.
+         * @param offset The index of the start of the path in `url`.
+         * @param limit The limit (exclusive) of the path in `url`.
          */
         private fun removeDotSegments(
-            uri: StringBuilder,
+            url: StringBuilder,
             offset: Int,
             limit: Int
         ): String {
@@ -433,9 +433,9 @@ object HlsPlaylistParser {
             var limit = limit
             if (offset >= limit) {
                 // Nothing to do.
-                return uri.toString()
+                return url.toString()
             }
-            if (uri[offset] == '/') {
+            if (url[offset] == '/') {
                 // If the path starts with a /, always retain it.
                 offset++
             }
@@ -445,7 +445,7 @@ object HlsPlaylistParser {
             while (i <= limit) {
                 val nextSegmentStart = if (i == limit) {
                     i
-                } else if (uri[i] == '/') {
+                } else if (url[i] == '/') {
                     i + 1
                 } else {
                     i++
@@ -453,16 +453,16 @@ object HlsPlaylistParser {
                 }
                 // We've encountered the end of a segment or the end of the path. If the final segment was
                 // "." or "..", remove the appropriate segments of the path.
-                if (i == segmentStart + 1 && uri[segmentStart] == '.') {
+                if (i == segmentStart + 1 && url[segmentStart] == '.') {
                     // Given "abc/def/./ghi", remove "./" to get "abc/def/ghi".
-                    uri.delete(segmentStart, nextSegmentStart)
+                    url.deleteRange(segmentStart, nextSegmentStart)
                     limit -= nextSegmentStart - segmentStart
                     i = segmentStart
-                } else if (i == segmentStart + 2 && uri[segmentStart] == '.' && uri[segmentStart + 1] == '.') {
+                } else if (i == segmentStart + 2 && url[segmentStart] == '.' && url[segmentStart + 1] == '.') {
                     // Given "abc/def/../ghi", remove "def/../" to get "abc/ghi".
-                    val prevSegmentStart = uri.lastIndexOf("/", segmentStart - 2) + 1
+                    val prevSegmentStart = url.lastIndexOf("/", segmentStart - 2) + 1
                     val removeFrom = if (prevSegmentStart > offset) prevSegmentStart else offset
-                    uri.delete(removeFrom, nextSegmentStart)
+                    url.deleteRange(removeFrom, nextSegmentStart)
                     limit -= nextSegmentStart - removeFrom
                     segmentStart = prevSegmentStart
                     i = prevSegmentStart
@@ -471,41 +471,41 @@ object HlsPlaylistParser {
                     segmentStart = i
                 }
             }
-            return uri.toString()
+            return url.toString()
         }
 
         /**
-         * Calculates indices of the constituent components of a URI.
+         * Calculates indices of the constituent components of a URL.
          *
-         * @param uriString The URI as a string.
+         * @param urlString The URL as a string.
          * @return The corresponding indices.
          */
-        private fun getUriIndices(uriString: String?): IntArray {
+        private fun getUrlIndices(urlString: String?): IntArray {
             val indices = IntArray(INDEX_COUNT)
-            if (uriString.isNullOrEmpty()) {
+            if (urlString.isNullOrEmpty()) {
                 indices[SCHEME_COLON] = -1
                 return indices
             }
 
             // Determine outer structure from right to left.
-            // Uri = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-            val length = uriString.length
-            var fragmentIndex = uriString.indexOf('#')
+            // Url = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+            val length = urlString.length
+            var fragmentIndex = urlString.indexOf('#')
             if (fragmentIndex == -1) {
                 fragmentIndex = length
             }
-            var queryIndex = uriString.indexOf('?')
+            var queryIndex = urlString.indexOf('?')
             if (queryIndex == -1 || queryIndex > fragmentIndex) {
                 // '#' before '?': '?' is within the fragment.
                 queryIndex = fragmentIndex
             }
             // Slashes are allowed only in hier-part so any colon after the first slash is part of the
             // hier-part, not the scheme colon separator.
-            var schemeIndexLimit = uriString.indexOf('/')
+            var schemeIndexLimit = urlString.indexOf('/')
             if (schemeIndexLimit == -1 || schemeIndexLimit > queryIndex) {
                 schemeIndexLimit = queryIndex
             }
-            var schemeIndex = uriString.indexOf(':')
+            var schemeIndex = urlString.indexOf(':')
             if (schemeIndex > schemeIndexLimit) {
                 // '/' before ':'
                 schemeIndex = -1
@@ -514,10 +514,10 @@ object HlsPlaylistParser {
             // Determine hier-part structure: hier-part = "//" authority path / path
             // This block can also cope with schemeIndex == -1.
             val hasAuthority =
-                schemeIndex + 2 < queryIndex && uriString[schemeIndex + 1] == '/' && uriString[schemeIndex + 2] == '/'
+                schemeIndex + 2 < queryIndex && urlString[schemeIndex + 1] == '/' && urlString[schemeIndex + 2] == '/'
             var pathIndex: Int
             if (hasAuthority) {
-                pathIndex = uriString.indexOf('/', schemeIndex + 3) // find first '/' after "://"
+                pathIndex = urlString.indexOf('/', schemeIndex + 3) // find first '/' after "://"
                 if (pathIndex == -1 || pathIndex > queryIndex) {
                     pathIndex = queryIndex
                 }
@@ -533,31 +533,31 @@ object HlsPlaylistParser {
         }
     }
 
-    object C {
+    private object C {
         /**
-         * UUID for the ClearKey DRM scheme.
+         * [Uuid] for the ClearKey DRM scheme.
          *
          *
          * ClearKey is supported on Android devices running Android 5.0 (API Level 21) and up.
          */
-        val CLEARKEY_UUID = UUID(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
+        val CLEARKEY_UUID = Uuid.fromLongs(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
 
         /**
-         * UUID for the Widevine DRM scheme.
+         * [Uuid] for the Widevine DRM scheme.
          *
          *
          * Widevine is supported on Android devices running Android 4.3 (API Level 18) and up.
          */
-        val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
+        val WIDEVINE_UUID = Uuid.fromLongs(-0x121074568629b532L, -0x5c37d8232ae2de13L)
 
         /**
-         * UUID for the PlayReady DRM scheme.
+         * [Uuid] for the PlayReady DRM scheme.
          *
          *
          * PlayReady is supported on all AndroidTV devices. Note that most other Android devices do not
          * provide PlayReady support.
          */
-        val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
+        val PLAYREADY_UUID = Uuid.fromLongs(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
 
 
         /** "cenc" scheme type name as defined in ISO/IEC 23001-7:2016.  */
@@ -806,7 +806,7 @@ object HlsPlaylistParser {
 
         const val APPLICATION_MEDIA3_CUES: String = "$BASE_TYPE_APPLICATION/x-media3-cues"
 
-        /** MIME type for an image URI loaded from an external image management framework.  */
+        /** MIME type for an image URL loaded from an external image management framework.  */
         const val APPLICATION_EXTERNALLY_LOADED_IMAGE: String = "$BASE_TYPE_APPLICATION/x-image-uri"
 
 
@@ -1067,7 +1067,7 @@ object HlsPlaylistParser {
 
     object PsshAtomUtil {
         fun buildPsshAtom(
-            systemId: UUID, keyIds: Array<UUID>?, data: ByteArray?
+            systemId: Uuid, keyIds: Array<Uuid>?, data: ByteArray?
         ): ByteArray {
             val dataLength = data?.size ?: 0
             var psshBoxLength: Int =
@@ -1075,26 +1075,30 @@ object HlsPlaylistParser {
             if (keyIds != null) {
                 psshBoxLength += 4 /* KID_count */ + (keyIds.size * 16) /* KIDs */
             }
-            val psshBox: ByteBuffer = ByteBuffer.allocate(psshBoxLength)
-            psshBox.putInt(psshBoxLength)
-            psshBox.putInt(Mp4Box.TYPE_pssh)
-            psshBox.putInt(if (keyIds != null) 0x01000000 else 0 /* version=(buildV1Atom ? 1 : 0), flags=0 */)
-            psshBox.putLong(systemId.mostSignificantBits)
-            psshBox.putLong(systemId.leastSignificantBits)
+            val buffer = Buffer()
+            buffer.writeInt(psshBoxLength)
+            buffer.writeInt(Mp4Box.TYPE_pssh)
+            buffer.writeInt(if (keyIds != null) 0x01000000 else 0 /* version=(buildV1Atom ? 1 : 0), flags=0 */)
+            systemId.toLongs { mostSignificantBits, leastSignificantBits ->
+                buffer.writeLong(mostSignificantBits)
+                buffer.writeLong(leastSignificantBits)
+            }
             if (keyIds != null) {
-                psshBox.putInt(keyIds.size)
+                buffer.writeInt(keyIds.size)
                 for (keyId in keyIds) {
-                    psshBox.putLong(keyId.mostSignificantBits)
-                    psshBox.putLong(keyId.leastSignificantBits)
+                    keyId.toLongs { mostSignificantBits, leastSignificantBits ->
+                        buffer.writeLong(mostSignificantBits)
+                        buffer.writeLong(leastSignificantBits)
+                    }
                 }
             }
             if (data != null && data.size != 0) {
-                psshBox.putInt(data.size)
-                psshBox.put(data)
+                buffer.writeInt(data.size)
+                buffer.write(data)
             } else {
-                psshBox.putInt(0)
+                buffer.writeInt(0)
             }
-            return psshBox.array()
+            return buffer.readByteArray()
         }
     }
 
@@ -1169,7 +1173,6 @@ object HlsPlaylistParser {
         return parseOptionalStringAttr(line, pattern, null, variableDefinitions)
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
     @Throws(ParserException::class)
     private fun parseDrmSchemeData(
         line: String, keyFormat: String, variableDefinitions: Map<String, String>
@@ -1177,22 +1180,22 @@ object HlsPlaylistParser {
         val keyFormatVersions =
             parseOptionalStringAttr(line, REGEX_KEYFORMATVERSIONS, "1", variableDefinitions)
         if (KEYFORMAT_WIDEVINE_PSSH_BINARY == keyFormat) {
-            val uriString = parseStringAttr(line, REGEX_URI, variableDefinitions)
+            val urlString = parseStringAttr(line, REGEX_URI, variableDefinitions)
             return SchemeData(
-                uuid = WIDEVINE_UUID,
+                uuid = C.WIDEVINE_UUID,
                 mimeType = MimeTypes.VIDEO_MP4,
-                data = Base64.Default.decode(uriString.substring(uriString.indexOf(',')))
+                data = base64DecodeArray(urlString.substring(urlString.indexOf(',')))
             )
         } else if (KEYFORMAT_WIDEVINE_PSSH_JSON == keyFormat) {
             return SchemeData(
                 uuid = C.WIDEVINE_UUID,
                 mimeType = "hls",
-                data = line.toByteArray(charset = Charsets.UTF_8)
+                data = line.encodeToByteArray()
             )
         } else if (KEYFORMAT_PLAYREADY == keyFormat && "1" == keyFormatVersions) {
-            val uriString = parseStringAttr(line, REGEX_URI, variableDefinitions)
+            val urlString = parseStringAttr(line, REGEX_URI, variableDefinitions)
             val data: ByteArray =
-                Base64.Default.decode(uriString.substring(uriString.indexOf(',')))
+                base64DecodeArray(urlString.substring(urlString.indexOf(',')))
             val psshData: ByteArray =
                 PsshAtomUtil.buildPsshAtom(
                     systemId = C.PLAYREADY_UUID,
@@ -1270,7 +1273,7 @@ object HlsPlaylistParser {
     }
 
     data class Variant(
-        val url: URI,
+        val url: Url,
         val format: Format,
         val videoGroupId: String?,
         val audioGroupId: String?,
@@ -1323,7 +1326,7 @@ object HlsPlaylistParser {
 
     data class Rendition(
         /** The rendition's url, or null if the tag does not have a URI attribute. */
-        val url: URI?,
+        val url: Url?,
 
         /** Format information associated with this rendition. */
         val format: Format,
@@ -1336,14 +1339,14 @@ object HlsPlaylistParser {
     )
 
     data class HlsMultivariantPlaylist(
-        /** The base uri. Used to resolve relative paths. */
+        /** The base url. Used to resolve relative paths. */
         val baseUri: String,
 
         /** The list of tags in the playlist. */
         val tags: List<String>,
 
         /** All of the media playlist URLs referenced by the playlist. */
-        //val mediaPlaylistUrls: List<URI>,
+        //val mediaPlaylistUrls: List<Url>,
 
         /** The variants declared by the playlist. */
         val variants: List<Variant>,
@@ -1729,8 +1732,8 @@ object HlsPlaylistParser {
     private fun parseMultivariantPlaylist(
         iterator: Iterator<String>, baseUri: String
     ): HlsMultivariantPlaylist {
-        val urlToVariantInfos: HashMap<URI, ArrayList<VariantInfo>?> =
-            HashMap<URI, ArrayList<VariantInfo>?>()
+        val urlToVariantInfos: HashMap<Url, ArrayList<VariantInfo>?> =
+            HashMap<Url, ArrayList<VariantInfo>?>()
         val variableDefinitions = HashMap<String, String>()
         val variants: ArrayList<Variant> = ArrayList<Variant>()
         val videos: ArrayList<Rendition> = ArrayList<Rendition>()
@@ -1853,10 +1856,10 @@ object HlsPlaylistParser {
                     parseOptionalStringAttr(line, REGEX_SUBTITLES, variableDefinitions)
                 val closedCaptionsGroupId: String? =
                     parseOptionalStringAttr(line, REGEX_CLOSED_CAPTIONS, variableDefinitions)
-                val uri: URI
+                val url: Url
                 if (isIFrameOnlyVariant) {
-                    uri =
-                        UriUtil.resolveToUri(
+                    url =
+                        UrlUtil.resolveToUrl(
                             baseUri,
                             parseStringAttr(line, REGEX_URI, variableDefinitions)
                         )
@@ -1865,14 +1868,14 @@ object HlsPlaylistParser {
                         "#EXT-X-STREAM-INF must be followed by another line",  /* cause= */null
                     )
                 } else {
-                    // The following line contains #EXT-X-STREAM-INF's URI.
+                    // The following line contains #EXT-X-STREAM-INF's URL.
                     line = replaceVariableReferences(iterator.next(), variableDefinitions)
-                    uri = UriUtil.resolveToUri(baseUri, line)
+                    url = UrlUtil.resolveToUrl(baseUri, line)
                 }
 
                 val variant =
                     Variant(
-                        url = uri,
+                        url = url,
                         format = Format(
                             id = variants.size.toString(),
                             containerMimeType = MimeTypes.APPLICATION_M3U8,
@@ -1890,10 +1893,10 @@ object HlsPlaylistParser {
                         captionGroupId = closedCaptionsGroupId
                     )
                 variants.add(variant)
-                var variantInfosForUrl: ArrayList<VariantInfo>? = urlToVariantInfos[uri]
+                var variantInfosForUrl: ArrayList<VariantInfo>? = urlToVariantInfos[url]
                 if (variantInfosForUrl == null) {
                     variantInfosForUrl = ArrayList()
-                    urlToVariantInfos[uri] = variantInfosForUrl
+                    urlToVariantInfos[url] = variantInfosForUrl
                 }
                 variantInfosForUrl.add(
                     VariantInfo(
@@ -1911,7 +1914,7 @@ object HlsPlaylistParser {
         // TODO: Don't deduplicate variants by URL.
         val deduplicatedVariants = variants.distinctBy { it.url }
         /*val deduplicatedVariants: ArrayList<Variant> = ArrayList<Variant>()
-        val urlsInDeduplicatedVariants = HashSet<URI>()
+        val urlsInDeduplicatedVariants = HashSet<Url>()
         for (i in variants.indices) {
             val variant: Variant = variants[i]
             if (urlsInDeduplicatedVariants.add(variant.url)) {
@@ -1945,10 +1948,10 @@ object HlsPlaylistParser {
                 containerMimeType = MimeTypes.APPLICATION_M3U8,
             )
 
-            val referenceUri: String? =
+            val referenceUrl: String? =
                 parseOptionalStringAttr(line, REGEX_URI, variableDefinitions)
-            val uri: URI? =
-                if (referenceUri == null) null else UriUtil.resolveToUri(baseUri, referenceUri)
+            val url: Url? =
+                if (referenceUrl == null) null else UrlUtil.resolveToUrl(baseUri, referenceUrl)
             //val metadata =
             //    Metadata(HlsTrackMetadataEntry(groupId, name, emptyList<T>()))
             when (parseStringAttr(line, REGEX_TYPE, variableDefinitions)) {
@@ -1963,11 +1966,11 @@ object HlsPlaylistParser {
                             codecs = Util.getCodecsOfType(variantFormat.codecs, C.TRACK_TYPE_VIDEO)
                         )
                     }
-                    if (uri == null) {
-                        // TODO: Remove this case and add a Rendition with a null uri to videos.
+                    if (url == null) {
+                        // TODO: Remove this case and add a Rendition with a null url to videos.
                     } else {
                         //formatBuilder.setMetadata(metadata)
-                        videos.add(Rendition(url = uri, format = formatBuilder, groupId, name))
+                        videos.add(Rendition(url = url, format = formatBuilder, groupId, name))
                     }
                 }
 
@@ -1995,11 +1998,11 @@ object HlsPlaylistParser {
                         }
                     }
                     val format = formatBuilder.copy(sampleMimeType = sampleMimeType)
-                    if (uri != null) {
+                    if (url != null) {
                         //formatBuilder.setMetadata(metadata)
-                        audios.add(Rendition(uri, format, groupId, name))
+                        audios.add(Rendition(url, format, groupId, name))
                     } else if (variant != null) {
-                        // TODO: Remove muxedAudioFormat and add a Rendition with a null uri to audios.
+                        // TODO: Remove muxedAudioFormat and add a Rendition with a null url to audios.
                         muxedAudioFormat = format
                     }
                 }
@@ -2018,10 +2021,10 @@ object HlsPlaylistParser {
                     if (sampleMimeType == null) {
                         sampleMimeType = MimeTypes.TEXT_VTT
                     }
-                    if (uri != null) {
+                    if (url != null) {
                         subtitles.add(
                             Rendition(
-                                uri,
+                                url,
                                 formatBuilder.copy(sampleMimeType = sampleMimeType),
                                 groupId,
                                 name

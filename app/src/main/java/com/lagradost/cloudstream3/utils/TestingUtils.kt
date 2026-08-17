@@ -200,7 +200,7 @@ object TestingUtils {
                 }
 
                 else -> {
-                    logger.error("Unknown load response: ${loadResponse.javaClass.name}")
+                    logger.error("Unknown load response: ${loadResponse::class.qualifiedName}")
                     return TestResult.Fail
                 }
             } ?: return TestResult.Fail

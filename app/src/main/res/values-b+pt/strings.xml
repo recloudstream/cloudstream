@@ -61,7 +61,7 @@
     <string name="stream">Transmitir</string>
     <string name="error_loading_links_toast">Erro a Carregar Links</string>
     <string name="download_storage_text">Armazenamento Interno</string>
-    <string name="app_dubbed_text">Dob</string>
+    <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Leg</string>
     <string name="popup_delete_file">Eliminar Ficheiro</string>
     <string name="popup_play_file">Reproduzir Ficheiro</string>
@@ -100,7 +100,7 @@
     <string name="subs_import_text" formatted="true">Importar fontes colocando em %s</string>
     <string name="continue_watching">Continuar a Assistir</string>
     <string name="action_remove_watching">Remover</string>
-    <string name="action_open_watching">Mais info</string>
+    <string name="action_open_watching">Mais informações</string>
     <string name="vpn_might_be_needed">Uma VPN pode ser necessária para que este fornecedor funcione corretamente</string>
     <string name="vpn_torrent">Este fornecedor é um torrent, uma VPN é recomendada</string>
     <string name="provider_info_meta">Metadados não são oferecidos pelo site, o carregamento do vídeo irá falhar se ele não existir no site.</string>
@@ -142,7 +142,7 @@
     <string name="search">Procurar</string>
     <string name="category_account">Contas e segurança</string>
     <string name="category_updates">Atualizações e cópias de segurança</string>
-    <string name="settings_info">Info</string>
+    <string name="settings_info">Informações</string>
     <string name="advanced_search">Procura Avançada</string>
     <string name="advanced_search_des">Mostra resultados separados por fornecedor</string>
     <string name="show_fillers_settings">Mostrar episódios de enchimento para anime</string>
@@ -318,9 +318,9 @@
     <string name="player_load_subtitles">Carregar de arquivo</string>
     <string name="player_load_subtitles_online">Carregar da Internet</string>
     <string name="downloaded_file">Arquivo baixado</string>
-    <string name="actor_main">Protagonista</string>
-    <string name="actor_supporting">Coadjuvante</string>
-    <string name="actor_background">Figurante</string>
+    <string name="actor_main">Principal</string>
+    <string name="actor_supporting">Suporte</string>
+    <string name="actor_background">Plano de fundo</string>
     <string name="home_random">Aleatório</string>
     <string name="coming_soon">Em breve…</string>
     <string name="poster_image">Imagem de Poster</string>
@@ -523,7 +523,7 @@
     <string name="no_repository_found_error">Repositório não encontrado, verifique o URL e tente a VPN</string>
     <string name="already_voted">Você já votou</string>
     <string name="action_unsubscribe">Cancelar Inscrição</string>
-    <string name="action_subscribe">Subscrever</string>
+    <string name="action_subscribe">Inscrever-se</string>
     <string name="favorites_list_name">Favoritos</string>
     <string name="links_reloaded_toast">A recarregar links</string>
     <string name="backup_frequency">Frequência de Backup</string>
@@ -686,7 +686,7 @@
     <string name="edit_profile_image_success">Imagem Atualizada com Sucesso</string>
     <string name="action_mark_watched_up_to_this_episode">Marcar como assistido o episódio</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Removar marcação de assistido até esse episódio</string>
-    <string name="action_reload">Recarregado</string>
+    <string name="action_reload">Recarregar</string>
     <string name="reload_provider">Provedor de Recarregamento</string>
     <string name="episode_action_play_mirror">Reproduzir do servidor alternativo</string>"
     <string name="name">Nome</string>
@@ -733,4 +733,8 @@
         <item quantity="many">%d downloads na fila</item>
         <item quantity="other">%d downloads na fila</item>
     </plurals>
+    <string name="show_player_metadata_overlay">Mostrar sobreposição de metadados do player</string>
+    <string name="video_singular">Vídeo</string>
+    <string name="skip_type_preview">Pré-visualização</string>
+    <string name="player_is_live">Ao Vivo</string>
 </resources>

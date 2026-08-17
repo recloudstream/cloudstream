@@ -83,6 +83,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
@@ -1324,7 +1325,7 @@ class ResultViewModel2 : ViewModel() {
         episodeIds: Array<String>,
         watchState: VideoWatchState
     ) {
-        val watchStateString = DataStore.mapper.writeValueAsString(watchState)
+        val watchStateString = watchState.toJson()
         episodeIds.forEach {
             if (getVideoWatchState(it.toInt()) != watchState) {
                 editor.setKeyRaw(
@@ -1685,14 +1686,13 @@ class ResultViewModel2 : ViewModel() {
                 }
 
                 val realRecommendations = ArrayList<SearchResponse>()
-                val apiNames = synchronized(apis) {
-                    apis.filter {
-                        it.name.contains("gogoanime", true) ||
-                                it.name.contains("9anime", true)
-                    }.map {
-                        it.name
-                    }
+                val apiNames = apis.filter {
+                    it.name.contains("gogoanime", true) ||
+                        it.name.contains("9anime", true)
+                }.map {
+                    it.name
                 }
+
                 meta.recommendations?.forEach { rec ->
                     apiNames.forEach { name ->
                         realRecommendations.add(rec.copy(apiName = name))

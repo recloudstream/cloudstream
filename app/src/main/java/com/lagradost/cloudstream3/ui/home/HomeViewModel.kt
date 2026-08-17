@@ -133,7 +133,7 @@ class HomeViewModel : ViewModel() {
     private var currentShuffledList: List<SearchResponse> = listOf()
 
     private fun autoloadRepo(): APIRepository {
-        return APIRepository(synchronized(apis) { apis.first { it.hasMainPage } })
+        return APIRepository(apis.withLock { apis.first { it.hasMainPage } })
     }
 
     private val _availableWatchStatusTypes =

@@ -616,7 +616,7 @@
     <string name="play_from_beginning_img_des">Reproduzir do começo</string>
     <string name="test_warning">Reprovou alguns testes</string>
     <string name="delete_plugin">Excluir plugin</string>
-    <string name="downloads_empty">Você não baixou nada :/</string>
+    <string name="downloads_empty">Atualmente não há downloads disponíveis.</string>
     <string name="hide_player_control_names">Ocultar os nomes dos controles do player</string>
     <string name="open_local_video">Abrir arquivo de vídeo</string>
     <string name="sort_release_date_new">Data de lançamento (do novo ao antigo)</string>
@@ -736,7 +736,7 @@
     <string name="source_name">Nome da fonte</string>
     <string name="download_all">Baixar tudo</string>
     <string name="cancel_all">Cancelar tudo</string>
-    <string name="download_episode_range">Você deseja baixar o episódio%s</string>
+    <string name="download_episode_range">Você deseja baixar o episódio%s?</string>
     <string name="cancel_queue_message">Você gostaria de cancelar todos os downloads da fila?</string>
     <plurals name="downloads_active">
         <item quantity="one">%ddownload ativo</item>
@@ -748,7 +748,7 @@
         <item quantity="many">%d downloads na sequência</item>
         <item quantity="other">%d downloads na sequência</item>
     </plurals>
-    <string name="show_player_metadata_overlay">Exibir sobreposição de metadados do player</string>
+    <string name="show_player_metadata_overlay">Mostrar sobreposição de metadados do reprodutor</string>
     <string name="video_singular">Vídeo</string>
     <string name="skip_type_preview">Visualização</string>
     <string name="player_is_live">Ao vivo</string>

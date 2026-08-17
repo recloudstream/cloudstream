@@ -12,6 +12,7 @@
         android:id="@+id/player_metadata_scrim"
         android:layout_width="680dp"
         android:layout_height="match_parent"
+        android:layout_marginTop="-10dp"
         android:background="@drawable/bg_player_metadata_scrim_netflix"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -350,6 +351,22 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="32dp"
                     android:orientation="vertical">
+
+                    <TextClock
+                            android:id="@+id/player_video_clock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:maxWidth="600dp"
+                            android:textAlignment="viewEnd"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:visibility="visible"
+                            android:format12Hour="hh:mm a"
+                            android:format24Hour="HH:mm"
+                            android:fontFamily="@font/google_sans"
+                            android:textStyle="bold" />
 
                     <LinearLayout
                         android:id="@+id/player_video_title_holder"
@@ -1115,6 +1132,8 @@
 
     <FrameLayout
         android:id="@+id/subtitle_holder"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

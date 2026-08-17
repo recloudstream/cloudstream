@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.ContextCompat.getString
+import androidx.navigation.NavOptions
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.temp.CloudStreamPackage
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
@@ -12,6 +13,15 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.safefile.SafeFile
 
 object OfflinePlaybackHelper {
+    /**
+     * Pop any existing player off the nav back stack before pushing the new one,
+     * keeping the stack flat (at most one player at a time). This prevents an
+     * OOM when many files are opened in sequence via DownloadedPlayerActivity.
+     */
+    private val replacePlayerNavOptions = NavOptions.Builder()
+        .setPopUpTo(R.id.navigation_player, inclusive = true, saveState = false)
+        .build()
+
     fun playLink(activity: Activity, url: String) {
         activity.navigate(
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
@@ -20,7 +30,8 @@ object OfflinePlaybackHelper {
                         BasicLink(url)
                     ), id = url.hashCode()
                 ), 0
-            )
+            ),
+            replacePlayerNavOptions
         )
     }
 
@@ -52,7 +63,8 @@ object OfflinePlaybackHelper {
                     subs,
                     if (id != -1) id else null,
                 ), 0
-            )
+            ),
+            replacePlayerNavOptions
         )
         return true
     }
@@ -76,7 +88,8 @@ object OfflinePlaybackHelper {
                         )
                     )
                 ), 0
-            )
+            ),
+            replacePlayerNavOptions
         )
     }
 }

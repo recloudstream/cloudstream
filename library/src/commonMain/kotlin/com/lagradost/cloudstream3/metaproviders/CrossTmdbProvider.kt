@@ -16,6 +16,8 @@ import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class CrossTmdbProvider : TmdbProvider() {
     override var name = "MultiMovie"
@@ -30,14 +32,13 @@ class CrossTmdbProvider : TmdbProvider() {
     }
 
     private val validApis
-        get() =
-            synchronized(apis) { apis.filter { it.lang == this.lang && it::class.java != this::class.java } }
+        get() = apis.filter { it.lang == this.lang && it::class != this::class }
     //.distinctBy { it.uniqueId }
 
-
+    @Serializable
     data class CrossMetaData(
-        @JsonProperty("isSuccess") val isSuccess: Boolean,
-        @JsonProperty("movies") val movies: List<Pair<String, String>>? = null,
+        @JsonProperty("isSuccess") @SerialName("isSuccess") val isSuccess: Boolean,
+        @JsonProperty("movies") @SerialName("movies") val movies: List<Pair<String, String>>? = null,
     )
 
     override suspend fun loadLinks(

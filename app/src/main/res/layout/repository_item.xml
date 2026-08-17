@@ -80,8 +80,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="5dp"
                 android:textColor="?attr/grayTextColor"
-                tools:text="Votes: 10K"
                 android:visibility="gone"
+                tools:text="Votes: 10K"
                 tools:visibility="visible" />
 
             <TextView
@@ -103,6 +103,14 @@
             android:textColor="?attr/grayTextColor"
             android:textSize="12sp"
             tools:text="https://github.com/..." />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="5dp"
+            tools:visibility="visible"
+            android:visibility="gone"
+            android:id="@+id/repository_name_text"
+            style="@style/SmallBlackButton"
+            tools:text="Repository name" />
     </LinearLayout>
 
     <ImageView

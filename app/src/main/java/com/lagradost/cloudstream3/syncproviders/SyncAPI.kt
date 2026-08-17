@@ -10,8 +10,8 @@ import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.utils.Levenshtein
 import com.lagradost.cloudstream3.utils.UiText
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.util.Date
 
 /**
@@ -138,7 +138,7 @@ abstract class SyncAPI : AuthAPI() {
                 ListSorting.Query ->
                     if (query != null) {
                         items.sortedBy {
-                            -FuzzySearch.partialRatio(
+                            -Levenshtein.partialRatio(
                                 query.lowercase(), it.name.lowercase()
                             )
                         }

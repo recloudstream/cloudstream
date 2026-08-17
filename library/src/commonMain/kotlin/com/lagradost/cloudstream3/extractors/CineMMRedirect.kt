@@ -4,7 +4,7 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import io.ktor.http.Url
 
 // deobfuscated from https://hglink.to/main.js?v=1.1.3 using https://deobfuscate.io/
 private val mirrors = arrayOf(
@@ -90,7 +90,7 @@ abstract class CineMMRedirect : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val videoId = url.toHttpUrl().encodedPath
+        val videoId = Url(url).encodedPath
         val mirror = mirrors.random()
 
         // re-use existing extractors by calling the ExtractorApi

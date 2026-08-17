@@ -49,7 +49,7 @@ class SearchViewModel : ViewModel() {
 
     private var suggestionJob: Job? = null
 
-    private var repos = synchronized(apis) { apis.map { APIRepository(it) } }
+    private var repos = apis.withLock { apis.map { APIRepository(it) } }
 
     fun clearSearch() {
         _searchResponse.postValue(Resource.Success(ExpandableSearchList(emptyList(), 0, false)))
@@ -68,7 +68,7 @@ class SearchViewModel : ViewModel() {
     private var onGoingSearch: Job? = null
 
     fun reloadRepos() {
-        repos = synchronized(apis) { apis.map { APIRepository(it) } }
+        repos = apis.withLock { apis.map { APIRepository(it) } }
     }
 
     fun searchAndCancel(

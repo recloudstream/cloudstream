@@ -11,6 +11,7 @@
         android:id="@+id/player_metadata_scrim"
         android:layout_width="640dp"
         android:layout_height="match_parent"
+        android:layout_marginTop="-10dp"
         android:background="@drawable/bg_player_metadata_scrim_netflix"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -263,6 +264,15 @@
                             tools:visibility="visible"
                             android:layout_gravity="center"/>
                     </LinearLayout>
+
+                    <TextClock
+                        android:id="@+id/player_video_clock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:visibility="gone"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <!-- Removed as it has no use anymore-->
@@ -1075,6 +1085,8 @@
 
     <FrameLayout
         android:id="@+id/subtitle_holder"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
