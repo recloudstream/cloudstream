@@ -101,7 +101,6 @@ class SyncSettingsFragment : PreferenceFragmentCompat() {
                 val msgText = when (result) {
                     is SyncManager.SyncResult.Push -> if (result.isSuccess) getString(R.string.sync_push_success) else getString(R.string.sync_push_failed) + (result.error?.let { " - $it" } ?: "")
                     is SyncManager.SyncResult.Pull -> if (result.isSuccess) getString(R.string.sync_pull_success) else getString(R.string.sync_pull_failed) + (result.error?.let { " - $it" } ?: "")
-                    else -> getString(R.string.sync_pull_failed)
                 }
                 Toast.makeText(context, msgText, Toast.LENGTH_LONG).show()
             }
