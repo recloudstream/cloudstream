@@ -36,7 +36,7 @@
     <string name="next_episode">Tập tiếp theo</string>
     <string name="result_tags">Thể loại</string>
     <string name="result_share">Chia sẻ</string>
-    <string name="result_open_in_browser">Mở bằng trình duyệt</string>
+    <string name="result_open_in_browser">Phát bằng Trình duyệt</string>
     <string name="skip_loading">Bỏ tải</string>
     <string name="loading">Đang tải…</string>
     <string name="type_watching">Đang xem</string>
@@ -255,13 +255,13 @@
     <string name="watch_quality_pref">Chất lượng xem ưu tiên (WiFi)</string>
     <string name="limit_title">Số ký tự tối đa tiêu đề trình phát</string>
     <string name="limit_title_rez">Hiển thị thông tin trình phát</string>
-    <string name="video_buffer_size_settings">Kích thước bộ nhớ đệm video</string>
-    <string name="video_buffer_length_settings">Thời lượng bộ nhớ đệm</string>
+    <string name="video_buffer_size_settings">Kích thước bộ đệm video</string>
+    <string name="video_buffer_length_settings">Thời lượng bộ đệm video</string>
     <string name="video_buffer_disk_settings">Bộ nhớ đệm video trên thiết bị</string>
     <string name="video_buffer_clear_settings">Xoá bộ nhớ đệm hình ảnh và video</string>
     <string name="video_ram_description">Sẽ gây lỗi nếu đặt quá cao trên thiết bị có bộ nhớ thấp như Android TV.</string>
-    <string name="video_disk_description">Sẽ gây lỗi nếu đặt quá cao trên máy có dung lượng lưu trữ thấp như Android TV.</string>
-    <string name="dns_pref">DNS over HTTPS</string>
+    <string name="video_disk_description">Sẽ gây lỗi nếu đặt quá cao trên thiết bị có dung lượng lưu trữ thấp như Android TV.</string>
+    <string name="dns_pref">DNS qua HTTPS</string>
     <string name="dns_pref_summary">Rất hữu ích để bỏ chặn ISP</string>
     <string name="add_site_pref">Bản sao trang web</string>
     <string name="remove_site_pref">Xoá trang web</string>
@@ -748,4 +748,12 @@
     <string name="player_is_live">Trực tiếp</string>
     <string name="video_singular">Video</string>
     <string name="skip_type_preview">Xem trước</string>
+    <string name="tv_layout_clock_settings">Hiển thị đồng hồ thời gian thực</string>
+    <string name="tv_layout_clock_settings_des">Hiển thị đồng hồ thời gian thực ở phía trên màn hình. Áp dụng cho trang chủ và trình phát</string>
+    <string name="profile_settings">Cài đặt hồ sơ</string>
+    <string name="profile_hide_negative_sources">Ẩn nguồn có độ ưu tiên âm</string>
+    <string name="profile_hide_error_sources">Ẩn nguồn có lỗi</string>
+    <plurals name="links_hidden">
+        <item quantity="other">%d liên kết bị ẩn</item>
+    </plurals>
 </resources>

@@ -117,7 +117,7 @@
     <string name="subs_font_size">Madhësia e shkrimit</string>
     <string name="search_provider_text_providers">Kërko duke përdorur ofruesit</string>
     <string name="search_provider_text_types">Kërko duke përdorur tipet</string>
-    <string name="benene_count_text">%d Banane të dhëna per developer-at</string>
+    <string name="benene_count_text">%d Banane të dhëna për developer-at</string>
     <string name="benene_count_text_none">Asnjë Banane e dhënë</string>
     <string name="subs_auto_select_language">Zgjedhje automatike e gjuhës</string>
     <string name="subs_download_languages">Shkarko gjuhët</string>
@@ -127,7 +127,7 @@
     <string name="continue_watching">Vazhdo shikimin</string>
     <string name="action_remove_watching">Hiq</string>
     <string name="action_open_watching">Më shumë informacion</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Një VPN mund të nevojitet që ky ofrues të funksionojë në rregull</string>
     <string name="vpn_torrent">Ky ofrues është Torrent, rekomandohet një VPN</string>
     <string name="provider_info_meta">Metadata nuk ofrohet nga kjo faqe, ngarkimi i videos do të dështojë nëse nuk ekziston në këtë faqe.</string>
@@ -216,7 +216,7 @@
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Asnje sezon</string>
     <string name="episode">Episodi</string>
-    <string name="episodes">Episodet</string>
+    <string name="episodes">Episode</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="episode_upcoming_format" formatted="true">Vazhdon në %s</string>
@@ -679,7 +679,7 @@
     <string name="update_plugins">Përditëso shtesat</string>
     <string name="update_plugins_manually">Përditëso shtesat manualisht</string>
     <string name="starting_plugin_update_manually">Filloi procesi i përditësimit të shtesave!</string>
-    <string name="plugins_updated_manually">%d Shtes(at) u përditësuan me sukses!</string>
+    <string name="plugins_updated_manually">%d Shtes(a) u përditësuan me sukses</string>
     <string name="no_plugins_updated_manually">Nuk u përditësua asnjë shtesë.</string>
     <string name="player_notification_channel_name">Njoftimet e luajtësit</string>
     <string name="player_notification_channel_description">Njoftimi për kontrollin e luajtjes nga sfondi</string>
@@ -735,4 +735,13 @@
         <item quantity="other">%d shkarkime në radhë</item>
     </plurals>
     <string name="player_is_live">Live</string>
+    <string name="profile_settings">Cilësimet e profil-it</string>
+    <string name="profile_hide_negative_sources">Fshih burimet me prioritet negativ</string>
+    <string name="profile_hide_error_sources">Fshih burimet me error-e</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d link i fshehur</item>
+        <item quantity="other">%d linqe të fshehura</item>
+    </plurals>
+    <string name="tv_layout_clock_settings">Shfaq orën në kohë reale</string>
+    <string name="tv_layout_clock_settings_des">Shfaq një orë në krye të ekranit. Aplikohet në faqen kryesore dhe në luajtës</string>
 </resources>

@@ -90,6 +90,12 @@
             android:key="@string/show_player_metadata_key"
             android:title="@string/show_player_metadata_overlay" />
         <SwitchPreference
+                android:icon="@drawable/ic_baseline_clock_24"
+                android:summary="@string/tv_layout_clock_settings_des"
+                android:title="@string/tv_layout_clock_settings"
+                android:defaultValue="false"
+                android:key="@string/tv_layout_clock_key" />
+        <SwitchPreference
             android:icon="@drawable/ic_baseline_play_arrow_24"
             android:summary="@string/random_button_settings_desc"
             android:title="@string/random_button_settings"
