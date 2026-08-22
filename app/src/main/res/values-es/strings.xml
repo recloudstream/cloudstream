@@ -737,4 +737,9 @@
     <string name="video_singular">Vídeo</string>
     <string name="skip_type_preview">Vista previa</string>
     <string name="player_is_live">En Vivo</string>
+    <string name="tv_layout_clock_settings">Mostrar reloj en tiempo real</string>
+    <string name="tv_layout_clock_settings_des">Muestra un reloj en tiempo real en la parte superior de la pantalla. Se aplica a la página de inicio y al reproductor</string>
+    <string name="profile_settings">Configuración del perfil</string>
+    <string name="profile_hide_negative_sources">Ocultar fuentes con prioridad negativa</string>
+    <string name="profile_hide_error_sources">Ocultar fuentes con errores</string>
 </resources>

@@ -32,6 +32,26 @@ class EpisodeDateTest {
     }
 
     @Test
+    fun addDateDefaultFormatParsesExtraTime() {
+        val ep = episode()
+        ep.addDate("2026-05-17 12:30:45")
+        val expected = LocalDate(2026, 5, 17)
+            .atStartOfDayIn(TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+        assertEquals(expected, ep.date)
+    }
+
+    @Test
+    fun addDateDefaultFormatParsesExtraJunk() {
+        val ep = episode()
+        ep.addDate("  2026-05-17 random data")
+        val expected = LocalDate(2026, 5, 17)
+            .atStartOfDayIn(TimeZone.currentSystemDefault())
+            .toEpochMilliseconds()
+        assertEquals(expected, ep.date)
+    }
+
+    @Test
     fun addDateNullDoesNotSetDate() {
         val ep = episode()
         ep.addDate(null as String?)

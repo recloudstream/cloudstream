@@ -77,6 +77,7 @@ val appLanguages = arrayListOf(
     Pair("Azərbaycan dili", "az"),
     Pair("Bahasa Indonesia", "in"),
     Pair("Bahasa Melayu", "ms"),
+    Pair("català", "ca"),
     Pair("Deutsch", "de"),
     Pair("English", "en"),
     Pair("Español", "es"),
@@ -97,6 +98,7 @@ val appLanguages = arrayListOf(
     Pair("Português", "pt"),
     Pair("Português (Brasil)", "pt-BR"),
     Pair("Română", "ro"),
+    Pair("Shqip мова", "sq"),
     Pair("Slovenčina", "sk"),
     Pair("Soomaaliga", "so"),
     Pair("Svenska", "sv"),
@@ -106,6 +108,7 @@ val appLanguages = arrayListOf(
     Pair("Wikang Filipino", "fil"),
     Pair("Čeština", "cs"),
     Pair("Ελληνικά", "el"),
+    Pair("беларуская мова", "be"),
     Pair("български", "bg"),
     Pair("македонски", "mk"),
     Pair("русский", "ru"),
@@ -359,7 +362,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
             } ?: emptyList()
         }
 
-        settingsManager.edit { putBoolean(getString(R.string.jsdelivr_proxy_key), getKey(getString(R.string.jsdelivr_proxy_key), false) ?: false) }
+        settingsManager.edit { putBoolean(getString(R.string.jsdelivr_proxy_key), getKey<Boolean>(getString(R.string.jsdelivr_proxy_key), false) ?: false) }
         getPref(R.string.jsdelivr_proxy_key)?.setOnPreferenceChangeListener { _, newValue ->
             setKey(getString(R.string.jsdelivr_proxy_key), newValue)
             return@setOnPreferenceChangeListener true

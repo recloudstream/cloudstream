@@ -761,18 +761,64 @@ fun MainAPI.fixUrl(url: String): String {
     }
 }
 
-/** Sort the urls based on quality
+/**
+ * Sort the urls based on quality
+ *
  * @param urls Set of [ExtractorLink]
- * */
+ */
 fun sortUrls(urls: Set<ExtractorLink>): List<ExtractorLink> {
     return urls.sortedBy { t -> -t.quality }
 }
 
-/** Capitalize the first letter of string.
+/**
+ * Splits the parameters of a [Url] into a map of key-value pairs.
+ *
+ * Unlike a manual `split("&")` / `split("=")` implementation, this relies on Ktor's
+ * built-in parameters parser ([Url.parameters]), which already handles URL-decoding,
+ * malformed pairs, and parameters without a value.
+ *
+ * Note: if a parameter key appears multiple times (e.g. `?a=1&a=2`), only the **first**
+ * value is kept, since the return type is `Map<String, String>`. Use [Url.parameters]
+ * directly if you need all values for repeated keys.
+ *
+ * @param url the [Url] whose parameters should be extracted.
+ * @return a map of decoded parameter names to their first decoded value.
+ *
+ * @sample
+ * splitUrlParameters(Url("https://example.com/path?foo=bar&baz=qux"))
+ * // returns {"foo": "bar", "baz": "qux"}
+ */
+@Prerelease
+fun splitUrlParameters(url: Url): Map<String, String> {
+    return url.parameters.entries().associate { (key, values) -> key to values.firstOrNull().orEmpty() }
+}
+
+/**
+ * Splits the parameters of a raw URL [String] into a map of key-value pairs.
+ *
+ * Convenience overload for callers that have a URL as plain text rather than a parsed
+ * [Url] instance. Internally parses [url] with Ktor's [Url] constructor and delegates
+ * to [splitUrlParameters].
+ *
+ * @param url the URL string whose parameters should be extracted.
+ * @return a map of decoded parameter names to their first decoded value.
+ *
+ * @sample
+ * splitUrlParameters("https://example.com/path?foo=bar&baz=qux")
+ * // returns {"foo": "bar", "baz": "qux"}
+ */
+@Prerelease
+fun splitUrlParameters(url: String): Map<String, String> {
+    return splitUrlParameters(Url(url))
+}
+
+/**
+ * Capitalize the first letter of string.
+ *
  * @param str String to be capitalized
  * @return non-nullable String
  * @see capitalizeStringNullable
- * */
+ */
 fun capitalizeString(str: String): String {
     return capitalizeStringNullable(str) ?: str
 }
@@ -1823,7 +1869,7 @@ interface LoadResponse {
 
         /** Read the id string to get all other ids */
         fun readIdFromString(idString: String?): Map<SimklSyncServices, String> {
-            return tryParseJson(idString) ?: return emptyMap()
+            return tryParseJson<Map<SimklSyncServices, String>>(idString) ?: return emptyMap()
         }
 
         fun LoadResponse.isMovie(): Boolean {
@@ -2530,13 +2576,21 @@ constructor(
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
-    if (date == null) return
+    if (date.isNullOrBlank()) return
     this.date = runCatching {
         // First try standard ISO 8601 (e.g. "2026-01-01T12:30:00.000Z", "2026-05-17T14:35+02:00")
         runCatching { Instant.parse(date).toEpochMilliseconds() }
             .getOrElse {
                 val fmt = DateTimeComponents.Format { byUnicodePattern(format) }
-                val components = DateTimeComponents.parse(date, fmt)
+
+                // Try parsing the full date first then only parse the beginning of the string
+                // May lose time, but better than failing.
+                val components = runCatching {
+                    DateTimeComponents.parse(date, fmt)
+                }.recoverCatching {
+                    DateTimeComponents.parse(date.trimStart().take(format.length), fmt)
+                }.getOrThrow()
+
                 /**
                  * Try multiple conversions in order of precision for non-ISO-8601 formats,
                  * since the date string may or may not include time and/or timezone offset:

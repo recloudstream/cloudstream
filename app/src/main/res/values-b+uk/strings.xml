@@ -646,7 +646,7 @@
     <string name="sort_button_episode">Еп. %s</string>
     <string name="sort_button_date">Дата %s</string>
     <string name="update_plugins">Оновити розширення</string>
-    <string name="plugins_updated_manually">Успішно оновлено %d розширення(-ь)!</string>
+    <string name="plugins_updated_manually">Успішно оновлено %d розширення(-ь)</string>
     <string name="update_plugins_manually">Оновити розширення вручну</string>
     <string name="starting_plugin_update_manually">Починається оновлення розширень!</string>
     <string name="no_plugins_updated_manually">Не оновлено жодного розширення.</string>
@@ -739,4 +739,15 @@
     <string name="video_singular">Відео</string>
     <string name="skip_type_preview">Передперегляд</string>
     <string name="player_is_live">Наживо</string>
+    <string name="tv_layout_clock_settings">Показувати поточний час</string>
+    <string name="tv_layout_clock_settings_des">Показувати поточний час у верхній частині екрана (на головній та у програвачі)</string>
+    <string name="profile_settings">Налаштування профілю</string>
+    <string name="profile_hide_negative_sources">Приховати джерела з від’ємним пріоритетом</string>
+    <string name="profile_hide_error_sources">Приховати джерела з помилками</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d приховане посилання</item>
+        <item quantity="few">%d приховані посилання</item>
+        <item quantity="many">%d прихованих посилань</item>
+        <item quantity="other">%d прихованих посилань</item>
+    </plurals>
 </resources>

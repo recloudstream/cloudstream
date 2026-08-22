@@ -7,8 +7,8 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64DecodeArray
 import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.newSubtitleFile
-import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
@@ -16,6 +16,8 @@ import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.DelicateCryptographyApi
 import dev.whyoleg.cryptography.algorithms.AES
 import dev.whyoleg.cryptography.algorithms.MD5
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class Megacloud : Rabbitstream() {
     override val name = "Megacloud"
@@ -36,6 +38,7 @@ class Megacloud : Rabbitstream() {
                 extractedKey += sourcesArray[i].toString()
                 sourcesArray[i] = ' '
             }
+
             currentIndex += index[1]
         }
 
@@ -55,7 +58,7 @@ class Megacloud : Rabbitstream() {
             val matchKey2 = matchingKey(match.groupValues[2])
             try {
                 listOf(matchKey1.toInt(16), matchKey2.toInt(16))
-            } catch (e: NumberFormatException) {
+            } catch (_: NumberFormatException) {
                 emptyList()
             }
         }.filter { it.isNotEmpty() }
@@ -86,26 +89,25 @@ open class Rabbitstream : ExtractorApi() {
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
+        callback: (ExtractorLink) -> Unit,
     ) {
         val id = url.substringAfterLast("/").substringBefore("?")
-
         val response = app.get(
             "$mainUrl/$embed/getSources?id=$id",
             referer = mainUrl,
-            headers = mapOf("X-Requested-With" to "XMLHttpRequest")
+            headers = mapOf("X-Requested-With" to "XMLHttpRequest"),
         )
 
         val encryptedMap = response.parsedSafe<SourcesEncrypted>()
         val sources = encryptedMap?.sources
         val decryptedSources = if (sources == null || encryptedMap.encrypted == false) {
-            response.parsedSafe()
+            response.parsedSafe<SourcesResponses>()
         } else {
             val (key, encData) = extractRealKey(sources)
-            val decrypted = decryptMapped<List<Sources>>(encData, key)
+            val decrypted = tryParseJson<List<Sources>>(decrypt(encData, key))
             SourcesResponses(
                 sources = decrypted,
-                tracks = encryptedMap.tracks
+                tracks = encryptedMap.tracks,
             )
         }
 
@@ -121,7 +123,7 @@ open class Rabbitstream : ExtractorApi() {
             subtitleCallback.invoke(
                 newSubtitleFile(
                     track?.label ?: return@map,
-                    track.file ?: return@map
+                    track.file ?: return@map,
                 )
             )
         }
@@ -133,16 +135,11 @@ open class Rabbitstream : ExtractorApi() {
         return extractedKey to sources
     }
 
-    private inline suspend fun <reified T> decryptMapped(input: String, key: String): T? {
-        val decrypt = decrypt(input, key)
-        return AppUtils.tryParseJson(decrypt)
-    }
-
     private suspend fun decrypt(input: String, key: String): String {
         return decryptSourceUrl(
             generateKey(
                 salt = base64DecodeArray(input).copyOfRange(8, 16),
-                secret = key.encodeToByteArray()
+                secret = key.encodeToByteArray(),
             ), input
         )
     }
@@ -154,6 +151,7 @@ open class Rabbitstream : ExtractorApi() {
             key = md5(key + secret + salt)
             currentKey += key
         }
+
         return currentKey
     }
 
@@ -172,26 +170,30 @@ open class Rabbitstream : ExtractorApi() {
         return decryptedData.decodeToString()
     }
 
+    @Serializable
     data class Tracks(
-        @JsonProperty("file") val file: String? = null,
-        @JsonProperty("label") val label: String? = null,
-        @JsonProperty("kind") val kind: String? = null,
+        @JsonProperty("file") @SerialName("file") val file: String? = null,
+        @JsonProperty("label") @SerialName("label") val label: String? = null,
+        @JsonProperty("kind") @SerialName("kind") val kind: String? = null,
     )
 
+    @Serializable
     data class Sources(
-        @JsonProperty("file") val file: String? = null,
-        @JsonProperty("type") val type: String? = null,
-        @JsonProperty("label") val label: String? = null,
+        @JsonProperty("file") @SerialName("file") val file: String? = null,
+        @JsonProperty("type") @SerialName("type") val type: String? = null,
+        @JsonProperty("label") @SerialName("label") val label: String? = null,
     )
 
+    @Serializable
     data class SourcesResponses(
-        @JsonProperty("sources") val sources: List<Sources?>? = emptyList(),
-        @JsonProperty("tracks") val tracks: List<Tracks?>? = emptyList(),
+        @JsonProperty("sources") @SerialName("sources") val sources: List<Sources?>? = emptyList(),
+        @JsonProperty("tracks") @SerialName("tracks") val tracks: List<Tracks?>? = emptyList(),
     )
 
+    @Serializable
     data class SourcesEncrypted(
-        @JsonProperty("sources") val sources: String? = null,
-        @JsonProperty("encrypted") val encrypted: Boolean? = null,
-        @JsonProperty("tracks") val tracks: List<Tracks?>? = emptyList(),
+        @JsonProperty("sources") @SerialName("sources") val sources: String? = null,
+        @JsonProperty("encrypted") @SerialName("encrypted") val encrypted: Boolean? = null,
+        @JsonProperty("tracks") @SerialName("tracks") val tracks: List<Tracks?>? = emptyList(),
     )
 }

@@ -661,7 +661,7 @@
     <string name="sort_button_date">Tarih %s</string>
     <string name="update_plugins">Eklentileri Güncelle</string>
     <string name="starting_plugin_update_manually">Eklenti güncellemesi başlıyor!</string>
-    <string name="plugins_updated_manually">%d eklenti başarıyla güncellendi!</string>
+    <string name="plugins_updated_manually">%d eklenti başarıyla güncellendi</string>
     <string name="no_plugins_updated_manually">Hiçbir eklenti güncellenmedi.</string>
     <string name="update_plugins_manually">Eklentileri el ile güncelle</string>
     <string name="player_notification_channel_description">Oynatıcı bildirimi arka planda oynatmasını kontrol etmek içindir</string>
@@ -749,4 +749,13 @@
     <string name="player_is_live">Canlı</string>
     <string name="skip_type_preview">Ön Gösterim</string>
     <string name="video_singular">Video</string>
+    <string name="tv_layout_clock_settings">Gerçek zamanlı saati göster</string>
+    <string name="tv_layout_clock_settings_des">Ekranın üst kısmında gerçek zamanlı bir saat göster. Ana sayfa ve oynatıcı için uygulanır</string>
+    <string name="profile_settings">Profil ayarları</string>
+    <string name="profile_hide_negative_sources">Eksi önceliğe sahip kaynakları gizle</string>
+    <string name="profile_hide_error_sources">Hatalı kaynakları gizle</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d gizli bağlantı</item>
+        <item quantity="other">%d gizli bağlantı</item>
+    </plurals>
 </resources>

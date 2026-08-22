@@ -1,13 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import java.util.Locale
-
-// If you find a way to use SettingsGeneral getCurrentLocale()
-// instead of this function do it.
-fun getCurrentLocale(): String {
-    return Locale.getDefault().toLanguageTag()
-}
-
 @Suppress(
     "unused",
     "MemberVisibilityCanBePrivate"
@@ -47,23 +39,10 @@ object SubtitleHelper {
         val ISO_639_3: String,      // ISO 639-6 missing as it's intended to differentiate specific dialects and variants
         val openSubtitles: String, // inconsistent codes that do not conform ISO 639
     ) {
-        fun localizedName(localizedTo: String? = null): String {
-            // Use system locale to localize language name
-            val localeOfLangCode = Locale.forLanguageTag(this.IETF_tag)
-            val localeOfLocalizeTo = Locale.forLanguageTag(localizedTo ?: getCurrentLocale())
-            val sysLocalizedName = localeOfLangCode.getDisplayName(localeOfLocalizeTo)
-
-            val langCodeWithCountry = "${localeOfLangCode.language} (" // ${localeOfLangCode.country})"
-            val failedToLocalize =
-                sysLocalizedName.equals(this.IETF_tag, ignoreCase = true) ||
-                sysLocalizedName.contains(langCodeWithCountry, ignoreCase = true)
-
-            return if (failedToLocalize)
+        fun localizedName(localizedTo: String? = null): String =
+            localizedLanguageName(this.IETF_tag, localizedTo ?: getCurrentLocale())
                 // fallback to native language name
-                this.nativeName
-            else
-                sysLocalizedName
-        }
+                ?: this.nativeName
 
         fun nameNextToFlagEmoji(localizedTo: String? = null): String {
             // fallback to [A][A] -> [?] question mak flag

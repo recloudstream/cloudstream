@@ -756,4 +756,9 @@
     <string name="video_singular">مقطع</string>
     <string name="skip_type_preview">استعراض</string>
     <string name="player_is_live">البث قائم</string>
+    <string name="tv_layout_clock_settings">أظهر ساعة الوقت الحقيقي</string>
+    <string name="tv_layout_clock_settings_des">أظهر شاشة الوقت الحقيقي في قمة الشاشة. ينطبق على الصفحة الرئيسية و المشغل</string>
+    <string name="profile_settings">اعدادات الملف الشخصي</string>
+    <string name="profile_hide_negative_sources">أخفي المصادر صاحبة الأولوية السلبية</string>
+    <string name="profile_hide_error_sources">أخفي المصادر التي تحتوي أخطاء</string>
 </resources>

@@ -307,6 +307,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 playerVideoTitleRez,
                 playerVideoInfo,
                 playerGoBackHolder,
+                playerVideoClock,
             ).forEach {
                 it.animateY(titleMove)
             }
@@ -772,7 +773,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             val showPlayerEpisodes = !isGone && isThereEpisodes()
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
-            playerVideoTitleHolder.isGone = togglePlayerTitleGone
+            playerVideoTitleHolder.isGone = togglePlayerTitleGone || playerVideoTitle.text.isBlank()
             playerVideoTitleRez.isGone = isGone || playerVideoTitleRez.text.isBlank()
             playerEpisodeFiller.isGone = isGone
             playerCenterMenu.isGone = isGone

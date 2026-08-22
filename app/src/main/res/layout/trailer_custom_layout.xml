@@ -102,6 +102,8 @@
 
     <FrameLayout
         android:id="@+id/subtitle_holder"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -168,6 +170,12 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="32dp"
             android:orientation="vertical">
+
+            <TextClock
+                android:id="@+id/player_video_clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/player_video_title_holder"

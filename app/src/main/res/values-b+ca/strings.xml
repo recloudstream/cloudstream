@@ -123,7 +123,7 @@
     <string name="continue_watching">Continua mirant</string>
     <string name="action_remove_watching">Eliminar</string>
     <string name="action_open_watching">Més info</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Potser necessiteu una VPN per que aquest proveïdor funcioni correctament</string>
     <string name="vpn_torrent">Aquest proveïdor és un Torrent, es recomana fer servir una VPN</string>
     <string name="provider_info_meta">El lloc no proveeix metadades, la càrrega del video fallarà si no existeix al lloc.</string>

@@ -7,6 +7,8 @@ import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
 class Sblona : StreamSB() {
@@ -141,17 +143,15 @@ open class StreamSB : ExtractorApi() {
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
+        callback: (ExtractorLink) -> Unit,
     ) {
-        val regexID =
+        val regexId =
             Regex("(embed-[a-zA-Z\\d]{0,8}[a-zA-Z\\d_-]+|/e/[a-zA-Z\\d]{0,8}[a-zA-Z\\d_-]+)")
-        val id = regexID.findAll(url).map {
+        val id = regexId.findAll(url).map {
             it.value.replace(Regex("(embed-|/e/)"), "")
         }.first()
         val master = "$mainUrl/375664356a494546326c4b797c7c6e756577776778623171737/${encodeId(id)}"
-        val headers = mapOf(
-            "watchsb" to "sbstream",
-        )
+        val headers = mapOf("watchsb" to "sbstream")
         val mapped = app.get(
             master.lowercase(),
             headers = headers,
@@ -161,9 +161,8 @@ open class StreamSB : ExtractorApi() {
             name,
             mapped?.streamData?.file ?: return,
             url,
-            headers = headers
+            headers = headers,
         ).forEach(callback)
-
         mapped.streamData.subs?.map {sub ->
             subtitleCallback.invoke(
                 newSubtitleFile(
@@ -189,25 +188,27 @@ open class StreamSB : ExtractorApi() {
         }
     }
 
-    data class Subs (
-        @JsonProperty("file") val file: String? = null,
-        @JsonProperty("label") val label: String? = null,
+    @Serializable
+    data class Subs(
+        @JsonProperty("file") @SerialName("file") val file: String? = null,
+        @JsonProperty("label") @SerialName("label") val label: String? = null,
     )
 
-    data class StreamData (
-        @JsonProperty("file") val file: String,
-        @JsonProperty("cdn_img") val cdnImg: String,
-        @JsonProperty("hash") val hash: String,
-        @JsonProperty("subs") val subs: ArrayList<Subs>? = arrayListOf(),
-        @JsonProperty("length") val length: String,
-        @JsonProperty("id") val id: String,
-        @JsonProperty("title") val title: String,
-        @JsonProperty("backup") val backup: String,
+    @Serializable
+    data class StreamData(
+        @JsonProperty("file") @SerialName("file") val file: String,
+        @JsonProperty("cdn_img") @SerialName("cdn_img") val cdnImg: String,
+        @JsonProperty("hash") @SerialName("hash") val hash: String,
+        @JsonProperty("subs") @SerialName("subs") val subs: ArrayList<Subs>? = arrayListOf(),
+        @JsonProperty("length") @SerialName("length") val length: String,
+        @JsonProperty("id") @SerialName("id") val id: String,
+        @JsonProperty("title") @SerialName("title") val title: String,
+        @JsonProperty("backup") @SerialName("backup") val backup: String,
     )
 
-    data class Main (
-        @JsonProperty("stream_data") val streamData: StreamData,
-        @JsonProperty("status_code") val statusCode: Int,
+    @Serializable
+    data class Main(
+        @JsonProperty("stream_data") @SerialName("stream_data") val streamData: StreamData,
+        @JsonProperty("status_code") @SerialName("status_code") val statusCode: Int,
     )
-
 }

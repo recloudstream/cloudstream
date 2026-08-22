@@ -17,13 +17,13 @@ import kotlinx.serialization.json.JsonTransformingSerializer
  *
  * Usage:
  *
- *   @OptIn(ExperimentalSerializationApi::class)
+ *   @OptIn(ExperimentalSerializationApi::class) // KeepGeneratedSerializer is an experimental annotation for now
  *   @KeepGeneratedSerializer
  *   @Serializable(with = MyData.Serializer::class)
  *   data class MyData(
- *       val tags: List<String> = emptyList(),
- *       val title: String = "",
- *       val meta: Map<String, String> = emptyMap(),
+ *       @SerialName("tags") val tags: List<String> = emptyList(),
+ *       @SerialName("title") val title: String = "",
+ *       @SerialName("meta") val meta: Map<String, String> = emptyMap(),
  *   ) {
  *       object Serializer : NonEmptySerializer<MyData>(MyData.generatedSerializer())
  *   }
@@ -33,7 +33,6 @@ abstract class NonEmptySerializer<T : Any>(tSerializer: KSerializer<T>) :
 
     override fun transformSerialize(element: JsonElement): JsonElement {
         if (element !is JsonObject) return element
-
         return JsonObject(element.filterValues { value ->
             when (value) {
                 is JsonPrimitive -> value.content.isNotEmpty()

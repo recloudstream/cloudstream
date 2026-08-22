@@ -24,6 +24,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
@@ -43,6 +45,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.plugins.Plugin
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.BaseFragment
@@ -424,11 +427,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             .inflate(R.layout.sort_bottom_single_provider_choice, parent, false)
                         val titleText = view.findViewById<TextView>(R.id.text1)
                         val pinIcon = view.findViewById<ImageView>(R.id.pinicon)
+                        val settingsIcon = view.findViewById<ImageView>(R.id.action_settings)
+
                         val name = getItem(position)
                         titleText?.text = name
+                        val providerApi = currentValidApis[position]
                         val isPinned =
-                            pinnedphashset.contains(currentValidApis[position].name)
+                            pinnedphashset.contains(providerApi.name)
                         pinIcon.visibility = if (isPinned) View.VISIBLE else View.GONE
+
+                        val pluginInstance = providerApi.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                        val isDownloadedPluginWithSettings = pluginInstance?.openSettings != null && !isLayout(TV)
+
+                        settingsIcon.visibility = if (isDownloadedPluginWithSettings) View.VISIBLE else View.GONE
+                        if (isDownloadedPluginWithSettings) {
+                            settingsIcon.setOnClickListener {
+                                try {
+                                    val activityContext = it.context.getActivity() ?: it.context
+                                    pluginInstance.openSettings?.invoke(activityContext)
+                                } catch (e: Throwable) {
+                                    logError(e)
+                                }
+                            }
+                        }
+
                         return view
                     }
                 }
@@ -451,7 +473,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     arrayAdapter.clear()
                     val sortedApis = validAPIs
                         .filter {
-                            it.hasMainPage && (pinnedphashset.contains(it.name) || it.supportedTypes.any(
+                            val isPinned = pinnedphashset.contains(it.name)
+
+                            // Hide pinned NSFW when NSFW not selected. NSFW is distracting when not chosen.
+                            if (isPinned && !preSelectedTypes.contains(TvType.NSFW)) {
+                                if (it.supportedTypes.all { type -> type == TvType.NSFW }) return@filter false
+                            }
+
+                            it.hasMainPage && (isPinned || it.supportedTypes.any(
                                 preSelectedTypes::contains
                             ))
                         }
@@ -665,13 +694,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     fromUI = true
                 )
                 showToast(R.string.action_reload, Toast.LENGTH_SHORT)
-                true
             }
 
             homePreviewSearchButton.setOnClickListener { _ ->
                 // Open blank screen.
                 homeViewModel.queryTextSubmit("")
             }
+
+            // Load value for toggling Tv layout real time clock. Hide by default at startup
+            // set visibility first, to apply a scroll effect later
+            context?.let {
+                if (isLayout(TV)) {
+                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
+                    val toggleClock =
+                        settingsManager.getBoolean(
+                            getString(R.string.tv_layout_clock_key),
+                            false
+                        )
+                    binding.homeClock.isVisible = toggleClock
+                } else {
+                    binding.homeClock.isVisible = false
+                }
+            }
+
 
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -712,6 +757,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             view.getLocationInWindow(rect)
                             scrollParent.isVisible = true
                             scrollParent.translationY = rect[1].toFloat() - 60.toPx
+
+                            // Move the TV layout real time clock out of the way too
+                            // We check if we have the correct layout and if the clock is enabled
+                            if(isLayout(TV) && binding.homeClock.isVisible) {
+                                val scrollParent = binding.homeClock
+
+                                val rect = IntArray(2)
+                                view.getLocationInWindow(rect)
+                                scrollParent.isVisible = true
+                                scrollParent.translationY = rect[1].toFloat() - 60.toPx
+                            }
                         }
                     }
                     super.onScrolled(recyclerView, dx, dy)

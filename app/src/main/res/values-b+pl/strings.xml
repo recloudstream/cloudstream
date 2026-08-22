@@ -649,7 +649,7 @@
     <string name="sort_episodes_number_desc">Odcinek (malejąco)</string>
     <string name="sort_episodes_rating_high_low">Ocena (najwyższa)</string>
     <string name="update_plugins">Zaktualizuj wtyczki</string>
-    <string name="plugins_updated_manually">Pomyślnie zaktualizowano wtyczki: %d!</string>
+    <string name="plugins_updated_manually">Pomyślnie zaktualizowano wtyczki: %d</string>
     <string name="no_plugins_updated_manually">Nie zaktualizowano żadnych wtyczek.</string>
     <string name="update_plugins_manually">Zaktualizuj wtyczki ręcznie</string>
     <string name="starting_plugin_update_manually">Rozpoczęcie procesu aktualizacji wtyczek!</string>
@@ -742,4 +742,15 @@
     <string name="video_singular">Wideo</string>
     <string name="skip_type_preview">Zapowiedź</string>
     <string name="player_is_live">Na żywo</string>
+    <string name="profile_settings">Ustawienia profilu</string>
+    <string name="profile_hide_negative_sources">Ukryj źródła z negatywnym priorytetem</string>
+    <string name="profile_hide_error_sources">Ukryj źródła z błędami</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d ukryty odnośnik</item>
+        <item quantity="few">%d ukryte odnośniki</item>
+        <item quantity="many">%d ukrytych odnośników</item>
+        <item quantity="other">%d ukrytych odnośników</item>
+    </plurals>
+    <string name="tv_layout_clock_settings">Pokaż zegar czasu rzeczywistego</string>
+    <string name="tv_layout_clock_settings_des">Wyświetl zegar czasu rzeczywistego u góry ekranu. Dotyczy strony głównej i odtwarzacza</string>
 </resources>

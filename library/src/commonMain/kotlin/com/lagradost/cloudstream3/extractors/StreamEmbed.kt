@@ -7,22 +7,23 @@ import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 open class StreamEmbed : ExtractorApi() {
-    override var name = "StreamEmbed"
-    override var mainUrl = "https://watch.gxplayer.xyz"
+    override val name = "StreamEmbed"
+    override val mainUrl = "https://watch.gxplayer.xyz"
     override val requiresReferer = true
 
     override suspend fun getUrl(
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
+        callback: (ExtractorLink) -> Unit,
     ) {
         val jsonString = app.get(url, referer = mainUrl).text
             .substringAfter("var video = ").substringBefore(";")
         val video = parseJson<Details>(jsonString)
-
         M3u8Helper.generateM3u8(
             this.name,
             "$mainUrl/m3u8/${video.uid}/${video.md5}/master.txt?s=1&id=${video.id}&cache=${video.status}",
@@ -30,14 +31,15 @@ open class StreamEmbed : ExtractorApi() {
         ).forEach(callback)
     }
 
+    @Serializable
     private data class Details(
-        @JsonProperty("id") val id: String,
-        @JsonProperty("uid") val uid: String,
-        @JsonProperty("slug") val slug: String,
-        @JsonProperty("title") val title: String,
-        @JsonProperty("quality") val quality: String,
-        @JsonProperty("type") val type: String,
-        @JsonProperty("status") val status: String,
-        @JsonProperty("md5") val md5: String,
+        @JsonProperty("id") @SerialName("id") val id: String,
+        @JsonProperty("uid") @SerialName("uid") val uid: String,
+        @JsonProperty("slug") @SerialName("slug") val slug: String,
+        @JsonProperty("title") @SerialName("title") val title: String,
+        @JsonProperty("quality") @SerialName("quality") val quality: String,
+        @JsonProperty("type") @SerialName("type") val type: String,
+        @JsonProperty("status") @SerialName("status") val status: String,
+        @JsonProperty("md5") @SerialName("md5") val md5: String,
     )
 }

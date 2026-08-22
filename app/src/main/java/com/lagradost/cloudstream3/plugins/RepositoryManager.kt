@@ -98,7 +98,7 @@ data class PluginWrapper(
 object RepositoryManager {
     const val ONLINE_PLUGINS_FOLDER = "Extensions"
     val PREBUILT_REPOSITORIES: Array<RepositoryData> by lazy {
-        getKey("PREBUILT_REPOSITORIES") ?: emptyArray()
+        getKey<Array<RepositoryData>>("PREBUILT_REPOSITORIES") ?: emptyArray()
     }
     private val GH_REGEX =
         Regex("^https://raw.githubusercontent.com/([A-Za-z0-9-]+)/([A-Za-z0-9_.-]+)/(.*)$")
@@ -240,7 +240,7 @@ object RepositoryManager {
     }
 
     fun getRepositories(): Array<RepositoryData> {
-        return getKey(REPOSITORIES_KEY) ?: emptyArray()
+        return getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
     }
 
     // Don't want to read before we write in another thread
