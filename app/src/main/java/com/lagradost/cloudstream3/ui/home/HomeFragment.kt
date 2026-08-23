@@ -811,11 +811,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeChangeApi.text = apiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
                 homePreviewSearchButton.isGone = (apiName == noneApi.name)
-                if (isLayout(TV or EMULATOR)) {
-                    val plugin = APIHolder.getApiFromNameNull(apiName)
-                        ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
-                    homePreviewSettingsButton.isGone = plugin?.openSettings == null
-                }
             }
         }
 
@@ -836,6 +831,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         homeLoadingError.isVisible = false
                         homeMasterRecycler.isVisible = true
                         homeLoadingShimmer.stopShimmer()
+
+                        if (isLayout(TV or EMULATOR)) {
+                            val plugin = APIHolder.getApiFromNameNull(homeViewModel.apiName.value)
+                                ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                            homePreviewSettingsButton.isGone = plugin?.openSettings == null
+                        }
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
                             val distinct = d.values
