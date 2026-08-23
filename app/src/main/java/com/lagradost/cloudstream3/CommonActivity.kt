@@ -30,13 +30,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.isNotEmpty
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceManager
-import coil3.ImageLoader
-import coil3.request.Disposable
-import coil3.request.ImageRequest
-import coil3.request.allowHardware
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigationrail.NavigationRailView
@@ -47,18 +41,11 @@ import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
-import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.player.PlayerPipHelper.isPIPPossible
 import com.lagradost.cloudstream3.ui.player.Torrent
-import com.lagradost.cloudstream3.ui.result.ActorAdaptor
-import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
-import com.lagradost.cloudstream3.ui.result.ImageAdapter
-import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
-import com.lagradost.cloudstream3.ui.settings.extensions.PluginAdapter
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
@@ -67,7 +54,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UiText
 import java.lang.ref.WeakReference
 import java.util.Locale
-import java.util.WeakHashMap
 import kotlin.math.max
 import kotlin.math.min
 import org.schabi.newpipe.extractor.NewPipe
@@ -88,129 +74,9 @@ object CommonActivity {
             _activity = WeakReference(value)
         }
 
-    private class ProfileImagePicker {
-        private class Attempt(val callback: (String) -> Boolean) {
-            var validation: Disposable? = null
-            var isValid = true
-
-            fun invalidate() {
-                isValid = false
-                validation?.dispose()
-                validation = null
-            }
-
-            fun complete() {
-                isValid = false
-                validation = null
-            }
-        }
-
-        lateinit var launcher: ActivityResultLauncher<Array<String>>
-        private var attempt: Attempt? = null
-        private var isDestroyed = false
-
-        private fun cancelAttempt() {
-            val cancelledAttempt = attempt
-            attempt = null
-            cancelledAttempt?.invalidate()
-        }
-
-        private fun completeAttempt(completedAttempt: Attempt): Boolean {
-            if (attempt !== completedAttempt || !completedAttempt.isValid) return false
-            attempt = null
-            completedAttempt.complete()
-            return true
-        }
-
-        fun launch(callback: (String) -> Boolean) {
-            if (isDestroyed) return
-            if (attempt?.validation == null && attempt != null) return
-            cancelAttempt()
-            val newAttempt = Attempt(callback)
-            attempt = newAttempt
-            try {
-                launcher.launch(arrayOf("image/*"))
-            } catch (error: Exception) {
-                completeAttempt(newAttempt)
-                logError(error)
-                CommonActivity.showToast(
-                    R.string.edit_profile_image_error_invalid,
-                    Toast.LENGTH_SHORT
-                )
-            }
-        }
-
-        fun onImagePicked(context: Context, uri: Uri?) {
-            // Results restored after recreation have no live dialog callback and are ignored.
-            val currentAttempt = attempt ?: return
-            if (uri == null) {
-                completeAttempt(currentAttempt)
-                return
-            }
-
-            val validation = ImageLoader(context).enqueue(
-                ImageRequest.Builder(context).data(uri)
-                    .allowHardware(false).size(512, 512).listener(
-                        onSuccess = { _, _ ->
-                            if (!completeAttempt(currentAttempt)) return@listener
-                            if (currentAttempt.callback(uri.toString())) {
-                                CommonActivity.showToast(
-                                    R.string.edit_profile_image_success,
-                                    Toast.LENGTH_SHORT
-                                )
-                            }
-                        },
-                        onError = { _, _ ->
-                            if (!completeAttempt(currentAttempt)) return@listener
-                            CommonActivity.showToast(R.string.edit_profile_image_error_invalid)
-                        },
-                        onCancel = {
-                            completeAttempt(currentAttempt)
-                        }
-                    ).build()
-            )
-            currentAttempt.validation = validation
-            if (attempt !== currentAttempt || !currentAttempt.isValid) {
-                currentAttempt.validation = null
-                validation.dispose()
-            }
-        }
-
-        fun cancel() {
-            cancelAttempt()
-        }
-
-        fun destroy() {
-            isDestroyed = true
-            cancelAttempt()
-            launcher.unregister()
-        }
-    }
-
-    private val profileImagePickers =
-        WeakHashMap<ComponentActivity, WeakReference<ProfileImagePicker>>()
-    private var profileImagePicker: WeakReference<ProfileImagePicker>? = null
-
     @MainThread
     fun setActivityInstance(newActivity: Activity?) {
         activity = newActivity
-        profileImagePicker =
-            (newActivity as? ComponentActivity)?.let(profileImagePickers::get)
-    }
-
-    @MainThread
-    fun pickProfileImage(callback: (String) -> Boolean) {
-        val picker = profileImagePicker?.get()
-        if (picker == null) {
-            showToast(R.string.edit_profile_image_error_invalid, Toast.LENGTH_SHORT)
-            return
-        }
-        picker.launch(callback)
-    }
-
-    @MainThread
-    fun cancelProfileImagePick() {
-        profileImagePicker?.get()?.cancel()
     }
 
     @MainThread
@@ -370,6 +236,21 @@ object CommonActivity {
         setLocale(this, localeCode)
     }
 
+
+    private var activityFileLauncher: ActivityResultLauncher<Array<String>>? = null
+    private var activityFileLauncherCallback: Pair<Int, ((Uri?) -> Unit)>? = null
+
+    // Ensure that previous launches do not trigger current callbacks.
+    private var fileLaunchCounter = 0
+
+    /** Use the ActivityResultContracts.OpenDocument() file picker to select a file.
+     * Note: Is only able to handle ONE callback at once. Multiple calls will overwrite the old calls.
+     */
+    fun selectFile(mimetypes: Array<String>, callback: (Uri?) -> Unit) {
+        activityFileLauncherCallback = ++fileLaunchCounter to callback
+        activityFileLauncher?.launch(mimetypes)
+    }
+
     fun init(act: Activity) {
         setActivityInstance(act)
         ioSafe { Torrent.deleteAllFiles() }
@@ -394,36 +275,15 @@ object CommonActivity {
                 }
             }
 
-        val picker = ProfileImagePicker()
-        val applicationContext = componentActivity.applicationContext
-        picker.launcher =
-            componentActivity.registerForActivityResult(ActivityResultContracts.OpenDocument()) {
-                picker.onImagePicked(applicationContext, it)
-            }
-        profileImagePickers[componentActivity] = WeakReference(picker)
-        componentActivity.lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onResume(owner: LifecycleOwner) {
-                setActivityInstance(owner as? Activity)
-            }
+        activityFileLauncher =
+            componentActivity.registerForActivityResult(ActivityResultContracts.OpenDocument()) { result ->
+                val callback = activityFileLauncherCallback ?: return@registerForActivityResult
+                activityFileLauncherCallback = null
 
-            override fun onPause(owner: LifecycleOwner) {
-                if (profileImagePicker?.get() === picker) {
-                    profileImagePicker = null
+                if (fileLaunchCounter == callback.first) {
+                    callback.second.invoke(result)
                 }
             }
-
-            override fun onDestroy(owner: LifecycleOwner) {
-                if (profileImagePicker?.get() === picker) {
-                    profileImagePicker = null
-                }
-                val ownerActivity = owner as? ComponentActivity
-                ownerActivity?.let(profileImagePickers::remove)
-                if (activity === ownerActivity) {
-                    setActivityInstance(null)
-                }
-                picker.destroy()
-            }
-        })
 
         // Ask for notification permissions on Android 13
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
