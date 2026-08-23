@@ -1681,24 +1681,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
                 }
-                // Re-point nav rail focus at the provider button on every arrival
-                // (rail button, back stack pop, first load), so D-pad right always
-                // reaches the "None" / provider selector button.
-                if (isLayout(TV or EMULATOR)) {
-                    val fromView = binding?.navRailView
-                    if (fromView != null) {
-                        fromView.nextFocusRightId = R.id.home_change_api
-                        for (focusView in arrayOf(
-                            R.id.navigation_downloads,
-                            R.id.navigation_home,
-                            R.id.navigation_search,
-                            R.id.navigation_library,
-                            R.id.navigation_settings,
-                        )) {
-                            fromView.findViewById<View?>(focusView)?.nextFocusRightId = R.id.home_change_api
-                        }
-                    }
-                }
             } else detachBackPressedCallback("MainActivity")
         }
 
