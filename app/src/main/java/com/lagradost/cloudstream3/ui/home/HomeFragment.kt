@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
+import androidx.core.view.doOnLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -771,8 +772,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         }
                     }
                     super.onScrolled(recyclerView, dx, dy)
+                    updateTvRailFocus()
                 }
             })
+
+            homeMasterRecycler.doOnLayout { updateTvRailFocus() }
 
         }
 
@@ -947,6 +951,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 break
             }
         }*/
+    }
+
+    private fun updateTvRailFocus() {
+        if (!isLayout(TV or EMULATOR)) return
+        val target =
+            if (binding?.homeMasterRecycler?.computeVerticalScrollOffset() == 0) R.id.home_change_api
+            else View.NO_ID
+        val rail = activity?.findViewById<View>(R.id.nav_rail_view) ?: return
+        rail.nextFocusRightId = target
+        for (focusView in arrayOf(
+            R.id.navigation_downloads,
+            R.id.navigation_home,
+            R.id.navigation_search,
+            R.id.navigation_library,
+            R.id.navigation_settings,
+        )) {
+            rail.findViewById<View>(focusView)?.nextFocusRightId = target
+        }
     }
 
     private fun handleTvBackPress(helper: BackPressedCallbackHelper.CallbackHelper) {
