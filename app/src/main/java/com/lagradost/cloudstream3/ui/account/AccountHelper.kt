@@ -61,8 +61,8 @@ private object ProfileImagePicker {
                     showToast(R.string.edit_profile_image_error_invalid)
                 }
 
-                ImageLoader(context).enqueue(
-                    ImageRequest.Builder(context).data(uri)
+                ImageLoader(ctx).enqueue(
+                    ImageRequest.Builder(ctx).data(uri)
                         .allowHardware(false).size(512, 512).listener(
                             onSuccess = { _, _ ->
                                 callback(uri.toString())
