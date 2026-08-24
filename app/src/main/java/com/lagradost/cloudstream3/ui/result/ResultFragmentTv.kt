@@ -932,6 +932,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             true
                         )
 
+                        resultCastText.setText(if (showCast) d.actorsText else null)
                         resultCastItems.isGone = !showCast || d.actors.isNullOrEmpty()
                         (resultCastItems.adapter as? ActorAdaptor)?.submitList(if (showCast) d.actors else emptyList())
 
