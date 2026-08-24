@@ -130,7 +130,6 @@ fun CloneflixDropdown(
                         role = Role.DropdownList,
                         onClick = { expanded = !expanded }
                     )
-                    .focusable(interactionSource = interactionSource)
                     .padding(horizontal = dimens.spacingM, vertical = dimens.spacingS)
                     .semantics {
                         role = Role.DropdownList
@@ -204,8 +203,8 @@ fun CloneflixDropdown(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(40.dp)
-                            .background(if (isItemFocused) Color(0xFF333333) else Color.Transparent)
-                            .focusable(interactionSource = itemInteractionSource)
+                            .background(if (isItemFocused) Color(0xFF333333) else Color.Transparent),
+                        interactionSource = itemInteractionSource
                     )
                 }
             }
