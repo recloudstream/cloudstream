@@ -47,6 +47,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
 
 class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
@@ -60,6 +61,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     private var composeRecommendationsState by mutableStateOf<List<SearchResponse>>(emptyList())
     private var composeActorsState by mutableStateOf<List<ActorData>>(emptyList())
     private var composeWatchStatusState by mutableStateOf(WatchType.NONE)
+    private var composeRawSeasonsState by mutableStateOf<List<Pair<UiText?, Int>>>(emptyList())
     private var composeSeasonsState by mutableStateOf<List<String>>(emptyList())
     private var composeSelectedSeasonIndexState by mutableStateOf(0)
     private var composeHasTrailersState by mutableStateOf(false)
@@ -215,7 +217,8 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             )
                         },
                         onSeasonSelect = { idx ->
-                            viewModel.changeSeason(idx)
+                            val seasonNumber = composeRawSeasonsState.getOrNull(idx)?.second ?: (idx + 1)
+                            viewModel.changeSeason(seasonNumber)
                         },
                         onAddToListClick = {
                             val curStatus = composeWatchStatusState
@@ -353,6 +356,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         }
 
         observe(viewModel.seasonSelections) {
+            composeRawSeasonsState = it
             composeSeasonsState = it.map { s -> s.first?.asStringNull(context) ?: "" }
         }
 
