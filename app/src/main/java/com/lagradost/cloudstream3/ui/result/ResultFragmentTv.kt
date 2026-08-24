@@ -146,10 +146,10 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     val d = page.value
                     val title = d.titleText.asStringNull(context) ?: d.title
                     val plot = d.plotText.asStringNull(context) ?: ""
-                    val year = d.yearText?.asStringNull(context) ?: ""
-                    val duration = d.durationText?.asStringNull(context) ?: ""
-                    val rating = d.ratingText?.asStringNull(context) ?: "98% Match"
-                    val contentRating = d.contentRatingText?.asStringNull(context) ?: "TV-MA"
+                    val year = d.yearText?.asStringNull(context)
+                    val duration = d.durationText?.asStringNull(context)
+                    val rating = d.ratingText?.asStringNull(context)
+                    val contentRating = d.contentRatingText?.asStringNull(context)
                     val genres = d.tags
                     val actors = composeActorsState.ifEmpty { d.actors ?: emptyList() }
 
