@@ -44,6 +44,7 @@ object CloneflixMovieCardDefaults {
     val WidthPlayerPreview: Dp = 245.dp
     val WidthContinueWatchingMedium: Dp = 218.dp
     val WidthContinueWatchingSmall: Dp = 160.dp
+    val WidthPoster: Dp = 150.dp
 
     val HeightMedium: Dp = 123.dp
     val HeightSmall: Dp = 72.dp
@@ -57,6 +58,7 @@ object CloneflixMovieCardDefaults {
     val HeightPlayerPreview: Dp = 152.dp
     val HeightContinueWatchingMedium: Dp = 133.dp
     val HeightContinueWatchingSmall: Dp = 98.dp
+    val HeightPoster: Dp = 225.dp
 
     val RankBoxWidth: Dp = 90.dp
     val RankFontSize: TextUnit = 110.sp
@@ -76,6 +78,7 @@ object CloneflixMovieCardDefaults {
     val ActionButtonSize: Dp = 40.dp
 
     fun cardWidth(type: CloneflixMovieCardType, size: CloneflixMovieCardSize): Dp = when (type) {
+        CloneflixMovieCardType.POSTER -> if (size == CloneflixMovieCardSize.MEDIUM) WidthPoster else 110.dp
         CloneflixMovieCardType.TOP10 -> if (size == CloneflixMovieCardSize.MEDIUM) WidthTop10Medium else WidthTop10Small
         CloneflixMovieCardType.EPISODE -> if (size == CloneflixMovieCardSize.SMALL) WidthEpisodeSmall else WidthEpisodeMedium
         CloneflixMovieCardType.MORE_LIKE_THIS,
@@ -87,6 +90,7 @@ object CloneflixMovieCardDefaults {
     }
 
     fun cardHeight(type: CloneflixMovieCardType, size: CloneflixMovieCardSize): Dp = when (type) {
+        CloneflixMovieCardType.POSTER -> if (size == CloneflixMovieCardSize.MEDIUM) HeightPoster else 165.dp
         CloneflixMovieCardType.TOP10 -> if (size == CloneflixMovieCardSize.MEDIUM) HeightTop10Medium else HeightTop10Small
         CloneflixMovieCardType.EPISODE -> if (size == CloneflixMovieCardSize.SMALL) HeightEpisodeSmall else HeightEpisodeMedium
         CloneflixMovieCardType.MORE_LIKE_THIS,

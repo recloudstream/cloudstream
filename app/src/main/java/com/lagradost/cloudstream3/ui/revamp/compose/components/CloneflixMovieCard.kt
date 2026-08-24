@@ -76,6 +76,7 @@ enum class CloneflixMovieCardSize {
 
 enum class CloneflixMovieCardType {
     DEFAULT,
+    POSTER,
     MORE_LIKE_THIS,
     MORE_LIKE_THIS_WITH_PLAY,
     EPISODE,
@@ -97,6 +98,7 @@ fun CloneflixMovieCard(
     size: CloneflixMovieCardSize = CloneflixMovieCardSize.MEDIUM,
     badge: CloneflixBadgeType? = null,
     showLogo: Boolean = false,
+    showBottomTitle: Boolean = false,
     top10Rank: Int? = null,
     progress: Float? = null,
     runtime: String? = null,
@@ -191,6 +193,7 @@ fun CloneflixMovieCard(
                     MovieCardSurface(
                         title = title,
                         showLogo = showLogo,
+                        showBottomTitle = showBottomTitle,
                         badge = badge,
                         runtime = runtime,
                         timestamp = timestamp,
@@ -213,6 +216,7 @@ fun CloneflixMovieCard(
                 MovieCardSurface(
                     title = title,
                     showLogo = showLogo,
+                    showBottomTitle = showBottomTitle,
                     badge = badge,
                     runtime = runtime,
                     timestamp = timestamp,
@@ -247,6 +251,7 @@ private fun MovieCardSurface(
     timestamp: String?,
     progress: Float?,
     showCenterPlay: Boolean,
+    showBottomTitle: Boolean = false,
     posterUrl: String? = null
 ) {
     val typography = CloneflixTheme.typography
@@ -386,6 +391,37 @@ private fun MovieCardSurface(
                         .fillMaxWidth(progress.coerceIn(0f, 1f))
                         .fillMaxHeight()
                         .background(PrimaryRed)
+                )
+            }
+        }
+
+        // Bottom Title Overlay with Black Background Gradient
+        if (showBottomTitle && !title.isNullOrBlank()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color(0xD9000000),
+                                Color(0xF2000000),
+                                Color(0xFF000000)
+                            )
+                        )
+                    )
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = typography.regularCaption1,
+                    fontWeight = FontWeight.Bold,
+                    color = PrimaryWhite,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 12.sp,
+                    lineHeight = 15.sp
                 )
             }
         }
@@ -569,6 +605,7 @@ fun CloneflixMovieBlockRow(
                     size = item.size,
                     badge = item.badge,
                     showLogo = item.showLogo,
+                    showBottomTitle = item.showBottomTitle,
                     top10Rank = item.top10Rank,
                     progress = item.progress,
                     runtime = item.runtime,
@@ -588,6 +625,7 @@ data class CloneflixMovieCardItem(
     val size: CloneflixMovieCardSize = CloneflixMovieCardSize.MEDIUM,
     val badge: CloneflixBadgeType? = null,
     val showLogo: Boolean = false,
+    val showBottomTitle: Boolean = false,
     val top10Rank: Int? = null,
     val progress: Float? = null,
     val runtime: String? = null,

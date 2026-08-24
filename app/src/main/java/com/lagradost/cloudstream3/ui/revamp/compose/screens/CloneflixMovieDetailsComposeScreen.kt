@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -85,6 +86,7 @@ import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryRed
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryWhite
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.TransparentBlack60
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import kotlinx.coroutines.launch
 
 /**
  * Data representation for trailer / extra clips in Figma Node 121:4925.
@@ -148,6 +150,7 @@ fun CloneflixMovieDetailsComposeScreen(
     val playButtonFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
+        scrollState.scrollTo(0)
         playButtonFocusRequester.requestFocus()
     }
 
@@ -182,9 +185,10 @@ fun CloneflixMovieDetailsComposeScreen(
         dynamicRecommendations?.map { rec ->
             CloneflixMovieCardItem(
                 title = rec.name,
-                type = CloneflixMovieCardType.MORE_LIKE_THIS,
+                type = CloneflixMovieCardType.POSTER,
                 posterUrl = rec.posterUrl,
-                showLogo = true
+                showLogo = false,
+                showBottomTitle = true
             )
         } ?: emptyList()
     }
@@ -203,7 +207,7 @@ fun CloneflixMovieDetailsComposeScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(500.dp)
+                .height(440.dp)
                 .background(PrimaryBlack)
         ) {
             // Live Backdrop Image filling full banner width & height
@@ -225,7 +229,7 @@ fun CloneflixMovieDetailsComposeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(140.dp)
+                    .height(130.dp)
                     .align(Alignment.TopCenter)
                     .background(
                         Brush.verticalGradient(
@@ -278,8 +282,8 @@ fun CloneflixMovieDetailsComposeScreen(
                 if (!logoUrl.isNullOrBlank()) {
                     Box(
                         modifier = Modifier
-                            .height(72.dp)
-                            .width(260.dp)
+                            .height(68.dp)
+                            .width(240.dp)
                     ) {
                         AndroidView(
                             factory = { ctx ->
@@ -299,7 +303,7 @@ fun CloneflixMovieDetailsComposeScreen(
                     Text(
                         text = title,
                         style = typography.boldTitle1,
-                        fontSize = 34.sp,
+                        fontSize = 32.sp,
                         color = PrimaryWhite,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
@@ -317,7 +321,13 @@ fun CloneflixMovieDetailsComposeScreen(
                     CloneflixHeroPlayButton(
                         onClick = onPlayClick,
                         text = "Play",
-                        modifier = Modifier.focusRequester(playButtonFocusRequester)
+                        modifier = Modifier
+                            .focusRequester(playButtonFocusRequester)
+                            .onFocusChanged { state ->
+                                if (state.isFocused && scrollState.value > 0) {
+                                    // Keep Hero banner fully visible when play button is focused
+                                }
+                            }
                     )
 
                     // Add to My List (+)
@@ -596,7 +606,7 @@ fun CloneflixMovieDetailsComposeScreen(
             }
 
             // ==========================================
-            // 4. MORE LIKE THIS SECTION (Figma 121:4909)
+            // 4. MORE LIKE THIS SECTION (Figma 121:4909 - Poster Layout)
             // ==========================================
             if (recommendationCards.isNotEmpty()) {
                 Text(
@@ -608,27 +618,28 @@ fun CloneflixMovieDetailsComposeScreen(
 
                 Spacer(modifier = Modifier.height(dimens.spacingL))
 
-                // 3-Column Grid of Recommendation Cards
+                // Responsive Poster Grid (6 columns per row for TV immersion)
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(dimens.spacingL)
                 ) {
-                    val chunkedRecommendations = recommendationCards.chunked(3)
+                    val chunkedRecommendations = recommendationCards.chunked(6)
                     chunkedRecommendations.forEach { rowItems ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
+                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
                         ) {
-                            rowItems.forEachIndexed { idx, cardItem ->
+                            rowItems.forEach { cardItem ->
                                 Box(modifier = Modifier.weight(1f)) {
                                     CloneflixMovieCard(
                                         title = cardItem.title,
-                                        type = cardItem.type,
+                                        type = CloneflixMovieCardType.POSTER,
                                         size = CloneflixMovieCardSize.MEDIUM,
                                         badge = cardItem.badge,
                                         runtime = cardItem.runtime,
                                         posterUrl = cardItem.posterUrl,
-                                        showLogo = cardItem.showLogo,
+                                        showLogo = false,
+                                        showBottomTitle = true,
                                         onClick = {
                                             val rec = dynamicRecommendations?.find { it.name == cardItem.title }
                                             if (rec != null && onRecommendationClick != null) {
@@ -641,8 +652,8 @@ fun CloneflixMovieDetailsComposeScreen(
                                     )
                                 }
                             }
-                            if (rowItems.size < 3) {
-                                repeat(3 - rowItems.size) {
+                            if (rowItems.size < 6) {
+                                repeat(6 - rowItems.size) {
                                     Spacer(modifier = Modifier.weight(1f))
                                 }
                             }
@@ -688,18 +699,24 @@ fun CloneflixMovieDetailsComposeScreen(
             }
 
             // ==========================================
-            // 6. ABOUT SECTION (Figma 121:4932)
+            // 6. ABOUT SECTION (Figma 121:4932 - Focusable Container for D-Pad)
             // ==========================================
             val hasAboutContent = !creator.isNullOrBlank() || castList.isNotEmpty() ||
                     writers.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty() ||
                     !maturityRating.isNullOrBlank()
 
             if (hasAboutContent) {
+                val aboutInteractionSource = remember { MutableInteractionSource() }
+                val isAboutFocused by aboutInteractionSource.collectIsFocusedAsState()
+                val aboutBorder = if (isAboutFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else BorderStroke(1.dp, Color(0xFF333333))
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
-                        .background(Grey850)
+                        .background(if (isAboutFocused) Color(0xFF262626) else Grey850)
+                        .border(aboutBorder, RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
+                        .focusable(interactionSource = aboutInteractionSource)
                         .padding(dimens.spacing2Xl),
                     verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
                 ) {
