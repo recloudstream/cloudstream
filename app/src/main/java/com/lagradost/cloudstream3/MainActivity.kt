@@ -1255,15 +1255,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         R.id.home_preview_info_btt,
                         R.id.home_preview_hidden_next_focus,
                         R.id.home_preview_hidden_prev_focus,
-                        R.id.result_play_movie_button,
-                        R.id.result_play_series_button,
-                        R.id.result_resume_series_button,
-                        R.id.result_play_trailer_button,
-                        R.id.result_bookmark_Button,
-                        R.id.result_favorite_Button,
-                        R.id.result_subscribe_Button,
-                        R.id.result_search_Button,
-                        R.id.result_episodes_show_button,
                     )
 
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->

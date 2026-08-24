@@ -29,6 +29,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -141,6 +144,12 @@ fun CloneflixMovieDetailsComposeScreen(
     val typography = CloneflixTheme.typography
     val dimens = CloneflixTheme.dimens
     val scrollState = rememberScrollState()
+
+    val playButtonFocusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        playButtonFocusRequester.requestFocus()
+    }
 
     var inMyListState by remember(isInWatchList) { mutableStateOf(isInWatchList) }
 
@@ -360,7 +369,8 @@ fun CloneflixMovieDetailsComposeScreen(
                     // White Primary Play Button
                     CloneflixHeroPlayButton(
                         onClick = onPlayClick,
-                        text = "Play"
+                        text = "Play",
+                        modifier = Modifier.focusRequester(playButtonFocusRequester)
                     )
 
                     // Add to My List (+)
