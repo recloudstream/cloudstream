@@ -66,12 +66,31 @@ import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.lagradost.cloudstream3.ActorData
+import com.lagradost.cloudstream3.ui.revamp.compose.screens.CloneflixMovieDetailsComposeScreen
+import com.lagradost.cloudstream3.ui.revamp.compose.theme.CloneflixTheme
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
+import com.lagradost.cloudstream3.ui.search.SearchClickCallback
+import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 
 class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     BindingCreator.Inflate(FragmentResultTvBinding::inflate)
 ) {
 
     private lateinit var viewModel: ResultViewModel2
+
+    private var composePageState by mutableStateOf<Resource<ResultData>?>(null)
+    private var composeEpisodesState by mutableStateOf<List<ResultEpisode>>(emptyList())
+    private var composeRecommendationsState by mutableStateOf<List<SearchResponse>>(emptyList())
+    private var composeActorsState by mutableStateOf<List<ActorData>>(emptyList())
+    private var composeWatchStatusState by mutableStateOf(WatchType.NONE)
+    private var composeSeasonsState by mutableStateOf<List<String>>(emptyList())
+    private var composeSelectedSeasonIndexState by mutableStateOf(0)
+    private var composeHasTrailersState by mutableStateOf(false)
+    private var composeResumeWatchingState by mutableStateOf<ResumeWatchingStatus?>(null)
 
     override fun onDestroyView() {
         updateUIEvent -= ::updateUI
@@ -272,6 +291,110 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
             )
         // ===== ===== =====
         var comingSoon = false
+
+        binding.resultComposeView.setContent {
+            CloneflixTheme {
+                val page = composePageState
+                if (page is Resource.Success) {
+                    val d = page.value
+                    val title = d.titleText.asStringNull(context) ?: d.title
+                    val plot = d.plotText.asStringNull(context) ?: ""
+                    val year = d.yearText?.asStringNull(context) ?: ""
+                    val duration = d.durationText?.asStringNull(context) ?: ""
+                    val rating = d.ratingText?.asStringNull(context) ?: "98% Match"
+                    val contentRating = d.contentRatingText?.asStringNull(context) ?: "TV-MA"
+                    val genres = d.tags
+                    val actors = composeActorsState.ifEmpty { d.actors ?: emptyList() }
+
+                    CloneflixMovieDetailsComposeScreen(
+                        title = title,
+                        backdropUrl = d.posterBackgroundImage ?: d.posterImage,
+                        posterUrl = d.posterImage,
+                        logoUrl = d.logoUrl,
+                        matchScore = rating,
+                        releaseYear = year,
+                        seasonsCount = duration,
+                        maturityRating = contentRating,
+                        synopsis = plot,
+                        genres = genres,
+                        dynamicActors = actors,
+                        dynamicEpisodes = composeEpisodesState,
+                        dynamicRecommendations = composeRecommendationsState,
+                        dynamicSeasons = composeSeasonsState,
+                        selectedSeasonIndex = composeSelectedSeasonIndexState,
+                        isInWatchList = composeWatchStatusState != WatchType.NONE,
+                        hasTrailers = composeHasTrailersState,
+                        onPlayClick = {
+                            val resume = composeResumeWatchingState
+                            if (resume != null) {
+                                viewModel.handleAction(
+                                    EpisodeClickEvent(
+                                        storedData.playerAction,
+                                        resume.result
+                                    )
+                                )
+                            } else {
+                                val ep = composeEpisodesState.firstOrNull()
+                                if (ep != null) {
+                                    viewModel.handleAction(
+                                        EpisodeClickEvent(
+                                            storedData.playerAction,
+                                            ep
+                                        )
+                                    )
+                                } else {
+                                    binding.resultPlayMovieButton.performClick()
+                                }
+                            }
+                        },
+                        onEpisodeClick = { ep ->
+                            viewModel.handleAction(
+                                EpisodeClickEvent(
+                                    storedData.playerAction,
+                                    ep
+                                )
+                            )
+                        },
+                        onEpisodeDownloadClick = { ep ->
+                            viewModel.handleAction(
+                                EpisodeClickEvent(
+                                    ACTION_DOWNLOAD_EPISODE,
+                                    ep
+                                )
+                            )
+                        },
+                        onSeasonSelect = { idx ->
+                            viewModel.changeSeason(idx)
+                        },
+                        onAddToListClick = {
+                            binding.resultBookmarkButton.performClick()
+                        },
+                        onLikeClick = {
+                            binding.resultFavoriteButton.performClick()
+                        },
+                        onTrailerClick = {
+                            binding.resultPlayTrailerButton.performClick()
+                        },
+                        onActorClick = { actorName ->
+                            QuickSearchFragment.pushSearch(activity, actorName)
+                        },
+                        onRecommendationClick = { rec ->
+                            SearchHelper.handleSearchClickCallback(
+                                SearchClickCallback(
+                                    SEARCH_ACTION_LOAD,
+                                    binding.root,
+                                    0,
+                                    rec
+                                )
+                            )
+                        },
+                        onCloseClick = {
+                            activity?.popCurrentPage()
+                        }
+                    )
+                }
+            }
+        }
 
         binding.apply {
             //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
@@ -477,6 +600,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         }
 
         observeNullable(viewModel.resumeWatching) { resume ->
+            composeResumeWatchingState = resume
             binding.apply {
                 if (resume == null) {
                     return@observeNullable
@@ -547,9 +671,10 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
 
         observe(viewModel.trailers) { trailersLinks ->
             context?.updateHasTrailers()
-            if (!LoadResponse.isTrailersEnabled) return@observe
             val extractedTrailerLinks = trailersLinks.flatMap { it.mirros }
                 .map { (extractedTrailerLink, _) -> extractedTrailerLink }
+            composeHasTrailersState = extractedTrailerLinks.isNotEmpty()
+            if (!LoadResponse.isTrailersEnabled) return@observe
             binding.apply {
                 resultPlayTrailer.isGone = extractedTrailerLinks.isEmpty()
                 resultPlayTrailerButton.setOnClickListener {
@@ -567,6 +692,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         }
 
         observe(viewModel.watchStatus) { watchType ->
+            composeWatchStatusState = watchType
             binding.apply {
                 resultBookmarkText.setText(watchType.stringRes)
 
@@ -768,6 +894,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
             binding.resultRangeSelection.select(selected)
         }
         observe(viewModel.selectedSeasonIndex) { selected ->
+            composeSelectedSeasonIndexState = selected
             binding.resultSeasonSelection.select(selected)
         }
         observe(viewModel.selectedDubStatusIndex) { selected ->
@@ -780,9 +907,11 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
             binding.resultDubSelection.update(it)
         }
         observe(viewModel.seasonSelections) {
+            composeSeasonsState = it.map { s -> s.first?.asStringNull(context) ?: "" }
             binding.resultSeasonSelection.update(it)
         }
         observe(viewModel.recommendations) { recommendations ->
+            composeRecommendationsState = recommendations
             setRecommendations(recommendations, null)
         }
 
@@ -805,6 +934,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         var hasLoadedEpisodesOnce = false
         observeNullable(viewModel.episodes) { episodes ->
             if (episodes == null) return@observeNullable
+            if (episodes is Resource.Success) {
+                composeEpisodesState = episodes.value
+            }
             binding.apply {
                 if (comingSoon) resultBookmarkButton.requestFocus()
 
@@ -859,10 +991,13 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
 
         observeNullable(viewModel.page) { data ->
             if (data == null) return@observeNullable
+            composePageState = data
             binding.apply {
                 when (data) {
                     is Resource.Success -> {
                         val d = data.value
+                        composeActorsState = d.actors ?: emptyList()
+                        resultComposeView.isVisible = true
                         resultVpn.setText(d.vpnText)
                         resultInfo.setText(d.metaText)
                         resultNoEpisodes.setText(d.noEpisodesFoundText)
@@ -945,15 +1080,18 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         }
                     }
 
-                    is Resource.Loading -> {}
+                    is Resource.Loading -> {
+                        resultComposeView.isGone = true
+                    }
 
                     is Resource.Failure -> {
+                        resultComposeView.isGone = true
                         resultErrorText.text =
                             storedData.url.plus("\n") + data.errorString
                     }
                 }
 
-                resultFinishLoading.isVisible = data is Resource.Success
+                resultFinishLoading.isGone = true
 
                 resultLoading.isVisible = data is Resource.Loading
 

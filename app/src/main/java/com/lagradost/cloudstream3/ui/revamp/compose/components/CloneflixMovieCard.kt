@@ -38,6 +38,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.viewinterop.AndroidView
+import android.widget.ImageView
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -99,6 +102,7 @@ fun CloneflixMovieCard(
     runtime: String? = null,
     timestamp: String? = null,
     subtitle: String? = null,
+    posterUrl: String? = null,
     onClick: (() -> Unit)? = null
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -191,7 +195,8 @@ fun CloneflixMovieCard(
                         runtime = runtime,
                         timestamp = timestamp,
                         progress = progress,
-                        showCenterPlay = false
+                        showCenterPlay = false,
+                        posterUrl = posterUrl
                     )
                 }
             }
@@ -213,7 +218,8 @@ fun CloneflixMovieCard(
                     timestamp = timestamp,
                     progress = progress,
                     showCenterPlay = type == CloneflixMovieCardType.MORE_LIKE_THIS_WITH_PLAY ||
-                            type == CloneflixMovieCardType.EPISODE
+                            type == CloneflixMovieCardType.EPISODE,
+                    posterUrl = posterUrl
                 )
             }
 
@@ -240,11 +246,12 @@ private fun MovieCardSurface(
     runtime: String?,
     timestamp: String?,
     progress: Float?,
-    showCenterPlay: Boolean
+    showCenterPlay: Boolean,
+    posterUrl: String? = null
 ) {
     val typography = CloneflixTheme.typography
 
-    // Gradient Background Mockup
+    // Background
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -258,18 +265,32 @@ private fun MovieCardSurface(
                 )
             )
     ) {
-        // Title Text in Mockup Center
-        Text(
-            text = title,
-            style = typography.regularCaption1,
-            fontWeight = FontWeight.SemiBold,
-            color = Grey50,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 8.dp)
-        )
+        if (!posterUrl.isNullOrBlank()) {
+            AndroidView(
+                factory = { ctx ->
+                    ImageView(ctx).apply {
+                        scaleType = ImageView.ScaleType.CENTER_CROP
+                    }
+                },
+                update = { imageView ->
+                    imageView.loadImage(posterUrl)
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            // Title Text in Mockup Center
+            Text(
+                text = title,
+                style = typography.regularCaption1,
+                fontWeight = FontWeight.SemiBold,
+                color = Grey50,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(horizontal = 8.dp)
+            )
+        }
 
         // Top-Left Logo / Lettermark
         if (showLogo) {
@@ -553,6 +574,7 @@ fun CloneflixMovieBlockRow(
                     runtime = item.runtime,
                     timestamp = item.timestamp,
                     subtitle = item.subtitle,
+                    posterUrl = item.posterUrl,
                     onClick = { onItemClick?.invoke(item) }
                 )
             }
@@ -570,7 +592,8 @@ data class CloneflixMovieCardItem(
     val progress: Float? = null,
     val runtime: String? = null,
     val timestamp: String? = null,
-    val subtitle: String? = null
+    val subtitle: String? = null,
+    val posterUrl: String? = null
 )
 
 /**

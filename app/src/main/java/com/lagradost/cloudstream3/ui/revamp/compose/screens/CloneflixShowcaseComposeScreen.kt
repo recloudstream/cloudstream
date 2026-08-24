@@ -36,7 +36,7 @@ import com.lagradost.cloudstream3.ui.revamp.theme.CloneflixTheme as LegacyClonef
 @Composable
 fun CloneflixShowcaseComposeScreen() {
     val context = LocalContext.current
-    val tabs = listOf("About", "Typography", "Colors", "Buttons", "Components", "Content Blocks", "Icons & Labels", "Dropdowns", "Input Fields", "Hero Banners", "Avatars", "Video Player", "Movie Preview")
+    val tabs = listOf("About", "Typography", "Colors", "Buttons", "Components", "Content Blocks", "Icons & Labels", "Dropdowns", "Input Fields", "Hero Banners", "Avatars", "Video Player", "Movie Preview", "Movie Details")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val typography = CloneflixTheme.typography
     val colors = CloneflixTheme.colors
@@ -147,6 +147,7 @@ fun CloneflixShowcaseComposeScreen() {
                 10 -> CloneflixAvatarsComposeScreen()
                 11 -> CloneflixVideoPlayerComposeScreen()
                 12 -> CloneflixMoviePreviewComposeScreen()
+                13 -> CloneflixMovieDetailsComposeScreen()
             }
         }
     }
