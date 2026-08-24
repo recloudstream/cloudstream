@@ -56,6 +56,7 @@ import androidx.compose.ui.res.stringResource
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.CloneflixTheme
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.GreenAccent
+import com.lagradost.cloudstream3.ui.revamp.compose.theme.getRatingScoreColor
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey100
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey200
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey50
@@ -395,23 +396,26 @@ private fun MovieCardSurface(
             }
         }
 
-        // Bottom Title Overlay with Black Background Gradient
+        // Bottom Title Overlay with Black Background Gradient (30% of card height)
         if (showBottomTitle && !title.isNullOrBlank()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .fillMaxHeight(0.30f)
                     .align(Alignment.BottomStart)
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                Color(0xD9000000),
-                                Color(0xF2000000),
+                                Color(0x99000000),
+                                Color(0xCC000000),
+                                Color(0xEE000000),
                                 Color(0xFF000000)
                             )
                         )
                     )
-                    .padding(horizontal = 8.dp, vertical = 6.dp)
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                contentAlignment = Alignment.BottomStart
             ) {
                 Text(
                     text = title,
@@ -746,7 +750,7 @@ fun CloneflixExpandedMoviePreview(
                 ) {
                     Text(
                         text = matchScore,
-                        color = GreenAccent,
+                        color = getRatingScoreColor(matchScore),
                         style = typography.mediumBody,
                         fontWeight = FontWeight.Bold
                     )

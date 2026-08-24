@@ -43,6 +43,7 @@ import com.lagradost.cloudstream3.ui.revamp.compose.theme.GreenAccent
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey100
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey200
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryWhite
+import com.lagradost.cloudstream3.ui.revamp.compose.theme.getRatingScoreColor
 
 /**
  * Text / MovieInfo Inline Row Pattern from Figma Section 12.
@@ -65,7 +66,7 @@ fun CloneflixMovieInfoRow(
     ) {
         Text(
             text = matchText,
-            color = GreenAccent,
+            color = getRatingScoreColor(matchText),
             style = typography.mediumBody,
             fontWeight = FontWeight.Bold
         )
@@ -119,7 +120,7 @@ fun CloneflixMovieInfoBlock(
         ) {
             Text(
                 text = matchScore,
-                color = GreenAccent,
+                color = getRatingScoreColor(matchScore),
                 style = typography.mediumBody,
                 fontWeight = FontWeight.Bold
             )

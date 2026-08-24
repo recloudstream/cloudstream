@@ -48,6 +48,8 @@ val Blue200 = Color(0xFF448EF4)
 val Blue300 = Color(0xFF54B9C5)
 
 val GreenAccent = Color(0xFF46D369)
+val YellowAccent = Color(0xFFFFB800)
+val OrangeAccent = Color(0xFFFF8C00)
 
 val Grey10 = Color(0xFFE5E5E5)
 val Grey20 = Color(0xFFDCDCDC)
@@ -111,8 +113,37 @@ data class CloneflixColors(
     val blueAccent100: Color = Blue100,
     val blueAccent200: Color = Blue200,
     val blueAccent300: Color = Blue300,
-    val greenAccent: Color = GreenAccent
+    val greenAccent: Color = GreenAccent,
+    val yellowAccent: Color = YellowAccent,
+    val orangeAccent: Color = OrangeAccent
 )
+
+/**
+ * Resolves color dynamically based on match score / rating quality:
+ * - High score (>= 70% or >= 7.0 / 10, or "New"): GreenAccent (0xFF46D369)
+ * - Moderate / average score (50% - 69% or 5.0 - 6.9 / 10): YellowAccent (0xFFFFB800)
+ * - Low score (< 50% or < 5.0 / 10): Red100 (0xFFEB3942)
+ */
+fun getRatingScoreColor(scoreText: String?): Color {
+    if (scoreText.isNullOrBlank()) return GreenAccent
+    val text = scoreText.trim()
+    if (text.equals("New", ignoreCase = true)) return GreenAccent
+
+    val match = Regex("""(\d+(\.\d+)?)""").find(text)
+    if (match != null) {
+        val num = match.value.toDoubleOrNull() ?: return GreenAccent
+        val isPercentage = text.contains("%") || num > 10.0
+        val percentage = if (isPercentage) num else (num * 10.0)
+
+        return when {
+            percentage >= 70.0 -> GreenAccent
+            percentage >= 50.0 -> YellowAccent
+            else -> Red100
+        }
+    }
+
+    return GreenAccent
+}
 
 @Immutable
 data class CloneflixTypography(

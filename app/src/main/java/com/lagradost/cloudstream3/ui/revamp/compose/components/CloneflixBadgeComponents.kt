@@ -325,36 +325,40 @@ enum class CloneflixLogoVariant {
 
 /**
  * Cloneflix Brand Logo Composable (Wordmark & Lettermark).
+ * Optionally displays provider/plugin name or custom text in brand styling.
  */
 @Composable
 fun CloneflixLogoView(
     variant: CloneflixLogoVariant = CloneflixLogoVariant.WORDMARK_MEDIUM,
+    text: String? = null,
     modifier: Modifier = Modifier
 ) {
+    val logoText = (if (!text.isNullOrBlank()) text else "CLONEFLIX").uppercase()
     when (variant) {
         CloneflixLogoVariant.WORDMARK_MEDIUM -> {
             Text(
-                text = "CLONEFLIX",
+                text = logoText,
                 color = PrimaryRed,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Black,
                 fontFamily = FontFamily.SansSerif,
                 letterSpacing = 1.5.sp,
-                modifier = modifier.semantics { contentDescription = "Cloneflix Logo" }
+                modifier = modifier.semantics { contentDescription = "$logoText Logo" }
             )
         }
         CloneflixLogoVariant.WORDMARK_SMALL -> {
             Text(
-                text = "CLONEFLIX",
+                text = logoText,
                 color = PrimaryRed,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Black,
                 fontFamily = FontFamily.SansSerif,
                 letterSpacing = 1.sp,
-                modifier = modifier.semantics { contentDescription = "Cloneflix Logo Small" }
+                modifier = modifier.semantics { contentDescription = "$logoText Logo Small" }
             )
         }
         CloneflixLogoVariant.LETTERMARK_LARGE -> {
+            val letter = logoText.firstOrNull()?.toString() ?: "C"
             Box(
                 modifier = modifier
                     .size(48.dp)
@@ -363,7 +367,7 @@ fun CloneflixLogoView(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "C",
+                    text = letter,
                     color = PrimaryRed,
                     fontSize = 38.sp,
                     fontWeight = FontWeight.Black,
@@ -372,6 +376,7 @@ fun CloneflixLogoView(
             }
         }
         CloneflixLogoVariant.LETTERMARK_MEDIUM -> {
+            val letter = logoText.firstOrNull()?.toString() ?: "C"
             Box(
                 modifier = modifier
                     .size(36.dp)
@@ -380,7 +385,7 @@ fun CloneflixLogoView(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "C",
+                    text = letter,
                     color = PrimaryRed,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Black,
@@ -389,6 +394,7 @@ fun CloneflixLogoView(
             }
         }
         CloneflixLogoVariant.LETTERMARK_SMALL -> {
+            val letter = logoText.firstOrNull()?.toString() ?: "C"
             Box(
                 modifier = modifier
                     .size(24.dp)
@@ -397,7 +403,7 @@ fun CloneflixLogoView(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "C",
+                    text = letter,
                     color = PrimaryRed,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Black,

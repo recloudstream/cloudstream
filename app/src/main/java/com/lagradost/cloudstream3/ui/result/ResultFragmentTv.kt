@@ -147,6 +147,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 if (page is Resource.Success) {
                     val d = page.value
                     val title = d.titleText.asStringNull(context) ?: d.title
+                    val provider = d.apiName.asStringNull(context) ?: storedData.apiName
                     val plot = d.plotText.asStringNull(context) ?: ""
                     val year = d.yearText?.asStringNull(context)
                     val duration = d.durationText?.asStringNull(context)
@@ -157,6 +158,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
 
                     CloneflixMovieDetailsComposeScreen(
                         title = title,
+                        providerName = provider,
                         backdropUrl = d.posterBackgroundImage ?: d.posterImage,
                         posterUrl = d.posterImage,
                         logoUrl = d.logoUrl,

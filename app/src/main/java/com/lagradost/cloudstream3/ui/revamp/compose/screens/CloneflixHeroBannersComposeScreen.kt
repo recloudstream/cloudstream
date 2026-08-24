@@ -426,7 +426,12 @@ fun CloneflixHeroBannersComposeScreen(
     }
 }
 
-@Preview(name = "Hero Banners Screen Preview", showBackground = true, backgroundColor = 0xFF141414, device = Devices.TV_720p)
+@Preview(
+    name = "Hero Banners Screen Preview",
+    showBackground = true,
+    backgroundColor = 0xFF141414,
+    device = "spec:width=1920dp,height=1080dp,dpi=320,orientation=landscape"
+)
 @Composable
 private fun HeroBannersScreenPreview() {
     CloneflixTheme {
