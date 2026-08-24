@@ -37,12 +37,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -75,10 +77,13 @@ import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixTokens
 import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixVideoQualityBadge
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.CloneflixTheme
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.GreenAccent
+import com.lagradost.cloudstream3.ui.revamp.compose.theme.getRatingScoreColor
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey100
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey200
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey50
+import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey600
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey700
+import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey750
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey800
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey850
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryBlack
@@ -106,6 +111,7 @@ data class CloneflixTrailerData(
 fun CloneflixMovieDetailsComposeScreen(
     modifier: Modifier = Modifier,
     title: String = CloneflixSampleData.SAMPLE_TITLE_HOUSE_OF_NINJAS,
+    providerName: String? = null,
     backdropUrl: String? = null,
     posterUrl: String? = null,
     logoUrl: String? = null,
@@ -142,6 +148,10 @@ fun CloneflixMovieDetailsComposeScreen(
     onCloseClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val heroHeight = (screenHeight * 0.65f).coerceAtLeast(380.dp)
+
     val colors = CloneflixTheme.colors
     val typography = CloneflixTheme.typography
     val dimens = CloneflixTheme.dimens
@@ -202,13 +212,14 @@ fun CloneflixMovieDetailsComposeScreen(
             .verticalScroll(scrollState)
     ) {
         // ==========================================
-        // 1. HERO BANNER SECTION (Figma 121:4893 - Edge to Edge Full Banner)
+        // 1. HERO BANNER SECTION (Figma 121:4893 - 60% Screen Height Crop)
         // ==========================================
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(440.dp)
-                .background(PrimaryBlack)
+                .height(heroHeight)
+                .clipToBounds()
+                .background(colors.background)
         ) {
             // Live Backdrop Image filling full banner width & height
             if (!backdropUrl.isNullOrBlank()) {
@@ -216,31 +227,18 @@ fun CloneflixMovieDetailsComposeScreen(
                     factory = { ctx ->
                         ImageView(ctx).apply {
                             scaleType = ImageView.ScaleType.CENTER_CROP
+                            adjustViewBounds = false
+                            clipToOutline = true
                         }
                     },
                     update = { imageView ->
                         imageView.loadImage(backdropUrl)
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clipToBounds()
                 )
             }
-
-            // Top Header Gradient Overlay (darkens top area for close button & status bar)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(130.dp)
-                    .align(Alignment.TopCenter)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Black.copy(alpha = 0.85f),
-                                TransparentBlack60,
-                                Color.Transparent
-                            )
-                        )
-                    )
-            )
 
             // Bottom Hero Gradient Overlay (fades smoothly down into the page background)
             Box(
@@ -252,25 +250,34 @@ fun CloneflixMovieDetailsComposeScreen(
                         Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                TransparentBlack60,
-                                PrimaryBlack.copy(alpha = 0.92f),
-                                PrimaryBlack
+                                colors.background.copy(alpha = 0.5f),
+                                colors.background.copy(alpha = 0.92f),
+                                colors.background
                             )
                         )
                     )
             )
 
-            // Top-Right Close Button
-            CloneflixCircleActionButton(
-                icon = painterResource(id = R.drawable.cloneflix_ic_close),
-                contentDescription = "Close",
-                onClick = {
-                    onCloseClick()
-                },
+            // Top-Right: Logo + Close Button
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(dimens.spacing2Xl)
-            )
+            ) {
+                CloneflixLogoView(
+                    variant = CloneflixLogoVariant.WORDMARK_MEDIUM,
+                    text = providerName
+                )
+                CloneflixCircleActionButton(
+                    icon = painterResource(id = R.drawable.cloneflix_ic_close),
+                    contentDescription = "Close",
+                    onClick = {
+                        onCloseClick()
+                    }
+                )
+            }
 
             // Title, Wordmark, and Action Buttons aligned at the bottom
             Column(
@@ -278,7 +285,7 @@ fun CloneflixMovieDetailsComposeScreen(
                     .align(Alignment.BottomStart)
                     .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacingL)
             ) {
-                // Wordmark / Logo / Title
+                // Movie Title Logo or Title Text
                 if (!logoUrl.isNullOrBlank()) {
                     Box(
                         modifier = Modifier
@@ -298,8 +305,6 @@ fun CloneflixMovieDetailsComposeScreen(
                         )
                     }
                 } else {
-                    CloneflixLogoView(variant = CloneflixLogoVariant.WORDMARK_MEDIUM)
-                    Spacer(modifier = Modifier.height(dimens.spacingS))
                     Text(
                         text = title,
                         style = typography.boldTitle1,
@@ -312,24 +317,26 @@ fun CloneflixMovieDetailsComposeScreen(
 
                 Spacer(modifier = Modifier.height(dimens.spacingL))
 
-                // Action Buttons Row (Play, Add/List, Thumbs Up, Trailer)
+                // Primary Play Button (Separate dedicated section)
+                CloneflixHeroPlayButton(
+                    onClick = onPlayClick,
+                    text = "Play",
+                    modifier = Modifier
+                        .focusRequester(playButtonFocusRequester)
+                        .onFocusChanged { state ->
+                            if (state.isFocused && scrollState.value > 0) {
+                                // Keep Hero banner fully visible when play button is focused
+                            }
+                        }
+                )
+
+                Spacer(modifier = Modifier.height(dimens.spacingM))
+
+                // Secondary Action Buttons Row (Add to List, Like, Trailer) below Play button
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
                 ) {
-                    // White Primary Play Button
-                    CloneflixHeroPlayButton(
-                        onClick = onPlayClick,
-                        text = "Play",
-                        modifier = Modifier
-                            .focusRequester(playButtonFocusRequester)
-                            .onFocusChanged { state ->
-                                if (state.isFocused && scrollState.value > 0) {
-                                    // Keep Hero banner fully visible when play button is focused
-                                }
-                            }
-                    )
-
                     // Add to My List (+)
                     CloneflixCircleActionButton(
                         icon = painterResource(
@@ -397,7 +404,7 @@ fun CloneflixMovieDetailsComposeScreen(
                             if (!matchScore.isNullOrBlank()) {
                                 Text(
                                     text = matchScore,
-                                    color = GreenAccent,
+                                    color = getRatingScoreColor(matchScore),
                                     style = typography.mediumBody,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -708,13 +715,13 @@ fun CloneflixMovieDetailsComposeScreen(
             if (hasAboutContent) {
                 val aboutInteractionSource = remember { MutableInteractionSource() }
                 val isAboutFocused by aboutInteractionSource.collectIsFocusedAsState()
-                val aboutBorder = if (isAboutFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else BorderStroke(1.dp, Color(0xFF333333))
+                val aboutBorder = if (isAboutFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else BorderStroke(1.dp, Grey600)
 
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
-                        .background(if (isAboutFocused) Color(0xFF262626) else Grey850)
+                        .background(if (isAboutFocused) Grey750 else Grey850)
                         .border(aboutBorder, RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
                         .focusable(interactionSource = aboutInteractionSource)
                         .padding(dimens.spacing2Xl),
@@ -1037,10 +1044,39 @@ fun CloneflixAboutMetadataRow(
     }
 }
 
-@Preview(device = Devices.TV_1080p, showBackground = true)
+@Preview(
+    name = "TV 1080p Landscape",
+    device = "spec:width=1920dp,height=1080dp,dpi=320,orientation=landscape",
+    showBackground = true,
+    backgroundColor = 0xFF141414
+)
+@Preview(
+    name = "TV 720p Landscape",
+    device = "spec:width=1280dp,height=720dp,dpi=213,orientation=landscape",
+    showBackground = true,
+    backgroundColor = 0xFF141414
+)
 @Composable
 private fun CloneflixMovieDetailsComposeScreenPreview() {
     CloneflixTheme {
-        CloneflixMovieDetailsComposeScreen()
+        CloneflixMovieDetailsComposeScreen(
+            title = "HOUSE OF NINJAS",
+            providerName = "SUPERSTREAM",
+            matchScore = "98% Match",
+            releaseYear = "2024",
+            seasonsCount = "1 Season",
+            quality = "4K Ultra HD",
+            maturityRating = "TV-MA",
+            advisories = "smoking, violence, language",
+            top10RankText = "#2 in TV Shows Today",
+            synopsis = "Years after retiring from their formidable ninja lives, a dysfunctional family must return to shadowy missions to counteract a string of looming threats.",
+            cast = listOf("Kento Kaku", "Yosuke Eguchi", "Tae Kimura", "Kengo Kora"),
+            genres = listOf("TV Dramas", "Action", "Japanese", "Suspenseful"),
+            moodTags = listOf("Dark", "Suspenseful", "Exciting"),
+            creator = "Dave Boyle",
+            writers = listOf("Dave Boyle", "Masahiro Yamaura", "Kota Oishi"),
+            isInWatchList = false,
+            hasTrailers = true
+        )
     }
 }
