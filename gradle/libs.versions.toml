@@ -55,6 +55,8 @@ tvprovider = "1.1.0"
 video = "1.0.0"
 workRuntimeKtx = "2.11.2"
 zipline = "1.27.0"
+composeBom = "2024.12.01"
+activityCompose = "1.10.1"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
@@ -136,6 +138,14 @@ video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 zipline = { module = "app.cash.zipline:zipline-android", version.ref = "zipline" }
 
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-lint = { id = "com.android.lint", version.ref = "androidGradlePlugin" }
@@ -145,6 +155,8 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokkaGradlePlugin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm" , version.ref = "kotlinGradlePlugin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlinGradlePlugin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinGradlePlugin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinGradlePlugin" }
+
 
 [bundles]
 coil = ["coil", "coil-network-okhttp"]

@@ -226,3 +226,9 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/kotlin,java,android,androidstudio,visualstudiocode
+.agents/rules/antigravity-rtk-rules.md
+.agents/skills/cloudstream/SKILL.md
+.codegraph/.gitignore
+.rtk/filters.toml
+CLAUDE.md
+gradle/gradle-daemon-jvm.properties

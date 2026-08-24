@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.dokka)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -199,6 +200,7 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
+        compose = true
     }
 
     packaging {
@@ -238,6 +240,16 @@ dependencies {
     implementation(libs.preference.ktx)
     implementation(libs.material)
     implementation(libs.constraintlayout)
+
+    // Jetpack Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.activity.compose)
+
 
     // Coil Image Loading
     implementation(libs.bundles.coil)
