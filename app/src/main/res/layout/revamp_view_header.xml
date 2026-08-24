@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/cloneflix_spacing_3xl">
+
+        <FrameLayout
+            android:id="@+id/headerIconFrame"
+            android:layout_width="@dimen/cloneflix_header_icon_size"
+            android:layout_height="@dimen/cloneflix_header_icon_size"
+            android:background="@drawable/cloneflix_bg_header_icon">
+
+            <ImageView
+                android:id="@+id/headerIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                app:tint="@color/cloneflix_primary_white"
+                tools:src="@drawable/cloneflix_ic_about" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/cloneflix_spacing_3xl"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/headerTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/netflix_sans"
+                android:textColor="@color/cloneflix_primary_white"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                tools:text="About" />
+
+            <TextView
+                android:id="@+id/headerSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/cloneflix_spacing_xs"
+                android:fontFamily="@font/netflix_sans"
+                android:textColor="@color/cloneflix_grey_200"
+                android:textSize="14sp"
+                android:visibility="gone"
+                tools:text="Cloneflix Design System 2024"
+                tools:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/headerDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/cloneflix_divider_height"
+        android:background="@color/cloneflix_border_subtle" />
+</LinearLayout>

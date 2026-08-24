@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lagradost.cloudstream3.ui.revamp.components.CloneflixCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevationLevel="surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/cloneflix_spacing_3xl">
+
+        <TextView
+            android:id="@+id/aboutAuthorTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/netflix_sans"
+            android:lineSpacingExtra="6dp"
+            android:textColor="@color/cloneflix_primary_white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Hello! I'm Ivanna Heraskina, a Product Designer from San Francisco 🌉." />
+
+        <TextView
+            android:id="@+id/aboutDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/cloneflix_spacing_l"
+            android:fontFamily="@font/netflix_sans"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/cloneflix_grey_10"
+            android:textSize="15sp"
+            android:text="The Cloneflix Design System 2024 (Website Version) was created with love and dedication. Whether you're a designer, developer, or just interested in UI/UX, feel free to use this toolkit. Use it to bring your creative ideas to life." />
+
+        <TextView
+            android:id="@+id/aboutContact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/cloneflix_spacing_l"
+            android:fontFamily="@font/netflix_sans"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/cloneflix_grey_50"
+            android:textSize="14sp"
+            android:text="If you have any thoughts or feedback, or simply want to say hi, add me on X.com (@ivannaheraskina)." />
+
+        <TextView
+            android:id="@+id/aboutSupport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/cloneflix_spacing_m"
+            android:fontFamily="@font/netflix_sans"
+            android:textColor="@color/cloneflix_grey_100"
+            android:textSize="14sp"
+            android:text="If it was useful, your support would mean a lot!" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/cloneflix_spacing_2xl"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.lagradost.cloudstream3.ui.revamp.components.CloneflixButton
+                android:id="@+id/btnConnectX"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/cloneflix_spacing_m"
+                app:cloneflixButtonVariant="primary"
+                app:cloneflixButtonSize="medium"
+                app:cloneflixIcon="@drawable/cloneflix_ic_open_in_new"
+                app:cloneflixText="Follow @ivannaheraskina" />
+
+            <com.lagradost.cloudstream3.ui.revamp.components.CloneflixButton
+                android:id="@+id/btnFeedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cloneflixButtonVariant="outline"
+                app:cloneflixButtonSize="medium"
+                app:cloneflixIcon="@drawable/cloneflix_ic_feedback"
+                app:cloneflixText="Feedback" />
+        </LinearLayout>
+    </LinearLayout>
+</com.lagradost.cloudstream3.ui.revamp.components.CloneflixCardView>

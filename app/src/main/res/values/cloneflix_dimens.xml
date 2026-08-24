@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="cloneflix_spacing_xxs">2dp</dimen>
+    <dimen name="cloneflix_spacing_xs">4dp</dimen>
+    <dimen name="cloneflix_spacing_s">8dp</dimen>
+    <dimen name="cloneflix_spacing_m">12dp</dimen>
+    <dimen name="cloneflix_spacing_l">16dp</dimen>
+    <dimen name="cloneflix_spacing_xl">20dp</dimen>
+    <dimen name="cloneflix_spacing_2xl">24dp</dimen>
+    <dimen name="cloneflix_spacing_3xl">32dp</dimen>
+    <dimen name="cloneflix_spacing_4xl">40dp</dimen>
+    <dimen name="cloneflix_spacing_5xl">48dp</dimen>
+    <dimen name="cloneflix_spacing_6xl">64dp</dimen>
+    <dimen name="cloneflix_spacing_7xl">80dp</dimen>
+
+    <dimen name="cloneflix_radius_xs">4dp</dimen>
+    <dimen name="cloneflix_radius_s">8dp</dimen>
+    <dimen name="cloneflix_radius_m">12dp</dimen>
+    <dimen name="cloneflix_radius_l">16dp</dimen>
+    <dimen name="cloneflix_radius_xl">24dp</dimen>
+    <dimen name="cloneflix_radius_full">999dp</dimen>
+
+    <dimen name="cloneflix_header_icon_size">80dp</dimen>
+    <dimen name="cloneflix_header_icon_stroke">1.4dp</dimen>
+    <dimen name="cloneflix_header_icon_size_compact">56dp</dimen>
+    <dimen name="cloneflix_button_height_large">48dp</dimen>
+    <dimen name="cloneflix_button_height_medium">40dp</dimen>
+    <dimen name="cloneflix_button_height_small">32dp</dimen>
+    <dimen name="cloneflix_input_height">52dp</dimen>
+    <dimen name="cloneflix_color_swatch_height">72dp</dimen>
+    <dimen name="cloneflix_divider_height">1dp</dimen>
+
+    <!-- Icon Sizes -->
+    <dimen name="cloneflix_icon_xs">14dp</dimen>
+    <dimen name="cloneflix_icon_s">16dp</dimen>
+    <dimen name="cloneflix_icon_m">24dp</dimen>
+    <dimen name="cloneflix_icon_l">32dp</dimen>
+    <dimen name="cloneflix_icon_xl">40dp</dimen>
+
+    <!-- Border & Stroke Widths -->
+    <dimen name="cloneflix_border_subtle">0.5dp</dimen>
+    <dimen name="cloneflix_border_default">1dp</dimen>
+    <dimen name="cloneflix_border_focus">2dp</dimen>
+
+    <!-- Movie Card Dimensions -->
+    <dimen name="cloneflix_card_width_medium">218dp</dimen>
+    <dimen name="cloneflix_card_height_medium">123dp</dimen>
+    <dimen name="cloneflix_card_width_small">128dp</dimen>
+    <dimen name="cloneflix_card_height_small">72dp</dimen>
+    <dimen name="cloneflix_card_width_trailer">236dp</dimen>
+    <dimen name="cloneflix_card_height_trailer">204dp</dimen>
+    <dimen name="cloneflix_card_width_player_preview">245dp</dimen>
+    <dimen name="cloneflix_card_height_player_preview">152dp</dimen>
+    <dimen name="cloneflix_card_thumbnail_episode_width">128dp</dimen>
+    <dimen name="cloneflix_card_thumbnail_episode_height">72dp</dimen>
+
+    <dimen name="cloneflix_text_regular_caption2">11sp</dimen>
+    <dimen name="cloneflix_text_regular_caption1">13sp</dimen>
+    <dimen name="cloneflix_text_regular_smallbody">14sp</dimen>
+    <dimen name="cloneflix_text_regular_body">16sp</dimen>
+    <dimen name="cloneflix_text_regular_headline2">17sp</dimen>
+    <dimen name="cloneflix_text_regular_headline1">18sp</dimen>
+    <dimen name="cloneflix_text_regular_title4">20sp</dimen>
+    <dimen name="cloneflix_text_regular_title3">21sp</dimen>
+    <dimen name="cloneflix_text_regular_title2">24sp</dimen>
+    <dimen name="cloneflix_text_regular_title1">27sp</dimen>
+    <dimen name="cloneflix_text_regular_largetitle">50sp</dimen>
+
+    <dimen name="cloneflix_text_medium_caption2">12sp</dimen>
+    <dimen name="cloneflix_text_medium_caption1">13sp</dimen>
+    <dimen name="cloneflix_text_medium_smallbody">14sp</dimen>
+    <dimen name="cloneflix_text_medium_body">16sp</dimen>
+    <dimen name="cloneflix_text_medium_headline2">20sp</dimen>
+    <dimen name="cloneflix_text_medium_headline1">21sp</dimen>
+    <dimen name="cloneflix_text_medium_title4">22sp</dimen>
+    <dimen name="cloneflix_text_medium_title3">24sp</dimen>
+    <dimen name="cloneflix_text_medium_title2">28sp</dimen>
+    <dimen name="cloneflix_text_medium_title1">30sp</dimen>
+    <dimen name="cloneflix_text_medium_largetitle">33sp</dimen>
+
+    <dimen name="cloneflix_text_bold_title2">20sp</dimen>
+    <dimen name="cloneflix_text_bold_title1">48sp</dimen>
+    <dimen name="cloneflix_text_bold_largetitle">55sp</dimen>
+    <dimen name="cloneflix_text_header_display">40sp</dimen>
+    <dimen name="cloneflix_text_header_display_large">80sp</dimen>
+
+    <dimen name="cloneflix_text_logo_bebas">32sp</dimen>
+</resources>

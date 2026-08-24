@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CloneflixTextView">
+        <attr name="cloneflixTextStyle" format="enum">
+            <enum name="regularCaption2" value="0" />
+            <enum name="regularCaption1" value="1" />
+            <enum name="regularSmallBody" value="2" />
+            <enum name="regularBody" value="3" />
+            <enum name="regularHeadline2" value="4" />
+            <enum name="regularHeadline1" value="5" />
+            <enum name="regularTitle4" value="6" />
+            <enum name="regularTitle3" value="7" />
+            <enum name="regularTitle2" value="8" />
+            <enum name="regularTitle1" value="9" />
+            <enum name="regularLargeTitle" value="10" />
+
+            <enum name="mediumCaption2" value="11" />
+            <enum name="mediumCaption1" value="12" />
+            <enum name="mediumSmallBody" value="13" />
+            <enum name="mediumBody" value="14" />
+            <enum name="mediumHeadline2" value="15" />
+            <enum name="mediumHeadline1" value="16" />
+            <enum name="mediumTitle4" value="17" />
+            <enum name="mediumTitle3" value="18" />
+            <enum name="mediumTitle2" value="19" />
+            <enum name="mediumTitle1" value="20" />
+            <enum name="mediumLargeTitle" value="21" />
+
+            <enum name="boldTitle2" value="22" />
+            <enum name="boldTitle1" value="23" />
+            <enum name="boldLargeTitle" value="24" />
+
+            <enum name="logoBebas" value="25" />
+            <enum name="headerDisplay" value="26" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="CloneflixButton">
+        <attr name="cloneflixButtonVariant" format="enum">
+            <enum name="primary" value="0" />
+            <enum name="secondary" value="1" />
+            <enum name="outline" value="2" />
+            <enum name="ghost" value="3" />
+        </attr>
+        <attr name="cloneflixButtonSize" format="enum">
+            <enum name="large" value="0" />
+            <enum name="medium" value="1" />
+            <enum name="small" value="2" />
+        </attr>
+        <attr name="cloneflixIcon" format="reference" />
+        <attr name="cloneflixText" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="CloneflixHeaderView">
+        <attr name="headerTitle" format="string" />
+        <attr name="headerSubtitle" format="string" />
+        <attr name="headerIcon" format="reference" />
+        <attr name="showDivider" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CloneflixCardView">
+        <attr name="cardElevationLevel" format="enum">
+            <enum name="flat" value="0" />
+            <enum name="surface" value="1" />
+            <enum name="elevated" value="2" />
+        </attr>
+        <attr name="cardBorderWidth" format="dimension" />
+        <attr name="cardBorderColor" format="color" />
+    </declare-styleable>
+</resources>

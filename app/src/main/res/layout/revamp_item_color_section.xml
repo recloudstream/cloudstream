@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/cloneflix_spacing_3xl"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/sectionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/cloneflix_spacing_l"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/cloneflix_primary_red"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        tools:text="PRIMARY COLORS" />
+
+    <LinearLayout
+        android:id="@+id/swatchesContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+</LinearLayout>

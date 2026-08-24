@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cloneflix_primary_red">#E50914</color>
+    <color name="cloneflix_primary_black">#000000</color>
+    <color name="cloneflix_primary_white">#FFFFFF</color>
+
+    <color name="cloneflix_red_100">#EB3942</color>
+    <color name="cloneflix_red_200">#C11119</color>
+    <color name="cloneflix_red_300">#F50723</color>
+
+    <color name="cloneflix_blue_100">#0071EB</color>
+    <color name="cloneflix_blue_200">#448EF4</color>
+    <color name="cloneflix_blue_300">#54B9C5</color>
+
+    <color name="cloneflix_green">#46D369</color>
+
+    <color name="cloneflix_grey_10">#E5E5E5</color>
+    <color name="cloneflix_grey_20">#DCDCDC</color>
+    <color name="cloneflix_grey_25">#D2D2D2</color>
+    <color name="cloneflix_grey_50">#BCBCBC</color>
+    <color name="cloneflix_grey_100">#B3B3B3</color>
+    <color name="cloneflix_grey_150">#979797</color>
+    <color name="cloneflix_grey_200">#808080</color>
+    <color name="cloneflix_grey_250">#777777</color>
+    <color name="cloneflix_grey_300_t40">#666D6D6E</color>
+    <color name="cloneflix_grey_300_t70">#B26D6D6E</color>
+    <color name="cloneflix_grey_350">#545454</color>
+    <color name="cloneflix_grey_400">#414141</color>
+    <color name="cloneflix_grey_450">#404040</color>
+    <color name="cloneflix_grey_500">#3A3A3A</color>
+    <color name="cloneflix_grey_550">#363636</color>
+    <color name="cloneflix_grey_600_t60">#99333333</color>
+    <color name="cloneflix_grey_600">#333333</color>
+    <color name="cloneflix_grey_650">#2F2F2F</color>
+    <color name="cloneflix_grey_700">#2A2A2A</color>
+    <color name="cloneflix_grey_750">#262626</color>
+    <color name="cloneflix_grey_800">#232323</color>
+    <color name="cloneflix_grey_850">#181818</color>
+    <color name="cloneflix_grey_900">#141414</color>
+
+    <color name="cloneflix_transparent_white_15">#26FFFFFF</color>
+    <color name="cloneflix_transparent_white_20">#33FFFFFF</color>
+    <color name="cloneflix_transparent_white_30">#4CFFFFFF</color>
+    <color name="cloneflix_transparent_white_35">#59FFFFFF</color>
+    <color name="cloneflix_transparent_white_50">#7FFFFFFF</color>
+    <color name="cloneflix_transparent_white_70">#B2FFFFFF</color>
+
+    <color name="cloneflix_transparent_black_30">#4C000000</color>
+    <color name="cloneflix_transparent_black_60">#99000000</color>
+    <color name="cloneflix_transparent_black_90">#E5000000</color>
+
+    <color name="cloneflix_surface_dark">#232323</color>
+    <color name="cloneflix_surface_elevated">#181818</color>
+    <color name="cloneflix_canvas_background">#141414</color>
+    <color name="cloneflix_border_subtle">#33FFFFFF</color>
+    <color name="cloneflix_divider">#26FFFFFF</color>
+</resources>

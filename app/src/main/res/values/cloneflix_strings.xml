@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Accessibility / Content Descriptions -->
+    <string name="cloneflix_cd_play">Play</string>
+    <string name="cloneflix_cd_pause">Pause</string>
+    <string name="cloneflix_cd_stop">Stop</string>
+    <string name="cloneflix_cd_replay_10">Replay 10 seconds</string>
+    <string name="cloneflix_cd_forward_10">Forward 10 seconds</string>
+    <string name="cloneflix_cd_next_episode">Next Episode</string>
+    <string name="cloneflix_cd_episodes">Episodes and Info</string>
+    <string name="cloneflix_cd_audio_subtitles">Audio and Subtitles</string>
+    <string name="cloneflix_cd_playback_speed">Playback Speed</string>
+    <string name="cloneflix_cd_lock_screen">Lock Screen Controls</string>
+    <string name="cloneflix_cd_unlock_screen">Unlock Screen Controls</string>
+    <string name="cloneflix_cd_add_to_list">Add to My List</string>
+    <string name="cloneflix_cd_remove_from_list">Remove from My List</string>
+    <string name="cloneflix_cd_like">Like / Rate Up</string>
+    <string name="cloneflix_cd_double_like">Love / Double Thumbs Up</string>
+    <string name="cloneflix_cd_dislike">Dislike / Rate Down</string>
+    <string name="cloneflix_cd_mute">Mute Audio</string>
+    <string name="cloneflix_cd_unmute">Unmute Audio</string>
+    <string name="cloneflix_cd_close">Close</string>
+    <string name="cloneflix_cd_back">Back</string>
+    <string name="cloneflix_cd_copy">Copy</string>
+    <string name="cloneflix_cd_search">Search</string>
+    <string name="cloneflix_cd_clear_search">Clear Search</string>
+    <string name="cloneflix_cd_notifications">Notifications</string>
+    <string name="cloneflix_cd_account">Account Profile</string>
+    <string name="cloneflix_cd_help">Help &amp; Support</string>
+    <string name="cloneflix_cd_movie_card">Movie card %1$s</string>
+    <string name="cloneflix_cd_play_episode">Play episode %1$d</string>
+    <string name="cloneflix_cd_video_progress">Video progress %1$s of %2$s</string>
+    <string name="cloneflix_cd_volume_slider">Volume level %1$d percent</string>
+    <string name="cloneflix_cd_avatar">User Avatar %1$s</string>
+
+    <!-- Badges & Status Labels -->
+    <string name="cloneflix_badge_recently_added">Recently Added</string>
+    <string name="cloneflix_badge_top_10">Top 10</string>
+    <string name="cloneflix_badge_new_season">New Season</string>
+    <string name="cloneflix_badge_new_episodes">New Episodes</string>
+    <string name="cloneflix_badge_leaving_soon">Leaving Soon</string>
+    <string name="cloneflix_badge_must_watch">Must Watch</string>
+    <string name="cloneflix_badge_original">Cloneflix Original</string>
+    <string name="cloneflix_badge_spatial_audio">Spatial Audio</string>
+
+    <!-- General UI Labels -->
+    <string name="cloneflix_label_episodes">Episodes</string>
+    <string name="cloneflix_label_more_like_this">More Like This</string>
+    <string name="cloneflix_label_trailers">Trailers &amp; More</string>
+    <string name="cloneflix_label_audio">Audio</string>
+    <string name="cloneflix_label_subtitles">Subtitles</string>
+    <string name="cloneflix_label_speed">Speed</string>
+    <string name="cloneflix_label_season_format">Season %1$d</string>
+    <string name="cloneflix_label_episode_prefix">EP %1$d</string>
+    <string name="cloneflix_label_speed_normal">1.0x (Normal)</string>
+    <string name="cloneflix_label_subtitles_off">Off</string>
+
+    <!-- Next Episode & Buttons -->
+    <string name="cloneflix_next_episode_in">Next episode in %1$ds</string>
+    <string name="cloneflix_btn_play">Play</string>
+    <string name="cloneflix_btn_more_info">More Info</string>
+    <string name="cloneflix_btn_watch_credits">Watch Credits</string>
+    <string name="cloneflix_btn_play_next">Play Next</string>
+
+    <!-- Placeholders & Defaults -->
+    <string name="cloneflix_placeholder_input">Enter text here…</string>
+    <string name="cloneflix_placeholder_search">Search movies, TV shows, genres…</string>
+</resources>

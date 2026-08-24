@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/cloneflix_spacing_l"
+    android:background="@drawable/cloneflix_bg_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/cloneflix_spacing_l">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/styleLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/netflix_sans"
+            android:textColor="@color/cloneflix_grey_100"
+            android:textSize="12sp"
+            tools:text="Regular / Title1 / 27px" />
+
+        <TextView
+            android:id="@+id/styleMetrics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/netflix_sans"
+            android:textColor="@color/cloneflix_grey_200"
+            android:textSize="11sp"
+            tools:text="Size: 27sp • LineHeight: 36sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/styleSampleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/cloneflix_spacing_s"
+        android:fontFamily="@font/netflix_sans"
+        android:textColor="@color/cloneflix_primary_white"
+        tools:text="Almost all our lives we are surrounded by stories" />
+</LinearLayout>
