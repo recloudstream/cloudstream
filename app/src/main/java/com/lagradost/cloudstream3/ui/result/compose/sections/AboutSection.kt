@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,7 +26,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.result.compose.components.CastMemberCard
 import com.lagradost.cloudstream3.ui.result.compose.components.MovieDetailsTokens
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 
@@ -66,7 +70,10 @@ fun AboutSection(
     moodTags: List<String>,
     maturityRating: String?,
     advisories: String?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actors: List<ActorData>? = null,
+    onActorClick: ((String) -> Unit)? = null,
+    onActorLongClick: ((String) -> Unit)? = null
 ) {
     val colors = MovieDetailsTheme.colors
     val typography = MovieDetailsTheme.typography
@@ -98,12 +105,49 @@ fun AboutSection(
                 color = colors.textPrimary
             )
 
-            Spacer(modifier = Modifier.height(dimens.spacingXs))
+            if (!actors.isNullOrEmpty()) {
+                Spacer(modifier = Modifier.height(dimens.spacingXs))
+
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.spacingS)) {
+                    Text(
+                        text = stringResource(id = R.string.cast_label).trimEnd(':'),
+                        style = typography.boldTitle2,
+                        fontSize = 15.sp,
+                        color = colors.textPrimary
+                    )
+
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                    ) {
+                        items(
+                            items = actors,
+                            key = { it.actor.name }
+                        ) { actorData ->
+                            CastMemberCard(
+                                actorData = actorData,
+                                onActorClick = { name ->
+                                    onActorClick?.invoke(name)
+                                },
+                                onActorLongClick = { name ->
+                                    if (onActorLongClick != null) {
+                                        onActorLongClick(name)
+                                    } else {
+                                        onActorClick?.invoke(name)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(dimens.spacingS))
+            }
 
             if (!creator.isNullOrBlank()) {
                 AboutMetadataRow(label = stringResource(id = R.string.creator_label), value = creator)
             }
-            if (castList.isNotEmpty()) {
+            if (actors.isNullOrEmpty() && castList.isNotEmpty()) {
                 AboutMetadataRow(label = stringResource(id = R.string.cast_label), value = castList.joinToString(", "))
             }
             if (writers.isNotEmpty()) {

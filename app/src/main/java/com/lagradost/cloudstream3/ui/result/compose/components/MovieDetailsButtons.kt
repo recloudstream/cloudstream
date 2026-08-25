@@ -119,18 +119,22 @@ fun HeroPlayButton(
 
             if (progress != null && progress > 0.05f) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(3.dp)
-                        .align(Alignment.BottomStart)
-                        .background(PrimaryBlack.copy(alpha = 0.35f))
+                    modifier = Modifier.matchParentSize()
                 ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth(progress.coerceIn(0f, 1f))
-                            .fillMaxHeight()
-                            .background(PrimaryWhite)
-                    )
+                            .fillMaxWidth()
+                            .height(5.dp)
+                            .align(Alignment.BottomCenter)
+                            .background(PrimaryBlack.copy(alpha = 0.45f))
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(progress.coerceIn(0f, 1f))
+                                .fillMaxHeight()
+                                .background(PrimaryWhite)
+                        )
+                    }
                 }
             }
         }

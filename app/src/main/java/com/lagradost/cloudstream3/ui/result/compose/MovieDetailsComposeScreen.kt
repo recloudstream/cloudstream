@@ -344,7 +344,7 @@ fun MovieDetailsComposeScreen(
                 }
             }
 
-            val hasAboutContent = !creator.isNullOrBlank() || castList.isNotEmpty() ||
+            val hasAboutContent = !creator.isNullOrBlank() || !dynamicActors.isNullOrEmpty() || castList.isNotEmpty() ||
                     writers.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty() ||
                     !maturityRating.isNullOrBlank()
 
@@ -358,7 +358,10 @@ fun MovieDetailsComposeScreen(
                         genres = genres,
                         moodTags = moodTags,
                         maturityRating = maturityRating,
-                        advisories = advisories
+                        advisories = advisories,
+                        actors = dynamicActors,
+                        onActorClick = onActorClick,
+                        onActorLongClick = onActorClick
                     )
                 }
             }
