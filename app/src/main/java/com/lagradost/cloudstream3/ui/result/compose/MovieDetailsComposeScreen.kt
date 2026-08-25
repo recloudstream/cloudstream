@@ -87,6 +87,7 @@ fun MovieDetailsComposeScreen(
     onPlayLongClick: (() -> Unit)? = null,
     onEpisodeLongClick: ((ResultEpisode) -> Unit)? = null,
     statusText: String? = null,
+    isOngoing: Boolean = false,
     nextAiringUnixTime: Long? = null,
     nextAiringEpisode: String? = null,
     nextAiringDate: String? = null,
@@ -175,6 +176,7 @@ fun MovieDetailsComposeScreen(
 
     val airingSchedule = remember(
         statusText,
+        isOngoing,
         nextAiringUnixTime,
         nextAiringEpisode,
         nextAiringDate,
@@ -184,6 +186,7 @@ fun MovieDetailsComposeScreen(
         resolveAiringSchedule(
             context = context,
             statusText = statusText,
+            isOngoing = isOngoing,
             nextAiringUnixTime = nextAiringUnixTime,
             nextAiringEpisode = nextAiringEpisode,
             nextAiringDate = nextAiringDate,
@@ -423,6 +426,7 @@ private fun MovieDetailsComposeScreenPreview() {
             advisories = "fear, language, violence",
             top10RankText = "#1 in TV Shows Today",
             statusText = "Ongoing",
+            isOngoing = true,
             nextAiringEpisode = "Episode 5",
             nextAiringDate = "2d 14h",
             synopsis = "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.",

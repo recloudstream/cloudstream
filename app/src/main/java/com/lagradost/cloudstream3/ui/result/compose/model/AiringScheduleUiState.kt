@@ -28,13 +28,12 @@ data class AiringScheduleUiState(
 fun resolveAiringSchedule(
     context: Context,
     statusText: String? = null,
+    isOngoing: Boolean = false,
     nextAiringUnixTime: Long? = null,
     nextAiringEpisode: String? = null,
     nextAiringDate: String? = null,
     episodes: List<ResultEpisode>? = null
 ): AiringScheduleUiState? {
-    val isOngoing = statusText?.contains("ongoing", ignoreCase = true) == true
-
     val nowMs = APIHolder.unixTimeMS
     val nowSec = APIHolder.unixTime
     val upcomingEpisode = episodes?.filter { (it.airDate ?: 0L) > nowMs }?.minByOrNull { it.airDate ?: Long.MAX_VALUE }

@@ -261,6 +261,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         d.actors ?: castNames.map { ActorData(com.lagradost.cloudstream3.Actor(it)) }
                     }
                     val ongoingInfo = d.onGoingText?.asStringNull(context)
+                    val isOngoing = d.isOngoing ?: (d.showStatus?.let { it == com.lagradost.cloudstream3.ShowStatus.Ongoing } == true)
 
                     MovieDetailsComposeScreen(
                         title = title,
@@ -274,6 +275,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         maturityRating = contentRating,
                         advisories = null,
                         statusText = ongoingInfo,
+                        isOngoing = isOngoing,
                         nextAiringUnixTime = d.nextAiringUnixTime,
                         nextAiringEpisode = d.nextAiringEpisode?.asStringNull(context),
                         nextAiringDate = d.nextAiringDate?.asStringNull(context),

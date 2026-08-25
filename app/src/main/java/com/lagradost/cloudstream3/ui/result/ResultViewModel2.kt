@@ -186,6 +186,8 @@ data class ResultData(
     val metaText: UiText?,
     val durationText: UiText?,
     val onGoingText: UiText?,
+    val showStatus: ShowStatus? = null,
+    val isOngoing: Boolean? = null,
     val noEpisodesFoundText: UiText?,
     val titleText: UiText,
     val typeText: UiText,
@@ -357,6 +359,8 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 }
             )
         } else null,
+        showStatus = if (this is EpisodeResponse) this.showStatus else null,
+        isOngoing = if (this is EpisodeResponse) this.showStatus == ShowStatus.Ongoing else null,
         noEpisodesFoundText =
             if ((this is TvSeriesLoadResponse && this.episodes.isEmpty()) || (this is AnimeLoadResponse && !this.episodes.any { it.value.isNotEmpty() })) txt(
                 R.string.no_episodes_found

@@ -15,9 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.result.compose.model.AiringScheduleUiState
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 
@@ -75,9 +77,9 @@ fun OngoingStatusBadge(
     isOngoing: Boolean = true
 ) {
     val colors = MovieDetailsTheme.colors
-    val isOngoingState = isOngoing || statusText?.contains("ongoing", ignoreCase = true) == true
-    val badgeColor = if (isOngoingState) colors.greenAccent else colors.textSecondary
-    val displayText = (statusText ?: if (isOngoingState) "Ongoing" else "Completed").uppercase()
+    val badgeColor = if (isOngoing) colors.greenAccent else colors.textSecondary
+    val defaultText = stringResource(if (isOngoing) R.string.status_ongoing else R.string.status_completed)
+    val displayText = (statusText ?: defaultText).uppercase()
 
     Box(
         modifier = modifier
