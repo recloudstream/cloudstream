@@ -47,11 +47,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -413,46 +409,12 @@ fun MovieDetailsComposeScreen(
                             .padding(dimens.spacing2Xl)
                     ) {
                         if (!providerName.isNullOrBlank()) {
-                            val textColor = colors.primary
-                            val isLightText = textColor.luminance() > 0.5f
-                            val innerOutlineColor = if (isLightText) Color.Black else Color.White
-                            val outerOutlineColor = if (isLightText) Color.White else Color.Black
-
-                            val providerStyle = typography.boldTitle2.copy(
-                                fontWeight = FontWeight.Black
+                            Text(
+                                text = providerName.uppercase(),
+                                style = typography.boldTitle2,
+                                color = colors.primary,
+                                letterSpacing = 2.sp
                             )
-                            Box(contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = providerName.uppercase(),
-                                    style = providerStyle.copy(
-                                        drawStyle = Stroke(
-                                            width = 24f,
-                                            join = StrokeJoin.Round,
-                                            cap = StrokeCap.Round
-                                        )
-                                    ),
-                                    color = outerOutlineColor,
-                                    letterSpacing = 2.sp
-                                )
-                                Text(
-                                    text = providerName.uppercase(),
-                                    style = providerStyle.copy(
-                                        drawStyle = Stroke(
-                                            width = 16f,
-                                            join = StrokeJoin.Round,
-                                            cap = StrokeCap.Round
-                                        )
-                                    ),
-                                    color = innerOutlineColor,
-                                    letterSpacing = 2.sp
-                                )
-                                Text(
-                                    text = providerName.uppercase(),
-                                    style = providerStyle,
-                                    color = textColor,
-                                    letterSpacing = 2.sp
-                                )
-                            }
                         }
                     }
 
