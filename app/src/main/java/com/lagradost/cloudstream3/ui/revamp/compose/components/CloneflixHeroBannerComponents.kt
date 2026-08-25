@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.revamp.compose.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
@@ -36,13 +37,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
@@ -86,9 +91,6 @@ enum class CloneflixHeroBannerType {
     MOVIE_PREVIEW
 }
 
-/**
- * Standard Play Button used in Hero Banners and Title Previews.
- */
 @Composable
 fun CloneflixHeroPlayButton(
     onClick: () -> Unit,
@@ -98,15 +100,16 @@ fun CloneflixHeroPlayButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
+    val scale by animateFloatAsState(
+        targetValue = if (isFocused) 1.05f else 1f,
+        label = "heroPlayBtnScale"
+    )
+
     val background = if (isFocused) PrimaryWhite else PrimaryWhite.copy(alpha = 0.95f)
     val border = if (isFocused) BorderStroke(2.dp, PrimaryRed) else null
 
-    Row(
+    Box(
         modifier = modifier
-            .height(42.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(background)
-            .then(if (border != null) Modifier.border(border, RoundedCornerShape(4.dp)) else Modifier)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -114,31 +117,42 @@ fun CloneflixHeroPlayButton(
                 onClick = onClick
             )
             .focusable(interactionSource = interactionSource)
-            .padding(horizontal = 24.dp, vertical = 8.dp)
             .semantics {
                 contentDescription = "$text Video"
             },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.cloneflix_ic_play),
-            contentDescription = null,
-            tint = PrimaryBlack,
-            modifier = Modifier.size(20.dp)
-        )
-        Text(
-            text = text,
-            color = PrimaryBlack,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Row(
+            modifier = Modifier
+                .height(42.dp)
+                .zIndex(if (isFocused) 10f else 0f)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
+                .clip(RoundedCornerShape(4.dp))
+                .background(background)
+                .then(if (border != null) Modifier.border(border, RoundedCornerShape(4.dp)) else Modifier)
+                .padding(horizontal = 24.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.cloneflix_ic_play),
+                contentDescription = null,
+                tint = PrimaryBlack,
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = text,
+                color = PrimaryBlack,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
-/**
- * Standard More Info Button used in Hero Banners and Title Previews.
- */
 @Composable
 fun CloneflixHeroMoreInfoButton(
     onClick: () -> Unit,
@@ -186,9 +200,59 @@ fun CloneflixHeroMoreInfoButton(
     }
 }
 
-/**
- * Circular Action Button used in Hero Banners (Replay, Volume, Plus, ThumbUp, Close).
- */
+@Composable
+fun CloneflixHeroTrailerButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    text: String = "Play Trailer"
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val dimens = CloneflixTheme.dimens
+
+    val scale by animateFloatAsState(
+        targetValue = if (isFocused) CloneflixTokens.FOCUS_SCALE_FACTOR_LARGE else 1f,
+        label = "heroTrailerBtnScale"
+    )
+
+    val background = if (isFocused) TransparentWhite20 else TransparentBlack60
+    val border = if (isFocused) {
+        BorderStroke(dimens.borderFocus, PrimaryWhite)
+    } else {
+        BorderStroke(dimens.borderDefault, Grey200.copy(alpha = CloneflixTokens.ALPHA_HIGH))
+    }
+
+    Box(
+        modifier = modifier
+            .height(40.dp)
+            .scale(scale)
+            .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
+            .background(background)
+            .border(border, RoundedCornerShape(CloneflixTokens.RadiusCard))
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick
+            )
+            .focusable(interactionSource = interactionSource)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .semantics {
+                role = Role.Button
+                contentDescription = text
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            color = PrimaryWhite,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            style = CloneflixTheme.typography.mediumBody
+        )
+    }
+}
+
 @Composable
 fun CloneflixHeroCircleButton(
     iconRes: Int,
@@ -235,9 +299,6 @@ fun CloneflixHeroCircleButton(
     }
 }
 
-/**
- * Hero Banner Right-Edge Maturity Rating Badge (e.g. "16+", "TV-MA").
- */
 @Composable
 fun CloneflixHeroMaturityRating(
     rating: String = "16+",
@@ -254,7 +315,6 @@ fun CloneflixHeroMaturityRating(
                 shape = RoundedCornerShape(topStart = 2.dp, bottomStart = 2.dp)
             )
             .drawBehind {
-                // Red left accent bar
                 drawRect(
                     color = PrimaryRed,
                     size = androidx.compose.ui.geometry.Size(3.dp.toPx(), size.height)
@@ -273,9 +333,6 @@ fun CloneflixHeroMaturityRating(
     }
 }
 
-/**
- * Title Preview Component from Figma Section 15 (Sizes: Large, Medium, Small1, Small2, Small3).
- */
 @Composable
 fun CloneflixTitlePreview(
     size: CloneflixTitlePreviewSize = CloneflixTitlePreviewSize.LARGE,
@@ -296,10 +353,8 @@ fun CloneflixTitlePreview(
                 modifier = modifier.widthIn(max = 540.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Title Logo Box
                 CloneflixTitleLogoView(title = title, subtitle = subtitle)
 
-                // Top 10 Rank Banner
                 if (!top10RankText.isNullOrBlank()) {
                     CloneflixTop10RankBanner(
                         rankText = top10RankText,
@@ -307,7 +362,6 @@ fun CloneflixTitlePreview(
                     )
                 }
 
-                // Synopsis
                 Text(
                     text = synopsis,
                     style = typography.regularBody,
@@ -317,7 +371,6 @@ fun CloneflixTitlePreview(
                     lineHeight = 22.sp
                 )
 
-                // Action Buttons Row
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -409,9 +462,6 @@ fun CloneflixTitlePreview(
     }
 }
 
-/**
- * Stylized Cinematic Title Logo View.
- */
 @Composable
 fun CloneflixTitleLogoView(
     title: String,
@@ -444,9 +494,6 @@ fun CloneflixTitleLogoView(
     }
 }
 
-/**
- * Versatile Hero Banner Component supporting LandingPage, AuthenticationPage, HomePage, and MoviePreview.
- */
 @Composable
 fun CloneflixHeroBanner(
     type: CloneflixHeroBannerType = CloneflixHeroBannerType.HOME_PAGE,
@@ -472,7 +519,6 @@ fun CloneflixHeroBanner(
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color(0xFF181C24))
             ) {
-                // Background artistic backdrop gradient simulating hero wallpaper
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -484,7 +530,6 @@ fun CloneflixHeroBanner(
                         )
                 )
 
-                // Top Vignette Gradient (for navigation bar contrast)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -496,7 +541,6 @@ fun CloneflixHeroBanner(
                         )
                 )
 
-                // Left Scrim Gradient (for title readability)
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -511,7 +555,6 @@ fun CloneflixHeroBanner(
                         )
                 )
 
-                // Bottom Fade Scrim Gradient (seamless merge into movie rows)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -524,7 +567,6 @@ fun CloneflixHeroBanner(
                         )
                 )
 
-                // Title Preview Overlay (Left)
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -540,7 +582,6 @@ fun CloneflixHeroBanner(
                     )
                 }
 
-                // Controls Overlay (Right: Audio toggle + Maturity Rating)
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -570,7 +611,6 @@ fun CloneflixHeroBanner(
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color(0xFF181C24))
             ) {
-                // Backdrop Gradient
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -582,7 +622,6 @@ fun CloneflixHeroBanner(
                         )
                 )
 
-                // Bottom Fade Scrim
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -595,7 +634,6 @@ fun CloneflixHeroBanner(
                         )
                 )
 
-                // Top Right Close Button
                 if (onCloseClick != null) {
                     Box(
                         modifier = Modifier
@@ -613,7 +651,6 @@ fun CloneflixHeroBanner(
                     }
                 }
 
-                // Bottom-Left Title & Actions
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -652,7 +689,6 @@ fun CloneflixHeroBanner(
                     }
                 }
 
-                // Bottom-Right Audio Toggle
                 if (onAudioToggle != null) {
                     Box(
                         modifier = Modifier
@@ -678,7 +714,6 @@ fun CloneflixHeroBanner(
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color(0xFF0F1115))
             ) {
-                // Vignette background
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -690,7 +725,6 @@ fun CloneflixHeroBanner(
                         )
                 )
 
-                // Header Navigation
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -715,7 +749,6 @@ fun CloneflixHeroBanner(
                     )
                 }
 
-                // Central Hero Content
                 Column(
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -772,7 +805,6 @@ fun CloneflixHeroBanner(
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color(0xFF0F1115))
             ) {
-                // Vignette background
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -784,7 +816,6 @@ fun CloneflixHeroBanner(
                         )
                 )
 
-                // Header
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -801,7 +832,6 @@ fun CloneflixHeroBanner(
                     )
                 }
 
-                // Auth Card in Center
                 Box(
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -841,10 +871,6 @@ fun CloneflixHeroBanner(
     }
 }
 
-/**
- * Full Composed Home Page Hero Pattern from Figma Section 15 (Frame 314).
- * Includes Top App Navigation Bar, Hero Backdrop with Title Preview, Rating, and Bottom Shelf Preview.
- */
 @Composable
 fun CloneflixHomePageHeroPattern(
     onPlayClick: () -> Unit = {},
@@ -865,7 +891,6 @@ fun CloneflixHomePageHeroPattern(
             .clip(RoundedCornerShape(8.dp))
             .background(Color(0xFF141414))
     ) {
-        // 1. Top Navigation Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -878,7 +903,6 @@ fun CloneflixHomePageHeroPattern(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Left: Logo & Nav items
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
@@ -928,7 +952,6 @@ fun CloneflixHomePageHeroPattern(
                 }
             }
 
-            // Right: Actions (Search, Notification, Profile)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -951,7 +974,6 @@ fun CloneflixHomePageHeroPattern(
                         .clickable(onClick = onNotificationClick)
                 )
 
-                // Profile Avatar with Dropdown Arrow
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -981,7 +1003,6 @@ fun CloneflixHomePageHeroPattern(
             }
         }
 
-        // 2. Hero Banner Body
         CloneflixHeroBanner(
             type = CloneflixHeroBannerType.HOME_PAGE,
             title = "HOUSE OF NINJAS",
@@ -994,7 +1015,6 @@ fun CloneflixHomePageHeroPattern(
             isMuted = isMuted
         )
 
-        // 3. Bottom Trending Shelf Row Preview
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1047,7 +1067,6 @@ fun CloneflixHomePageHeroPattern(
                             .focusable(interactionSource = interactionSource)
                             .padding(8.dp)
                     ) {
-                        // Badge Tag
                         Box(
                             modifier = Modifier
                                 .align(Alignment.TopStart)

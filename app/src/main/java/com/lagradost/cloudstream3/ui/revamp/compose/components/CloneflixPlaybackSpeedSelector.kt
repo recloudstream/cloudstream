@@ -111,7 +111,6 @@ fun CloneflixPlaybackSpeedSelector(
             modifier = Modifier.padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Top Row with Title & optional Close
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -145,14 +144,12 @@ fun CloneflixPlaybackSpeedSelector(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Speed step track with points
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 contentAlignment = Alignment.Center
             ) {
-                // Connecting line
                 Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -168,7 +165,6 @@ fun CloneflixPlaybackSpeedSelector(
                     )
                 }
 
-                // Steps row
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -221,7 +217,6 @@ fun CloneflixPlaybackSpeedSelector(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Speed labels row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

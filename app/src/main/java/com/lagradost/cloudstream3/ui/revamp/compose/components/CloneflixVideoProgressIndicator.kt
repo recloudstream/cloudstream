@@ -200,7 +200,6 @@ fun CloneflixVideoProgressIndicator(
                 val trackHeightPx = trackHeight.toPx()
                 val cornerRadius = CornerRadius(trackHeightPx / 2f, trackHeightPx / 2f)
 
-                // 1. Background (Remaining) track
                 drawRoundRect(
                     color = Grey450,
                     topLeft = Offset(0f, centerY - trackHeightPx / 2f),
@@ -208,7 +207,6 @@ fun CloneflixVideoProgressIndicator(
                     cornerRadius = cornerRadius
                 )
 
-                // 2. Buffered progress track
                 val bufferedWidth = (bufferedProgress.coerceIn(0f, 1f) * totalWidth)
                 if (bufferedWidth > 0f) {
                     drawRoundRect(
@@ -219,7 +217,6 @@ fun CloneflixVideoProgressIndicator(
                     )
                 }
 
-                // 3. Played progress track
                 val playedWidth = (animatedProgress * totalWidth)
                 if (playedWidth > 0f) {
                     drawRoundRect(
@@ -230,7 +227,6 @@ fun CloneflixVideoProgressIndicator(
                     )
                 }
 
-                // 4. Halo ring on hover/focus
                 if (haloRadius.value > 0f) {
                     drawCircle(
                         color = PrimaryRed.copy(alpha = 0.25f),
@@ -239,14 +235,12 @@ fun CloneflixVideoProgressIndicator(
                     )
                 }
 
-                // 5. Scrubber thumb handle
                 drawCircle(
                     color = PrimaryRed,
                     radius = thumbRadius.toPx(),
                     center = Offset(playedWidth, centerY)
                 )
 
-                // 6. Center dot highlight in thumb
                 if (isHovered) {
                     drawCircle(
                         color = PrimaryWhite,

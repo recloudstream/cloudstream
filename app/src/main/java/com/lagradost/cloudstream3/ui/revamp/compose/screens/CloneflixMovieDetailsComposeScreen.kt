@@ -4,6 +4,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,6 +23,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.relocation.BringIntoViewResponder
+import androidx.compose.foundation.relocation.bringIntoViewResponder
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,8 +46,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -65,6 +72,7 @@ import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixBadgeTyp
 import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixCircleActionButton
 import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixDropdown
 import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixHeroPlayButton
+import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixHeroTrailerButton
 import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixLogoVariant
 import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixLogoView
 import com.lagradost.cloudstream3.ui.revamp.compose.components.CloneflixMaturityRating
@@ -93,20 +101,13 @@ import com.lagradost.cloudstream3.ui.revamp.compose.theme.TransparentBlack60
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import kotlinx.coroutines.launch
 
-/**
- * Data representation for trailer / extra clips in Figma Node 121:4925.
- */
 data class CloneflixTrailerData(
     val title: String,
     val runtime: String,
     val rawTrailer: Any? = null
 )
 
-/**
- * Movie Details Page / Details Only Screen based on Figma Node 121:4892.
- * Fully dynamic and optimized for Google TV / Android TV D-Pad traversal and Mobile touch.
- * Only renders sections and elements where real data is available; hides dummy/unsupported UI.
- */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CloneflixMovieDetailsComposeScreen(
     modifier: Modifier = Modifier,
@@ -156,6 +157,7 @@ fun CloneflixMovieDetailsComposeScreen(
     val typography = CloneflixTheme.typography
     val dimens = CloneflixTheme.dimens
     val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
 
     val playButtonFocusRequester = remember { FocusRequester() }
 
@@ -174,7 +176,6 @@ fun CloneflixMovieDetailsComposeScreen(
         mutableStateOf(seasonOptions.getOrElse(selectedSeasonIndex) { seasonOptions.firstOrNull() ?: "" })
     }
 
-    // Keep selectedSeasonText in sync when selectedSeasonIndex prop updates from ViewModel
     LaunchedEffect(selectedSeasonIndex, seasonOptions) {
         if (seasonOptions.isNotEmpty()) {
             selectedSeasonText = seasonOptions.getOrElse(selectedSeasonIndex) { seasonOptions.first() }
@@ -211,17 +212,25 @@ fun CloneflixMovieDetailsComposeScreen(
             .background(colors.background)
             .verticalScroll(scrollState)
     ) {
-        // ==========================================
-        // 1. HERO BANNER SECTION (Figma 121:4893 - 60% Screen Height Crop)
-        // ==========================================
+        val heroBringIntoViewResponder = remember {
+            object : BringIntoViewResponder {
+                override fun calculateRectForParent(localRect: Rect): Rect {
+                    return Rect(0f, 0f, localRect.right, localRect.bottom)
+                }
+
+                override suspend fun bringChildIntoView(localRect: () -> Rect?) {
+                }
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(heroHeight)
+                .bringIntoViewResponder(heroBringIntoViewResponder)
                 .clipToBounds()
                 .background(colors.background)
         ) {
-            // Live Backdrop Image filling full banner width & height
             if (!backdropUrl.isNullOrBlank()) {
                 AndroidView(
                     factory = { ctx ->
@@ -240,7 +249,6 @@ fun CloneflixMovieDetailsComposeScreen(
                 )
             }
 
-            // Bottom Hero Gradient Overlay (fades smoothly down into the page background)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -258,7 +266,6 @@ fun CloneflixMovieDetailsComposeScreen(
                     )
             )
 
-            // Top-Right: Logo + Close Button
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
@@ -279,13 +286,11 @@ fun CloneflixMovieDetailsComposeScreen(
                 )
             }
 
-            // Title, Wordmark, and Action Buttons aligned at the bottom
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacingL)
             ) {
-                // Movie Title Logo or Title Text
                 if (!logoUrl.isNullOrBlank()) {
                     Box(
                         modifier = Modifier
@@ -317,7 +322,6 @@ fun CloneflixMovieDetailsComposeScreen(
 
                 Spacer(modifier = Modifier.height(dimens.spacingL))
 
-                // Primary Play Button (Separate dedicated section)
                 CloneflixHeroPlayButton(
                     onClick = onPlayClick,
                     text = "Play",
@@ -325,42 +329,52 @@ fun CloneflixMovieDetailsComposeScreen(
                         .focusRequester(playButtonFocusRequester)
                         .onFocusChanged { state ->
                             if (state.isFocused && scrollState.value > 0) {
-                                // Keep Hero banner fully visible when play button is focused
+                                coroutineScope.launch {
+                                    scrollState.animateScrollTo(0)
+                                }
                             }
                         }
                 )
 
                 Spacer(modifier = Modifier.height(dimens.spacingM))
 
-                // Secondary Action Buttons Row (Add to List, Like, Trailer) below Play button
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
-                ) {
-                    // Add to My List (+)
-                    CloneflixCircleActionButton(
-                        icon = painterResource(
-                            id = if (inMyListState) R.drawable.cloneflix_ic_check else R.drawable.cloneflix_ic_plus
-                        ),
-                        contentDescription = if (inMyListState) "In My List" else "Add to My List",
-                        onClick = {
-                            inMyListState = !inMyListState
-                            onAddToListClick()
+                    modifier = Modifier.onFocusChanged { state ->
+                        if (state.hasFocus && scrollState.value > 0) {
+                            coroutineScope.launch {
+                                scrollState.animateScrollTo(0)
+                            }
                         }
-                    )
-
-                    // Thumbs Up / Like
-                    CloneflixCircleActionButton(
-                        icon = painterResource(id = R.drawable.cloneflix_ic_thumb_up),
-                        contentDescription = "Like",
-                        onClick = onLikeClick
-                    )
-
-                    // Trailer Toggle (shown only if trailer links available)
-                    if (hasTrailers) {
+                    }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                    ) {
                         CloneflixCircleActionButton(
-                            icon = painterResource(id = R.drawable.cloneflix_ic_play),
-                            contentDescription = "Trailer",
+                            icon = painterResource(
+                                id = if (inMyListState) R.drawable.cloneflix_ic_check else R.drawable.cloneflix_ic_plus
+                            ),
+                            contentDescription = if (inMyListState) "In My List" else "Add to My List",
+                            onClick = {
+                                inMyListState = !inMyListState
+                                onAddToListClick()
+                            }
+                        )
+
+                        CloneflixCircleActionButton(
+                            icon = painterResource(id = R.drawable.cloneflix_ic_thumb_up),
+                            contentDescription = "Like",
+                            onClick = onLikeClick
+                        )
+                    }
+
+                    if (hasTrailers) {
+                        Spacer(modifier = Modifier.width(dimens.spacingL))
+
+                        CloneflixHeroTrailerButton(
+                            text = "Trailer",
                             onClick = onTrailerClick
                         )
                     }
@@ -368,31 +382,23 @@ fun CloneflixMovieDetailsComposeScreen(
             }
         }
 
-        // ==========================================
-        // CONTENT SECTIONS WRAPPER WITH SAFE MARGINS
-        // ==========================================
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacingL)
         ) {
-            // ==========================================
-            // 2. MOVIE INFO & METADATA SECTION (Figma 121:4894)
-            // ==========================================
             val hasRightColumn = castList.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty()
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(dimens.spacing2Xl)
             ) {
-                // Left Column: Badges, Top 10, Synopsis
                 Column(
                     modifier = Modifier
                         .weight(if (hasRightColumn) 0.65f else 1f)
                         .fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
                 ) {
-                    // Line 1: Match Score, Year, Duration, Quality (rendered only if available)
                     val hasLine1 = !matchScore.isNullOrBlank() || !releaseYear.isNullOrBlank() ||
                             !seasonsCount.isNullOrBlank() || !quality.isNullOrBlank()
 
@@ -432,7 +438,6 @@ fun CloneflixMovieDetailsComposeScreen(
                         }
                     }
 
-                    // Line 2: Rating & Content Advisories (rendered only if available)
                     if (!maturityRating.isNullOrBlank() || !advisories.isNullOrBlank()) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -451,7 +456,6 @@ fun CloneflixMovieDetailsComposeScreen(
                         }
                     }
 
-                    // Line 3: Top 10 Rank Badge (rendered only if available)
                     if (!top10RankText.isNullOrBlank()) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -480,18 +484,36 @@ fun CloneflixMovieDetailsComposeScreen(
                         }
                     }
 
-                    // Line 4: Synopsis
                     if (synopsis.isNotBlank()) {
-                        Text(
-                            text = synopsis,
-                            style = typography.regularBody,
-                            color = Grey50,
-                            lineHeight = 22.sp
-                        )
+                        val synopsisInteractionSource = remember { MutableInteractionSource() }
+                        val isSynopsisFocused by synopsisInteractionSource.collectIsFocusedAsState()
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
+                                .background(if (isSynopsisFocused) Grey800.copy(alpha = 0.5f) else Color.Transparent)
+                                .then(
+                                    if (isSynopsisFocused) {
+                                        Modifier.border(
+                                            BorderStroke(dimens.borderFocus, PrimaryWhite),
+                                            RoundedCornerShape(CloneflixTokens.RadiusCard)
+                                        )
+                                    } else Modifier
+                                )
+                                .focusable(interactionSource = synopsisInteractionSource)
+                                .padding(dimens.spacingS)
+                        ) {
+                            Text(
+                                text = synopsis,
+                                style = typography.regularBody,
+                                color = if (isSynopsisFocused) PrimaryWhite else Grey50,
+                                lineHeight = 22.sp
+                            )
+                        }
                     }
                 }
 
-                // Right Column: Cast, Genres, Mood Tags (rendered only if metadata exists)
                 if (hasRightColumn) {
                     Column(
                         modifier = Modifier
@@ -499,7 +521,6 @@ fun CloneflixMovieDetailsComposeScreen(
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
                     ) {
-                        // Cast Row
                         if (castList.isNotEmpty()) {
                             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 Text(
@@ -517,7 +538,6 @@ fun CloneflixMovieDetailsComposeScreen(
                             }
                         }
 
-                        // Genres Row
                         if (genres.isNotEmpty()) {
                             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 Text(
@@ -533,7 +553,6 @@ fun CloneflixMovieDetailsComposeScreen(
                             }
                         }
 
-                        // This show is (Moods)
                         if (moodTags.isNotEmpty()) {
                             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 Text(
@@ -556,13 +575,10 @@ fun CloneflixMovieDetailsComposeScreen(
                 Spacer(modifier = Modifier.height(dimens.spacing3Xl))
             }
 
-            // ==========================================
-            // 3. EPISODES & SEASONS SECTION (Figma 121:4895)
-            // ==========================================
             if (episodesToDisplay.isNotEmpty()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(dimens.spacingL),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -572,7 +588,6 @@ fun CloneflixMovieDetailsComposeScreen(
                         color = PrimaryWhite
                     )
 
-                    // Season Selection Dropdown
                     if (seasonOptions.size > 1) {
                         CloneflixDropdown(
                             options = seasonOptions,
@@ -589,7 +604,6 @@ fun CloneflixMovieDetailsComposeScreen(
 
                 Spacer(modifier = Modifier.height(dimens.spacingL))
 
-                // Episodes List
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(dimens.spacingL)
@@ -612,9 +626,6 @@ fun CloneflixMovieDetailsComposeScreen(
                 Spacer(modifier = Modifier.height(dimens.spacing3Xl))
             }
 
-            // ==========================================
-            // 4. MORE LIKE THIS SECTION (Figma 121:4909 - Poster Layout)
-            // ==========================================
             if (recommendationCards.isNotEmpty()) {
                 Text(
                     text = "More Like This",
@@ -625,7 +636,6 @@ fun CloneflixMovieDetailsComposeScreen(
 
                 Spacer(modifier = Modifier.height(dimens.spacingL))
 
-                // Responsive Poster Grid (6 columns per row for TV immersion)
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(dimens.spacingL)
@@ -671,9 +681,6 @@ fun CloneflixMovieDetailsComposeScreen(
                 Spacer(modifier = Modifier.height(dimens.spacing3Xl))
             }
 
-            // ==========================================
-            // 5. TRAILERS & MORE SECTION (Figma 121:4925)
-            // ==========================================
             if (trailersList.isNotEmpty()) {
                 Text(
                     text = "Trailers & More",
@@ -705,9 +712,6 @@ fun CloneflixMovieDetailsComposeScreen(
                 Spacer(modifier = Modifier.height(dimens.spacing3Xl))
             }
 
-            // ==========================================
-            // 6. ABOUT SECTION (Figma 121:4932 - Focusable Container for D-Pad)
-            // ==========================================
             val hasAboutContent = !creator.isNullOrBlank() || castList.isNotEmpty() ||
                     writers.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty() ||
                     !maturityRating.isNullOrBlank()
@@ -770,9 +774,6 @@ fun CloneflixMovieDetailsComposeScreen(
     }
 }
 
-/**
- * Dynamic Episode item row inside the Details Page (Figma Node 121:4895).
- */
 @Composable
 fun CloneflixDynamicEpisodeRow(
     episode: ResultEpisode,
@@ -794,25 +795,33 @@ fun CloneflixDynamicEpisodeRow(
     val border = if (isFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else null
     val progress = remember(episode) { episode.getWatchProgress() }
 
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .scale(scale)
-            .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
-            .background(background)
-            .then(if (border != null) Modifier.border(border, RoundedCornerShape(CloneflixTokens.RadiusCardMedium)) else Modifier)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
                 role = Role.Button,
                 onClick = onClick
             )
-            .focusable(interactionSource = interactionSource)
-            .padding(dimens.spacingL),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
+            .focusable(interactionSource = interactionSource),
+        contentAlignment = Alignment.Center
     ) {
-        // Episode Number Index
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .zIndex(if (isFocused) 10f else 0f)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
+                .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
+                .background(background)
+                .then(if (border != null) Modifier.border(border, RoundedCornerShape(CloneflixTokens.RadiusCardMedium)) else Modifier)
+                .padding(dimens.spacingL),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
+        ) {
         Text(
             text = episode.episode.toString(),
             style = typography.boldTitle1,
@@ -821,7 +830,6 @@ fun CloneflixDynamicEpisodeRow(
             modifier = Modifier.width(32.dp)
         )
 
-        // 16:9 Episode Thumbnail with Play Overlay & Progress Bar
         Box(
             modifier = Modifier
                 .width(160.dp)
@@ -843,7 +851,6 @@ fun CloneflixDynamicEpisodeRow(
                 )
             }
 
-            // Play Icon Overlay
             Box(
                 modifier = Modifier
                     .size(36.dp)
@@ -862,7 +869,6 @@ fun CloneflixDynamicEpisodeRow(
                 )
             }
 
-            // Watched Progress Bar (if watched partially)
             if (progress > 0.05f) {
                 Box(
                     modifier = Modifier
@@ -881,7 +887,6 @@ fun CloneflixDynamicEpisodeRow(
             }
         }
 
-        // Title, Duration, and Description
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -920,7 +925,6 @@ fun CloneflixDynamicEpisodeRow(
             }
         }
 
-        // Download Action Button
         CloneflixCircleActionButton(
             icon = painterResource(id = R.drawable.netflix_download),
             contentDescription = "Download Episode ${episode.episode}",
@@ -929,10 +933,8 @@ fun CloneflixDynamicEpisodeRow(
         )
     }
 }
+}
 
-/**
- * Trailer item card in Trailers & More (Figma Node 121:4925).
- */
 @Composable
 fun CloneflixTrailerItemCard(
     trailer: CloneflixTrailerData,
@@ -951,72 +953,78 @@ fun CloneflixTrailerItemCard(
 
     val border = if (isFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else BorderStroke(dimens.borderSubtle, Grey700)
 
-    Column(
+    Box(
         modifier = modifier
-            .scale(scale)
-            .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
-            .background(Grey850)
-            .border(border, RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
                 role = Role.Button,
                 onClick = onClick
             )
-            .focusable(interactionSource = interactionSource)
+            .focusable(interactionSource = interactionSource),
+        contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(130.dp)
-                .background(Grey700)
-        ) {
-            // Play overlay
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(TransparentBlack60)
-                    .border(BorderStroke(1.5.dp, PrimaryWhite), CircleShape)
-                    .align(Alignment.Center)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.cloneflix_ic_play),
-                    contentDescription = null,
-                    tint = PrimaryWhite,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .align(Alignment.Center)
-                )
-            }
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimens.spacingM),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+                .zIndex(if (isFocused) 10f else 0f)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
+                .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
+                .background(Grey850)
+                .border(border, RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
         ) {
-            Text(
-                text = trailer.title,
-                style = typography.mediumBody,
-                fontWeight = FontWeight.Bold,
-                color = PrimaryWhite,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = trailer.runtime,
-                style = typography.regularCaption2,
-                color = Grey200
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(130.dp)
+                    .background(Grey700)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(CircleShape)
+                        .background(TransparentBlack60)
+                        .border(BorderStroke(1.5.dp, PrimaryWhite), CircleShape)
+                        .align(Alignment.Center)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.cloneflix_ic_play),
+                        contentDescription = null,
+                        tint = PrimaryWhite,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(dimens.spacingM),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = trailer.title,
+                    style = typography.mediumBody,
+                    fontWeight = FontWeight.Bold,
+                    color = PrimaryWhite,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = trailer.runtime,
+                    style = typography.regularCaption2,
+                    color = Grey200
+                )
+            }
         }
     }
 }
 
-/**
- * Metadata row inside the About section (Figma Node 121:4932).
- */
 @Composable
 fun CloneflixAboutMetadataRow(
     label: String,
@@ -1047,12 +1055,6 @@ fun CloneflixAboutMetadataRow(
 @Preview(
     name = "TV 1080p Landscape",
     device = "spec:width=1920dp,height=1080dp,dpi=320,orientation=landscape",
-    showBackground = true,
-    backgroundColor = 0xFF141414
-)
-@Preview(
-    name = "TV 720p Landscape",
-    device = "spec:width=1280dp,height=720dp,dpi=213,orientation=landscape",
     showBackground = true,
     backgroundColor = 0xFF141414
 )

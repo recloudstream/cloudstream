@@ -5,33 +5,23 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * Central design tokens and defaults for Cloneflix components.
- * Eliminates magic numbers across Jetpack Compose UI.
- */
 object CloneflixTokens {
-    // Focus & Motion Tokens
     const val FOCUS_SCALE_FACTOR = 1.05f
     const val FOCUS_SCALE_FACTOR_LARGE = 1.08f
     const val FOCUS_SCALE_FACTOR_SUBTLE = 1.02f
 
-    // Alpha / Opacity Tokens
     const val ALPHA_MUTED = 0.3f
     const val ALPHA_SUBTLE = 0.4f
     const val ALPHA_MEDIUM = 0.6f
     const val ALPHA_HIGH = 0.7f
     const val ALPHA_NEAR_OPAQUE = 0.9f
 
-    // Common Radii
     val RadiusPill: Dp = 999.dp
     val RadiusCard: Dp = 4.dp
     val RadiusCardMedium: Dp = 8.dp
     val RadiusCardLarge: Dp = 12.dp
 }
 
-/**
- * Defaults and dimension formulas for Cloneflix Movie Cards.
- */
 object CloneflixMovieCardDefaults {
     val WidthMedium: Dp = 218.dp
     val WidthSmall: Dp = 128.dp
@@ -102,9 +92,6 @@ object CloneflixMovieCardDefaults {
     }
 }
 
-/**
- * Defaults for Video Player and Media Control Overlays.
- */
 object CloneflixPlayerDefaults {
     val ControlButtonSize: Dp = 48.dp
     val ControlButtonSizeLarge: Dp = 64.dp
@@ -118,9 +105,6 @@ object CloneflixPlayerDefaults {
     val SpeedItemWidth: Dp = 72.dp
 }
 
-/**
- * Defaults for Episodes and Drawer Panels.
- */
 object CloneflixDrawerDefaults {
     val DrawerWidth: Dp = 380.dp
     val EpisodeItemCornerRadius: Dp = 6.dp

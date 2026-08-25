@@ -165,7 +165,6 @@ fun CloneflixVideoPlayerControlBar(
             .background(Color(0xDF141414))
             .padding(dimens.spacingL)
     ) {
-        // Scrubber / Progress Bar
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -200,13 +199,11 @@ fun CloneflixVideoPlayerControlBar(
 
         Spacer(modifier = Modifier.height(dimens.spacingM))
 
-        // Control buttons row
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left Group
             Row(
                 horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
                 verticalAlignment = Alignment.CenterVertically
@@ -237,7 +234,6 @@ fun CloneflixVideoPlayerControlBar(
                 )
             }
 
-            // Center Title
             Text(
                 text = title,
                 style = typography.mediumBody,
@@ -245,7 +241,6 @@ fun CloneflixVideoPlayerControlBar(
                 color = PrimaryWhite
             )
 
-            // Right Group
             Row(
                 horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
                 verticalAlignment = Alignment.CenterVertically

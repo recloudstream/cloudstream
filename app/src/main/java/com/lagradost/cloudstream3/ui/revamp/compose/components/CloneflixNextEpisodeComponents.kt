@@ -96,7 +96,6 @@ fun CloneflixNextEpisodeCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Header row with countdown and close button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -148,13 +147,11 @@ fun CloneflixNextEpisodeCard(
                 }
             }
 
-            // Thumbnail preview + Episode Info row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                // Thumbnail Box
                 Box(
                     modifier = Modifier
                         .width(130.dp)
@@ -183,7 +180,6 @@ fun CloneflixNextEpisodeCard(
                         )
                     }
 
-                    // Duration pill
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
@@ -200,7 +196,6 @@ fun CloneflixNextEpisodeCard(
                     }
                 }
 
-                // Info Column
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -227,7 +222,6 @@ fun CloneflixNextEpisodeCard(
                 }
             }
 
-            // Action button "Play Next"
             val playNextInteraction = remember { MutableInteractionSource() }
             val isPlayNextFocused by playNextInteraction.collectIsFocusedAsState()
 

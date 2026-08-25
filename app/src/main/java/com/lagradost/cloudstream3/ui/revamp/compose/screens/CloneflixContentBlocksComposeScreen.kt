@@ -71,9 +71,6 @@ fun CloneflixContentBlocksComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // --------------------------------------------------------------------
-        // 1. HEADERS
-        // --------------------------------------------------------------------
         Text(
             text = "HEADERS",
             style = typography.sectionHeader,
@@ -125,9 +122,6 @@ fun CloneflixContentBlocksComposeScreen(
         CloneflixDivider()
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // --------------------------------------------------------------------
-        // 2. LANDING PAGE BLOCKS
-        // --------------------------------------------------------------------
         Text(
             text = "LANDING PAGE BLOCKS",
             style = typography.sectionHeader,
@@ -137,7 +131,6 @@ fun CloneflixContentBlocksComposeScreen(
 
         CloneflixCard(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(dimens.spacingL)) {
-                // Block 1: Headline + Image (TV)
                 CloneflixFeatureBlock(
                     title = "Enjoy on your TV",
                     description = "Watch on Smart TVs, Playstation, Xbox, Chromecast, Apple TV, Blu-ray players, and more.",
@@ -149,7 +142,6 @@ fun CloneflixContentBlocksComposeScreen(
 
                 Spacer(modifier = Modifier.height(dimens.spacingL))
 
-                // Block 2: Image + Headline (Devices)
                 CloneflixFeatureBlock(
                     title = "Watch everywhere",
                     description = "Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.",
@@ -161,7 +153,6 @@ fun CloneflixContentBlocksComposeScreen(
 
                 Spacer(modifier = Modifier.height(dimens.spacingL))
 
-                // Block 3: Headline + Image (Kids)
                 CloneflixFeatureBlock(
                     title = "Create profiles for kids",
                     description = "Send kids on adventures with their favorite characters in a space made just for them — free with your membership.",
@@ -177,9 +168,6 @@ fun CloneflixContentBlocksComposeScreen(
         CloneflixDivider()
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // --------------------------------------------------------------------
-        // 3. SCREENS PREVIEWS
-        // --------------------------------------------------------------------
         Text(
             text = "SCREENS PREVIEWS",
             style = typography.sectionHeader,
@@ -257,9 +245,6 @@ fun CloneflixContentBlocksComposeScreen(
         CloneflixDivider()
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // --------------------------------------------------------------------
-        // 4. FAQ ACCORDION
-        // --------------------------------------------------------------------
         Text(
             text = "FAQ ACCORDION",
             style = typography.sectionHeader,
@@ -275,9 +260,6 @@ fun CloneflixContentBlocksComposeScreen(
         CloneflixDivider()
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // --------------------------------------------------------------------
-        // 5. FOOTERS
-        // --------------------------------------------------------------------
         Text(
             text = "FOOTERS",
             style = typography.sectionHeader,

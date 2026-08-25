@@ -46,9 +46,6 @@ import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryWhite
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Red100
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.Red300
 
-/**
- * Maturity Rating Badges from Figma Design System (TV-Y, TV-Y7, G, TV-G, PG, TV-PG, PG-13, TV-14, R, TV-MA, NC-17).
- */
 @Composable
 fun CloneflixMaturityRating(
     rating: String,
@@ -58,16 +55,17 @@ fun CloneflixMaturityRating(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val borderColor = if (isFocused) PrimaryWhite else Grey25
-    val borderWidth = if (isFocused) 1.8.dp else 1.dp
-    val textColor = if (isFocused) PrimaryWhite else Grey25
+    val isInteractive = onClick != null
+    val borderColor = if (isInteractive && isFocused) PrimaryWhite else Grey25
+    val borderWidth = if (isInteractive && isFocused) 1.8.dp else 1.dp
+    val textColor = if (isInteractive && isFocused) PrimaryWhite else Grey25
 
     Box(
         modifier = modifier
             .height(22.dp)
             .clip(RoundedCornerShape(2.dp))
             .border(BorderStroke(borderWidth, borderColor), RoundedCornerShape(2.dp))
-            .background(if (isFocused) Grey300T40 else Color.Transparent)
+            .background(if (isInteractive && isFocused) Grey300T40 else Color.Transparent)
             .then(
                 if (onClick != null) {
                     Modifier
@@ -79,7 +77,7 @@ fun CloneflixMaturityRating(
                         )
                         .focusable(interactionSource = interactionSource)
                 } else {
-                    Modifier.focusable(interactionSource = interactionSource)
+                    Modifier
                 }
             )
             .padding(horizontal = 6.5.dp),
@@ -99,9 +97,6 @@ fun CloneflixMaturityRating(
     }
 }
 
-/**
- * Video Quality Badges (HD, 4K, HDR, UltraHD 4K, Dolby Vision).
- */
 @Composable
 fun CloneflixVideoQualityBadge(
     quality: String,
@@ -111,16 +106,17 @@ fun CloneflixVideoQualityBadge(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val borderColor = if (isFocused) PrimaryWhite else Grey200
-    val borderWidth = if (isFocused) 1.5.dp else 1.dp
-    val textColor = if (isFocused) PrimaryWhite else Grey10
+    val isInteractive = onClick != null
+    val borderColor = if (isInteractive && isFocused) PrimaryWhite else Grey200
+    val borderWidth = if (isInteractive && isFocused) 1.5.dp else 1.dp
+    val textColor = if (isInteractive && isFocused) PrimaryWhite else Grey10
 
     Box(
         modifier = modifier
             .height(18.dp)
             .clip(RoundedCornerShape(4.dp))
             .border(BorderStroke(borderWidth, borderColor), RoundedCornerShape(4.dp))
-            .background(if (isFocused) Grey300T40 else Color.Transparent)
+            .background(if (isInteractive && isFocused) Grey300T40 else Color.Transparent)
             .then(
                 if (onClick != null) {
                     Modifier
@@ -132,7 +128,7 @@ fun CloneflixVideoQualityBadge(
                         )
                         .focusable(interactionSource = interactionSource)
                 } else {
-                    Modifier.focusable(interactionSource = interactionSource)
+                    Modifier
                 }
             )
             .padding(horizontal = 6.dp),
@@ -158,9 +154,6 @@ enum class CloneflixTop10Size {
     SMALL
 }
 
-/**
- * Iconic Top 10 Red Stacked Badge.
- */
 @Composable
 fun CloneflixTop10Badge(
     modifier: Modifier = Modifier,
@@ -216,9 +209,6 @@ fun CloneflixTop10Badge(
     }
 }
 
-/**
- * Top 10 with Rank text (e.g. "#2 in TV Shows Today").
- */
 @Composable
 fun CloneflixTop10RankBanner(
     rankText: String,
@@ -278,9 +268,6 @@ enum class CloneflixBadgeType(@androidx.annotation.StringRes val stringRes: Int)
     LEAVING_SOON(com.lagradost.cloudstream3.R.string.cloneflix_badge_leaving_soon)
 }
 
-/**
- * Content Status Pill Badges (Recently Added, New Season, Top 10, Leaving Soon).
- */
 @Composable
 fun CloneflixContentBadge(
     type: CloneflixBadgeType,
@@ -323,10 +310,6 @@ enum class CloneflixLogoVariant {
     LETTERMARK_SMALL
 }
 
-/**
- * Cloneflix Brand Logo Composable (Wordmark & Lettermark).
- * Optionally displays provider/plugin name or custom text in brand styling.
- */
 @Composable
 fun CloneflixLogoView(
     variant: CloneflixLogoVariant = CloneflixLogoVariant.WORDMARK_MEDIUM,

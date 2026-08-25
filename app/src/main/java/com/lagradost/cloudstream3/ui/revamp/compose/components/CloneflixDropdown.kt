@@ -212,9 +212,6 @@ fun CloneflixDropdown(
     }
 }
 
-/**
- * Static showcase container for displaying dropdown state variants.
- */
 @Composable
 fun CloneflixDropdownStaticShowcase(
     title: String,

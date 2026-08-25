@@ -136,7 +136,6 @@ fun CloneflixVerticalVolumeBar(
             val barX = (totalW - barW) / 2f
             val corner = CornerRadius(barW / 2f, barW / 2f)
 
-            // Background bar (grey)
             drawRoundRect(
                 color = Grey450,
                 topLeft = Offset(barX, 0f),
@@ -144,7 +143,6 @@ fun CloneflixVerticalVolumeBar(
                 cornerRadius = corner
             )
 
-            // Active bar (red) from bottom upwards
             val fillH = animatedVolume * totalH
             if (fillH > 0f) {
                 drawRoundRect(
@@ -155,7 +153,6 @@ fun CloneflixVerticalVolumeBar(
                 )
             }
 
-            // Scrubber thumb circle
             val thumbY = totalH - fillH
             val thumbRadius = 7.dp.toPx()
             drawCircle(

@@ -110,7 +110,6 @@ fun CloneflixEpisodeCard(
         color = if (isFocused) Color(0xFF282828) else Color(0xEB1C1C1C)
     ) {
         Column(modifier = Modifier.padding(dimens.spacingS)) {
-            // Thumbnail with progress bar
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -147,7 +146,6 @@ fun CloneflixEpisodeCard(
                     )
                 }
 
-                // Duration badge
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -162,7 +160,6 @@ fun CloneflixEpisodeCard(
                     )
                 }
 
-                // Progress line
                 if (item.progress > 0f) {
                     Box(
                         modifier = Modifier
@@ -183,7 +180,6 @@ fun CloneflixEpisodeCard(
 
             Spacer(modifier = Modifier.height(dimens.spacingS))
 
-            // Episode title + badge
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -236,7 +232,6 @@ fun CloneflixEpisodesDrawer(
                 .fillMaxWidth()
                 .padding(vertical = dimens.spacingL)
         ) {
-            // Header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -276,7 +271,6 @@ fun CloneflixEpisodesDrawer(
 
             Spacer(modifier = Modifier.height(dimens.spacingL))
 
-            // Episodes carousel
             LazyRow(
                 state = listState,
                 contentPadding = PaddingValues(horizontal = dimens.spacing2Xl),

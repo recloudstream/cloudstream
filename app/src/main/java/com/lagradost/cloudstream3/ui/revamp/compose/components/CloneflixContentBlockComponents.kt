@@ -66,13 +66,6 @@ import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryRed
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryWhite
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.TransparentWhite20
 
-// ============================================================================
-// 1. HEADERS (Landing Page & Home Page)
-// ============================================================================
-
-/**
- * Landing Page Header with Logo, Language selector dropdown, and Sign In action button.
- */
 @Composable
 fun CloneflixLandingHeader(
     onSignInClick: () -> Unit = {},
@@ -92,7 +85,6 @@ fun CloneflixLandingHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Logo
         Text(
             text = "CLONEFLIX",
             style = typography.logoBebas,
@@ -100,7 +92,6 @@ fun CloneflixLandingHeader(
             color = PrimaryRed
         )
 
-        // Actions (Language dropdown + Sign In button)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
@@ -123,9 +114,6 @@ fun CloneflixLandingHeader(
     }
 }
 
-/**
- * Home Page Header with Logo, Navigation Links, Search, Notifications, and Profile Avatar.
- */
 @Composable
 fun CloneflixHomeHeader(
     selectedNavIndex: Int = 0,
@@ -147,7 +135,6 @@ fun CloneflixHomeHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Left side: Logo & Navigation Items
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.spacingXl)
@@ -187,7 +174,6 @@ fun CloneflixHomeHeader(
             }
         }
 
-        // Right side: Search, Notifications, Avatar with dropdown arrow
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
@@ -216,7 +202,6 @@ fun CloneflixHomeHeader(
                 )
             }
 
-            // Profile Avatar with dropdown arrow
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -251,13 +236,6 @@ fun CloneflixHomeHeader(
     }
 }
 
-// ============================================================================
-// 2. FAQ ACCORDION (Interactive Expandable Component)
-// ============================================================================
-
-/**
- * Individual FAQ Question Item with smooth accordion expansion.
- */
 @Composable
 fun CloneflixFaqItem(
     question: String,
@@ -289,7 +267,6 @@ fun CloneflixFaqItem(
             .fillMaxWidth()
             .animateContentSize(animationSpec = tween(durationMillis = 250))
     ) {
-        // Question Header Card
         Surface(
             onClick = onToggle,
             color = itemBackgroundColor,
@@ -326,7 +303,6 @@ fun CloneflixFaqItem(
             }
         }
 
-        // Answer Body Card
         AnimatedVisibility(visible = isOpen) {
             Column {
                 Spacer(modifier = Modifier.height(2.dp))
@@ -349,9 +325,6 @@ fun CloneflixFaqItem(
     }
 }
 
-/**
- * Full FAQ Section containing multiple interactive FAQ items.
- */
 @Composable
 fun CloneflixFaqSection(
     modifier: Modifier = Modifier
@@ -402,13 +375,6 @@ fun CloneflixFaqSection(
     }
 }
 
-// ============================================================================
-// 3. SCREENS PREVIEWS (TV, Mac, iPhone with Download Card, Kids)
-// ============================================================================
-
-/**
- * TV Screen Mockup Preview.
- */
 @Composable
 fun CloneflixTvPreviewCard(
     modifier: Modifier = Modifier
@@ -423,7 +389,6 @@ fun CloneflixTvPreviewCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(16.dp)
         ) {
-            // TV Bezel
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -433,7 +398,6 @@ fun CloneflixTvPreviewCard(
                     .border(2.dp, Grey700, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                // TV Screen Content Simulation
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -465,7 +429,6 @@ fun CloneflixTvPreviewCard(
                 }
             }
 
-            // TV Stand / Base
             Box(
                 modifier = Modifier
                     .width(60.dp)
@@ -482,9 +445,6 @@ fun CloneflixTvPreviewCard(
     }
 }
 
-/**
- * Mac / Computer Screen Mockup Preview.
- */
 @Composable
 fun CloneflixMacPreviewCard(
     modifier: Modifier = Modifier
@@ -499,7 +459,6 @@ fun CloneflixMacPreviewCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(16.dp)
         ) {
-            // Screen Bezel
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -509,7 +468,6 @@ fun CloneflixMacPreviewCard(
                     .border(1.5.dp, Grey700, RoundedCornerShape(6.dp))
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    // Top Bar (Window dots)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -524,7 +482,6 @@ fun CloneflixMacPreviewCard(
                         Box(modifier = Modifier.size(6.dp).background(Color(0xFF27C93F), CircleShape))
                     }
 
-                    // Content
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -554,7 +511,6 @@ fun CloneflixMacPreviewCard(
                 }
             }
 
-            // Laptop base
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.95f)
@@ -565,9 +521,6 @@ fun CloneflixMacPreviewCard(
     }
 }
 
-/**
- * Standalone / Floating Download Progress Card (Stranger Things badge).
- */
 @Composable
 fun CloneflixDownloadProgressCard(
     title: String = "Stranger Things",
@@ -586,7 +539,6 @@ fun CloneflixDownloadProgressCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Movie Poster Thumbnail Placeholder
             Box(
                 modifier = Modifier
                     .width(36.dp)
@@ -607,7 +559,6 @@ fun CloneflixDownloadProgressCard(
                 )
             }
 
-            // Title & Status
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -626,7 +577,6 @@ fun CloneflixDownloadProgressCard(
                 )
             }
 
-            // Download Animation / Indicator
             Box(
                 modifier = Modifier.size(24.dp),
                 contentAlignment = Alignment.Center
@@ -641,9 +591,6 @@ fun CloneflixDownloadProgressCard(
     }
 }
 
-/**
- * Mobile Phone Mockup Preview featuring the Stranger Things download card.
- */
 @Composable
 fun CloneflixMobilePreviewCard(
     modifier: Modifier = Modifier
@@ -663,7 +610,6 @@ fun CloneflixMobilePreviewCard(
                 .background(Color(0xFF1E1E1E))
                 .border(2.dp, Grey700, RoundedCornerShape(24.dp))
         ) {
-            // Screen Wallpaper / Content
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -674,7 +620,6 @@ fun CloneflixMobilePreviewCard(
                     )
                     .padding(16.dp)
             ) {
-                // Top status bar notch
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
@@ -683,7 +628,6 @@ fun CloneflixMobilePreviewCard(
                         .background(Color.Black, RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp))
                 )
 
-                // Downloading Card overlay
                 CloneflixDownloadProgressCard(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -695,9 +639,6 @@ fun CloneflixMobilePreviewCard(
     }
 }
 
-/**
- * Kids Profile & Content Screen Preview.
- */
 @Composable
 fun CloneflixKidsPreviewCard(
     modifier: Modifier = Modifier
@@ -725,7 +666,6 @@ fun CloneflixKidsPreviewCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(16.dp)
             ) {
-                // Kids Avatar Row
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -776,18 +716,11 @@ fun CloneflixKidsPreviewCard(
     }
 }
 
-// ============================================================================
-// 4. LANDING PAGE BLOCKS (Headline + Image / Image + Headline)
-// ============================================================================
-
 enum class CloneflixBlockLayout {
     HEADLINE_IMAGE,
     IMAGE_HEADLINE
 }
 
-/**
- * Reusable Landing Page Block with Title, Description, and Device Preview Slot.
- */
 @Composable
 fun CloneflixFeatureBlock(
     title: String,
@@ -865,13 +798,6 @@ fun CloneflixFeatureBlock(
     }
 }
 
-// ============================================================================
-// 5. FOOTERS (Landing Page, Authentication Page, Home Page)
-// ============================================================================
-
-/**
- * Landing Page Footer with Questions hotline, 4-column links grid, and Language selector.
- */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CloneflixLandingFooter(
@@ -897,7 +823,6 @@ fun CloneflixLandingFooter(
             .background(PrimaryBlack)
             .padding(horizontal = dimens.spacing2Xl, vertical = 48.dp)
     ) {
-        // Hotline
         Text(
             text = "Questions? Call 1-844-505-2993",
             style = typography.regularBody,
@@ -907,7 +832,6 @@ fun CloneflixLandingFooter(
                 .padding(bottom = dimens.spacingXl)
         )
 
-        // 4-Column Responsive Grid of Links
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             maxItemsInEachRow = 4,
@@ -930,7 +854,6 @@ fun CloneflixLandingFooter(
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        // Language Dropdown
         CloneflixDropdown(
             options = listOf("English", "Español", "Français", "Deutsch"),
             selectedOption = selectedLanguage,
@@ -949,9 +872,6 @@ fun CloneflixLandingFooter(
     }
 }
 
-/**
- * Authentication Page Footer (Streamlined).
- */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CloneflixAuthFooter(
@@ -1016,9 +936,6 @@ fun CloneflixAuthFooter(
     }
 }
 
-/**
- * Home Page Footer with Social Media Icons, Links Grid, and Service Code Button.
- */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CloneflixHomeFooter(
@@ -1043,7 +960,6 @@ fun CloneflixHomeFooter(
             .background(PrimaryBlack)
             .padding(horizontal = dimens.spacing2Xl, vertical = 40.dp)
     ) {
-        // Social Media Icons
         Row(
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -1071,7 +987,6 @@ fun CloneflixHomeFooter(
             }
         }
 
-        // Links Grid
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             maxItemsInEachRow = 4,
@@ -1094,7 +1009,6 @@ fun CloneflixHomeFooter(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Service Code Button
         Surface(
             onClick = onServiceCodeClick,
             shape = RoundedCornerShape(2.dp),
@@ -1111,7 +1025,6 @@ fun CloneflixHomeFooter(
             )
         }
 
-        // Copyright
         Text(
             text = "© 1997 - 2024 Netflix, Inc.",
             style = typography.regularCaption2,
@@ -1120,10 +1033,6 @@ fun CloneflixHomeFooter(
         )
     }
 }
-
-// ============================================================================
-// PREVIEWS
-// ============================================================================
 
 @Preview(name = "Landing Header Preview", showBackground = true, backgroundColor = 0xFF000000)
 @Composable

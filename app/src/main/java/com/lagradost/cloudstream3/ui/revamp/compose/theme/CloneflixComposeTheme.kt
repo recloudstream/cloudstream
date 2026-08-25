@@ -118,12 +118,6 @@ data class CloneflixColors(
     val orangeAccent: Color = OrangeAccent
 )
 
-/**
- * Resolves color dynamically based on match score / rating quality:
- * - High score (>= 70% or >= 7.0 / 10, or "New"): GreenAccent (0xFF46D369)
- * - Moderate / average score (50% - 69% or 5.0 - 6.9 / 10): YellowAccent (0xFFFFB800)
- * - Low score (< 50% or < 5.0 / 10): Red100 (0xFFEB3942)
- */
 fun getRatingScoreColor(scoreText: String?): Color {
     if (scoreText.isNullOrBlank()) return GreenAccent
     val text = scoreText.trim()

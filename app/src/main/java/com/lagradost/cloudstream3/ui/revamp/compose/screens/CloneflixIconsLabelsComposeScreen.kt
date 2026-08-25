@@ -135,7 +135,6 @@ fun CloneflixIconsLabelsComposeScreen(
             .verticalScroll(scrollState)
             .padding(dimens.spacing2Xl)
     ) {
-        // Section 0: Header
         CloneflixHeader(
             title = "Icons & Labels",
             subtitle = "Design System 2024 • Website & TV Reference",
@@ -144,7 +143,6 @@ fun CloneflixIconsLabelsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // Section 1: Icons
         Text(
             text = "ICONS (24)",
             style = typography.sectionHeader,
@@ -168,7 +166,6 @@ fun CloneflixIconsLabelsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // Section 2: Maturity Ratings
         Text(
             text = "MATURITY RATINGS",
             style = typography.sectionHeader,
@@ -196,7 +193,6 @@ fun CloneflixIconsLabelsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // Section 3: Video Quality
         Text(
             text = "VIDEO QUALITY",
             style = typography.sectionHeader,
@@ -224,7 +220,6 @@ fun CloneflixIconsLabelsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // Section 4: Labels & Badges
         Text(
             text = "LABELS & BADGES",
             style = typography.sectionHeader,
@@ -299,7 +294,6 @@ fun CloneflixIconsLabelsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // Section 5: Logos
         Text(
             text = "LOGO VARIANTS",
             style = typography.sectionHeader,
@@ -350,7 +344,6 @@ fun CloneflixIconsLabelsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // Section 6: Movie Info Patterns & Live Blocks
         Text(
             text = "PATTERNS & PREVIEWS",
             style = typography.sectionHeader,

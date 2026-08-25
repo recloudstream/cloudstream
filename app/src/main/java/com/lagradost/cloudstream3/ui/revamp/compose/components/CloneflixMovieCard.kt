@@ -37,8 +37,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
 import android.widget.ImageView
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import androidx.compose.ui.res.painterResource
@@ -87,10 +89,6 @@ enum class CloneflixMovieCardType {
     CONTINUE_WATCHING
 }
 
-/**
- * Main Movie Card Composable from Figma Node 202:17654.
- * Optimized for Google TV / Android TV D-Pad traversal and Mobile touch.
- */
 @Composable
 fun CloneflixMovieCard(
     title: String,
@@ -128,10 +126,9 @@ fun CloneflixMovieCard(
         BorderStroke(dimens.borderSubtle, colors.border)
     }
 
-    Column(
+    Box(
         modifier = modifier
             .width(cardWidth)
-            .scale(scale)
             .then(
                 if (onClick != null) {
                     Modifier
@@ -146,47 +143,77 @@ fun CloneflixMovieCard(
                     Modifier.focusable(interactionSource = interactionSource)
                 }
             )
-            .semantics { contentDescription = title }
+            .semantics { contentDescription = title },
+        contentAlignment = Alignment.Center
     ) {
-        if (type == CloneflixMovieCardType.TOP10 && top10Rank != null) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(cardHeight),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                // Large Stylized Rank Number (1..10)
-                Box(
-                    modifier = Modifier
-                        .width(CloneflixMovieCardDefaults.RankBoxWidth)
-                        .fillMaxHeight(),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    Text(
-                        text = top10Rank.toString(),
-                        fontSize = CloneflixMovieCardDefaults.RankFontSize,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = FontFamily.SansSerif,
-                        color = Grey800,
-                        lineHeight = CloneflixMovieCardDefaults.RankLineHeight,
-                        modifier = Modifier.offset(x = CloneflixMovieCardDefaults.RankShadowOffsetX)
-                    )
-                    Text(
-                        text = top10Rank.toString(),
-                        fontSize = CloneflixMovieCardDefaults.RankFontSize,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = FontFamily.SansSerif,
-                        color = PrimaryBlack,
-                        lineHeight = CloneflixMovieCardDefaults.RankLineHeight,
-                        modifier = Modifier.offset(x = CloneflixMovieCardDefaults.RankForegroundOffsetX)
-                    )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .zIndex(if (isFocused) 10f else 0f)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
                 }
+        ) {
+            if (type == CloneflixMovieCardType.TOP10 && top10Rank != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(cardHeight),
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(CloneflixMovieCardDefaults.RankBoxWidth)
+                            .fillMaxHeight(),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        Text(
+                            text = top10Rank.toString(),
+                            fontSize = CloneflixMovieCardDefaults.RankFontSize,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = FontFamily.SansSerif,
+                            color = Grey800,
+                            lineHeight = CloneflixMovieCardDefaults.RankLineHeight,
+                            modifier = Modifier.offset(x = CloneflixMovieCardDefaults.RankShadowOffsetX)
+                        )
+                        Text(
+                            text = top10Rank.toString(),
+                            fontSize = CloneflixMovieCardDefaults.RankFontSize,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = FontFamily.SansSerif,
+                            color = PrimaryBlack,
+                            lineHeight = CloneflixMovieCardDefaults.RankLineHeight,
+                            modifier = Modifier.offset(x = CloneflixMovieCardDefaults.RankForegroundOffsetX)
+                        )
+                    }
 
-                // Poster Card Thumbnail
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
+                            .background(Grey800)
+                            .border(border, RoundedCornerShape(CloneflixTokens.RadiusCard))
+                    ) {
+                        MovieCardSurface(
+                            title = title,
+                            showLogo = showLogo,
+                            showBottomTitle = showBottomTitle,
+                            badge = badge,
+                            runtime = runtime,
+                            timestamp = timestamp,
+                            progress = progress,
+                            showCenterPlay = false,
+                            posterUrl = posterUrl
+                        )
+                    }
+                }
+            } else {
                 Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
+                        .fillMaxWidth()
+                        .height(if (type == CloneflixMovieCardType.TRAILER) CloneflixMovieCardDefaults.HeightTrailerThumbnail else cardHeight)
                         .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
                         .background(Grey800)
                         .border(border, RoundedCornerShape(CloneflixTokens.RadiusCard))
@@ -199,45 +226,22 @@ fun CloneflixMovieCard(
                         runtime = runtime,
                         timestamp = timestamp,
                         progress = progress,
-                        showCenterPlay = false,
+                        showCenterPlay = type == CloneflixMovieCardType.MORE_LIKE_THIS_WITH_PLAY ||
+                                type == CloneflixMovieCardType.EPISODE,
                         posterUrl = posterUrl
                     )
                 }
-            }
-        } else {
-            // Standard Card Surface
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(if (type == CloneflixMovieCardType.TRAILER) CloneflixMovieCardDefaults.HeightTrailerThumbnail else cardHeight)
-                    .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
-                    .background(Grey800)
-                    .border(border, RoundedCornerShape(CloneflixTokens.RadiusCard))
-            ) {
-                MovieCardSurface(
-                    title = title,
-                    showLogo = showLogo,
-                    showBottomTitle = showBottomTitle,
-                    badge = badge,
-                    runtime = runtime,
-                    timestamp = timestamp,
-                    progress = progress,
-                    showCenterPlay = type == CloneflixMovieCardType.MORE_LIKE_THIS_WITH_PLAY ||
-                            type == CloneflixMovieCardType.EPISODE,
-                    posterUrl = posterUrl
-                )
-            }
 
-            // Trailer Title/Subtitle below thumbnail
-            if (type == CloneflixMovieCardType.TRAILER && !subtitle.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(dimens.spacingS))
-                Text(
-                    text = subtitle,
-                    style = typography.mediumSmallBody,
-                    color = if (isFocused) PrimaryWhite else Grey100,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                if (type == CloneflixMovieCardType.TRAILER && !subtitle.isNullOrBlank()) {
+                    Spacer(modifier = Modifier.height(dimens.spacingS))
+                    Text(
+                        text = subtitle,
+                        style = typography.mediumSmallBody,
+                        color = if (isFocused) PrimaryWhite else Grey100,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }
@@ -257,7 +261,6 @@ private fun MovieCardSurface(
 ) {
     val typography = CloneflixTheme.typography
 
-    // Background
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -284,7 +287,6 @@ private fun MovieCardSurface(
                 modifier = Modifier.fillMaxSize()
             )
         } else {
-            // Title Text in Mockup Center
             Text(
                 text = title,
                 style = typography.regularCaption1,
@@ -298,7 +300,6 @@ private fun MovieCardSurface(
             )
         }
 
-        // Top-Left Logo / Lettermark
         if (showLogo) {
             Box(
                 modifier = Modifier
@@ -309,7 +310,6 @@ private fun MovieCardSurface(
             }
         }
 
-        // Top-Right Badge (e.g. Recently Added, New Season)
         if (badge != null) {
             Box(
                 modifier = Modifier
@@ -320,15 +320,13 @@ private fun MovieCardSurface(
             }
         }
 
-        // Center Play Circle Button Overlay
         if (showCenterPlay) {
             Box(
                 modifier = Modifier
                     .size(CloneflixMovieCardDefaults.PlayButtonOverlaySize)
                     .clip(CircleShape)
                     .background(TransparentBlack60)
-                    .border(BorderStroke(CloneflixTheme.dimens.borderDefault, PrimaryWhite), CircleShape)
-                    .align(Alignment.Center),
+                    .border(BorderStroke(CloneflixTheme.dimens.borderDefault, PrimaryWhite), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -340,7 +338,6 @@ private fun MovieCardSurface(
             }
         }
 
-        // Bottom-Right Runtime Tag (e.g. "2h 18m")
         if (!runtime.isNullOrBlank()) {
             Box(
                 modifier = Modifier
@@ -359,7 +356,6 @@ private fun MovieCardSurface(
             }
         }
 
-        // Bottom-Right Timestamp Tag for Player Preview (e.g. "51:29")
         if (!timestamp.isNullOrBlank()) {
             Box(
                 modifier = Modifier
@@ -378,7 +374,6 @@ private fun MovieCardSurface(
             }
         }
 
-        // Bottom Progress Indicator (Continue Watching)
         if (progress != null) {
             Box(
                 modifier = Modifier
@@ -396,7 +391,6 @@ private fun MovieCardSurface(
             }
         }
 
-        // Bottom Title Overlay with Black Background Gradient (30% of card height)
         if (showBottomTitle && !title.isNullOrBlank()) {
             Box(
                 modifier = Modifier
@@ -432,10 +426,6 @@ private fun MovieCardSurface(
     }
 }
 
-/**
- * List of Episodes Item Pattern from Figma Section 120:3230.
- * Supports Current (active/highlighted) vs Other episode states with D-pad navigation.
- */
 @Composable
 fun CloneflixEpisodeItem(
     episodeNumber: Int,
@@ -490,7 +480,6 @@ fun CloneflixEpisodeItem(
             .padding(dimens.spacingL),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Episode Number (e.g. "1", "2")
         Text(
             text = episodeNumber.toString(),
             style = typography.boldTitle2,
@@ -500,7 +489,6 @@ fun CloneflixEpisodeItem(
 
         Spacer(modifier = Modifier.width(dimens.spacingM))
 
-        // Episode Thumbnail with Play Button Overlay (128x72dp)
         Box(
             modifier = Modifier
                 .width(CloneflixMovieCardDefaults.EpisodeThumbnailWidth)
@@ -516,7 +504,6 @@ fun CloneflixEpisodeItem(
                 color = Grey50
             )
 
-            // Play circle button overlay
             Box(
                 modifier = Modifier
                     .size(CloneflixMovieCardDefaults.EpisodeItemPlayButtonSize)
@@ -536,7 +523,6 @@ fun CloneflixEpisodeItem(
 
         Spacer(modifier = Modifier.width(dimens.spacingL))
 
-        // Episode Title, Duration & Description
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -574,9 +560,6 @@ fun CloneflixEpisodeItem(
     }
 }
 
-/**
- * Movie Block Carousel / Row Pattern (Figma Section 202:19015).
- */
 @Composable
 fun CloneflixMovieBlockRow(
     title: String,
@@ -638,9 +621,6 @@ data class CloneflixMovieCardItem(
     val posterUrl: String? = null
 )
 
-/**
- * Expanded Movie Preview Banner / Card (Figma Section 109:9726).
- */
 @Composable
 fun CloneflixExpandedMoviePreview(
     title: String = CloneflixSampleData.SAMPLE_TITLE_HOUSE_OF_NINJAS,
@@ -668,7 +648,6 @@ fun CloneflixExpandedMoviePreview(
             .border(BorderStroke(dimens.borderDefault, colors.border), RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Backdrop Header with Action Buttons
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -683,7 +662,6 @@ fun CloneflixExpandedMoviePreview(
                         )
                     )
             ) {
-                // Backdrop Title & Logo
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -700,12 +678,10 @@ fun CloneflixExpandedMoviePreview(
 
                     Spacer(modifier = Modifier.height(dimens.spacingM))
 
-                    // Circular Action Buttons (Play, Add, ThumbUp, Mute)
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
                     ) {
-                        // Play Button
                         CloneflixCircleActionButton(
                             icon = painterResource(id = R.drawable.cloneflix_ic_play),
                             contentDescription = stringResource(R.string.cloneflix_cd_play),
@@ -713,21 +689,18 @@ fun CloneflixExpandedMoviePreview(
                             onClick = onPlayClick
                         )
 
-                        // Add to List Button (+)
                         CloneflixCircleActionButton(
                             icon = painterResource(id = R.drawable.cloneflix_ic_plus),
                             contentDescription = stringResource(R.string.cloneflix_cd_add_to_list),
                             onClick = onAddClick
                         )
 
-                        // Thumb Up Button
                         CloneflixCircleActionButton(
                             icon = painterResource(id = R.drawable.cloneflix_ic_thumb_up),
                             contentDescription = stringResource(R.string.cloneflix_cd_like),
                             onClick = onThumbUpClick
                         )
 
-                        // Mute / Volume Button
                         CloneflixCircleActionButton(
                             icon = painterResource(id = R.drawable.cloneflix_ic_mute),
                             contentDescription = stringResource(R.string.cloneflix_cd_mute),
@@ -737,13 +710,11 @@ fun CloneflixExpandedMoviePreview(
                 }
             }
 
-            // Info Body
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(dimens.spacing2Xl)
             ) {
-                // Metadata Row (Match, Rating, Duration, Quality)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
@@ -768,7 +739,6 @@ fun CloneflixExpandedMoviePreview(
 
                 Spacer(modifier = Modifier.height(dimens.spacingM))
 
-                // Genres separated by dots
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(dimens.spacingS)
@@ -803,9 +773,6 @@ fun CloneflixExpandedMoviePreview(
     }
 }
 
-/**
- * Circular action button for media preview overlays.
- */
 @Composable
 fun CloneflixCircleActionButton(
     icon: Painter,

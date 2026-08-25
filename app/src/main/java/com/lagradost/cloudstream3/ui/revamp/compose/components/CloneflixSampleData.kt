@@ -1,9 +1,5 @@
 package com.lagradost.cloudstream3.ui.revamp.compose.components
 
-/**
- * Centralized mock/sample data for Cloneflix Previews and Showcases.
- * Keeps production Composable parameter signatures clean from hardcoded sample strings.
- */
 object CloneflixSampleData {
     const val SAMPLE_TITLE_HOUSE_OF_NINJAS = "House of Ninjas"
     const val SAMPLE_MATCH_SCORE = "98% Match"

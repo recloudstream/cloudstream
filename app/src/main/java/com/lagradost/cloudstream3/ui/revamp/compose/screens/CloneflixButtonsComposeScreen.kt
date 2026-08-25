@@ -74,7 +74,6 @@ fun CloneflixButtonsComposeScreen(
             .verticalScroll(scrollState)
             .padding(dimens.spacing2Xl)
     ) {
-        // Top Header
         CloneflixHeader(
             title = "Buttons",
             subtitle = "Action Buttons • Media Control Buttons • Compositions & Patterns",
@@ -83,9 +82,6 @@ fun CloneflixButtonsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // ==========================================
-        // SECTION 1: ACTION BUTTONS
-        // ==========================================
         Text(
             text = "ACTION BUTTONS",
             style = typography.sectionHeader,
@@ -101,7 +97,6 @@ fun CloneflixButtonsComposeScreen(
                     .padding(dimens.spacingL),
                 verticalArrangement = Arrangement.spacedBy(dimens.spacingL)
             ) {
-                // Sign In Buttons (Large & Small)
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Sign In (Primary Red • Large & Small)",
@@ -129,7 +124,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Use Sign-In Code
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Secondary / Dark Action",
@@ -146,7 +140,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Play & More Info
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Hero CTA Actions (Play & More Info)",
@@ -176,7 +169,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Get Started
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Get Started Action (Onboarding)",
@@ -195,7 +187,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Manage Profiles (Outlined)
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Manage Profiles (Outlined Border)",
@@ -212,7 +203,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Checkbox (Remember Me)
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Checkbox Button (Remember Me)",
@@ -230,9 +220,6 @@ fun CloneflixButtonsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // ==========================================
-        // SECTION 2: MEDIA CONTROL BUTTONS
-        // ==========================================
         Text(
             text = "MEDIA CONTROL BUTTONS",
             style = typography.sectionHeader,
@@ -248,7 +235,6 @@ fun CloneflixButtonsComposeScreen(
                     .padding(dimens.spacingL),
                 verticalArrangement = Arrangement.spacedBy(dimens.spacingL)
             ) {
-                // Video Player Action Bar Controls
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
                         text = "Video Player Controls (48dp / D-pad focusable)",
@@ -310,7 +296,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Movie Preview Circular Actions
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
                         text = "Movie Preview Action Buttons (40dp)",
@@ -345,7 +330,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Multi-reaction Reaction Pill
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
                         text = "Thumbs Multi-Reaction Pill (Dislike • Like • Love)",
@@ -361,7 +345,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Hero Banner Controls
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
                         text = "Hero Banner Video Controls (35dp Sound Toggle & Replay)",
@@ -389,9 +372,6 @@ fun CloneflixButtonsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // ==========================================
-        // SECTION 3: PATTERNS & COMPOSITIONS
-        // ==========================================
         Text(
             text = "PATTERNS & COMPOSITIONS",
             style = typography.sectionHeader,
@@ -407,7 +387,6 @@ fun CloneflixButtonsComposeScreen(
                     .padding(dimens.spacingL),
                 verticalArrangement = Arrangement.spacedBy(dimens.spacingL)
             ) {
-                // Pattern 1: Hero Actions
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Pattern: Hero CTAs (Play + More Info)",
@@ -422,7 +401,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Pattern 2: Preview Card Actions Row
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Pattern: Movie Card Quick Actions",
@@ -440,7 +418,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Pattern 3: Hero Banner Rating & Sound
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Pattern: Hero Banner Rating + Sound",
@@ -456,7 +433,6 @@ fun CloneflixButtonsComposeScreen(
 
                 CloneflixDivider()
 
-                // Pattern 4: Full Video Player Control Bar
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "Pattern: Video Player Bottom Control Bar",

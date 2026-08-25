@@ -45,9 +45,6 @@ import com.lagradost.cloudstream3.ui.revamp.compose.theme.Grey200
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryWhite
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.getRatingScoreColor
 
-/**
- * Text / MovieInfo Inline Row Pattern from Figma Section 12.
- */
 @Composable
 fun CloneflixMovieInfoRow(
     matchText: String = "New",
@@ -92,9 +89,6 @@ fun CloneflixMovieInfoRow(
     }
 }
 
-/**
- * MovieInfo Block Pattern from Figma Section 13 (Detailed header, advisories, Top 10 rank).
- */
 @Composable
 fun CloneflixMovieInfoBlock(
     matchScore: String = "98% Match",
@@ -113,7 +107,6 @@ fun CloneflixMovieInfoBlock(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Line 1: Match Score, Year, Duration, Quality, AD Icon
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -149,7 +142,6 @@ fun CloneflixMovieInfoBlock(
             }
         }
 
-        // Line 2: Rating badge with advisory keywords
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -165,7 +157,6 @@ fun CloneflixMovieInfoBlock(
             }
         }
 
-        // Line 3: Top 10 rank banner if present
         if (!top10RankText.isNullOrBlank()) {
             CloneflixTop10RankBanner(
                 rankText = top10RankText,
@@ -175,9 +166,6 @@ fun CloneflixMovieInfoBlock(
     }
 }
 
-/**
- * Complete MovieInfo Overview Card from Figma Section 14 (Synopsis, Block & Metadata columns).
- */
 @Composable
 fun CloneflixMovieInfoOverview(
     title: String = "House of Ninjas",
@@ -253,7 +241,6 @@ fun CloneflixMovieInfoOverview(
 
             Spacer(modifier = Modifier.height(dimens.spacingL))
 
-            // Metadata columns: Cast, Genres, Mood tags
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     text = buildAnnotatedString {

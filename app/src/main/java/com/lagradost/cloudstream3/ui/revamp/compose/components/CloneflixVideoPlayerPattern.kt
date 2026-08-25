@@ -116,7 +116,6 @@ fun CloneflixVideoPlayerPattern(
             .clip(RoundedCornerShape(12.dp))
             .background(Color(0xFF0F0F0F))
     ) {
-        // 1. Mock Video Content / Cinematic Gradient Backdrop
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -127,7 +126,6 @@ fun CloneflixVideoPlayerPattern(
                     )
                 )
         ) {
-            // Subtle cinematic film grain / center title watermark
             Text(
                 text = title.uppercase(),
                 style = CloneflixTheme.typography.logoBebas,
@@ -137,7 +135,6 @@ fun CloneflixVideoPlayerPattern(
             )
         }
 
-        // 2. Scrim Gradients (Top and Bottom)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -162,7 +159,6 @@ fun CloneflixVideoPlayerPattern(
                 )
         )
 
-        // 3. TOP BAR
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -175,7 +171,6 @@ fun CloneflixVideoPlayerPattern(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                // Back Button
                 Box(
                     modifier = Modifier
                         .size(40.dp)
@@ -192,7 +187,6 @@ fun CloneflixVideoPlayerPattern(
                     )
                 }
 
-                // Title + Episode Header
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -216,7 +210,6 @@ fun CloneflixVideoPlayerPattern(
                 }
             }
 
-            // Flag / Options Button
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -234,13 +227,11 @@ fun CloneflixVideoPlayerPattern(
             }
         }
 
-        // 4. CENTER PLAY/PAUSE/REPLAY/FORWARD CONTROLS
         Row(
             modifier = Modifier.align(Alignment.Center),
             horizontalArrangement = Arrangement.spacedBy(28.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Replay 10s
             CloneflixPlayerControlButton(
                 action = CloneflixPlayerControlAction.REPLAY_10,
                 onClick = { currentProgress = (currentProgress - 0.05f).coerceAtLeast(0f) },
@@ -248,7 +239,6 @@ fun CloneflixVideoPlayerPattern(
                 iconSize = 24.dp
             )
 
-            // Play / Pause main button
             Box(
                 modifier = Modifier
                     .size(64.dp)
@@ -265,7 +255,6 @@ fun CloneflixVideoPlayerPattern(
                 )
             }
 
-            // Forward 10s
             CloneflixPlayerControlButton(
                 action = CloneflixPlayerControlAction.FORWARD_10,
                 onClick = { currentProgress = (currentProgress + 0.05f).coerceAtMost(1f) },
@@ -274,7 +263,6 @@ fun CloneflixVideoPlayerPattern(
             )
         }
 
-        // 5. SEEK / SCROLL PREVIEW TOOLTIP OVERLAY
         if (overlayState == CloneflixPlayerOverlayState.SCROLL_PREVIEW) {
             Column(
                 modifier = Modifier
@@ -321,7 +309,6 @@ fun CloneflixVideoPlayerPattern(
             }
         }
 
-        // 6. VOLUME SLIDER POPOVER OVERLAY
         if (overlayState == CloneflixPlayerOverlayState.SOUND_CHANGE) {
             Box(
                 modifier = Modifier
@@ -337,7 +324,6 @@ fun CloneflixVideoPlayerPattern(
             }
         }
 
-        // 7. BOTTOM CONTROLS & PROGRESS BAR
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -345,7 +331,6 @@ fun CloneflixVideoPlayerPattern(
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            // Progress Bar
             CloneflixVideoProgressIndicator(
                 progress = currentProgress,
                 bufferedProgress = 0.65f,
@@ -356,13 +341,11 @@ fun CloneflixVideoPlayerPattern(
                 showTimestamps = false
             )
 
-            // Bottom Buttons Bar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Left group: Play/Pause, 10s Replay, 10s Forward, Volume
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -399,7 +382,6 @@ fun CloneflixVideoPlayerPattern(
                     )
                 }
 
-                // Middle Info Label
                 Text(
                     text = "$title • $episodeLabel",
                     style = CloneflixTheme.typography.mediumBody,
@@ -409,7 +391,6 @@ fun CloneflixVideoPlayerPattern(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                // Right group: Next Episode, Episodes, Subtitles, Speed, Fullscreen
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -472,7 +453,6 @@ fun CloneflixVideoPlayerPattern(
             }
         }
 
-        // 8. NEXT EPISODE FLOATING PROMPT OVERLAY
         if (overlayState == CloneflixPlayerOverlayState.NEXT_PREVIEW) {
             Box(
                 modifier = Modifier
@@ -496,7 +476,6 @@ fun CloneflixVideoPlayerPattern(
             }
         }
 
-        // 9. EPISODES DRAWER OVERLAY
         if (overlayState == CloneflixPlayerOverlayState.LIST_PREVIEW) {
             Box(
                 modifier = Modifier
@@ -517,7 +496,6 @@ fun CloneflixVideoPlayerPattern(
             }
         }
 
-        // 10. PLAYBACK SPEED SELECTOR OVERLAY
         if (overlayState == CloneflixPlayerOverlayState.SPEED_CHANGE) {
             Box(
                 modifier = Modifier
@@ -539,7 +517,6 @@ fun CloneflixVideoPlayerPattern(
             }
         }
 
-        // 11. AUDIO & SUBTITLES MODAL DIALOG OVERLAY
         if (overlayState == CloneflixPlayerOverlayState.SUBTITLES_CHANGE) {
             Box(
                 modifier = Modifier

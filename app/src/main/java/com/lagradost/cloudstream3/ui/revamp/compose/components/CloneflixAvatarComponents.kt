@@ -153,9 +153,6 @@ object CloneflixOfficialAvatars {
     }
 }
 
-/**
- * High-fidelity vector graphic renderer for Cloneflix avatar faces.
- */
 @Composable
 fun CloneflixAvatarGraphic(
     avatar: CloneflixAvatarModel,
@@ -165,7 +162,6 @@ fun CloneflixAvatarGraphic(
         val w = size.width
         val h = size.height
 
-        // Background gradient
         drawRoundRect(
             brush = Brush.verticalGradient(
                 colors = listOf(avatar.topColor, avatar.bottomColor),
@@ -176,7 +172,6 @@ fun CloneflixAvatarGraphic(
             cornerRadius = CornerRadius(w * 0.08f, h * 0.08f)
         )
 
-        // Draw facial features based on AvatarFaceStyle
         when (avatar.faceStyle) {
             AvatarFaceStyle.SMILEY -> drawSmileyFace(w, h, PrimaryWhite)
             AvatarFaceStyle.WINK -> drawWinkFace(w, h, PrimaryWhite)
@@ -202,11 +197,9 @@ private fun DrawScope.drawSmileyFace(w: Float, h: Float, color: Color) {
     val leftEyeX = w * 0.35f
     val rightEyeX = w * 0.65f
 
-    // Eyes
     drawCircle(color = color, radius = eyeRadius, center = Offset(leftEyeX, eyeY))
     drawCircle(color = color, radius = eyeRadius, center = Offset(rightEyeX, eyeY))
 
-    // Smile Arc
     val mouthPath = Path().apply {
         moveTo(w * 0.30f, h * 0.56f)
         quadraticTo(w * 0.50f, h * 0.74f, w * 0.70f, h * 0.56f)
@@ -222,17 +215,14 @@ private fun DrawScope.drawWinkFace(w: Float, h: Float, color: Color) {
     val eyeRadius = w * 0.065f
     val eyeY = h * 0.38f
 
-    // Left eye (open)
     drawCircle(color = color, radius = eyeRadius, center = Offset(w * 0.35f, eyeY))
 
-    // Right eye (wink)
     val winkPath = Path().apply {
         moveTo(w * 0.60f, eyeY)
         quadraticTo(w * 0.67f, eyeY - h * 0.04f, w * 0.74f, eyeY)
     }
     drawPath(path = winkPath, color = color, style = Stroke(width = w * 0.06f, cap = StrokeCap.Round))
 
-    // Smirk
     val mouthPath = Path().apply {
         moveTo(w * 0.34f, h * 0.58f)
         quadraticTo(w * 0.52f, h * 0.72f, w * 0.72f, h * 0.52f)
@@ -241,7 +231,6 @@ private fun DrawScope.drawWinkFace(w: Float, h: Float, color: Color) {
 }
 
 private fun DrawScope.drawAngryFace(w: Float, h: Float, color: Color) {
-    // Brows
     val leftBrow = Path().apply {
         moveTo(w * 0.22f, h * 0.28f)
         lineTo(w * 0.44f, h * 0.36f)
@@ -253,11 +242,9 @@ private fun DrawScope.drawAngryFace(w: Float, h: Float, color: Color) {
     drawPath(leftBrow, color = color, style = Stroke(width = w * 0.07f, cap = StrokeCap.Round))
     drawPath(rightBrow, color = color, style = Stroke(width = w * 0.07f, cap = StrokeCap.Round))
 
-    // Eyes
     drawCircle(color = color, radius = w * 0.055f, center = Offset(w * 0.34f, h * 0.42f))
     drawCircle(color = color, radius = w * 0.055f, center = Offset(w * 0.66f, h * 0.42f))
 
-    // Frown
     val mouthPath = Path().apply {
         moveTo(w * 0.32f, h * 0.68f)
         quadraticTo(w * 0.50f, h * 0.56f, w * 0.68f, h * 0.68f)
@@ -266,7 +253,6 @@ private fun DrawScope.drawAngryFace(w: Float, h: Float, color: Color) {
 }
 
 private fun DrawScope.drawKidsFace(w: Float, h: Float, color: Color) {
-    // Big round eyes
     drawCircle(color = color, radius = w * 0.10f, center = Offset(w * 0.35f, h * 0.38f))
     drawCircle(color = color, radius = w * 0.10f, center = Offset(w * 0.65f, h * 0.38f))
     drawCircle(color = PrimaryBlack, radius = w * 0.05f, center = Offset(w * 0.35f, h * 0.38f))
@@ -274,7 +260,6 @@ private fun DrawScope.drawKidsFace(w: Float, h: Float, color: Color) {
     drawCircle(color = PrimaryWhite, radius = w * 0.02f, center = Offset(w * 0.37f, h * 0.36f))
     drawCircle(color = PrimaryWhite, radius = w * 0.02f, center = Offset(w * 0.67f, h * 0.36f))
 
-    // Big happy smile with tongue
     val mouthPath = Path().apply {
         moveTo(w * 0.28f, h * 0.58f)
         quadraticTo(w * 0.50f, h * 0.78f, w * 0.72f, h * 0.58f)
@@ -283,17 +268,14 @@ private fun DrawScope.drawKidsFace(w: Float, h: Float, color: Color) {
 }
 
 private fun DrawScope.drawMonsterGrey(w: Float, h: Float) {
-    // Horns
     drawCircle(color = PrimaryWhite, radius = w * 0.08f, center = Offset(w * 0.25f, h * 0.20f))
     drawCircle(color = PrimaryWhite, radius = w * 0.08f, center = Offset(w * 0.75f, h * 0.20f))
 
-    // Eyes
     drawCircle(color = PrimaryWhite, radius = w * 0.07f, center = Offset(w * 0.35f, h * 0.40f))
     drawCircle(color = PrimaryWhite, radius = w * 0.07f, center = Offset(w * 0.65f, h * 0.40f))
     drawCircle(color = PrimaryBlack, radius = w * 0.035f, center = Offset(w * 0.35f, h * 0.40f))
     drawCircle(color = PrimaryBlack, radius = w * 0.035f, center = Offset(w * 0.65f, h * 0.40f))
 
-    // Teeth smile
     val mouthPath = Path().apply {
         moveTo(w * 0.30f, h * 0.60f)
         lineTo(w * 0.70f, h * 0.60f)
@@ -305,19 +287,17 @@ private fun DrawScope.drawMonsterGrey(w: Float, h: Float) {
 }
 
 private fun DrawScope.drawMonsterBlue(w: Float, h: Float) {
-    // Single Cyclops Eye
     drawCircle(color = PrimaryWhite, radius = w * 0.13f, center = Offset(w * 0.50f, h * 0.36f))
     drawCircle(color = Color(0xFF0984E3), radius = w * 0.07f, center = Offset(w * 0.50f, h * 0.36f))
     drawCircle(color = PrimaryBlack, radius = w * 0.04f, center = Offset(w * 0.50f, h * 0.36f))
     drawCircle(color = PrimaryWhite, radius = w * 0.018f, center = Offset(w * 0.52f, h * 0.34f))
 
-    // Cute fangs mouth
     val mouthPath = Path().apply {
         moveTo(w * 0.32f, h * 0.60f)
         quadraticTo(w * 0.50f, h * 0.76f, w * 0.68f, h * 0.60f)
     }
     drawPath(path = mouthPath, color = PrimaryWhite, style = Stroke(width = w * 0.06f, cap = StrokeCap.Round))
-    // Fang
+
     val fang = Path().apply {
         moveTo(w * 0.40f, h * 0.60f)
         lineTo(w * 0.43f, h * 0.68f)
@@ -328,7 +308,6 @@ private fun DrawScope.drawMonsterBlue(w: Float, h: Float) {
 }
 
 private fun DrawScope.drawMonsterRed(w: Float, h: Float) {
-    // Sharp eyes
     val leftEye = Path().apply {
         moveTo(w * 0.28f, h * 0.36f)
         lineTo(w * 0.44f, h * 0.40f)
@@ -344,7 +323,6 @@ private fun DrawScope.drawMonsterRed(w: Float, h: Float) {
     drawPath(leftEye, color = Color(0xFFFFD32A))
     drawPath(rightEye, color = Color(0xFFFFD32A))
 
-    // Wide grin
     val mouth = Path().apply {
         moveTo(w * 0.26f, h * 0.56f)
         quadraticTo(w * 0.50f, h * 0.78f, w * 0.74f, h * 0.56f)
@@ -359,18 +337,15 @@ private fun DrawScope.drawMonsterYellow(w: Float, h: Float) {
 }
 
 private fun DrawScope.drawChickenFace(w: Float, h: Float) {
-    // Comb on head
     drawCircle(color = Color(0xFFFF4757), radius = w * 0.09f, center = Offset(w * 0.50f, h * 0.16f))
     drawCircle(color = Color(0xFFFF4757), radius = w * 0.07f, center = Offset(w * 0.38f, h * 0.19f))
     drawCircle(color = Color(0xFFFF4757), radius = w * 0.07f, center = Offset(w * 0.62f, h * 0.19f))
 
-    // Eyes
     drawCircle(color = PrimaryWhite, radius = w * 0.06f, center = Offset(w * 0.35f, h * 0.40f))
     drawCircle(color = PrimaryWhite, radius = w * 0.06f, center = Offset(w * 0.65f, h * 0.40f))
     drawCircle(color = PrimaryBlack, radius = w * 0.03f, center = Offset(w * 0.35f, h * 0.40f))
     drawCircle(color = PrimaryBlack, radius = w * 0.03f, center = Offset(w * 0.65f, h * 0.40f))
 
-    // Beak
     val beak = Path().apply {
         moveTo(w * 0.42f, h * 0.48f)
         lineTo(w * 0.58f, h * 0.48f)
@@ -381,18 +356,15 @@ private fun DrawScope.drawChickenFace(w: Float, h: Float) {
 }
 
 private fun DrawScope.drawZombieFace(w: Float, h: Float) {
-    // Mismatched eyes
     drawCircle(color = PrimaryWhite, radius = w * 0.08f, center = Offset(w * 0.35f, h * 0.38f))
     drawCircle(color = PrimaryBlack, radius = w * 0.03f, center = Offset(w * 0.35f, h * 0.38f))
 
-    // X eye
     val xPath = Path().apply {
         moveTo(w * 0.60f, h * 0.34f); lineTo(w * 0.70f, h * 0.42f)
         moveTo(w * 0.70f, h * 0.34f); lineTo(w * 0.60f, h * 0.42f)
     }
     drawPath(xPath, color = PrimaryWhite, style = Stroke(width = w * 0.04f, cap = StrokeCap.Round))
 
-    // Stitched mouth
     val mouthLine = Path().apply {
         moveTo(w * 0.30f, h * 0.62f); lineTo(w * 0.70f, h * 0.62f)
         moveTo(w * 0.38f, h * 0.56f); lineTo(w * 0.38f, h * 0.68f)
@@ -403,17 +375,14 @@ private fun DrawScope.drawZombieFace(w: Float, h: Float) {
 }
 
 private fun DrawScope.drawPandaFace(w: Float, h: Float) {
-    // Black ears
     drawCircle(color = Color(0xFF2F3640), radius = w * 0.11f, center = Offset(w * 0.22f, h * 0.22f))
     drawCircle(color = Color(0xFF2F3640), radius = w * 0.11f, center = Offset(w * 0.78f, h * 0.22f))
 
-    // Eye patches
     drawCircle(color = Color(0xFF2F3640), radius = w * 0.09f, center = Offset(w * 0.36f, h * 0.44f))
-    drawCircle(color = Color(0xFF2F3640), radius = w * 0.09f, center = Offset(w * 0.64f, h * 0.44f))
+    drawCircle(color = Color(0xFF2F3640), radius = w * 0.64f, center = Offset(w * 0.64f, h * 0.44f))
     drawCircle(color = PrimaryWhite, radius = w * 0.035f, center = Offset(w * 0.36f, h * 0.43f))
     drawCircle(color = PrimaryWhite, radius = w * 0.035f, center = Offset(w * 0.64f, h * 0.43f))
 
-    // Nose & smile
     drawCircle(color = Color(0xFF2F3640), radius = w * 0.04f, center = Offset(w * 0.50f, h * 0.56f))
     val mouthPath = Path().apply {
         moveTo(w * 0.42f, h * 0.64f)
@@ -423,7 +392,6 @@ private fun DrawScope.drawPandaFace(w: Float, h: Float) {
 }
 
 private fun DrawScope.drawCoolFace(w: Float, h: Float, color: Color) {
-    // Sunglasses
     val glasses = Path().apply {
         moveTo(w * 0.22f, h * 0.36f)
         lineTo(w * 0.78f, h * 0.36f)
@@ -436,7 +404,6 @@ private fun DrawScope.drawCoolFace(w: Float, h: Float, color: Color) {
     }
     drawPath(glasses, color = PrimaryBlack)
 
-    // Smile
     val mouthPath = Path().apply {
         moveTo(w * 0.34f, h * 0.62f)
         quadraticTo(w * 0.50f, h * 0.76f, w * 0.68f, h * 0.58f)
@@ -454,9 +421,6 @@ private fun DrawScope.drawGeometricFace(w: Float, h: Float, text: String) {
     drawSmileyFace(w, h, PrimaryWhite)
 }
 
-/**
- * Small Avatar component (UserProfilePicture or UserProfileMenu)
- */
 @Composable
 fun CloneflixSmallAvatar(
     avatar: CloneflixAvatarModel,
@@ -530,9 +494,6 @@ fun CloneflixSmallAvatar(
     }
 }
 
-/**
- * Large Avatar component (UserProfileAvatar or AddUserProfile) with hover/TV D-pad focus states.
- */
 @Composable
 fun CloneflixLargeAvatar(
     name: String,
@@ -591,7 +552,6 @@ fun CloneflixLargeAvatar(
             contentAlignment = Alignment.Center
         ) {
             if (isAddProfile) {
-                // Circle Plus Icon for Add Profile
                 Box(
                     modifier = Modifier
                         .size(size * 0.54f)
@@ -632,9 +592,6 @@ fun CloneflixLargeAvatar(
     }
 }
 
-/**
- * Sample "Who's Watching?" profile selector row with D-Pad traversal and selection state.
- */
 @Composable
 fun CloneflixUserProfilesRow(
     profiles: List<Pair<String, CloneflixAvatarModel>>,
@@ -674,9 +631,6 @@ private val PolygonShape = GenericShape { size, _ ->
     close()
 }
 
-/**
- * Interactive Profile Dropdown Menu matching the Figma design popover.
- */
 @Composable
 fun CloneflixProfileMenuDropdown(
     currentProfiles: List<Pair<String, CloneflixAvatarModel>>,
@@ -694,7 +648,6 @@ fun CloneflixProfileMenuDropdown(
         horizontalAlignment = Alignment.End,
         modifier = modifier.width(224.dp)
     ) {
-        // Pointer Polygon Arrow on top
         Box(
             modifier = Modifier
                 .padding(end = 24.dp)
@@ -704,7 +657,6 @@ fun CloneflixProfileMenuDropdown(
                 .border(BorderStroke(1.dp, Grey600), PolygonShape)
         )
 
-        // Dropdown Menu Card
         Surface(
             color = Color(0xFF141414),
             shape = RoundedCornerShape(4.dp),
@@ -715,7 +667,6 @@ fun CloneflixProfileMenuDropdown(
                 .offset(y = (-1).dp)
         ) {
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                // Profiles List
                 currentProfiles.forEach { (name, avatar) ->
                     ProfileMenuItem(
                         icon = {
@@ -736,7 +687,6 @@ fun CloneflixProfileMenuDropdown(
                 CloneflixDivider(modifier = Modifier.padding(horizontal = 8.dp))
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Action Items
                 ProfileMenuItem(
                     iconRes = R.drawable.cloneflix_ic_edit,
                     label = "Manage Profiles",
@@ -765,7 +715,6 @@ fun CloneflixProfileMenuDropdown(
                 CloneflixDivider(modifier = Modifier.padding(horizontal = 8.dp))
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Sign Out Link
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

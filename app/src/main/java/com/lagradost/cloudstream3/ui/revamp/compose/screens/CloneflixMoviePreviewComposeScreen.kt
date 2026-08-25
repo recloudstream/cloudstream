@@ -119,7 +119,6 @@ fun CloneflixMoviePreviewComposeScreen(
             .verticalScroll(scrollState)
             .padding(dimens.spacing2Xl)
     ) {
-        // Header
         CloneflixHeader(
             title = "Movie Preview",
             subtitle = "Movie Cards • Samples • Carousels • Episode Lists • Detail Previews",
@@ -128,7 +127,6 @@ fun CloneflixMoviePreviewComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // SECTION 1: Movie Cards
         Text(
             text = "MOVIE CARDS (VARIANTS)",
             style = typography.sectionHeader,
@@ -240,7 +238,6 @@ fun CloneflixMoviePreviewComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // SECTION 2: Samples - Home Page Movie Cards
         Text(
             text = "SAMPLES (HOME PAGE CARDS)",
             style = typography.sectionHeader,
@@ -308,7 +305,6 @@ fun CloneflixMoviePreviewComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // SECTION 3: Patterns - Movie Blocks (Carousels)
         Text(
             text = "PATTERNS: MOVIE BLOCKS",
             style = typography.sectionHeader,
@@ -349,7 +345,6 @@ fun CloneflixMoviePreviewComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // SECTION 4: Patterns - List of Episodes
         Text(
             text = "PATTERNS: LIST OF EPISODES",
             style = typography.sectionHeader,
@@ -405,7 +400,6 @@ fun CloneflixMoviePreviewComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing3Xl))
 
-        // SECTION 5: Patterns - Expanded Movie Preview & Detail Card
         Text(
             text = "PATTERNS: MOVIE PREVIEW (EXPANDED & DETAIL)",
             style = typography.sectionHeader,
@@ -452,9 +446,6 @@ fun CloneflixMoviePreviewComposeScreen(
     }
 }
 
-/**
- * More Like This Card with metadata and Add button from Figma 121:3161.
- */
 @Composable
 fun CloneflixMoreLikeThisDetailCard(
     title: String,
@@ -478,7 +469,6 @@ fun CloneflixMoreLikeThisDetailCard(
             .border(BorderStroke(0.5.dp, colors.border), RoundedCornerShape(6.dp))
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Thumbnail with Logo & Runtime
             CloneflixMovieCard(
                 title = title,
                 type = CloneflixMovieCardType.MORE_LIKE_THIS,
@@ -487,7 +477,6 @@ fun CloneflixMoreLikeThisDetailCard(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Metadata row with + button
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -511,7 +500,6 @@ fun CloneflixMoreLikeThisDetailCard(
                         )
                     }
 
-                    // Circle Add Button
                     Box(
                         modifier = Modifier
                             .size(32.dp)

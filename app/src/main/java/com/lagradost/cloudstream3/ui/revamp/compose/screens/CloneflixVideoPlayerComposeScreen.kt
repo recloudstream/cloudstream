@@ -100,7 +100,6 @@ fun CloneflixVideoPlayerComposeScreen(
             .verticalScroll(scrollState)
             .padding(dimens.spacing2Xl)
     ) {
-        // Section Header matching Figma
         CloneflixHeader(
             title = "Video Player",
             subtitle = "Video Progress Indicator • Volume Slider • Speed • Subtitles • Patterns",
@@ -109,9 +108,6 @@ fun CloneflixVideoPlayerComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // ==========================================
-        // SECTION 1: COMPONENTS
-        // ==========================================
         Text(
             text = "COMPONENTS",
             style = typography.sectionHeader,
@@ -120,7 +116,6 @@ fun CloneflixVideoPlayerComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 1. Video Progress Indicator
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -204,7 +199,6 @@ fun CloneflixVideoPlayerComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 2. Volume Slider (High, Middle, Mute)
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -275,7 +269,6 @@ fun CloneflixVideoPlayerComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 3. Next Episode Preview & Playback Speed
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -326,7 +319,6 @@ fun CloneflixVideoPlayerComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 4. Subtitles & Audio Selector
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -360,9 +352,6 @@ fun CloneflixVideoPlayerComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // ==========================================
-        // SECTION 2: PATTERNS (FULL VIDEO PLAYER)
-        // ==========================================
         Text(
             text = "PATTERNS",
             style = typography.sectionHeader,
@@ -371,7 +360,6 @@ fun CloneflixVideoPlayerComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // Interactive pattern state switcher
         ScrollableTabRow(
             selectedTabIndex = patternTabs.indexOfFirst { it.second == selectedPatternState }.coerceAtLeast(0),
             containerColor = colors.surfaceElevated,
@@ -406,7 +394,6 @@ fun CloneflixVideoPlayerComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // Full Composed Video Player Pattern Card
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE

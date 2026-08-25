@@ -155,7 +155,6 @@ fun CloneflixAudioSubtitlesSelector(
                 .fillMaxWidth()
                 .padding(24.dp)
         ) {
-            // Header with Close
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -187,14 +186,12 @@ fun CloneflixAudioSubtitlesSelector(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Two Columns: Audio (Left) and Subtitles (Right)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp),
                 horizontalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                // Column 1: Audio
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -225,7 +222,6 @@ fun CloneflixAudioSubtitlesSelector(
                     }
                 }
 
-                // Vertical Divider line
                 Box(
                     modifier = Modifier
                         .width(1.dp)
@@ -233,7 +229,6 @@ fun CloneflixAudioSubtitlesSelector(
                         .background(Color(0x26FFFFFF))
                 )
 
-                // Column 2: Subtitles
                 Column(
                     modifier = Modifier
                         .weight(1f)

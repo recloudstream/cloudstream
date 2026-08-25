@@ -68,9 +68,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // ==========================================
-        // SECTION 1: TITLE PREVIEW SIZES
-        // ==========================================
         Text(
             text = "TITLE PREVIEW SIZES",
             style = typography.sectionHeader,
@@ -79,7 +76,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // Size: Large
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -108,7 +104,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // Size: Medium
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -136,7 +131,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // Size: Small 1, Small 2, Small 3
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -193,9 +187,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // ==========================================
-        // SECTION 2: HERO BANNER VARIANTS
-        // ==========================================
         Text(
             text = "HERO BANNER VARIANTS",
             style = typography.sectionHeader,
@@ -204,7 +195,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 1. Home Page Hero Banner
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -240,7 +230,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 2. Movie Preview Hero Banner
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -275,7 +264,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 3. Landing Page Hero
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -301,7 +289,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 4. Authentication Page Hero
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -327,9 +314,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // ==========================================
-        // SECTION 3: COMPOSED PATTERNS (HeroBanner+)
-        // ==========================================
         Text(
             text = "COMPOSED PATTERNS (HERO BANNER+)",
             style = typography.sectionHeader,
@@ -338,7 +322,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 1. Full Composed Home Page Pattern
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE
@@ -368,7 +351,6 @@ fun CloneflixHeroBannersComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacingL))
 
-        // 2. Full Composed Movie Preview Modal Pattern
         CloneflixCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CloneflixCardElevation.SURFACE

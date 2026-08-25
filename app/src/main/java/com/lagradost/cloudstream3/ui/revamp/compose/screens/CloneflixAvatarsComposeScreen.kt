@@ -107,7 +107,6 @@ fun CloneflixAvatarsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // Section 1: Small Avatar Variants
         Text(
             text = "SMALL AVATAR (32DP)",
             style = typography.sectionHeader,
@@ -170,7 +169,6 @@ fun CloneflixAvatarsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // Section 2: Large Avatar Variants & States
         Text(
             text = "LARGE AVATAR & FOCUS STATES (144DP)",
             style = typography.sectionHeader,
@@ -244,7 +242,6 @@ fun CloneflixAvatarsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // Section 3: Sample "Who's Watching?" Profile Selector
         Text(
             text = "SAMPLE: WHO'S WATCHING? (PROFILE SELECTOR)",
             style = typography.sectionHeader,
@@ -289,7 +286,6 @@ fun CloneflixAvatarsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // Section 4: Sample Profile Menu Popover Dropdown
         Text(
             text = "SAMPLE: PROFILE MENU (HEADER POPOVER)",
             style = typography.sectionHeader,
@@ -345,7 +341,6 @@ fun CloneflixAvatarsComposeScreen(
 
         Spacer(modifier = Modifier.height(dimens.spacing2Xl))
 
-        // Section 5: Official Avatars Catalog
         Text(
             text = "OFFICIAL AVATARS CATALOG",
             style = typography.sectionHeader,
