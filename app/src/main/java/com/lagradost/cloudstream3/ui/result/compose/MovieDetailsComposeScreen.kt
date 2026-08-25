@@ -33,14 +33,17 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResumeWatchingStatus
-import com.lagradost.cloudstream3.ui.result.compose.components.AboutSection
 import com.lagradost.cloudstream3.ui.result.compose.components.EpisodeRowItem
-import com.lagradost.cloudstream3.ui.result.compose.components.EpisodesHeaderSection
-import com.lagradost.cloudstream3.ui.result.compose.components.HeroBannerSection
 import com.lagradost.cloudstream3.ui.result.compose.components.MovieCardItem
 import com.lagradost.cloudstream3.ui.result.compose.components.MovieCardType
-import com.lagradost.cloudstream3.ui.result.compose.components.MovieInfoSynopsisSection
-import com.lagradost.cloudstream3.ui.result.compose.components.RecommendationRowView
+import com.lagradost.cloudstream3.ui.result.compose.model.MovieRecommendationRow
+import com.lagradost.cloudstream3.ui.result.compose.model.MovieTrailerData
+import com.lagradost.cloudstream3.ui.result.compose.model.getPlayButtonText
+import com.lagradost.cloudstream3.ui.result.compose.sections.AboutSection
+import com.lagradost.cloudstream3.ui.result.compose.sections.EpisodesHeaderSection
+import com.lagradost.cloudstream3.ui.result.compose.sections.HeroBannerSection
+import com.lagradost.cloudstream3.ui.result.compose.sections.MovieInfoSynopsisSection
+import com.lagradost.cloudstream3.ui.result.compose.sections.RecommendationRowView
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.ui.result.compose.components
+package com.lagradost.cloudstream3.ui.result.compose.sections
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.result.compose.components.SeasonDropdown
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 
 @Composable

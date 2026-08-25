@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.ui.result.compose.MovieTrailerData
+import com.lagradost.cloudstream3.ui.result.compose.model.MovieTrailerData
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 import com.lagradost.cloudstream3.ui.result.compose.theme.PrimaryWhite
 import com.lagradost.cloudstream3.ui.result.compose.theme.TransparentBlack60

@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.ui.result.compose.components
+package com.lagradost.cloudstream3.ui.result.compose.sections
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.lagradost.cloudstream3.ui.result.compose.MovieRecommendationRow
+import com.lagradost.cloudstream3.ui.result.compose.components.MovieCardItem
+import com.lagradost.cloudstream3.ui.result.compose.components.MovieCardSize
+import com.lagradost.cloudstream3.ui.result.compose.components.MovieCardType
+import com.lagradost.cloudstream3.ui.result.compose.components.MovieDetailsMovieCard
+import com.lagradost.cloudstream3.ui.result.compose.model.MovieRecommendationRow
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 
 @Composable

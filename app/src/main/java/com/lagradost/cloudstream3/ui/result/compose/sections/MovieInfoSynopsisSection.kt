@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.ui.result.compose.components
+package com.lagradost.cloudstream3.ui.result.compose.sections
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -26,6 +26,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.result.compose.components.MaturityRatingBadge
+import com.lagradost.cloudstream3.ui.result.compose.components.MovieDetailsTokens
+import com.lagradost.cloudstream3.ui.result.compose.components.VideoQualityBadge
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 import com.lagradost.cloudstream3.ui.result.compose.theme.getRatingScoreColor
 

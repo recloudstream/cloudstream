@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.ui.result.compose.components
+package com.lagradost.cloudstream3.ui.result.compose.sections
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -38,6 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.result.compose.components.CircleActionButton
+import com.lagradost.cloudstream3.ui.result.compose.components.HeroPlayButton
+import com.lagradost.cloudstream3.ui.result.compose.components.HeroTrailerButton
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 
 @OptIn(ExperimentalFoundationApi::class)

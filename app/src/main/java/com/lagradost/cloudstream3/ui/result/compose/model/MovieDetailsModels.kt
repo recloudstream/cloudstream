@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.ui.result.compose
+package com.lagradost.cloudstream3.ui.result.compose.model
 
 import android.content.Context
 import androidx.compose.runtime.Immutable
