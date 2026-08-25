@@ -18,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
@@ -64,6 +65,12 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     private var composeRawSeasonsState by mutableStateOf<List<Pair<UiText?, Int>>>(emptyList())
     private var composeSeasonsState by mutableStateOf<List<String>>(emptyList())
     private var composeSelectedSeasonIndexState by mutableStateOf(0)
+    private var composeDubSubSelectionsState by mutableStateOf<List<Pair<UiText?, DubStatus>>>(emptyList())
+    private var composeDubSubState by mutableStateOf<List<String>>(emptyList())
+    private var composeSelectedDubStatusIndexState by mutableStateOf(0)
+    private var composeRangeSelectionsState by mutableStateOf<List<Pair<UiText?, EpisodeRange>>>(emptyList())
+    private var composeRangesState by mutableStateOf<List<String>>(emptyList())
+    private var composeSelectedRangeIndexState by mutableStateOf(0)
     private var composeHasTrailersState by mutableStateOf(false)
     private var composeResumeWatchingState by mutableStateOf<ResumeWatchingStatus?>(null)
 
@@ -173,6 +180,20 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         dynamicRecommendations = composeRecommendationsState,
                         dynamicSeasons = composeSeasonsState,
                         selectedSeasonIndex = composeSelectedSeasonIndexState,
+                        dynamicDubs = composeDubSubState,
+                        selectedDubIndex = composeSelectedDubStatusIndexState,
+                        onDubSelect = { idx ->
+                            composeDubSubSelectionsState.getOrNull(idx)?.second?.let { dub ->
+                                viewModel.changeDubStatus(dub)
+                            }
+                        },
+                        dynamicRanges = composeRangesState,
+                        selectedRangeIndex = composeSelectedRangeIndexState,
+                        onRangeSelect = { idx ->
+                            composeRangeSelectionsState.getOrNull(idx)?.second?.let { range ->
+                                viewModel.changeRange(range)
+                            }
+                        },
                         isInWatchList = composeWatchStatusState != WatchType.NONE,
                         hasTrailers = composeHasTrailersState,
                         resumeStatus = composeResumeWatchingState,
@@ -204,10 +225,30 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                                 }
                             }
                         },
+                        onPlayLongClick = {
+                            val resume = composeResumeWatchingState
+                            val ep = resume?.result ?: composeEpisodesState.firstOrNull() ?: (viewModel.movie.value as? Resource.Success)?.value?.second
+                            if (ep != null) {
+                                viewModel.handleAction(
+                                    EpisodeClickEvent(
+                                        ACTION_SHOW_OPTIONS,
+                                        ep
+                                    )
+                                )
+                            }
+                        },
                         onEpisodeClick = { ep ->
                             viewModel.handleAction(
                                 EpisodeClickEvent(
                                     storedData.playerAction,
+                                    ep
+                                )
+                            )
+                        },
+                        onEpisodeLongClick = { ep ->
+                            viewModel.handleAction(
+                                EpisodeClickEvent(
+                                    ACTION_SHOW_OPTIONS,
                                     ep
                                 )
                             )
@@ -367,6 +408,24 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         observe(viewModel.seasonSelections) {
             composeRawSeasonsState = it
             composeSeasonsState = it.map { s -> s.first?.asStringNull(context) ?: "" }
+        }
+
+        observe(viewModel.dubSubSelections) {
+            composeDubSubSelectionsState = it
+            composeDubSubState = it.map { d -> d.first?.asStringNull(context) ?: "" }
+        }
+
+        observe(viewModel.selectedDubStatusIndex) {
+            composeSelectedDubStatusIndexState = it
+        }
+
+        observe(viewModel.rangeSelections) {
+            composeRangeSelectionsState = it
+            composeRangesState = it.map { r -> r.first?.asStringNull(context) ?: "" }
+        }
+
+        observe(viewModel.selectedRangeIndex) {
+            composeSelectedRangeIndexState = it
         }
 
         observe(viewModel.recommendations) { recommendations ->

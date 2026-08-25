@@ -7,6 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.BringIntoViewSpec
 import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
@@ -127,6 +128,14 @@ fun MovieDetailsComposeScreen(
     resumeStatus: ResumeWatchingStatus? = null,
     isMovie: Boolean = true,
     selectedSeasonIndex: Int = 0,
+    dynamicDubs: List<String>? = null,
+    selectedDubIndex: Int = 0,
+    onDubSelect: ((Int) -> Unit)? = null,
+    dynamicRanges: List<String>? = null,
+    selectedRangeIndex: Int = 0,
+    onRangeSelect: ((Int) -> Unit)? = null,
+    onPlayLongClick: (() -> Unit)? = null,
+    onEpisodeLongClick: ((ResultEpisode) -> Unit)? = null,
     isInWatchList: Boolean = false,
     hasTrailers: Boolean = false,
     onPlayClick: () -> Unit = {},
@@ -177,6 +186,34 @@ fun MovieDetailsComposeScreen(
     LaunchedEffect(selectedSeasonIndex, seasonOptions) {
         if (seasonOptions.isNotEmpty()) {
             selectedSeasonText = seasonOptions.getOrElse(selectedSeasonIndex) { seasonOptions.first() }
+        }
+    }
+
+    val dubOptions = remember(dynamicDubs) {
+        dynamicDubs ?: emptyList()
+    }
+
+    var selectedDubText by remember(selectedDubIndex, dubOptions) {
+        mutableStateOf(dubOptions.getOrElse(selectedDubIndex) { dubOptions.firstOrNull() ?: "" })
+    }
+
+    LaunchedEffect(selectedDubIndex, dubOptions) {
+        if (dubOptions.isNotEmpty()) {
+            selectedDubText = dubOptions.getOrElse(selectedDubIndex) { dubOptions.first() }
+        }
+    }
+
+    val rangeOptions = remember(dynamicRanges) {
+        dynamicRanges ?: emptyList()
+    }
+
+    var selectedRangeText by remember(selectedRangeIndex, rangeOptions) {
+        mutableStateOf(rangeOptions.getOrElse(selectedRangeIndex) { rangeOptions.firstOrNull() ?: "" })
+    }
+
+    LaunchedEffect(selectedRangeIndex, rangeOptions) {
+        if (rangeOptions.isNotEmpty()) {
+            selectedRangeText = rangeOptions.getOrElse(selectedRangeIndex) { rangeOptions.first() }
         }
     }
 
@@ -344,11 +381,12 @@ fun MovieDetailsComposeScreen(
                                 .width(110.dp)
                                 .focusRequester(playButtonFocusRequester)
                                 .focusable(interactionSource = playInteractionSource)
-                                .clickable(
+                                .combinedClickable(
                                     interactionSource = playInteractionSource,
                                     indication = null,
                                     role = Role.Button,
-                                    onClick = onPlayClick
+                                    onClick = onPlayClick,
+                                    onLongClick = onPlayLongClick
                                 )
                         )
 
@@ -473,6 +511,7 @@ fun MovieDetailsComposeScreen(
 
                             HeroPlayButton(
                                 onClick = onPlayClick,
+                                onLongClick = onPlayLongClick,
                                 text = playButtonText,
                                 progress = resumeProgressFraction,
                                 interactionSource = playInteractionSource,
@@ -751,6 +790,32 @@ fun MovieDetailsComposeScreen(
                                 width = 180.dp
                             )
                         }
+
+                        if (dubOptions.size > 1) {
+                            SeasonDropdown(
+                                options = dubOptions,
+                                selectedOption = selectedDubText,
+                                onOptionSelected = { dubStr ->
+                                    selectedDubText = dubStr
+                                    val idx = dubOptions.indexOf(dubStr)
+                                    if (idx >= 0) onDubSelect?.invoke(idx)
+                                },
+                                width = 140.dp
+                            )
+                        }
+
+                        if (rangeOptions.size > 1) {
+                            SeasonDropdown(
+                                options = rangeOptions,
+                                selectedOption = selectedRangeText,
+                                onOptionSelected = { rangeStr ->
+                                    selectedRangeText = rangeStr
+                                    val idx = rangeOptions.indexOf(rangeStr)
+                                    if (idx >= 0) onRangeSelect?.invoke(idx)
+                                },
+                                width = 140.dp
+                            )
+                        }
                     }
                 }
 
@@ -771,10 +836,16 @@ fun MovieDetailsComposeScreen(
                             else showToast("Downloading Episode ${ep.episode}")
                         }
                     }
+                    val onEpLongClick = remember(ep) {
+                        if (onEpisodeLongClick != null) {
+                            { onEpisodeLongClick(ep) }
+                        } else null
+                    }
                     EpisodeRowItem(
                         episode = ep,
                         onClick = onEpClick,
                         onDownloadClick = onEpDownload,
+                        onLongClick = onEpLongClick,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = dimens.spacing2Xl, vertical = 6.dp)
@@ -922,11 +993,13 @@ fun MovieDetailsComposeScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EpisodeRowItem(
     episode: ResultEpisode,
     onClick: () -> Unit,
     onDownloadClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -956,11 +1029,12 @@ fun EpisodeRowItem(
             .clip(MovieDetailsTokens.ShapeCardMedium)
             .background(background)
             .then(if (border != null) Modifier.border(border, MovieDetailsTokens.ShapeCardMedium) else Modifier)
-            .clickable(
+            .combinedClickable(
                 interactionSource = interactionSource,
                 indication = null,
                 role = Role.Button,
-                onClick = onClick
+                onClick = onClick,
+                onLongClick = onLongClick
             )
             .focusable(interactionSource = interactionSource)
             .padding(dimens.spacingL),

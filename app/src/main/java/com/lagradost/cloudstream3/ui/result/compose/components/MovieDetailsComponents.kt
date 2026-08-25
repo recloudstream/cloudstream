@@ -4,9 +4,11 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -143,12 +145,14 @@ object MovieCardDefaults {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HeroPlayButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     text: String = stringResource(id = R.string.play_movie_button),
     progress: Float? = null,
+    onLongClick: (() -> Unit)? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true
 ) {
@@ -167,12 +171,13 @@ fun HeroPlayButton(
 
     Box(
         modifier = modifier
-            .clickable(
+            .combinedClickable(
                 interactionSource = interactionSource,
                 indication = null,
                 enabled = enabled,
                 role = Role.Button,
-                onClick = onClick
+                onClick = onClick,
+                onLongClick = onLongClick
             )
             .focusable(enabled = enabled, interactionSource = interactionSource)
             .semantics {
