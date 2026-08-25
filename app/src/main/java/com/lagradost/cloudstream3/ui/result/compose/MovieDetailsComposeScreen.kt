@@ -411,9 +411,11 @@ fun MovieDetailsComposeScreen(
                         if (!providerName.isNullOrBlank()) {
                             Text(
                                 text = providerName.uppercase(),
-                                style = typography.boldTitle2,
-                                color = colors.primary,
-                                letterSpacing = 2.sp
+                                style = typography.boldTitle2.copy(
+                                    fontWeight = FontWeight.Black,
+                                    letterSpacing = (-0.8).sp
+                                ),
+                                color = colors.primary
                             )
                         }
                     }
