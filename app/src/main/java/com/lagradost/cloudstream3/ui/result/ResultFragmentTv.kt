@@ -139,7 +139,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()
         hideKeyboard()
-        if (storedData.restart || !viewModel.hasLoaded())
+        if (storedData.restart || !viewModel.hasLoaded()) {
             viewModel.load(
                 activity,
                 storedData.url,
@@ -148,9 +148,96 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 storedData.dubStatus,
                 storedData.start
             )
+        }
         // ===== ===== =====
-        var comingSoon = false
 
+        setupComposeView(binding, storedData)
+        setupViewModelObservers(binding, storedData)
+    }
+
+    private fun handlePlayClick(storedData: ResultFragment.StoredData) {
+        val resume = composeResumeWatchingState
+        if (resume != null) {
+            viewModel.handleAction(
+                EpisodeClickEvent(
+                    storedData.playerAction,
+                    resume.result
+                )
+            )
+        } else {
+            val ep = composeEpisodesState.firstOrNull()
+            if (ep != null) {
+                viewModel.handleAction(
+                    EpisodeClickEvent(
+                        storedData.playerAction,
+                        ep
+                    )
+                )
+            } else {
+                (viewModel.movie.value as? Resource.Success)?.value?.let { (_, movieEp) ->
+                    viewModel.handleAction(
+                        EpisodeClickEvent(ACTION_CLICK_DEFAULT, movieEp)
+                    )
+                }
+            }
+        }
+    }
+
+    private fun handlePlayLongClick() {
+        val resume = composeResumeWatchingState
+        val ep = resume?.result ?: composeEpisodesState.firstOrNull() ?: (viewModel.movie.value as? Resource.Success)?.value?.second
+        if (ep != null) {
+            viewModel.handleAction(
+                EpisodeClickEvent(
+                    ACTION_SHOW_OPTIONS,
+                    ep
+                )
+            )
+        }
+    }
+
+    private fun handleTrailerClick() {
+        val trailersLinks = viewModel.trailers.value ?: emptyList()
+        val extractedTrailerLinks = trailersLinks.flatMap { it.mirros }
+            .map { (extractedTrailerLink, _) -> extractedTrailerLink }
+        if (extractedTrailerLinks.isNotEmpty()) {
+            activity.navigate(
+                R.id.global_to_navigation_player,
+                GeneratorPlayer.newInstance(
+                    ExtractorLinkGenerator(
+                        extractedTrailerLinks,
+                        emptyList()
+                    ),
+                    0
+                )
+            )
+        }
+    }
+
+    private fun handleAddToListClick() {
+        val curStatus = composeWatchStatusState
+        activity?.showBottomDialog(
+            WatchType.entries.map { getString(it.stringRes) }.toList(),
+            curStatus.ordinal,
+            getString(R.string.action_add_to_bookmarks),
+            showApply = false,
+            {}
+        ) {
+            viewModel.updateWatchStatus(WatchType.entries[it], context)
+        }
+    }
+
+    private fun handleLikeClick() {
+        viewModel.toggleFavoriteStatus(context) { newStatus: Boolean? ->
+            if (newStatus == null) return@toggleFavoriteStatus
+            val message = if (newStatus) R.string.favorite_added else R.string.favorite_removed
+            val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                ?: txt(R.string.no_data).asStringNull(context) ?: ""
+            CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+        }
+    }
+
+    private fun setupComposeView(binding: FragmentResultTvBinding, storedData: ResultFragment.StoredData) {
         binding.resultComposeView.setContent {
             MovieDetailsTheme {
                 val page = composePageState
@@ -202,46 +289,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         isFavorite = composeFavoriteStatusState,
                         hasTrailers = composeHasTrailersState,
                         resumeStatus = composeResumeWatchingState,
-                        isMovie = composeEpisodesState.isEmpty() || (composeResumeWatchingState?.isMovie == true),
-                        onPlayClick = {
-                            val resume = composeResumeWatchingState
-                            if (resume != null) {
-                                viewModel.handleAction(
-                                    EpisodeClickEvent(
-                                        storedData.playerAction,
-                                        resume.result
-                                    )
-                                )
-                            } else {
-                                val ep = composeEpisodesState.firstOrNull()
-                                if (ep != null) {
-                                    viewModel.handleAction(
-                                        EpisodeClickEvent(
-                                            storedData.playerAction,
-                                            ep
-                                        )
-                                    )
-                                } else {
-                                    (viewModel.movie.value as? Resource.Success)?.value?.let { (_, movieEp) ->
-                                        viewModel.handleAction(
-                                            EpisodeClickEvent(ACTION_CLICK_DEFAULT, movieEp)
-                                        )
-                                    }
-                                }
-                            }
-                        },
-                        onPlayLongClick = {
-                            val resume = composeResumeWatchingState
-                            val ep = resume?.result ?: composeEpisodesState.firstOrNull() ?: (viewModel.movie.value as? Resource.Success)?.value?.second
-                            if (ep != null) {
-                                viewModel.handleAction(
-                                    EpisodeClickEvent(
-                                        ACTION_SHOW_OPTIONS,
-                                        ep
-                                    )
-                                )
-                            }
-                        },
+                        isMovie = composeEpisodesState.isEmpty() || composeResumeWatchingState?.isMovie == true,
+                        onPlayClick = { handlePlayClick(storedData) },
+                        onPlayLongClick = { handlePlayLongClick() },
                         onEpisodeClick = { ep ->
                             viewModel.handleAction(
                                 EpisodeClickEvent(
@@ -262,48 +312,11 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             val seasonNumber = composeRawSeasonsState.getOrNull(idx)?.second ?: (idx + 1)
                             viewModel.changeSeason(seasonNumber)
                         },
-                        onAddToListClick = {
-                            val curStatus = composeWatchStatusState
-                            activity?.showBottomDialog(
-                                WatchType.entries.map { getString(it.stringRes) }.toList(),
-                                curStatus.ordinal,
-                                getString(R.string.action_add_to_bookmarks),
-                                showApply = false,
-                                {}
-                            ) {
-                                viewModel.updateWatchStatus(WatchType.entries[it], context)
-                            }
-                        },
-                        onLikeClick = {
-                            viewModel.toggleFavoriteStatus(context) { newStatus: Boolean? ->
-                                if (newStatus == null) return@toggleFavoriteStatus
-                                val message = if (newStatus) R.string.favorite_added else R.string.favorite_removed
-                                val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                                    ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                                CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
-                            }
-                        },
-                        onTrailerClick = {
-                            val trailersLinks = viewModel.trailers.value ?: emptyList()
-                            val extractedTrailerLinks = trailersLinks.flatMap { it.mirros }
-                                .map { (extractedTrailerLink, _) -> extractedTrailerLink }
-                            if (extractedTrailerLinks.isNotEmpty()) {
-                                activity.navigate(
-                                    R.id.global_to_navigation_player,
-                                    GeneratorPlayer.newInstance(
-                                        ExtractorLinkGenerator(
-                                            extractedTrailerLinks,
-                                            emptyList()
-                                        ),
-                                        0
-                                    )
-                                )
-                            }
-                        },
+                        onAddToListClick = { handleAddToListClick() },
+                        onLikeClick = { handleLikeClick() },
+                        onTrailerClick = { handleTrailerClick() },
                         onSearchClick = {
-                            title.let { t ->
-                                QuickSearchFragment.pushSearch(activity, t)
-                            }
+                            QuickSearchFragment.pushSearch(activity, title)
                         },
                         onActorClick = { actorName ->
                             QuickSearchFragment.pushSearch(activity, actorName)
@@ -325,7 +338,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 }
             }
         }
+    }
 
+    private fun setupViewModelObservers(binding: FragmentResultTvBinding, storedData: ResultFragment.StoredData) {
         observeNullable(viewModel.resumeWatching) { resume ->
             composeResumeWatchingState = resume
         }
@@ -350,6 +365,11 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
             composeWatchStatusState = watchType
         }
 
+        observePopupsAndLoading()
+        observeSelectionsAndContent(binding, storedData)
+    }
+
+    private fun observePopupsAndLoading() {
         observeNullable(viewModel.selectPopup) { popup ->
             if (popup == null) {
                 popupDialog?.dismissSafe(activity)
@@ -407,7 +427,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 }
             }
         }
+    }
 
+    private fun observeSelectionsAndContent(binding: FragmentResultTvBinding, storedData: ResultFragment.StoredData) {
         observe(viewModel.selectedSeasonIndex) { selected ->
             composeSelectedSeasonIndexState = selected
         }

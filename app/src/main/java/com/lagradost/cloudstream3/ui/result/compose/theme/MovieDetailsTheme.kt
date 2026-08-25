@@ -94,7 +94,7 @@ fun getRatingScoreColor(scoreText: String?): Color {
     if (match != null) {
         val num = match.value.toDoubleOrNull() ?: return GreenAccent
         val isPercentage = text.contains("%") || num > 10.0
-        val percentage = if (isPercentage) num else (num * 10.0)
+        val percentage = if (isPercentage) num else num * 10.0
 
         return when {
             percentage >= 70.0 -> GreenAccent
