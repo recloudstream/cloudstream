@@ -34,6 +34,7 @@ import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.result.compose.MovieDetailsComposeScreen
+import com.lagradost.cloudstream3.ui.result.compose.MovieTrailerData
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
@@ -62,6 +63,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     private var composeRecommendationsState by mutableStateOf<List<SearchResponse>>(emptyList())
     private var composeActorsState by mutableStateOf<List<ActorData>>(emptyList())
     private var composeWatchStatusState by mutableStateOf(WatchType.NONE)
+    private var composeFavoriteStatusState by mutableStateOf(false)
     private var composeRawSeasonsState by mutableStateOf<List<Pair<UiText?, Int>>>(emptyList())
     private var composeSeasonsState by mutableStateOf<List<String>>(emptyList())
     private var composeSelectedSeasonIndexState by mutableStateOf(0)
@@ -71,6 +73,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     private var composeRangeSelectionsState by mutableStateOf<List<Pair<UiText?, EpisodeRange>>>(emptyList())
     private var composeRangesState by mutableStateOf<List<String>>(emptyList())
     private var composeSelectedRangeIndexState by mutableStateOf(0)
+    private var composeTrailersDataState by mutableStateOf<List<MovieTrailerData>>(emptyList())
     private var composeHasTrailersState by mutableStateOf(false)
     private var composeResumeWatchingState by mutableStateOf<ResumeWatchingStatus?>(null)
 
@@ -194,7 +197,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                                 viewModel.changeRange(range)
                             }
                         },
+                        dynamicTrailers = composeTrailersDataState,
                         isInWatchList = composeWatchStatusState != WatchType.NONE,
+                        isFavorite = composeFavoriteStatusState,
                         hasTrailers = composeHasTrailersState,
                         resumeStatus = composeResumeWatchingState,
                         isMovie = composeEpisodesState.isEmpty() || (composeResumeWatchingState?.isMovie == true),
@@ -334,9 +339,19 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         }
 
         observe(viewModel.trailers) { trailersLinks ->
-            val extractedTrailerLinks = trailersLinks.flatMap { it.mirros }
-                .map { (extractedTrailerLink, _) -> extractedTrailerLink }
-            composeHasTrailersState = extractedTrailerLinks.isNotEmpty()
+            val trailerItems = trailersLinks.flatMap { it.mirros }.mapNotNull { (extractedTrailerLink, _) ->
+                MovieTrailerData(
+                    title = extractedTrailerLink.name.ifBlank { getString(R.string.play_trailer) },
+                    runtime = "",
+                    rawTrailer = extractedTrailerLink
+                )
+            }
+            composeTrailersDataState = trailerItems
+            composeHasTrailersState = trailerItems.isNotEmpty()
+        }
+
+        observeNullable(viewModel.favoriteStatus) { isFav ->
+            composeFavoriteStatusState = isFav == true
         }
 
         observe(viewModel.watchStatus) { watchType ->

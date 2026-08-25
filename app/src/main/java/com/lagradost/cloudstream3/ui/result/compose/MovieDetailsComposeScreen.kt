@@ -137,6 +137,7 @@ fun MovieDetailsComposeScreen(
     onPlayLongClick: (() -> Unit)? = null,
     onEpisodeLongClick: ((ResultEpisode) -> Unit)? = null,
     isInWatchList: Boolean = false,
+    isFavorite: Boolean = false,
     hasTrailers: Boolean = false,
     onPlayClick: () -> Unit = {},
     onEpisodeClick: ((ResultEpisode) -> Unit)? = null,
@@ -172,8 +173,6 @@ fun MovieDetailsComposeScreen(
         lazyListState.scrollToItem(0)
         playButtonFocusRequester.requestFocus()
     }
-
-    var inMyListState by remember(isInWatchList) { mutableStateOf(isInWatchList) }
 
     val seasonOptions = remember(dynamicSeasons) {
         dynamicSeasons ?: emptyList()
@@ -406,11 +405,9 @@ fun MovieDetailsComposeScreen(
                                         .clickable(
                                             interactionSource = inMyListInteractionSource,
                                             indication = null,
-                                            role = Role.Button
-                                        ) {
-                                            inMyListState = !inMyListState
-                                            onAddToListClick()
-                                        }
+                                            role = Role.Button,
+                                            onClick = onAddToListClick
+                                        )
                                 )
 
                                 Box(
@@ -526,24 +523,27 @@ fun MovieDetailsComposeScreen(
                             ) {
                                 CircleActionButton(
                                     icon = painterResource(
-                                        id = if (inMyListState) R.drawable.ic_baseline_check_24 else R.drawable.ic_baseline_add_24
+                                        id = if (isInWatchList) R.drawable.ic_baseline_check_24 else R.drawable.ic_baseline_add_24
                                     ),
-                                    contentDescription = if (inMyListState) {
+                                    contentDescription = if (isInWatchList) {
                                         stringResource(id = R.string.in_my_list)
                                     } else {
                                         stringResource(id = R.string.add_to_my_list)
                                     },
-                                    onClick = {
-                                        inMyListState = !inMyListState
-                                        onAddToListClick()
-                                    },
+                                    onClick = onAddToListClick,
                                     interactionSource = inMyListInteractionSource,
                                     enabled = false
                                 )
 
                                 CircleActionButton(
-                                    icon = painterResource(id = R.drawable.ic_baseline_favorite_24),
-                                    contentDescription = stringResource(id = R.string.favorite),
+                                    icon = painterResource(
+                                        id = if (isFavorite) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24
+                                    ),
+                                    contentDescription = if (isFavorite) {
+                                        stringResource(id = R.string.unfavorite)
+                                    } else {
+                                        stringResource(id = R.string.favorite)
+                                    },
                                     onClick = onLikeClick,
                                     interactionSource = likeInteractionSource,
                                     enabled = false
