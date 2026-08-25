@@ -44,47 +44,120 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/result_padding"
+            android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.65">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/grayShimmer"
+                    app:cardCornerRadius="0dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="@dimen/result_padding"
+                    android:layout_marginBottom="@dimen/result_padding"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="260dp"
+                        android:layout_height="56dp"
+                        android:background="@color/grayShimmer"
+                        app:cardCornerRadius="@dimen/loading_radius" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="20dp" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="168dp"
+                        android:layout_height="44dp"
+                        android:background="@color/grayShimmer"
+                        app:cardCornerRadius="@dimen/loading_radius" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="16dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:orientation="horizontal">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@color/grayShimmer"
+                            app:cardCornerRadius="20dp" />
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="1dp" />
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@color/grayShimmer"
+                            app:cardCornerRadius="20dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/loading_margin"
-                android:orientation="horizontal">
-
-                <include layout="@layout/loading_poster" />
+                android:layout_height="0dp"
+                android:layout_weight="0.35"
+                android:layout_marginStart="@dimen/result_padding"
+                android:layout_marginTop="@dimen/loading_margin"
+                android:layout_marginEnd="@dimen/result_padding"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/loading_margin"
-                    android:layout_marginEnd="@dimen/loading_margin"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    <include layout="@layout/loading_line" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.62"
+                        android:orientation="vertical">
 
-                    <include layout="@layout/loading_line" />
+                        <include layout="@layout/loading_line" />
+                        <include layout="@layout/loading_line" />
+                        <include layout="@layout/loading_line_short" />
+                    </LinearLayout>
 
-                    <include layout="@layout/loading_line" />
+                    <View
+                        android:layout_width="@dimen/loading_margin"
+                        android:layout_height="1dp" />
 
-                    <include layout="@layout/loading_line" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.38"
+                        android:orientation="vertical">
 
-                    <include layout="@layout/loading_line_short" />
+                        <include layout="@layout/loading_line_short" />
+                        <include layout="@layout/loading_line_short" />
+                    </LinearLayout>
                 </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="8dp" />
+
+                <include layout="@layout/loading_line_short" />
+
+                <include layout="@layout/loading_episode" />
             </LinearLayout>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                tools:ignore="ContentDescription" />
-
-            <include layout="@layout/loading_episode" />
-
-            <include layout="@layout/loading_episode" />
-
-            <include layout="@layout/loading_episode" />
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 

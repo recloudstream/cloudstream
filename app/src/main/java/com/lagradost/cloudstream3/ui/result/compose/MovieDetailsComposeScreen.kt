@@ -141,7 +141,6 @@ fun MovieDetailsComposeScreen(
     hasTrailers: Boolean = false,
     onPlayClick: () -> Unit = {},
     onEpisodeClick: ((ResultEpisode) -> Unit)? = null,
-    onEpisodeDownloadClick: ((ResultEpisode) -> Unit)? = null,
     onSeasonSelect: ((Int) -> Unit)? = null,
     onAddToListClick: () -> Unit = {},
     onLikeClick: () -> Unit = {},
@@ -307,8 +306,6 @@ fun MovieDetailsComposeScreen(
         }
     }
 
-    val trailersList = dynamicTrailers ?: emptyList()
-
     val tvBringIntoViewSpec = remember {
         object : BringIntoViewSpec {
             override fun calculateScrollDistance(
@@ -379,7 +376,6 @@ fun MovieDetailsComposeScreen(
                                 .height(42.dp)
                                 .width(110.dp)
                                 .focusRequester(playButtonFocusRequester)
-                                .focusable(interactionSource = playInteractionSource)
                                 .combinedClickable(
                                     interactionSource = playInteractionSource,
                                     indication = null,
@@ -401,7 +397,6 @@ fun MovieDetailsComposeScreen(
                                 Box(
                                     modifier = Modifier
                                         .size(40.dp)
-                                        .focusable(interactionSource = inMyListInteractionSource)
                                         .clickable(
                                             interactionSource = inMyListInteractionSource,
                                             indication = null,
@@ -413,7 +408,6 @@ fun MovieDetailsComposeScreen(
                                 Box(
                                     modifier = Modifier
                                         .size(40.dp)
-                                        .focusable(interactionSource = likeInteractionSource)
                                         .clickable(
                                             interactionSource = likeInteractionSource,
                                             indication = null,
@@ -426,7 +420,6 @@ fun MovieDetailsComposeScreen(
                                     Box(
                                         modifier = Modifier
                                             .size(40.dp)
-                                            .focusable(interactionSource = searchInteractionSource)
                                             .clickable(
                                                 interactionSource = searchInteractionSource,
                                                 indication = null,
@@ -442,7 +435,6 @@ fun MovieDetailsComposeScreen(
                                     modifier = Modifier
                                         .height(40.dp)
                                         .width(120.dp)
-                                        .focusable(interactionSource = trailerInteractionSource)
                                         .clickable(
                                             interactionSource = trailerInteractionSource,
                                             indication = null,
@@ -830,12 +822,6 @@ fun MovieDetailsComposeScreen(
                             else showToast("Playing ${ep.headerName}: ${ep.name}")
                         }
                     }
-                    val onEpDownload = remember(ep) {
-                        {
-                            if (onEpisodeDownloadClick != null) onEpisodeDownloadClick(ep)
-                            else showToast("Downloading Episode ${ep.episode}")
-                        }
-                    }
                     val onEpLongClick = remember(ep) {
                         if (onEpisodeLongClick != null) {
                             { onEpisodeLongClick(ep) }
@@ -844,7 +830,6 @@ fun MovieDetailsComposeScreen(
                     EpisodeRowItem(
                         episode = ep,
                         onClick = onEpClick,
-                        onDownloadClick = onEpDownload,
                         onLongClick = onEpLongClick,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -883,44 +868,6 @@ fun MovieDetailsComposeScreen(
                             }
                         }
                     )
-                }
-            }
-
-            if (trailersList.isNotEmpty()) {
-                item(key = "trailers_section", contentType = "trailers_section") {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = dimens.spacing2Xl)
-                            .padding(top = dimens.spacing3Xl, bottom = dimens.spacingL)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.trailers_and_more),
-                            style = typography.boldTitle2,
-                            fontSize = 22.sp,
-                            color = colors.textPrimary
-                        )
-
-                        Spacer(modifier = Modifier.height(dimens.spacingL))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
-                        ) {
-                            trailersList.forEach { trailer ->
-                                Box(modifier = Modifier.weight(1f)) {
-                                    TrailerItemCard(
-                                        trailer = trailer,
-                                        onClick = {
-                                            if (hasTrailers) onTrailerClick()
-                                            else showToast("Playing ${trailer.title}")
-                                        },
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
-                            }
-                        }
-                    }
                 }
             }
 
@@ -998,7 +945,6 @@ fun MovieDetailsComposeScreen(
 fun EpisodeRowItem(
     episode: ResultEpisode,
     onClick: () -> Unit,
-    onDownloadClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -1138,13 +1084,6 @@ fun EpisodeRowItem(
                 )
             }
         }
-
-        CircleActionButton(
-            icon = painterResource(id = R.drawable.baseline_downloading_24),
-            contentDescription = stringResource(id = R.string.download_episode_format, episode.episode),
-            onClick = onDownloadClick,
-            modifier = Modifier.size(36.dp)
-        )
     }
 }
 

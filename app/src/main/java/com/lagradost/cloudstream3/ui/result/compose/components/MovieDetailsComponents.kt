@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -535,6 +536,13 @@ fun SeasonDropdown(
         ) {
             options.forEach { option ->
                 val isSelected = option == selectedOption
+                val optionInteractionSource = remember(option) { MutableInteractionSource() }
+                val isOptionFocused by optionInteractionSource.collectIsFocusedAsState()
+                val focusColor = colors.onSurface.copy(
+                    alpha = if (colors.surface.luminance() < 0.5f) 0.22f else 0.12f
+                )
+                val focusBorder = colors.onSurface.copy(alpha = 0.72f)
+
                 DropdownMenuItem(
                     text = {
                         Text(
@@ -548,8 +556,22 @@ fun SeasonDropdown(
                         onOptionSelected(option)
                         expanded = false
                     },
+                    modifier = Modifier
+                        .clip(MovieDetailsTokens.ShapeCardSmall)
+                        .background(if (isOptionFocused) focusColor else Color.Transparent)
+                        .then(
+                            if (isOptionFocused) {
+                                Modifier.border(
+                                    BorderStroke(2.dp, focusBorder),
+                                    MovieDetailsTokens.ShapeCardSmall
+                                )
+                            } else {
+                                Modifier
+                            }
+                        ),
+                    interactionSource = optionInteractionSource,
                     colors = MenuDefaults.itemColors(
-                        textColor = colors.textPrimary
+                        textColor = if (isSelected) colors.primary else colors.textPrimary
                     )
                 )
             }

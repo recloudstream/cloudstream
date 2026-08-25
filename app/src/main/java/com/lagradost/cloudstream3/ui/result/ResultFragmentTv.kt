@@ -258,14 +258,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                                 )
                             )
                         },
-                        onEpisodeDownloadClick = { ep ->
-                            viewModel.handleAction(
-                                EpisodeClickEvent(
-                                    ACTION_DOWNLOAD_EPISODE,
-                                    ep
-                                )
-                            )
-                        },
                         onSeasonSelect = { idx ->
                             val seasonNumber = composeRawSeasonsState.getOrNull(idx)?.second ?: (idx + 1)
                             viewModel.changeSeason(seasonNumber)
