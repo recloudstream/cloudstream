@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,10 +40,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.zIndex
-import android.widget.ImageView
-import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import coil3.compose.AsyncImage
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -112,8 +112,9 @@ fun CloneflixMovieCard(
     val typography = CloneflixTheme.typography
     val dimens = CloneflixTheme.dimens
 
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (isFocused) CloneflixTokens.FOCUS_SCALE_FACTOR else 1f,
+        animationSpec = CloneflixTokens.FastFocusAnimationSpec,
         label = "cardScale"
     )
 
@@ -151,8 +152,8 @@ fun CloneflixMovieCard(
                 .fillMaxWidth()
                 .zIndex(if (isFocused) 10f else 0f)
                 .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
+                    scaleX = scaleState.value
+                    scaleY = scaleState.value
                 }
         ) {
             if (type == CloneflixMovieCardType.TOP10 && top10Rank != null) {
@@ -275,15 +276,10 @@ private fun MovieCardSurface(
             )
     ) {
         if (!posterUrl.isNullOrBlank()) {
-            AndroidView(
-                factory = { ctx ->
-                    ImageView(ctx).apply {
-                        scaleType = ImageView.ScaleType.CENTER_CROP
-                    }
-                },
-                update = { imageView ->
-                    imageView.loadImage(posterUrl)
-                },
+            AsyncImage(
+                model = posterUrl,
+                contentDescription = title,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
         } else {
@@ -606,6 +602,7 @@ fun CloneflixMovieBlockRow(
     }
 }
 
+@Immutable
 data class CloneflixMovieCardItem(
     val title: String,
     val type: CloneflixMovieCardType = CloneflixMovieCardType.DEFAULT,

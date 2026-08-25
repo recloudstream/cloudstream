@@ -101,8 +101,9 @@ fun CloneflixHeroPlayButton(
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (isFocused) 1.05f else 1f,
+        animationSpec = CloneflixTokens.FastFocusAnimationSpec,
         label = "heroPlayBtnScale"
     )
 
@@ -129,12 +130,12 @@ fun CloneflixHeroPlayButton(
                 .height(42.dp)
                 .zIndex(if (isFocused) 10f else 0f)
                 .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
+                    scaleX = scaleState.value
+                    scaleY = scaleState.value
                 }
-                .clip(RoundedCornerShape(4.dp))
+                .clip(CloneflixTokens.ShapeCardSmall)
                 .background(background)
-                .then(if (border != null) Modifier.border(border, RoundedCornerShape(4.dp)) else Modifier)
+                .then(if (border != null) Modifier.border(border, CloneflixTokens.ShapeCardSmall) else Modifier)
                 .padding(horizontal = 24.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -213,8 +214,9 @@ fun CloneflixHeroTrailerButton(
     val isFocused by interactionSource.collectIsFocusedAsState()
     val dimens = CloneflixTheme.dimens
 
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (isFocused) CloneflixTokens.FOCUS_SCALE_FACTOR_LARGE else 1f,
+        animationSpec = CloneflixTokens.FastFocusAnimationSpec,
         label = "heroTrailerBtnScale"
     )
 
@@ -228,10 +230,13 @@ fun CloneflixHeroTrailerButton(
     Box(
         modifier = modifier
             .height(40.dp)
-            .scale(scale)
-            .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
+            .graphicsLayer {
+                scaleX = scaleState.value
+                scaleY = scaleState.value
+            }
+            .clip(CloneflixTokens.ShapeCardSmall)
             .background(background)
-            .border(border, RoundedCornerShape(CloneflixTokens.RadiusCard))
+            .border(border, CloneflixTokens.ShapeCardSmall)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,

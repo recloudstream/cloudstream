@@ -1,5 +1,11 @@
 package com.lagradost.cloudstream3.ui.revamp.compose.components
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -20,6 +26,13 @@ object CloneflixTokens {
     val RadiusCard: Dp = 4.dp
     val RadiusCardMedium: Dp = 8.dp
     val RadiusCardLarge: Dp = 12.dp
+
+    val ShapeCardSmall = RoundedCornerShape(4.dp)
+    val ShapeCardMedium = RoundedCornerShape(8.dp)
+    val ShapeCardLarge = RoundedCornerShape(12.dp)
+    val ShapePill = RoundedCornerShape(999.dp)
+
+    val FastFocusAnimationSpec: TweenSpec<Float> = tween(durationMillis = 150, easing = FastOutSlowInEasing)
 }
 
 object CloneflixMovieCardDefaults {

@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.revamp.compose.screens
 
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -37,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +55,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -67,7 +68,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
+import coil3.compose.AsyncImage
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
@@ -103,13 +104,19 @@ import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryBlack
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryRed
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.PrimaryWhite
 import com.lagradost.cloudstream3.ui.revamp.compose.theme.TransparentBlack60
-import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import kotlinx.coroutines.launch
 
+@Immutable
 data class CloneflixTrailerData(
     val title: String,
     val runtime: String,
     val rawTrailer: Any? = null
+)
+
+@Immutable
+data class CloneflixRecommendationRow(
+    val rowIndex: Int,
+    val items: List<CloneflixMovieCardItem>
 )
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -215,7 +222,9 @@ fun CloneflixMovieDetailsComposeScreen(
     }
 
     val chunkedRecommendations = remember(recommendationCards) {
-        recommendationCards.chunked(6)
+        recommendationCards.chunked(6).mapIndexed { idx, list ->
+            CloneflixRecommendationRow(idx, list)
+        }
     }
 
     val trailersList = dynamicTrailers ?: emptyList()
@@ -250,17 +259,10 @@ fun CloneflixMovieDetailsComposeScreen(
                         .background(colors.background)
                 ) {
                     if (!backdropUrl.isNullOrBlank()) {
-                        AndroidView(
-                            factory = { ctx ->
-                                ImageView(ctx).apply {
-                                    scaleType = ImageView.ScaleType.CENTER_CROP
-                                    adjustViewBounds = false
-                                    clipToOutline = true
-                                }
-                            },
-                            update = { imageView ->
-                                imageView.loadImage(backdropUrl)
-                            },
+                        AsyncImage(
+                            model = backdropUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clipToBounds()
@@ -385,15 +387,10 @@ fun CloneflixMovieDetailsComposeScreen(
                                         .height(68.dp)
                                         .width(240.dp)
                                 ) {
-                                    AndroidView(
-                                        factory = { ctx ->
-                                            ImageView(ctx).apply {
-                                                scaleType = ImageView.ScaleType.FIT_START
-                                            }
-                                        },
-                                        update = { imageView ->
-                                            imageView.loadImage(logoUrl)
-                                        },
+                                    AsyncImage(
+                                        model = logoUrl,
+                                        contentDescription = title,
+                                        contentScale = ContentScale.Fit,
                                         modifier = Modifier.fillMaxSize()
                                     )
                                 }
@@ -683,23 +680,26 @@ fun CloneflixMovieDetailsComposeScreen(
                     key = { ep -> "episode_${ep.id}" },
                     contentType = { "episode_row" }
                 ) { ep ->
-                    Box(
+                    val onEpClick = remember(ep) {
+                        {
+                            if (onEpisodeClick != null) onEpisodeClick(ep)
+                            else showToast("Playing ${ep.headerName}: ${ep.name}")
+                        }
+                    }
+                    val onEpDownload = remember(ep) {
+                        {
+                            if (onEpisodeDownloadClick != null) onEpisodeDownloadClick(ep)
+                            else showToast("Downloading Episode ${ep.episode}")
+                        }
+                    }
+                    CloneflixDynamicEpisodeRow(
+                        episode = ep,
+                        onClick = onEpClick,
+                        onDownloadClick = onEpDownload,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = dimens.spacing2Xl, vertical = 6.dp)
-                    ) {
-                        CloneflixDynamicEpisodeRow(
-                            episode = ep,
-                            onClick = {
-                                if (onEpisodeClick != null) onEpisodeClick(ep)
-                                else showToast("Playing ${ep.headerName}: ${ep.name}")
-                            },
-                            onDownloadClick = {
-                                if (onEpisodeDownloadClick != null) onEpisodeDownloadClick(ep)
-                                else showToast("Downloading Episode ${ep.episode}")
-                            }
-                        )
-                    }
+                    )
                 }
             }
 
@@ -717,46 +717,22 @@ fun CloneflixMovieDetailsComposeScreen(
                     )
                 }
 
-                itemsIndexed(
+                items(
                     items = chunkedRecommendations,
-                    key = { index, _ -> "rec_row_$index" },
-                    contentType = { _, _ -> "recommendation_row" }
-                ) { _, rowItems ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = dimens.spacing2Xl, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
-                    ) {
-                        rowItems.forEach { cardItem ->
-                            Box(modifier = Modifier.weight(1f)) {
-                                CloneflixMovieCard(
-                                    title = cardItem.title,
-                                    type = CloneflixMovieCardType.POSTER,
-                                    size = CloneflixMovieCardSize.MEDIUM,
-                                    badge = cardItem.badge,
-                                    runtime = cardItem.runtime,
-                                    posterUrl = cardItem.posterUrl,
-                                    showLogo = false,
-                                    showBottomTitle = true,
-                                    onClick = {
-                                        val rec = dynamicRecommendations?.find { it.name == cardItem.title }
-                                        if (rec != null && onRecommendationClick != null) {
-                                            onRecommendationClick(rec)
-                                        } else {
-                                            showToast("Opened recommendation: ${cardItem.title}")
-                                        }
-                                    },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                    key = { row -> "rec_row_${row.rowIndex}" },
+                    contentType = { "recommendation_row" }
+                ) { row ->
+                    CloneflixRecommendationRowView(
+                        row = row,
+                        onCardClick = { cardItem ->
+                            val rec = dynamicRecommendations?.find { it.name == cardItem.title }
+                            if (rec != null && onRecommendationClick != null) {
+                                onRecommendationClick(rec)
+                            } else {
+                                showToast("Opened recommendation: ${cardItem.title}")
                             }
                         }
-                        if (rowItems.size < 6) {
-                            repeat(6 - rowItems.size) {
-                                Spacer(modifier = Modifier.weight(1f))
-                            }
-                        }
-                    }
+                    )
                 }
             }
 
@@ -879,9 +855,9 @@ fun CloneflixDynamicEpisodeRow(
     val typography = CloneflixTheme.typography
     val dimens = CloneflixTheme.dimens
 
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (isFocused) 1.02f else 1f,
-        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        animationSpec = CloneflixTokens.FastFocusAnimationSpec,
         label = "episodeScale"
     )
 
@@ -889,33 +865,28 @@ fun CloneflixDynamicEpisodeRow(
     val border = if (isFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else null
     val progress = remember(episode) { episode.getWatchProgress() }
 
-    Box(
+    Row(
         modifier = modifier
             .fillMaxWidth()
+            .zIndex(if (isFocused) 10f else 0f)
+            .graphicsLayer {
+                scaleX = scaleState.value
+                scaleY = scaleState.value
+            }
+            .clip(CloneflixTokens.ShapeCardMedium)
+            .background(background)
+            .then(if (border != null) Modifier.border(border, CloneflixTokens.ShapeCardMedium) else Modifier)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
                 role = Role.Button,
                 onClick = onClick
             )
-            .focusable(interactionSource = interactionSource),
-        contentAlignment = Alignment.Center
+            .focusable(interactionSource = interactionSource)
+            .padding(dimens.spacingL),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .zIndex(if (isFocused) 10f else 0f)
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                }
-                .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
-                .background(background)
-                .then(if (border != null) Modifier.border(border, RoundedCornerShape(CloneflixTokens.RadiusCardMedium)) else Modifier)
-                .padding(dimens.spacingL),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
-        ) {
             Text(
                 text = episode.episode.toString(),
                 style = typography.boldTitle1,
@@ -928,19 +899,14 @@ fun CloneflixDynamicEpisodeRow(
                 modifier = Modifier
                     .width(160.dp)
                     .height(90.dp)
-                    .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
+                    .clip(CloneflixTokens.ShapeCardSmall)
                     .background(Grey700)
             ) {
                 if (!episode.poster.isNullOrBlank()) {
-                    AndroidView(
-                        factory = { ctx ->
-                            ImageView(ctx).apply {
-                                scaleType = ImageView.ScaleType.CENTER_CROP
-                            }
-                        },
-                        update = { imageView ->
-                            imageView.loadImage(episode.poster)
-                        },
+                    AsyncImage(
+                        model = episode.poster,
+                        contentDescription = episode.name,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
@@ -1026,7 +992,6 @@ fun CloneflixDynamicEpisodeRow(
                 modifier = Modifier.size(36.dp)
             )
         }
-    }
 }
 
 @Composable
@@ -1040,82 +1005,77 @@ fun CloneflixTrailerItemCard(
     val typography = CloneflixTheme.typography
     val dimens = CloneflixTheme.dimens
 
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (isFocused) CloneflixTokens.FOCUS_SCALE_FACTOR else 1f,
-        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        animationSpec = CloneflixTokens.FastFocusAnimationSpec,
         label = "trailerScale"
     )
 
     val border = if (isFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else BorderStroke(dimens.borderSubtle, Grey700)
 
-    Box(
+    Column(
         modifier = modifier
+            .fillMaxWidth()
+            .zIndex(if (isFocused) 10f else 0f)
+            .graphicsLayer {
+                scaleX = scaleState.value
+                scaleY = scaleState.value
+            }
+            .clip(CloneflixTokens.ShapeCardMedium)
+            .background(Grey850)
+            .border(border, CloneflixTokens.ShapeCardMedium)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
                 role = Role.Button,
                 onClick = onClick
             )
-            .focusable(interactionSource = interactionSource),
-        contentAlignment = Alignment.Center
+            .focusable(interactionSource = interactionSource)
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .zIndex(if (isFocused) 10f else 0f)
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                }
-                .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
-                .background(Grey850)
-                .border(border, RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
+                .height(130.dp)
+                .background(Grey700)
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(130.dp)
-                    .background(Grey700)
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(TransparentBlack60)
+                    .border(BorderStroke(1.5.dp, PrimaryWhite), CircleShape)
+                    .align(Alignment.Center)
             ) {
-                Box(
+                Icon(
+                    painter = painterResource(id = R.drawable.cloneflix_ic_play),
+                    contentDescription = null,
+                    tint = PrimaryWhite,
                     modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape)
-                        .background(TransparentBlack60)
-                        .border(BorderStroke(1.5.dp, PrimaryWhite), CircleShape)
+                        .size(20.dp)
                         .align(Alignment.Center)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.cloneflix_ic_play),
-                        contentDescription = null,
-                        tint = PrimaryWhite,
-                        modifier = Modifier
-                            .size(20.dp)
-                            .align(Alignment.Center)
-                    )
-                }
+                )
             }
+        }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(dimens.spacingM),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = trailer.title,
-                    style = typography.mediumBody,
-                    fontWeight = FontWeight.Bold,
-                    color = PrimaryWhite,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = trailer.runtime,
-                    style = typography.regularCaption2,
-                    color = Grey200
-                )
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimens.spacingM),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = trailer.title,
+                style = typography.mediumBody,
+                fontWeight = FontWeight.Bold,
+                color = PrimaryWhite,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = trailer.runtime,
+                style = typography.regularCaption2,
+                color = Grey200
+            )
         }
     }
 }
@@ -1144,6 +1104,43 @@ fun CloneflixAboutMetadataRow(
             color = PrimaryWhite,
             modifier = Modifier.weight(1f)
         )
+    }
+}
+
+@Composable
+fun CloneflixRecommendationRowView(
+    row: CloneflixRecommendationRow,
+    onCardClick: (CloneflixMovieCardItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val dimens = CloneflixTheme.dimens
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = dimens.spacing2Xl, vertical = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+    ) {
+        row.items.forEach { cardItem ->
+            Box(modifier = Modifier.weight(1f)) {
+                CloneflixMovieCard(
+                    title = cardItem.title,
+                    type = CloneflixMovieCardType.POSTER,
+                    size = CloneflixMovieCardSize.MEDIUM,
+                    badge = cardItem.badge,
+                    runtime = cardItem.runtime,
+                    posterUrl = cardItem.posterUrl,
+                    showLogo = false,
+                    showBottomTitle = true,
+                    onClick = { onCardClick(cardItem) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+        if (row.items.size < 6) {
+            repeat(6 - row.items.size) {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
     }
 }
 

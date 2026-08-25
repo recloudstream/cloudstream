@@ -74,6 +74,7 @@ annotation = { module = "androidx.annotation:annotation", version.ref = "annotat
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 colorpicker = { module = "com.github.recloudstream:color-picker-android", version.ref = "colorpicker" }
 conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = "conscryptAndroid" }
@@ -160,7 +161,7 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 
 
 [bundles]
-coil = ["coil", "coil-network-okhttp"]
+coil = ["coil", "coil-network-okhttp", "coil-compose"]
 cryptography = ["cryptography-core", "cryptography-provider-optimal"]
 lifecycle = ["lifecycle-livedata-ktx", "lifecycle-viewmodel-ktx"]
 media3 = ["media3-cast", "media3-common", "media3-container", "media3-datasource-cronet", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
