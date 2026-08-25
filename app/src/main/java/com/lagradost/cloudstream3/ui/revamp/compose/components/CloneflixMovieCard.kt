@@ -779,9 +779,10 @@ fun CloneflixCircleActionButton(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isPrimary: Boolean = false
+    isPrimary: Boolean = false,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val dimens = CloneflixTheme.dimens
 
@@ -807,10 +808,11 @@ fun CloneflixCircleActionButton(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
+                enabled = enabled,
                 role = Role.Button,
                 onClick = onClick
             )
-            .focusable(interactionSource = interactionSource),
+            .focusable(enabled = enabled, interactionSource = interactionSource),
         contentAlignment = Alignment.Center
     ) {
         Icon(

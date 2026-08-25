@@ -95,9 +95,10 @@ enum class CloneflixHeroBannerType {
 fun CloneflixHeroPlayButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    text: String = "Play"
+    text: String = "Play",
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     val scale by animateFloatAsState(
@@ -113,10 +114,11 @@ fun CloneflixHeroPlayButton(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
+                enabled = enabled,
                 role = Role.Button,
                 onClick = onClick
             )
-            .focusable(interactionSource = interactionSource)
+            .focusable(enabled = enabled, interactionSource = interactionSource)
             .semantics {
                 contentDescription = "$text Video"
             },
@@ -204,9 +206,10 @@ fun CloneflixHeroMoreInfoButton(
 fun CloneflixHeroTrailerButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    text: String = "Play Trailer"
+    text: String = "Play Trailer",
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val dimens = CloneflixTheme.dimens
 
@@ -232,10 +235,11 @@ fun CloneflixHeroTrailerButton(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
+                enabled = enabled,
                 role = Role.Button,
                 onClick = onClick
             )
-            .focusable(interactionSource = interactionSource)
+            .focusable(enabled = enabled, interactionSource = interactionSource)
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .semantics {
                 role = Role.Button

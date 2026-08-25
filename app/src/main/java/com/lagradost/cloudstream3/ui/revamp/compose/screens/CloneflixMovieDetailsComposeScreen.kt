@@ -2,7 +2,9 @@ package com.lagradost.cloudstream3.ui.revamp.compose.screens
 
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -23,15 +25,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.relocation.BringIntoViewResponder
-import androidx.compose.foundation.relocation.bringIntoViewResponder
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.gestures.BringIntoViewSpec
+import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -156,13 +161,18 @@ fun CloneflixMovieDetailsComposeScreen(
     val colors = CloneflixTheme.colors
     val typography = CloneflixTheme.typography
     val dimens = CloneflixTheme.dimens
-    val scrollState = rememberScrollState()
+    val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
+    val playInteractionSource = remember { MutableInteractionSource() }
+    val inMyListInteractionSource = remember { MutableInteractionSource() }
+    val likeInteractionSource = remember { MutableInteractionSource() }
+    val trailerInteractionSource = remember { MutableInteractionSource() }
 
     val playButtonFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
-        scrollState.scrollTo(0)
+        lazyListState.scrollToItem(0)
         playButtonFocusRequester.requestFocus()
     }
 
@@ -204,411 +214,480 @@ fun CloneflixMovieDetailsComposeScreen(
         } ?: emptyList()
     }
 
+    val chunkedRecommendations = remember(recommendationCards) {
+        recommendationCards.chunked(6)
+    }
+
     val trailersList = dynamicTrailers ?: emptyList()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.background)
-            .verticalScroll(scrollState)
-    ) {
-        val heroBringIntoViewResponder = remember {
-            object : BringIntoViewResponder {
-                override fun calculateRectForParent(localRect: Rect): Rect {
-                    return Rect(0f, 0f, localRect.right, localRect.bottom)
-                }
-
-                override suspend fun bringChildIntoView(localRect: () -> Rect?) {
-                }
+    val tvBringIntoViewSpec = remember {
+        object : BringIntoViewSpec {
+            override fun calculateScrollDistance(
+                offset: Float,
+                size: Float,
+                containerSize: Float
+            ): Float {
+                val parentFraction = 0.30f
+                val targetOffset = (parentFraction * containerSize)
+                return offset - targetOffset
             }
         }
+    }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(heroHeight)
-                .bringIntoViewResponder(heroBringIntoViewResponder)
-                .clipToBounds()
+    CompositionLocalProvider(LocalBringIntoViewSpec provides tvBringIntoViewSpec) {
+        LazyColumn(
+            state = lazyListState,
+            modifier = modifier
+                .fillMaxSize()
                 .background(colors.background)
         ) {
-            if (!backdropUrl.isNullOrBlank()) {
-                AndroidView(
-                    factory = { ctx ->
-                        ImageView(ctx).apply {
-                            scaleType = ImageView.ScaleType.CENTER_CROP
-                            adjustViewBounds = false
-                            clipToOutline = true
-                        }
-                    },
-                    update = { imageView ->
-                        imageView.loadImage(backdropUrl)
-                    },
+            item(key = "hero_banner", contentType = "hero_banner") {
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
+                        .height(heroHeight)
                         .clipToBounds()
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.85f)
-                    .align(Alignment.BottomCenter)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                colors.background.copy(alpha = 0.5f),
-                                colors.background.copy(alpha = 0.92f),
-                                colors.background
-                            )
-                        )
-                    )
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(dimens.spacing2Xl)
-            ) {
-                CloneflixLogoView(
-                    variant = CloneflixLogoVariant.WORDMARK_MEDIUM,
-                    text = providerName
-                )
-                CloneflixCircleActionButton(
-                    icon = painterResource(id = R.drawable.cloneflix_ic_close),
-                    contentDescription = "Close",
-                    onClick = {
-                        onCloseClick()
-                    }
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacingL)
-            ) {
-                if (!logoUrl.isNullOrBlank()) {
-                    Box(
-                        modifier = Modifier
-                            .height(68.dp)
-                            .width(240.dp)
-                    ) {
+                        .background(colors.background)
+                ) {
+                    if (!backdropUrl.isNullOrBlank()) {
                         AndroidView(
                             factory = { ctx ->
                                 ImageView(ctx).apply {
-                                    scaleType = ImageView.ScaleType.FIT_START
+                                    scaleType = ImageView.ScaleType.CENTER_CROP
+                                    adjustViewBounds = false
+                                    clipToOutline = true
                                 }
                             },
                             update = { imageView ->
-                                imageView.loadImage(logoUrl)
+                                imageView.loadImage(backdropUrl)
                             },
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                } else {
-                    Text(
-                        text = title,
-                        style = typography.boldTitle1,
-                        fontSize = 32.sp,
-                        color = PrimaryWhite,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(dimens.spacingL))
-
-                CloneflixHeroPlayButton(
-                    onClick = onPlayClick,
-                    text = "Play",
-                    modifier = Modifier
-                        .focusRequester(playButtonFocusRequester)
-                        .onFocusChanged { state ->
-                            if (state.isFocused && scrollState.value > 0) {
-                                coroutineScope.launch {
-                                    scrollState.animateScrollTo(0)
-                                }
-                            }
-                        }
-                )
-
-                Spacer(modifier = Modifier.height(dimens.spacingM))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.onFocusChanged { state ->
-                        if (state.hasFocus && scrollState.value > 0) {
-                            coroutineScope.launch {
-                                scrollState.animateScrollTo(0)
-                            }
-                        }
-                    }
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
-                    ) {
-                        CloneflixCircleActionButton(
-                            icon = painterResource(
-                                id = if (inMyListState) R.drawable.cloneflix_ic_check else R.drawable.cloneflix_ic_plus
-                            ),
-                            contentDescription = if (inMyListState) "In My List" else "Add to My List",
-                            onClick = {
-                                inMyListState = !inMyListState
-                                onAddToListClick()
-                            }
-                        )
-
-                        CloneflixCircleActionButton(
-                            icon = painterResource(id = R.drawable.cloneflix_ic_thumb_up),
-                            contentDescription = "Like",
-                            onClick = onLikeClick
-                        )
-                    }
-
-                    if (hasTrailers) {
-                        Spacer(modifier = Modifier.width(dimens.spacingL))
-
-                        CloneflixHeroTrailerButton(
-                            text = "Trailer",
-                            onClick = onTrailerClick
-                        )
-                    }
-                }
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacingL)
-        ) {
-            val hasRightColumn = castList.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty()
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dimens.spacing2Xl)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .weight(if (hasRightColumn) 0.65f else 1f)
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
-                ) {
-                    val hasLine1 = !matchScore.isNullOrBlank() || !releaseYear.isNullOrBlank() ||
-                            !seasonsCount.isNullOrBlank() || !quality.isNullOrBlank()
-
-                    if (hasLine1) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
-                        ) {
-                            if (!matchScore.isNullOrBlank()) {
-                                Text(
-                                    text = matchScore,
-                                    color = getRatingScoreColor(matchScore),
-                                    style = typography.mediumBody,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-
-                            if (!releaseYear.isNullOrBlank()) {
-                                Text(
-                                    text = releaseYear,
-                                    color = PrimaryWhite,
-                                    style = typography.regularBody
-                                )
-                            }
-
-                            if (!seasonsCount.isNullOrBlank()) {
-                                Text(
-                                    text = seasonsCount,
-                                    color = PrimaryWhite,
-                                    style = typography.regularBody
-                                )
-                            }
-
-                            if (!quality.isNullOrBlank()) {
-                                CloneflixVideoQualityBadge(quality = quality)
-                            }
-                        }
-                    }
-
-                    if (!maturityRating.isNullOrBlank() || !advisories.isNullOrBlank()) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingS)
-                        ) {
-                            if (!maturityRating.isNullOrBlank()) {
-                                CloneflixMaturityRating(rating = maturityRating)
-                            }
-                            if (!advisories.isNullOrBlank()) {
-                                Text(
-                                    text = advisories,
-                                    color = Grey100,
-                                    style = typography.regularCaption1
-                                )
-                            }
-                        }
-                    }
-
-                    if (!top10RankText.isNullOrBlank()) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
-                            modifier = Modifier.padding(vertical = dimens.spacingXs)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
-                                .background(PrimaryRed)
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                            ) {
-                                Text(
-                                    text = "TOP 10",
-                                    style = typography.regularCaption2,
-                                    color = PrimaryWhite,
-                                    fontWeight = FontWeight.Black
-                                )
-                            }
-                            Text(
-                                text = top10RankText,
-                                style = typography.mediumBody,
-                                fontWeight = FontWeight.Bold,
-                                color = PrimaryWhite
-                            )
-                        }
-                    }
-
-                    if (synopsis.isNotBlank()) {
-                        val synopsisInteractionSource = remember { MutableInteractionSource() }
-                        val isSynopsisFocused by synopsisInteractionSource.collectIsFocusedAsState()
-
-                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
-                                .background(if (isSynopsisFocused) Grey800.copy(alpha = 0.5f) else Color.Transparent)
-                                .then(
-                                    if (isSynopsisFocused) {
-                                        Modifier.border(
-                                            BorderStroke(dimens.borderFocus, PrimaryWhite),
-                                            RoundedCornerShape(CloneflixTokens.RadiusCard)
-                                        )
-                                    } else Modifier
-                                )
-                                .focusable(interactionSource = synopsisInteractionSource)
-                                .padding(dimens.spacingS)
-                        ) {
-                            Text(
-                                text = synopsis,
-                                style = typography.regularBody,
-                                color = if (isSynopsisFocused) PrimaryWhite else Grey50,
-                                lineHeight = 22.sp
-                            )
-                        }
+                                .fillMaxSize()
+                                .clipToBounds()
+                        )
                     }
-                }
 
-                if (hasRightColumn) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.85f)
+                            .align(Alignment.BottomCenter)
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        colors.background.copy(alpha = 0.5f),
+                                        colors.background.copy(alpha = 0.92f),
+                                        colors.background
+                                    )
+                                )
+                            )
+                    )
+
                     Column(
                         modifier = Modifier
-                            .weight(0.35f)
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .align(Alignment.TopStart)
+                            .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacing2Xl)
+                            .zIndex(50f),
                         verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
                     ) {
-                        if (castList.isNotEmpty()) {
-                            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                Text(
-                                    text = "Cast",
-                                    style = typography.regularCaption2,
-                                    color = Grey200
+                        Box(
+                            modifier = Modifier
+                                .height(42.dp)
+                                .width(110.dp)
+                                .focusRequester(playButtonFocusRequester)
+                                .focusable(interactionSource = playInteractionSource)
+                                .clickable(
+                                    interactionSource = playInteractionSource,
+                                    indication = null,
+                                    role = Role.Button,
+                                    onClick = onPlayClick
                                 )
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .focusable(interactionSource = inMyListInteractionSource)
+                                        .clickable(
+                                            interactionSource = inMyListInteractionSource,
+                                            indication = null,
+                                            role = Role.Button
+                                        ) {
+                                            inMyListState = !inMyListState
+                                            onAddToListClick()
+                                        }
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .focusable(interactionSource = likeInteractionSource)
+                                    .clickable(
+                                        interactionSource = likeInteractionSource,
+                                        indication = null,
+                                        role = Role.Button,
+                                        onClick = onLikeClick
+                                    )
+                                )
+                            }
+
+                            if (hasTrailers) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(40.dp)
+                                        .width(120.dp)
+                                        .focusable(interactionSource = trailerInteractionSource)
+                                        .clickable(
+                                            interactionSource = trailerInteractionSource,
+                                            indication = null,
+                                            role = Role.Button,
+                                            onClick = onTrailerClick
+                                        )
+                                )
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(dimens.spacing2Xl)
+                    ) {
+                        CloneflixLogoView(
+                            variant = CloneflixLogoVariant.WORDMARK_MEDIUM,
+                            text = providerName
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomStart)
+                            .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacingL),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Column {
+                            if (!logoUrl.isNullOrBlank()) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(68.dp)
+                                        .width(240.dp)
+                                ) {
+                                    AndroidView(
+                                        factory = { ctx ->
+                                            ImageView(ctx).apply {
+                                                scaleType = ImageView.ScaleType.FIT_START
+                                            }
+                                        },
+                                        update = { imageView ->
+                                            imageView.loadImage(logoUrl)
+                                        },
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                            } else {
                                 Text(
-                                    text = castList.joinToString(", "),
-                                    style = typography.regularCaption1,
+                                    text = title,
+                                    style = typography.boldTitle1,
+                                    fontSize = 32.sp,
                                     color = PrimaryWhite,
-                                    maxLines = 3,
+                                    maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
-                        }
 
-                        if (genres.isNotEmpty()) {
-                            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                Text(
-                                    text = "Genres",
-                                    style = typography.regularCaption2,
-                                    color = Grey200
+                            Spacer(modifier = Modifier.height(dimens.spacingL))
+
+                            CloneflixHeroPlayButton(
+                                onClick = onPlayClick,
+                                text = "Play",
+                                interactionSource = playInteractionSource,
+                                enabled = false
+                            )
+
+                            Spacer(modifier = Modifier.height(dimens.spacingM))
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                            ) {
+                                CloneflixCircleActionButton(
+                                    icon = painterResource(
+                                        id = if (inMyListState) R.drawable.cloneflix_ic_check else R.drawable.cloneflix_ic_plus
+                                    ),
+                                    contentDescription = if (inMyListState) "In My List" else "Add to My List",
+                                    onClick = {
+                                        inMyListState = !inMyListState
+                                        onAddToListClick()
+                                    },
+                                    interactionSource = inMyListInteractionSource,
+                                    enabled = false
                                 )
-                                Text(
-                                    text = genres.joinToString(", "),
-                                    style = typography.regularCaption1,
-                                    color = PrimaryWhite
+
+                                CloneflixCircleActionButton(
+                                    icon = painterResource(id = R.drawable.cloneflix_ic_thumb_up),
+                                    contentDescription = "Like",
+                                    onClick = onLikeClick,
+                                    interactionSource = likeInteractionSource,
+                                    enabled = false
                                 )
                             }
                         }
 
-                        if (moodTags.isNotEmpty()) {
-                            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                Text(
-                                    text = "This show is",
-                                    style = typography.regularCaption2,
-                                    color = Grey200
-                                )
-                                Text(
-                                    text = moodTags.joinToString(", "),
-                                    style = typography.regularCaption1,
-                                    color = PrimaryWhite
-                                )
-                            }
+                        if (hasTrailers) {
+                            CloneflixHeroTrailerButton(
+                                text = "Play Trailer",
+                                onClick = onTrailerClick,
+                                interactionSource = trailerInteractionSource,
+                                enabled = false
+                            )
                         }
                     }
                 }
             }
 
-            if (episodesToDisplay.isNotEmpty() || recommendationCards.isNotEmpty() || trailersList.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(dimens.spacing3Xl))
+            item(key = "movie_info_synopsis", contentType = "movie_info") {
+                val hasRightColumn = castList.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty()
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacingL),
+                    horizontalArrangement = Arrangement.spacedBy(dimens.spacing2Xl)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(if (hasRightColumn) 0.65f else 1f)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                    ) {
+                        val hasLine1 = !matchScore.isNullOrBlank() || !releaseYear.isNullOrBlank() ||
+                                !seasonsCount.isNullOrBlank() || !quality.isNullOrBlank()
+
+                        if (hasLine1) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                            ) {
+                                if (!matchScore.isNullOrBlank()) {
+                                    Text(
+                                        text = matchScore,
+                                        color = getRatingScoreColor(matchScore),
+                                        style = typography.mediumBody,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+
+                                if (!releaseYear.isNullOrBlank()) {
+                                    Text(
+                                        text = releaseYear,
+                                        color = PrimaryWhite,
+                                        style = typography.regularBody
+                                    )
+                                }
+
+                                if (!seasonsCount.isNullOrBlank()) {
+                                    Text(
+                                        text = seasonsCount,
+                                        color = PrimaryWhite,
+                                        style = typography.regularBody
+                                    )
+                                }
+
+                                if (!quality.isNullOrBlank()) {
+                                    CloneflixVideoQualityBadge(quality = quality)
+                                }
+                            }
+                        }
+
+                        if (!maturityRating.isNullOrBlank() || !advisories.isNullOrBlank()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(dimens.spacingS)
+                            ) {
+                                if (!maturityRating.isNullOrBlank()) {
+                                    CloneflixMaturityRating(rating = maturityRating)
+                                }
+                                if (!advisories.isNullOrBlank()) {
+                                    Text(
+                                        text = advisories,
+                                        color = Grey100,
+                                        style = typography.regularCaption1
+                                    )
+                                }
+                            }
+                        }
+
+                        if (!top10RankText.isNullOrBlank()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
+                                modifier = Modifier.padding(vertical = dimens.spacingXs)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
+                                        .background(PrimaryRed)
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "TOP 10",
+                                        style = typography.regularCaption2,
+                                        color = PrimaryWhite,
+                                        fontWeight = FontWeight.Black
+                                    )
+                                }
+                                Text(
+                                    text = top10RankText,
+                                    style = typography.mediumBody,
+                                    fontWeight = FontWeight.Bold,
+                                    color = PrimaryWhite
+                                )
+                            }
+                        }
+
+                        if (synopsis.isNotBlank()) {
+                            val synopsisInteractionSource = remember { MutableInteractionSource() }
+                            val isSynopsisFocused by synopsisInteractionSource.collectIsFocusedAsState()
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
+                                    .background(if (isSynopsisFocused) Grey800.copy(alpha = 0.5f) else Color.Transparent)
+                                    .then(
+                                        if (isSynopsisFocused) {
+                                            Modifier.border(
+                                                BorderStroke(dimens.borderFocus, PrimaryWhite),
+                                                RoundedCornerShape(CloneflixTokens.RadiusCard)
+                                            )
+                                        } else Modifier
+                                    )
+                                    .focusable(interactionSource = synopsisInteractionSource)
+                                    .padding(dimens.spacingS)
+                            ) {
+                                Text(
+                                    text = synopsis,
+                                    style = typography.regularBody,
+                                    color = if (isSynopsisFocused) PrimaryWhite else Grey50,
+                                    lineHeight = 22.sp
+                                )
+                            }
+                        }
+                    }
+
+                    if (hasRightColumn) {
+                        Column(
+                            modifier = Modifier
+                                .weight(0.35f)
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                        ) {
+                            if (castList.isNotEmpty()) {
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    Text(
+                                        text = "Cast",
+                                        style = typography.regularCaption2,
+                                        color = Grey200
+                                    )
+                                    Text(
+                                        text = castList.joinToString(", "),
+                                        style = typography.regularCaption1,
+                                        color = PrimaryWhite,
+                                        maxLines = 3,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+
+                            if (genres.isNotEmpty()) {
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    Text(
+                                        text = "Genres",
+                                        style = typography.regularCaption2,
+                                        color = Grey200
+                                    )
+                                    Text(
+                                        text = genres.joinToString(", "),
+                                        style = typography.regularCaption1,
+                                        color = PrimaryWhite
+                                    )
+                                }
+                            }
+
+                            if (moodTags.isNotEmpty()) {
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    Text(
+                                        text = "This show is",
+                                        style = typography.regularCaption2,
+                                        color = Grey200
+                                    )
+                                    Text(
+                                        text = moodTags.joinToString(", "),
+                                        style = typography.regularCaption1,
+                                        color = PrimaryWhite
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             if (episodesToDisplay.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(dimens.spacingL),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Episodes",
-                        style = typography.boldTitle2,
-                        fontSize = 24.sp,
-                        color = PrimaryWhite
-                    )
-
-                    if (seasonOptions.size > 1) {
-                        CloneflixDropdown(
-                            options = seasonOptions,
-                            selectedOption = selectedSeasonText,
-                            onOptionSelected = { seasonStr ->
-                                selectedSeasonText = seasonStr
-                                val idx = seasonOptions.indexOf(seasonStr)
-                                if (idx >= 0) onSeasonSelect?.invoke(idx)
-                            },
-                            width = 180.dp
+                item(key = "episodes_header", contentType = "episodes_header") {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.spacing2Xl)
+                            .padding(top = dimens.spacing2Xl, bottom = dimens.spacingL),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.spacingL),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Episodes",
+                            style = typography.boldTitle2,
+                            fontSize = 24.sp,
+                            color = PrimaryWhite
                         )
+
+                        if (seasonOptions.size > 1) {
+                            CloneflixDropdown(
+                                options = seasonOptions,
+                                selectedOption = selectedSeasonText,
+                                onOptionSelected = { seasonStr ->
+                                    selectedSeasonText = seasonStr
+                                    val idx = seasonOptions.indexOf(seasonStr)
+                                    if (idx >= 0) onSeasonSelect?.invoke(idx)
+                                },
+                                width = 180.dp
+                            )
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(dimens.spacingL))
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(dimens.spacingL)
-                ) {
-                    episodesToDisplay.forEach { ep ->
+                items(
+                    items = episodesToDisplay,
+                    key = { ep -> "episode_${ep.id}" },
+                    contentType = { "episode_row" }
+                ) { ep ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.spacing2Xl, vertical = 6.dp)
+                    ) {
                         CloneflixDynamicEpisodeRow(
                             episode = ep,
                             onClick = {
@@ -622,94 +701,101 @@ fun CloneflixMovieDetailsComposeScreen(
                         )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(dimens.spacing3Xl))
             }
 
-            if (recommendationCards.isNotEmpty()) {
-                Text(
-                    text = "More Like This",
-                    style = typography.boldTitle2,
-                    fontSize = 22.sp,
-                    color = PrimaryWhite
-                )
+            if (chunkedRecommendations.isNotEmpty()) {
+                item(key = "recommendations_header", contentType = "recommendations_header") {
+                    Text(
+                        text = "More Like This",
+                        style = typography.boldTitle2,
+                        fontSize = 22.sp,
+                        color = PrimaryWhite,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.spacing2Xl)
+                            .padding(top = dimens.spacing3Xl, bottom = dimens.spacingL)
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(dimens.spacingL))
+                itemsIndexed(
+                    items = chunkedRecommendations,
+                    key = { index, _ -> "rec_row_$index" },
+                    contentType = { _, _ -> "recommendation_row" }
+                ) { _, rowItems ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.spacing2Xl, vertical = 6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                    ) {
+                        rowItems.forEach { cardItem ->
+                            Box(modifier = Modifier.weight(1f)) {
+                                CloneflixMovieCard(
+                                    title = cardItem.title,
+                                    type = CloneflixMovieCardType.POSTER,
+                                    size = CloneflixMovieCardSize.MEDIUM,
+                                    badge = cardItem.badge,
+                                    runtime = cardItem.runtime,
+                                    posterUrl = cardItem.posterUrl,
+                                    showLogo = false,
+                                    showBottomTitle = true,
+                                    onClick = {
+                                        val rec = dynamicRecommendations?.find { it.name == cardItem.title }
+                                        if (rec != null && onRecommendationClick != null) {
+                                            onRecommendationClick(rec)
+                                        } else {
+                                            showToast("Opened recommendation: ${cardItem.title}")
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+                        if (rowItems.size < 6) {
+                            repeat(6 - rowItems.size) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+            }
 
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(dimens.spacingL)
-                ) {
-                    val chunkedRecommendations = recommendationCards.chunked(6)
-                    chunkedRecommendations.forEach { rowItems ->
+            if (trailersList.isNotEmpty()) {
+                item(key = "trailers_section", contentType = "trailers_section") {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.spacing2Xl)
+                            .padding(top = dimens.spacing3Xl, bottom = dimens.spacingL)
+                    ) {
+                        Text(
+                            text = "Trailers & More",
+                            style = typography.boldTitle2,
+                            fontSize = 22.sp,
+                            color = PrimaryWhite
+                        )
+
+                        Spacer(modifier = Modifier.height(dimens.spacingL))
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
                         ) {
-                            rowItems.forEach { cardItem ->
+                            trailersList.forEach { trailer ->
                                 Box(modifier = Modifier.weight(1f)) {
-                                    CloneflixMovieCard(
-                                        title = cardItem.title,
-                                        type = CloneflixMovieCardType.POSTER,
-                                        size = CloneflixMovieCardSize.MEDIUM,
-                                        badge = cardItem.badge,
-                                        runtime = cardItem.runtime,
-                                        posterUrl = cardItem.posterUrl,
-                                        showLogo = false,
-                                        showBottomTitle = true,
+                                    CloneflixTrailerItemCard(
+                                        trailer = trailer,
                                         onClick = {
-                                            val rec = dynamicRecommendations?.find { it.name == cardItem.title }
-                                            if (rec != null && onRecommendationClick != null) {
-                                                onRecommendationClick(rec)
-                                            } else {
-                                                showToast("Opened recommendation: ${cardItem.title}")
-                                            }
+                                            if (hasTrailers) onTrailerClick()
+                                            else showToast("Playing ${trailer.title}")
                                         },
                                         modifier = Modifier.fillMaxWidth()
                                     )
                                 }
                             }
-                            if (rowItems.size < 6) {
-                                repeat(6 - rowItems.size) {
-                                    Spacer(modifier = Modifier.weight(1f))
-                                }
-                            }
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(dimens.spacing3Xl))
-            }
-
-            if (trailersList.isNotEmpty()) {
-                Text(
-                    text = "Trailers & More",
-                    style = typography.boldTitle2,
-                    fontSize = 22.sp,
-                    color = PrimaryWhite
-                )
-
-                Spacer(modifier = Modifier.height(dimens.spacingL))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
-                ) {
-                    trailersList.forEach { trailer ->
-                        Box(modifier = Modifier.weight(1f)) {
-                            CloneflixTrailerItemCard(
-                                trailer = trailer,
-                                onClick = {
-                                    if (hasTrailers) onTrailerClick()
-                                    else showToast("Playing ${trailer.title}")
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(dimens.spacing3Xl))
             }
 
             val hasAboutContent = !creator.isNullOrBlank() || castList.isNotEmpty() ||
@@ -717,58 +803,65 @@ fun CloneflixMovieDetailsComposeScreen(
                     !maturityRating.isNullOrBlank()
 
             if (hasAboutContent) {
-                val aboutInteractionSource = remember { MutableInteractionSource() }
-                val isAboutFocused by aboutInteractionSource.collectIsFocusedAsState()
-                val aboutBorder = if (isAboutFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else BorderStroke(1.dp, Grey600)
+                item(key = "about_section", contentType = "about_section") {
+                    val aboutInteractionSource = remember { MutableInteractionSource() }
+                    val isAboutFocused by aboutInteractionSource.collectIsFocusedAsState()
+                    val aboutBorder = if (isAboutFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else BorderStroke(1.dp, Grey600)
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
-                        .background(if (isAboutFocused) Grey750 else Grey850)
-                        .border(aboutBorder, RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
-                        .focusable(interactionSource = aboutInteractionSource)
-                        .padding(dimens.spacing2Xl),
-                    verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
-                ) {
-                    Text(
-                        text = "About $title",
-                        style = typography.boldTitle2,
-                        fontSize = 20.sp,
-                        color = PrimaryWhite
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.spacing2Xl)
+                            .padding(top = dimens.spacing3Xl, bottom = dimens.spacing3Xl)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
+                                .background(if (isAboutFocused) Grey750 else Grey850)
+                                .border(aboutBorder, RoundedCornerShape(CloneflixTokens.RadiusCardMedium))
+                                .focusable(interactionSource = aboutInteractionSource)
+                                .padding(dimens.spacing2Xl),
+                            verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                        ) {
+                            Text(
+                                text = "About $title",
+                                style = typography.boldTitle2,
+                                fontSize = 20.sp,
+                                color = PrimaryWhite
+                            )
 
-                    Spacer(modifier = Modifier.height(dimens.spacingXs))
+                            Spacer(modifier = Modifier.height(dimens.spacingXs))
 
-                    if (!creator.isNullOrBlank()) {
-                        CloneflixAboutMetadataRow(label = "Creator", value = creator)
-                    }
-                    if (castList.isNotEmpty()) {
-                        CloneflixAboutMetadataRow(label = "Cast", value = castList.joinToString(", "))
-                    }
-                    if (writers.isNotEmpty()) {
-                        CloneflixAboutMetadataRow(label = "Writers", value = writers.joinToString(", "))
-                    }
-                    if (genres.isNotEmpty()) {
-                        CloneflixAboutMetadataRow(label = "Genres", value = genres.joinToString(", "))
-                    }
-                    if (moodTags.isNotEmpty()) {
-                        CloneflixAboutMetadataRow(label = "This show is", value = moodTags.joinToString(", "))
-                    }
-                    if (!maturityRating.isNullOrBlank()) {
-                        val ratingDescription = if (!advisories.isNullOrBlank()) {
-                            "$maturityRating Recommended for ages 16 and up. Contains $advisories."
-                        } else {
-                            maturityRating
+                            if (!creator.isNullOrBlank()) {
+                                CloneflixAboutMetadataRow(label = "Creator", value = creator)
+                            }
+                            if (castList.isNotEmpty()) {
+                                CloneflixAboutMetadataRow(label = "Cast", value = castList.joinToString(", "))
+                            }
+                            if (writers.isNotEmpty()) {
+                                CloneflixAboutMetadataRow(label = "Writers", value = writers.joinToString(", "))
+                            }
+                            if (genres.isNotEmpty()) {
+                                CloneflixAboutMetadataRow(label = "Genres", value = genres.joinToString(", "))
+                            }
+                            if (moodTags.isNotEmpty()) {
+                                CloneflixAboutMetadataRow(label = "This show is", value = moodTags.joinToString(", "))
+                            }
+                            if (!maturityRating.isNullOrBlank()) {
+                                val ratingDescription = if (!advisories.isNullOrBlank()) {
+                                    "$maturityRating Recommended for ages 16 and up. Contains $advisories."
+                                } else {
+                                    maturityRating
+                                }
+                                CloneflixAboutMetadataRow(
+                                    label = "Maturity Rating",
+                                    value = ratingDescription
+                                )
+                            }
                         }
-                        CloneflixAboutMetadataRow(
-                            label = "Maturity Rating",
-                            value = ratingDescription
-                        )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(dimens.spacing3Xl))
             }
         }
     }
@@ -788,6 +881,7 @@ fun CloneflixDynamicEpisodeRow(
 
     val scale by animateFloatAsState(
         targetValue = if (isFocused) 1.02f else 1f,
+        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
         label = "episodeScale"
     )
 
@@ -822,117 +916,117 @@ fun CloneflixDynamicEpisodeRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
         ) {
-        Text(
-            text = episode.episode.toString(),
-            style = typography.boldTitle1,
-            fontSize = 24.sp,
-            color = Grey200,
-            modifier = Modifier.width(32.dp)
-        )
-
-        Box(
-            modifier = Modifier
-                .width(160.dp)
-                .height(90.dp)
-                .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
-                .background(Grey700)
-        ) {
-            if (!episode.poster.isNullOrBlank()) {
-                AndroidView(
-                    factory = { ctx ->
-                        ImageView(ctx).apply {
-                            scaleType = ImageView.ScaleType.CENTER_CROP
-                        }
-                    },
-                    update = { imageView ->
-                        imageView.loadImage(episode.poster)
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+            Text(
+                text = episode.episode.toString(),
+                style = typography.boldTitle1,
+                fontSize = 24.sp,
+                color = Grey200,
+                modifier = Modifier.width(32.dp)
+            )
 
             Box(
                 modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(TransparentBlack60)
-                    .border(BorderStroke(1.dp, PrimaryWhite), CircleShape)
-                    .align(Alignment.Center)
+                    .width(160.dp)
+                    .height(90.dp)
+                    .clip(RoundedCornerShape(CloneflixTokens.RadiusCard))
+                    .background(Grey700)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.cloneflix_ic_play),
-                    contentDescription = null,
-                    tint = PrimaryWhite,
-                    modifier = Modifier
-                        .size(16.dp)
-                        .align(Alignment.Center)
-                )
-            }
+                if (!episode.poster.isNullOrBlank()) {
+                    AndroidView(
+                        factory = { ctx ->
+                            ImageView(ctx).apply {
+                                scaleType = ImageView.ScaleType.CENTER_CROP
+                            }
+                        },
+                        update = { imageView ->
+                            imageView.loadImage(episode.poster)
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
-            if (progress > 0.05f) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(4.dp)
-                        .align(Alignment.BottomStart)
-                        .background(Grey800)
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(TransparentBlack60)
+                        .border(BorderStroke(1.dp, PrimaryWhite), CircleShape)
+                        .align(Alignment.Center)
                 ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.cloneflix_ic_play),
+                        contentDescription = null,
+                        tint = PrimaryWhite,
+                        modifier = Modifier
+                            .size(16.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+
+                if (progress > 0.05f) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth(progress.coerceIn(0f, 1f))
-                            .fillMaxHeight()
-                            .background(PrimaryRed)
+                            .fillMaxWidth()
+                            .height(4.dp)
+                            .align(Alignment.BottomStart)
+                            .background(Grey800)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(progress.coerceIn(0f, 1f))
+                                .fillMaxHeight()
+                                .background(PrimaryRed)
+                        )
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${episode.episode}. ${episode.name ?: episode.headerName}",
+                        style = typography.mediumBody,
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryWhite,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = if (episode.runTime != null) "${episode.runTime}m" else "",
+                        style = typography.regularCaption1,
+                        color = Grey200
+                    )
+                }
+
+                if (!episode.description.isNullOrBlank()) {
+                    Text(
+                        text = episode.description,
+                        style = typography.regularCaption1,
+                        color = Grey100,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        lineHeight = 18.sp
                     )
                 }
             }
+
+            CloneflixCircleActionButton(
+                icon = painterResource(id = R.drawable.netflix_download),
+                contentDescription = "Download Episode ${episode.episode}",
+                onClick = onDownloadClick,
+                modifier = Modifier.size(36.dp)
+            )
         }
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "${episode.episode}. ${episode.name ?: episode.headerName}",
-                    style = typography.mediumBody,
-                    fontWeight = FontWeight.Bold,
-                    color = PrimaryWhite,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = if (episode.runTime != null) "${episode.runTime}m" else "",
-                    style = typography.regularCaption1,
-                    color = Grey200
-                )
-            }
-
-            if (!episode.description.isNullOrBlank()) {
-                Text(
-                    text = episode.description,
-                    style = typography.regularCaption1,
-                    color = Grey100,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    lineHeight = 18.sp
-                )
-            }
-        }
-
-        CloneflixCircleActionButton(
-            icon = painterResource(id = R.drawable.netflix_download),
-            contentDescription = "Download Episode ${episode.episode}",
-            onClick = onDownloadClick,
-            modifier = Modifier.size(36.dp)
-        )
     }
-}
 }
 
 @Composable
@@ -948,6 +1042,7 @@ fun CloneflixTrailerItemCard(
 
     val scale by animateFloatAsState(
         targetValue = if (isFocused) CloneflixTokens.FOCUS_SCALE_FACTOR else 1f,
+        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
         label = "trailerScale"
     )
 
