@@ -262,6 +262,11 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                                 )
                             }
                         },
+                        onSearchClick = {
+                            title.let { t ->
+                                QuickSearchFragment.pushSearch(activity, t)
+                            }
+                        },
                         onActorClick = { actorName ->
                             QuickSearchFragment.pushSearch(activity, actorName)
                         },

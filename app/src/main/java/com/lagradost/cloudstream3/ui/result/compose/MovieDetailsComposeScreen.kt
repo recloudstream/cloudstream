@@ -136,6 +136,7 @@ fun MovieDetailsComposeScreen(
     onAddToListClick: () -> Unit = {},
     onLikeClick: () -> Unit = {},
     onTrailerClick: () -> Unit = {},
+    onSearchClick: (() -> Unit)? = null,
     onActorClick: ((String) -> Unit)? = null,
     onRecommendationClick: ((SearchResponse) -> Unit)? = null,
     onCloseClick: () -> Unit = {}
@@ -154,6 +155,7 @@ fun MovieDetailsComposeScreen(
     val inMyListInteractionSource = remember { MutableInteractionSource() }
     val likeInteractionSource = remember { MutableInteractionSource() }
     val trailerInteractionSource = remember { MutableInteractionSource() }
+    val searchInteractionSource = remember { MutableInteractionSource() }
 
     val playButtonFocusRequester = remember { FocusRequester() }
 
@@ -384,6 +386,20 @@ fun MovieDetailsComposeScreen(
                                             onClick = onLikeClick
                                         )
                                 )
+
+                                if (onSearchClick != null) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .focusable(interactionSource = searchInteractionSource)
+                                            .clickable(
+                                                interactionSource = searchInteractionSource,
+                                                indication = null,
+                                                role = Role.Button,
+                                                onClick = onSearchClick
+                                            )
+                                    )
+                                }
                             }
 
                             if (hasTrailers) {
@@ -493,6 +509,16 @@ fun MovieDetailsComposeScreen(
                                     interactionSource = likeInteractionSource,
                                     enabled = false
                                 )
+
+                                if (onSearchClick != null) {
+                                    CircleActionButton(
+                                        icon = painterResource(id = R.drawable.search_icon),
+                                        contentDescription = stringResource(id = R.string.title_search),
+                                        onClick = onSearchClick,
+                                        interactionSource = searchInteractionSource,
+                                        enabled = false
+                                    )
+                                }
                             }
                         }
 
