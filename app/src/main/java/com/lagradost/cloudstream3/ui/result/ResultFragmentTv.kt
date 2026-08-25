@@ -251,7 +251,20 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     val rating = d.ratingText?.asStringNull(context)
                     val contentRating = d.contentRatingText?.asStringNull(context)
                     val genres = d.tags
-                    val actors = composeActorsState.ifEmpty { d.actors ?: emptyList() }
+                    val castNames = d.actorsText?.asStringNull(context)
+                        ?.replace(Regex("""^Cast:\s*""", RegexOption.IGNORE_CASE), "")
+                        ?.split(",")
+                        ?.map { it.trim() }
+                        ?.filter { it.isNotBlank() }
+                        ?: emptyList()
+                    val actors = composeActorsState.ifEmpty {
+                        d.actors ?: castNames.map { ActorData(com.lagradost.cloudstream3.Actor(it)) }
+                    }
+                    val nextAiring = d.nextAiringEpisode?.asStringNull(context)?.let { ep ->
+                        d.nextAiringDate?.asStringNull(context)?.let { date -> "$ep: $date" } ?: ep
+                    } ?: d.nextAiringDate?.asStringNull(context)
+                    val ongoingInfo = d.onGoingText?.asStringNull(context)
+                    val advisoriesText = listOfNotNull(ongoingInfo, nextAiring).joinToString(" • ").ifBlank { null }
 
                     MovieDetailsComposeScreen(
                         title = title,
@@ -263,6 +276,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         releaseYear = year,
                         seasonsCount = duration,
                         maturityRating = contentRating,
+                        advisories = advisoriesText,
                         synopsis = plot,
                         genres = genres,
                         dynamicActors = actors,

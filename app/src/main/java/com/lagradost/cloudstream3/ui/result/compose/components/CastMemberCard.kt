@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,7 +63,7 @@ private fun CastAvatarCircle(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
-            .background(colors.surface)
+            .background(colors.surfaceElevated)
             .border(BorderStroke(borderWidth, borderColor), CircleShape),
         contentAlignment = Alignment.Center
     ) {
@@ -83,7 +84,7 @@ private fun CastAvatarCircle(
                 Text(
                     text = (actor?.name ?: "?").take(2).uppercase(),
                     color = colors.textSecondary,
-                    fontSize = if (size > 50.dp) 18.sp else 12.sp,
+                    fontSize = if (size > 60.dp) 20.sp else 14.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -103,24 +104,24 @@ private fun CastDualAvatar(
     val mainBorderColor = if (isFocused) colors.primary else colors.border
 
     Box(
-        modifier = modifier.size(72.dp),
+        modifier = modifier.size(92.dp),
         contentAlignment = Alignment.Center
     ) {
         if (hasVoiceActor && secondaryActor?.image != null) {
             CastAvatarCircle(
                 actor = secondaryActor,
-                size = 48.dp,
-                borderColor = colors.primary.copy(alpha = 0.6f),
+                size = 56.dp,
+                borderColor = colors.primary.copy(alpha = 0.7f),
                 borderWidth = 1.5.dp,
-                modifier = Modifier.offset(x = 14.dp, y = 10.dp)
+                modifier = Modifier.offset(x = 18.dp, y = 14.dp)
             )
         }
 
         CastAvatarCircle(
             actor = mainActor,
-            size = 64.dp,
+            size = 80.dp,
             borderColor = mainBorderColor,
-            borderWidth = 2.dp
+            borderWidth = if (isFocused) 2.5.dp else 1.5.dp
         )
     }
 }
@@ -139,7 +140,7 @@ private fun CastMemberInfo(
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+        verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Text(
             text = mainName,
@@ -148,7 +149,7 @@ private fun CastMemberInfo(
             color = if (isFocused) colors.textPrimary else colors.textSecondary,
             fontSize = 13.sp,
             textAlign = TextAlign.Center,
-            maxLines = 2,
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
 
@@ -165,16 +166,23 @@ private fun CastMemberInfo(
         }
 
         if (!roleText.isNullOrBlank()) {
-            Text(
-                text = roleText,
-                style = typography.regularCaption2,
-                color = colors.primary,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(colors.primary.copy(alpha = 0.15f))
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = roleText,
+                    style = typography.regularCaption2,
+                    color = colors.primary,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -200,7 +208,7 @@ fun CastMemberCard(
     val dimens = MovieDetailsTheme.dimens
 
     val scaleState = animateFloatAsState(
-        targetValue = if (isFocused) 1.08f else 1f,
+        targetValue = if (isFocused) 1.06f else 1f,
         animationSpec = MovieDetailsTokens.FastFocusAnimationSpec,
         label = "castCardScale"
     )
@@ -208,7 +216,7 @@ fun CastMemberCard(
     val border = if (isFocused) {
         BorderStroke(dimens.borderFocus, colors.primary)
     } else {
-        BorderStroke(1.dp, colors.border.copy(alpha = 0.3f))
+        BorderStroke(1.dp, colors.border.copy(alpha = 0.35f))
     }
 
     val roleText = when {
@@ -219,17 +227,11 @@ fun CastMemberCard(
         else -> null
     }
 
-    Column(
+    val cardWidth = 130.dp
+
+    Box(
         modifier = modifier
-            .width(110.dp)
-            .zIndex(if (isFocused) 10f else 0f)
-            .graphicsLayer {
-                scaleX = scaleState.value
-                scaleY = scaleState.value
-            }
-            .clip(MovieDetailsTokens.ShapeCardMedium)
-            .background(if (isFocused) colors.surfaceElevated else colors.surface.copy(alpha = 0.5f))
-            .border(border, MovieDetailsTokens.ShapeCardMedium)
+            .width(cardWidth)
             .combinedClickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -253,25 +255,39 @@ fun CastMemberCard(
                 }
             )
             .focusable(interactionSource = interactionSource)
-            .padding(vertical = 10.dp, horizontal = 6.dp)
             .semantics {
                 contentDescription = currentMain?.name ?: ""
             },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        contentAlignment = Alignment.Center
     ) {
-        CastDualAvatar(
-            mainActor = currentMain,
-            secondaryActor = currentSecondary,
-            hasVoiceActor = hasVoiceActor,
-            isFocused = isFocused
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .zIndex(if (isFocused) 10f else 0f)
+                .graphicsLayer {
+                    scaleX = scaleState.value
+                    scaleY = scaleState.value
+                }
+                .clip(MovieDetailsTokens.ShapeCardMedium)
+                .background(if (isFocused) colors.surfaceElevated else colors.surface)
+                .border(border, MovieDetailsTokens.ShapeCardMedium)
+                .padding(vertical = 12.dp, horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            CastDualAvatar(
+                mainActor = currentMain,
+                secondaryActor = currentSecondary,
+                hasVoiceActor = hasVoiceActor,
+                isFocused = isFocused
+            )
 
-        CastMemberInfo(
-            mainName = currentMain?.name ?: "",
-            secondaryName = if (hasVoiceActor) currentSecondary?.name else null,
-            roleText = roleText,
-            isFocused = isFocused
-        )
+            CastMemberInfo(
+                mainName = currentMain?.name ?: "",
+                secondaryName = if (hasVoiceActor) currentSecondary?.name else null,
+                roleText = roleText,
+                isFocused = isFocused
+            )
+        }
     }
 }

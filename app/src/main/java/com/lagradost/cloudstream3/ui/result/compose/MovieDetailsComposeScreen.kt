@@ -40,6 +40,7 @@ import com.lagradost.cloudstream3.ui.result.compose.model.MovieRecommendationRow
 import com.lagradost.cloudstream3.ui.result.compose.model.MovieTrailerData
 import com.lagradost.cloudstream3.ui.result.compose.model.getPlayButtonText
 import com.lagradost.cloudstream3.ui.result.compose.sections.AboutSection
+import com.lagradost.cloudstream3.ui.result.compose.sections.CastAndCrewSection
 import com.lagradost.cloudstream3.ui.result.compose.sections.EpisodesHeaderSection
 import com.lagradost.cloudstream3.ui.result.compose.sections.HeroBannerSection
 import com.lagradost.cloudstream3.ui.result.compose.sections.MovieInfoSynopsisSection
@@ -344,7 +345,17 @@ fun MovieDetailsComposeScreen(
                 }
             }
 
-            val hasAboutContent = !creator.isNullOrBlank() || !dynamicActors.isNullOrEmpty() || castList.isNotEmpty() ||
+            if (!dynamicActors.isNullOrEmpty()) {
+                item(key = "cast_and_crew_section", contentType = "cast_section") {
+                    CastAndCrewSection(
+                        actors = dynamicActors,
+                        onActorClick = onActorClick,
+                        onActorLongClick = onActorClick
+                    )
+                }
+            }
+
+            val hasAboutContent = !creator.isNullOrBlank() || castList.isNotEmpty() ||
                     writers.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty() ||
                     !maturityRating.isNullOrBlank()
 
@@ -358,10 +369,7 @@ fun MovieDetailsComposeScreen(
                         genres = genres,
                         moodTags = moodTags,
                         maturityRating = maturityRating,
-                        advisories = advisories,
-                        actors = dynamicActors,
-                        onActorClick = onActorClick,
-                        onActorLongClick = onActorClick
+                        advisories = advisories
                     )
                 }
             }
