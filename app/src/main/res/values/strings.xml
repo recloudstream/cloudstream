@@ -792,4 +792,12 @@
         <item quantity="other">%d downloads queued</item>
     </plurals>
     <string name="player_is_live">Live</string>
+
+    <!-- Movie Details Badges -->
+    <string name="badge_recently_added">Recently Added</string>
+    <string name="badge_top_10">Top 10</string>
+    <string name="badge_new_season">New Season</string>
+    <string name="badge_new_episodes">New Episodes</string>
+    <string name="badge_leaving_soon">Leaving Soon</string>
+    <string name="badge_must_watch">Must Watch</string>
 </resources>

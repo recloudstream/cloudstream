@@ -275,18 +275,6 @@
             android:name=".ui.ControllerActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".ui.revamp.RevampDesignSystemActivity"
-            android:exported="false"
-            android:label="Cloneflix Design System 2024"
-            android:theme="@style/AppTheme" />
-
-        <activity
-            android:name=".ui.revamp.compose.CloneflixComposeActivity"
-            android:exported="false"
-            android:label="Cloneflix Compose Showcase"
-            android:theme="@style/AppTheme" />
-
 
 
         <service

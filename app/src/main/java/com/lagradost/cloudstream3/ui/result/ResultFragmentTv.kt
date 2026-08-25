@@ -32,8 +32,8 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
-import com.lagradost.cloudstream3.ui.revamp.compose.screens.CloneflixMovieDetailsComposeScreen
-import com.lagradost.cloudstream3.ui.revamp.compose.theme.CloneflixTheme
+import com.lagradost.cloudstream3.ui.result.compose.MovieDetailsComposeScreen
+import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchHelper
@@ -142,7 +142,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         var comingSoon = false
 
         binding.resultComposeView.setContent {
-            CloneflixTheme {
+            MovieDetailsTheme {
                 val page = composePageState
                 if (page is Resource.Success) {
                     val d = page.value
@@ -156,7 +156,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     val genres = d.tags
                     val actors = composeActorsState.ifEmpty { d.actors ?: emptyList() }
 
-                    CloneflixMovieDetailsComposeScreen(
+                    MovieDetailsComposeScreen(
                         title = title,
                         providerName = provider,
                         backdropUrl = d.posterBackgroundImage ?: d.posterImage,
