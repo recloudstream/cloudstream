@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.result.compose.theme
 
+import android.content.Context
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -8,14 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 
 val AppFontFamily: FontFamily = FontFamily.Default
 
@@ -207,28 +212,84 @@ object MovieDetailsTheme {
 }
 
 @Composable
+fun rememberMovieDetailsColors(): MovieDetailsColors {
+    val context = LocalContext.current
+    return remember(context) {
+        val primary = try {
+            Color(context.colorFromAttribute(R.attr.colorPrimary))
+        } catch (_: Throwable) {
+            PrimaryRed
+        }
+        val onPrimary = try {
+            Color(context.colorFromAttribute(com.google.android.material.R.attr.colorOnPrimary))
+        } catch (_: Throwable) {
+            PrimaryWhite
+        }
+        val background = try {
+            Color(context.colorFromAttribute(R.attr.primaryBlackBackground))
+        } catch (_: Throwable) {
+            CanvasBackground
+        }
+        val surface = try {
+            Color(context.colorFromAttribute(R.attr.primaryGrayBackground))
+        } catch (_: Throwable) {
+            SurfaceDark
+        }
+        val surfaceElevated = try {
+            Color(context.colorFromAttribute(R.attr.boxItemBackground))
+        } catch (_: Throwable) {
+            surface
+        }
+        val textPrimary = try {
+            Color(context.colorFromAttribute(R.attr.textColor))
+        } catch (_: Throwable) {
+            PrimaryWhite
+        }
+        val textSecondary = try {
+            Color(context.colorFromAttribute(R.attr.grayTextColor))
+        } catch (_: Throwable) {
+            Grey200
+        }
+        val border = try {
+            Color(context.colorFromAttribute(R.attr.iconGrayBackground)).copy(alpha = 0.4f)
+        } catch (_: Throwable) {
+            BorderSubtle
+        }
+
+        MovieDetailsColors(
+            primary = primary,
+            onPrimary = onPrimary,
+            background = background,
+            onBackground = textPrimary,
+            surface = surface,
+            surfaceElevated = surfaceElevated,
+            onSurface = textPrimary,
+            border = border,
+            divider = border,
+            textPrimary = textPrimary,
+            textSecondary = textSecondary,
+            textMuted = textSecondary,
+            textDimmed = textSecondary,
+            greenAccent = GreenAccent,
+            yellowAccent = YellowAccent,
+            orangeAccent = OrangeAccent
+        )
+    }
+}
+
+@Composable
 fun MovieDetailsTheme(
-    colors: MovieDetailsColors = MovieDetailsColors(),
+    colors: MovieDetailsColors = rememberMovieDetailsColors(),
     typography: MovieDetailsTypography = MovieDetailsTypography(),
     dimens: MovieDetailsDimens = MovieDetailsDimens(),
     content: @Composable () -> Unit
 ) {
-    val materialColors = darkColorScheme(
-        primary = colors.primary,
-        onPrimary = colors.onPrimary,
-        background = colors.background,
-        onBackground = colors.onBackground,
-        surface = colors.surface,
-        onSurface = colors.onSurface
-    )
-
     CompositionLocalProvider(
         LocalMovieDetailsColors provides colors,
         LocalMovieDetailsTypography provides typography,
         LocalMovieDetailsDimens provides dimens
     ) {
         MaterialTheme(
-            colorScheme = materialColors,
             shapes = MovieDetailsShapes,
             content = content
         )

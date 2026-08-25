@@ -175,6 +175,8 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         selectedSeasonIndex = composeSelectedSeasonIndexState,
                         isInWatchList = composeWatchStatusState != WatchType.NONE,
                         hasTrailers = composeHasTrailersState,
+                        resumeStatus = composeResumeWatchingState,
+                        isMovie = composeEpisodesState.isEmpty() || (composeResumeWatchingState?.isMovie == true),
                         onPlayClick = {
                             val resume = composeResumeWatchingState
                             if (resume != null) {

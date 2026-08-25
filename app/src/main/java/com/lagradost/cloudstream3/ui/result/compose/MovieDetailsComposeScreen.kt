@@ -1,9 +1,7 @@
 package com.lagradost.cloudstream3.ui.result.compose
 
 import android.widget.Toast
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -28,7 +26,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,29 +38,28 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,10 +69,8 @@ import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
-import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.ui.result.ResumeWatchingStatus
 import com.lagradost.cloudstream3.ui.result.compose.components.CircleActionButton
-import com.lagradost.cloudstream3.ui.result.compose.components.DetailsLogoVariant
-import com.lagradost.cloudstream3.ui.result.compose.components.DetailsLogoView
 import com.lagradost.cloudstream3.ui.result.compose.components.HeroPlayButton
 import com.lagradost.cloudstream3.ui.result.compose.components.HeroTrailerButton
 import com.lagradost.cloudstream3.ui.result.compose.components.MaturityRatingBadge
@@ -87,24 +81,12 @@ import com.lagradost.cloudstream3.ui.result.compose.components.MovieDetailsMovie
 import com.lagradost.cloudstream3.ui.result.compose.components.MovieDetailsTokens
 import com.lagradost.cloudstream3.ui.result.compose.components.SeasonDropdown
 import com.lagradost.cloudstream3.ui.result.compose.components.VideoQualityBadge
-import com.lagradost.cloudstream3.ui.result.compose.theme.GreenAccent
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey100
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey200
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey50
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey500
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey600
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey700
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey750
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey800
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey850
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 import com.lagradost.cloudstream3.ui.result.compose.theme.PrimaryBlack
-import com.lagradost.cloudstream3.ui.result.compose.theme.PrimaryRed
 import com.lagradost.cloudstream3.ui.result.compose.theme.PrimaryWhite
 import com.lagradost.cloudstream3.ui.result.compose.theme.TransparentBlack60
 import com.lagradost.cloudstream3.ui.result.compose.theme.getRatingScoreColor
 import com.lagradost.cloudstream3.ui.result.getWatchProgress
-import kotlinx.coroutines.launch
 
 @Immutable
 data class MovieTrailerData(
@@ -146,6 +128,8 @@ fun MovieDetailsComposeScreen(
     dynamicActors: List<ActorData>? = null,
     dynamicSeasons: List<String>? = null,
     dynamicTrailers: List<MovieTrailerData>? = null,
+    resumeStatus: ResumeWatchingStatus? = null,
+    isMovie: Boolean = true,
     selectedSeasonIndex: Int = 0,
     isInWatchList: Boolean = false,
     hasTrailers: Boolean = false,
@@ -169,7 +153,6 @@ fun MovieDetailsComposeScreen(
     val typography = MovieDetailsTheme.typography
     val dimens = MovieDetailsTheme.dimens
     val lazyListState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
 
     val playInteractionSource = remember { MutableInteractionSource() }
     val inMyListInteractionSource = remember { MutableInteractionSource() }
@@ -199,7 +182,74 @@ fun MovieDetailsComposeScreen(
         }
     }
 
+    fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
     val episodesToDisplay = dynamicEpisodes ?: emptyList()
+
+    val playButtonText = remember(resumeStatus, episodesToDisplay, isMovie, context) {
+        if (resumeStatus != null) {
+            val resumeEp = resumeStatus.result
+            val prefix = if (resumeStatus.progress != null) {
+                context.getString(R.string.resume)
+            } else {
+                context.getString(R.string.play_movie_button)
+            }
+            if (resumeStatus.isMovie) {
+                prefix
+            } else {
+                val sShort = context.getString(R.string.season_short)
+                val eShort = context.getString(R.string.episode_short)
+                val s = resumeEp.season
+                val e = resumeEp.episode
+                val epCode = if (s != null && s > 0 && e > 0) {
+                    "$sShort$s:$eShort$e"
+                } else if (e > 0) {
+                    "$eShort$e"
+                } else {
+                    ""
+                }
+                if (epCode.isNotBlank()) {
+                    "$prefix $epCode"
+                } else {
+                    prefix
+                }
+            }
+        } else {
+            val firstEp = episodesToDisplay.firstOrNull()
+            if (firstEp != null && !isMovie) {
+                val sShort = context.getString(R.string.season_short)
+                val eShort = context.getString(R.string.episode_short)
+                val s = firstEp.season
+                val e = firstEp.episode
+                val epCode = if (s != null && s > 0 && e > 0) {
+                    "$sShort$s:$eShort$e"
+                } else if (e > 0) {
+                    "$eShort$e"
+                } else {
+                    ""
+                }
+                val playStr = context.getString(R.string.play_movie_button)
+                if (epCode.isNotBlank()) {
+                    "$playStr $epCode"
+                } else {
+                    playStr
+                }
+            } else {
+                context.getString(R.string.play_movie_button)
+            }
+        }
+    }
+
+    val resumeProgressFraction = remember(resumeStatus) {
+        val prog = resumeStatus?.progress
+        if (prog != null && prog.maxProgress > 0) {
+            prog.progress.toFloat() / prog.maxProgress.toFloat()
+        } else {
+            null
+        }
+    }
 
     val castList = remember(dynamicActors, cast) {
         dynamicActors?.map { it.actor.name }?.filter { it.isNotBlank() }?.ifEmpty { cast } ?: cast
@@ -246,153 +296,273 @@ fun MovieDetailsComposeScreen(
                 .fillMaxSize()
                 .background(colors.background)
         ) {
-            item(key = "hero_banner") {
+            item(key = "hero_banner", contentType = "hero_banner") {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(heroHeight)
                         .clipToBounds()
+                        .background(colors.background)
                 ) {
-                    val imageUrl = backdropUrl ?: posterUrl
-                    if (!imageUrl.isNullOrBlank()) {
+                    if (!backdropUrl.isNullOrBlank()) {
                         AsyncImage(
-                            model = imageUrl,
-                            contentDescription = title,
+                            model = backdropUrl,
+                            contentDescription = null,
                             contentScale = ContentScale.Crop,
-                            alignment = Alignment.TopCenter,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .graphicsLayer { alpha = 0.85f }
+                                .clipToBounds()
                         )
                     }
 
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.85f)
+                            .align(Alignment.BottomCenter)
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
                                         Color.Transparent,
-                                        PrimaryBlack.copy(alpha = 0.3f),
-                                        PrimaryBlack.copy(alpha = 0.8f),
+                                        colors.background.copy(alpha = 0.5f),
+                                        colors.background.copy(alpha = 0.92f),
                                         colors.background
-                                    ),
-                                    startY = 0f
+                                    )
                                 )
                             )
                     )
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.horizontalGradient(
-                                    colors = listOf(
-                                        PrimaryBlack.copy(alpha = 0.7f),
-                                        Color.Transparent
-                                    ),
-                                    startX = 0f,
-                                    endX = 800f
-                                )
-                            )
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(top = dimens.spacing2Xl, end = dimens.spacing2Xl),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
-                    ) {
-                        CircleActionButton(
-                            icon = painterResource(id = R.drawable.ic_baseline_close_24),
-                            contentDescription = "Close",
-                            onClick = onCloseClick
-                        )
-                    }
 
                     Column(
                         modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(
-                                start = dimens.spacing3Xl,
-                                bottom = dimens.spacing2Xl,
-                                end = dimens.spacing3Xl
-                            )
-                            .fillMaxWidth(0.85f)
+                            .fillMaxWidth()
+                            .align(Alignment.TopStart)
+                            .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacing2Xl)
+                            .zIndex(50f),
+                        verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
                     ) {
-                        if (!providerName.isNullOrBlank()) {
-                            Text(
-                                text = providerName.uppercase(),
-                                style = typography.boldTitle2,
-                                color = PrimaryRed,
-                                letterSpacing = 2.sp,
-                                modifier = Modifier.padding(bottom = dimens.spacingS)
-                            )
-                        }
-
-                        DetailsLogoView(
-                            logoUrl = logoUrl,
-                            titleFallback = title,
-                            variant = DetailsLogoVariant.FULL_COLOR,
-                            height = 64.dp
+                        Box(
+                            modifier = Modifier
+                                .height(42.dp)
+                                .width(110.dp)
+                                .focusRequester(playButtonFocusRequester)
+                                .focusable(interactionSource = playInteractionSource)
+                                .clickable(
+                                    interactionSource = playInteractionSource,
+                                    indication = null,
+                                    role = Role.Button,
+                                    onClick = onPlayClick
+                                )
                         )
 
-                        Spacer(modifier = Modifier.height(dimens.spacingL))
-
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingM),
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            HeroPlayButton(
-                                onClick = onPlayClick,
-                                text = "Play",
-                                interactionSource = playInteractionSource,
-                                modifier = Modifier.focusRequester(playButtonFocusRequester)
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .focusable(interactionSource = inMyListInteractionSource)
+                                        .clickable(
+                                            interactionSource = inMyListInteractionSource,
+                                            indication = null,
+                                            role = Role.Button
+                                        ) {
+                                            inMyListState = !inMyListState
+                                            onAddToListClick()
+                                        }
+                                )
 
-                            if (hasTrailers) {
-                                HeroTrailerButton(
-                                    onClick = onTrailerClick,
-                                    text = "Play Trailer",
-                                    interactionSource = trailerInteractionSource
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .focusable(interactionSource = likeInteractionSource)
+                                        .clickable(
+                                            interactionSource = likeInteractionSource,
+                                            indication = null,
+                                            role = Role.Button,
+                                            onClick = onLikeClick
+                                        )
                                 )
                             }
 
-                            CircleActionButton(
-                                icon = painterResource(
-                                    id = if (inMyListState) R.drawable.ic_baseline_check_24 else R.drawable.ic_baseline_add_24
-                                ),
-                                contentDescription = if (inMyListState) "In My List" else "Add to My List",
-                                onClick = {
-                                    inMyListState = !inMyListState
-                                    onAddToListClick()
-                                },
-                                interactionSource = inMyListInteractionSource
+                            if (hasTrailers) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(40.dp)
+                                        .width(120.dp)
+                                        .focusable(interactionSource = trailerInteractionSource)
+                                        .clickable(
+                                            interactionSource = trailerInteractionSource,
+                                            indication = null,
+                                            role = Role.Button,
+                                            onClick = onTrailerClick
+                                        )
+                                )
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(dimens.spacing2Xl)
+                    ) {
+                        if (!providerName.isNullOrBlank()) {
+                            val textColor = colors.primary
+                            val isLightText = textColor.luminance() > 0.5f
+                            val innerOutlineColor = if (isLightText) Color.Black else Color.White
+                            val outerOutlineColor = if (isLightText) Color.White else Color.Black
+
+                            val providerStyle = typography.boldTitle2.copy(
+                                fontWeight = FontWeight.Black
+                            )
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = providerName.uppercase(),
+                                    style = providerStyle.copy(
+                                        drawStyle = Stroke(
+                                            width = 24f,
+                                            join = StrokeJoin.Round,
+                                            cap = StrokeCap.Round
+                                        )
+                                    ),
+                                    color = outerOutlineColor,
+                                    letterSpacing = 2.sp
+                                )
+                                Text(
+                                    text = providerName.uppercase(),
+                                    style = providerStyle.copy(
+                                        drawStyle = Stroke(
+                                            width = 16f,
+                                            join = StrokeJoin.Round,
+                                            cap = StrokeCap.Round
+                                        )
+                                    ),
+                                    color = innerOutlineColor,
+                                    letterSpacing = 2.sp
+                                )
+                                Text(
+                                    text = providerName.uppercase(),
+                                    style = providerStyle,
+                                    color = textColor,
+                                    letterSpacing = 2.sp
+                                )
+                            }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomStart)
+                            .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacingL),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Column {
+                            if (!logoUrl.isNullOrBlank()) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(68.dp)
+                                        .width(240.dp)
+                                ) {
+                                    AsyncImage(
+                                        model = logoUrl,
+                                        contentDescription = title,
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                            } else {
+                                Text(
+                                    text = title,
+                                    style = typography.boldTitle1,
+                                    fontSize = 32.sp,
+                                    color = colors.textPrimary,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(dimens.spacingL))
+
+                            HeroPlayButton(
+                                onClick = onPlayClick,
+                                text = playButtonText,
+                                progress = resumeProgressFraction,
+                                interactionSource = playInteractionSource,
+                                enabled = false
                             )
 
-                            CircleActionButton(
-                                icon = painterResource(id = R.drawable.ic_baseline_favorite_24),
-                                contentDescription = "Favorite",
-                                onClick = onLikeClick,
-                                interactionSource = likeInteractionSource
+                            Spacer(modifier = Modifier.height(dimens.spacingM))
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                            ) {
+                                CircleActionButton(
+                                    icon = painterResource(
+                                        id = if (inMyListState) R.drawable.ic_baseline_check_24 else R.drawable.ic_baseline_add_24
+                                    ),
+                                    contentDescription = if (inMyListState) {
+                                        stringResource(id = R.string.in_my_list)
+                                    } else {
+                                        stringResource(id = R.string.add_to_my_list)
+                                    },
+                                    onClick = {
+                                        inMyListState = !inMyListState
+                                        onAddToListClick()
+                                    },
+                                    interactionSource = inMyListInteractionSource,
+                                    enabled = false
+                                )
+
+                                CircleActionButton(
+                                    icon = painterResource(id = R.drawable.ic_baseline_favorite_24),
+                                    contentDescription = stringResource(id = R.string.favorite),
+                                    onClick = onLikeClick,
+                                    interactionSource = likeInteractionSource,
+                                    enabled = false
+                                )
+                            }
+                        }
+
+                        if (hasTrailers) {
+                            HeroTrailerButton(
+                                text = stringResource(id = R.string.play_trailer),
+                                onClick = onTrailerClick,
+                                interactionSource = trailerInteractionSource,
+                                enabled = false
                             )
                         }
                     }
                 }
             }
 
-            item(key = "meta_info_section") {
-                Column(
+            item(key = "movie_info_synopsis", contentType = "movie_info") {
+                val hasRightColumn = castList.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty()
+
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = dimens.spacing3Xl)
+                        .padding(horizontal = dimens.spacing2Xl, vertical = dimens.spacingL),
+                    horizontalArrangement = Arrangement.spacedBy(dimens.spacing2Xl)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(dimens.spacing4Xl)
+                    Column(
+                        modifier = Modifier
+                            .weight(if (hasRightColumn) 0.65f else 1f)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
                     ) {
-                        Column(modifier = Modifier.weight(0.65f)) {
+                        val hasLine1 = !matchScore.isNullOrBlank() || !releaseYear.isNullOrBlank() ||
+                                !seasonsCount.isNullOrBlank() || !quality.isNullOrBlank()
+
+                        if (hasLine1) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
@@ -409,19 +579,15 @@ fun MovieDetailsComposeScreen(
                                 if (!releaseYear.isNullOrBlank()) {
                                     Text(
                                         text = releaseYear,
-                                        color = Grey200,
+                                        color = colors.textPrimary,
                                         style = typography.regularBody
                                     )
-                                }
-
-                                if (!maturityRating.isNullOrBlank()) {
-                                    MaturityRatingBadge(rating = maturityRating)
                                 }
 
                                 if (!seasonsCount.isNullOrBlank()) {
                                     Text(
                                         text = seasonsCount,
-                                        color = Grey200,
+                                        color = colors.textPrimary,
                                         style = typography.regularBody
                                     )
                                 }
@@ -430,162 +596,134 @@ fun MovieDetailsComposeScreen(
                                     VideoQualityBadge(quality = quality)
                                 }
                             }
+                        }
 
-                            if (!advisories.isNullOrBlank()) {
-                                Spacer(modifier = Modifier.height(dimens.spacingS))
-                                Row(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(2.dp))
-                                        .border(BorderStroke(1.dp, Grey700), RoundedCornerShape(2.dp))
-                                        .padding(horizontal = 6.dp, vertical = 2.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    if (!maturityRating.isNullOrBlank()) {
-                                        Text(
-                                            text = maturityRating,
-                                            color = PrimaryWhite,
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            text = "•",
-                                            color = Grey500,
-                                            fontSize = 10.sp
-                                        )
-                                    }
+                        if (!maturityRating.isNullOrBlank() || !advisories.isNullOrBlank()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(dimens.spacingS)
+                            ) {
+                                if (!maturityRating.isNullOrBlank()) {
+                                    MaturityRatingBadge(rating = maturityRating)
+                                }
+                                if (!advisories.isNullOrBlank()) {
                                     Text(
                                         text = advisories,
-                                        color = Grey200,
-                                        fontSize = 11.sp
+                                        color = colors.textMuted,
+                                        style = typography.regularCaption1
                                     )
                                 }
                             }
+                        }
 
-                            if (!top10RankText.isNullOrBlank()) {
-                                Spacer(modifier = Modifier.height(dimens.spacingM))
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(dimens.spacingS)
+                        if (!top10RankText.isNullOrBlank()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
+                                modifier = Modifier.padding(vertical = dimens.spacingXs)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(MovieDetailsTokens.ShapeCardSmall)
+                                        .background(colors.primary)
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .clip(RoundedCornerShape(2.dp))
-                                            .background(PrimaryRed),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = "TOP\n10",
-                                            color = PrimaryWhite,
-                                            fontSize = 8.sp,
-                                            fontWeight = FontWeight.Black,
-                                            lineHeight = 9.sp
-                                        )
-                                    }
                                     Text(
-                                        text = top10RankText,
-                                        color = PrimaryWhite,
-                                        style = typography.boldTitle2,
-                                        fontSize = 16.sp
+                                        text = stringResource(id = R.string.top_10_badge_text),
+                                        style = typography.regularCaption2,
+                                        color = colors.onPrimary,
+                                        fontWeight = FontWeight.Black
                                     )
                                 }
-                            }
-
-                            if (synopsis.isNotBlank()) {
-                                Spacer(modifier = Modifier.height(dimens.spacingL))
                                 Text(
-                                    text = synopsis,
-                                    style = typography.regularBody,
-                                    color = PrimaryWhite,
-                                    lineHeight = 22.sp
+                                    text = top10RankText,
+                                    style = typography.mediumBody,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.textPrimary
                                 )
                             }
                         }
 
+                        if (synopsis.isNotBlank()) {
+                            val synopsisInteractionSource = remember { MutableInteractionSource() }
+                            val isSynopsisFocused by synopsisInteractionSource.collectIsFocusedAsState()
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(MovieDetailsTokens.ShapeCardSmall)
+                                    .background(if (isSynopsisFocused) colors.surfaceElevated.copy(alpha = 0.5f) else Color.Transparent)
+                                    .then(
+                                        if (isSynopsisFocused) {
+                                            Modifier.border(
+                                                BorderStroke(dimens.borderFocus, colors.primary),
+                                                MovieDetailsTokens.ShapeCardSmall
+                                            )
+                                        } else Modifier
+                                    )
+                                    .focusable(interactionSource = synopsisInteractionSource)
+                                    .padding(dimens.spacingS)
+                            ) {
+                                Text(
+                                    text = synopsis,
+                                    style = typography.regularBody,
+                                    color = if (isSynopsisFocused) colors.textPrimary else colors.textSecondary,
+                                    lineHeight = 22.sp
+                                )
+                            }
+                        }
+                    }
+
+                    if (hasRightColumn) {
                         Column(
-                            modifier = Modifier.weight(0.35f),
-                            verticalArrangement = Arrangement.spacedBy(dimens.spacingS)
+                            modifier = Modifier
+                                .weight(0.35f)
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
                         ) {
                             if (castList.isNotEmpty()) {
-                                Row {
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                     Text(
-                                        text = "Cast: ",
-                                        style = typography.regularSmallBody,
-                                        color = Grey200
+                                        text = stringResource(id = R.string.cast_label),
+                                        style = typography.regularCaption2,
+                                        color = colors.textSecondary
                                     )
                                     Text(
-                                        text = castList.take(4).joinToString(", "),
-                                        style = typography.regularSmallBody,
-                                        color = PrimaryWhite,
-                                        maxLines = 2,
+                                        text = castList.joinToString(", "),
+                                        style = typography.regularCaption1,
+                                        color = colors.textPrimary,
+                                        maxLines = 3,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                 }
                             }
 
                             if (genres.isNotEmpty()) {
-                                Row {
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                     Text(
-                                        text = "Genres: ",
-                                        style = typography.regularSmallBody,
-                                        color = Grey200
+                                        text = stringResource(id = R.string.genres_label),
+                                        style = typography.regularCaption2,
+                                        color = colors.textSecondary
                                     )
                                     Text(
                                         text = genres.joinToString(", "),
-                                        style = typography.regularSmallBody,
-                                        color = PrimaryWhite,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis
+                                        style = typography.regularCaption1,
+                                        color = colors.textPrimary
                                     )
                                 }
                             }
 
                             if (moodTags.isNotEmpty()) {
-                                Row {
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                     Text(
-                                        text = "This show is: ",
-                                        style = typography.regularSmallBody,
-                                        color = Grey200
+                                        text = stringResource(id = R.string.mood_tags_label),
+                                        style = typography.regularCaption2,
+                                        color = colors.textSecondary
                                     )
                                     Text(
                                         text = moodTags.joinToString(", "),
-                                        style = typography.regularSmallBody,
-                                        color = PrimaryWhite,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
-
-                            if (!creator.isNullOrBlank()) {
-                                Row {
-                                    Text(
-                                        text = "Creator: ",
-                                        style = typography.regularSmallBody,
-                                        color = Grey200
-                                    )
-                                    Text(
-                                        text = creator,
-                                        style = typography.regularSmallBody,
-                                        color = PrimaryWhite
-                                    )
-                                }
-                            }
-
-                            if (writers.isNotEmpty()) {
-                                Row {
-                                    Text(
-                                        text = "Writers: ",
-                                        style = typography.regularSmallBody,
-                                        color = Grey200
-                                    )
-                                    Text(
-                                        text = writers.joinToString(", "),
-                                        style = typography.regularSmallBody,
-                                        color = PrimaryWhite,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis
+                                        style = typography.regularCaption1,
+                                        color = colors.textPrimary
                                     )
                                 }
                             }
@@ -594,268 +732,197 @@ fun MovieDetailsComposeScreen(
                 }
             }
 
-            if (episodesToDisplay.isNotEmpty() || seasonOptions.isNotEmpty()) {
-                item(key = "episodes_section_header") {
-                    Column(
+            if (episodesToDisplay.isNotEmpty()) {
+                item(key = "episodes_header", contentType = "episodes_header") {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = dimens.spacing3Xl, end = dimens.spacing3Xl, top = dimens.spacing3Xl)
+                            .padding(horizontal = dimens.spacing2Xl)
+                            .padding(top = dimens.spacing2Xl, bottom = dimens.spacingL),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.spacingL),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Episodes",
-                                style = typography.boldTitle1,
-                                fontSize = 24.sp,
-                                color = PrimaryWhite
+                        Text(
+                            text = stringResource(id = R.string.episodes),
+                            style = typography.boldTitle2,
+                            fontSize = 24.sp,
+                            color = colors.textPrimary
+                        )
+
+                        if (seasonOptions.size > 1) {
+                            SeasonDropdown(
+                                options = seasonOptions,
+                                selectedOption = selectedSeasonText,
+                                onOptionSelected = { seasonStr ->
+                                    selectedSeasonText = seasonStr
+                                    val idx = seasonOptions.indexOf(seasonStr)
+                                    if (idx >= 0) onSeasonSelect?.invoke(idx)
+                                },
+                                width = 180.dp
                             )
-
-                            if (seasonOptions.size > 1) {
-                                SeasonDropdown(
-                                    options = seasonOptions,
-                                    selectedOption = selectedSeasonText,
-                                    onOptionSelected = { chosen ->
-                                        selectedSeasonText = chosen
-                                        val idx = seasonOptions.indexOf(chosen)
-                                        if (idx >= 0) {
-                                            onSeasonSelect?.invoke(idx)
-                                        }
-                                    },
-                                    width = 160.dp
-                                )
-                            }
                         }
-
-                        Spacer(modifier = Modifier.height(dimens.spacingL))
                     }
                 }
 
-                itemsIndexed(
+                items(
                     items = episodesToDisplay,
-                    key = { _, ep -> "ep_${ep.id}_${ep.episode}" }
-                ) { index, ep ->
+                    key = { ep -> "episode_${ep.id}" },
+                    contentType = { "episode_row" }
+                ) { ep ->
+                    val onEpClick = remember(ep) {
+                        {
+                            if (onEpisodeClick != null) onEpisodeClick(ep)
+                            else showToast("Playing ${ep.headerName}: ${ep.name}")
+                        }
+                    }
+                    val onEpDownload = remember(ep) {
+                        {
+                            if (onEpisodeDownloadClick != null) onEpisodeDownloadClick(ep)
+                            else showToast("Downloading Episode ${ep.episode}")
+                        }
+                    }
                     EpisodeRowItem(
                         episode = ep,
-                        index = index + 1,
-                        onEpisodeClick = { onEpisodeClick?.invoke(ep) },
-                        onDownloadClick = { onEpisodeDownloadClick?.invoke(ep) }
+                        onClick = onEpClick,
+                        onDownloadClick = onEpDownload,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.spacing2Xl, vertical = 6.dp)
+                    )
+                }
+            }
+
+            if (chunkedRecommendations.isNotEmpty()) {
+                item(key = "recommendations_header", contentType = "recommendations_header") {
+                    Text(
+                        text = stringResource(id = R.string.more_like_this),
+                        style = typography.boldTitle2,
+                        fontSize = 22.sp,
+                        color = colors.textPrimary,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.spacing2Xl)
+                            .padding(top = dimens.spacing3Xl, bottom = dimens.spacingL)
+                    )
+                }
+
+                items(
+                    items = chunkedRecommendations,
+                    key = { row -> "rec_row_${row.rowIndex}" },
+                    contentType = { "recommendation_row" }
+                ) { row ->
+                    RecommendationRowView(
+                        row = row,
+                        onCardClick = { cardItem ->
+                            val rec = dynamicRecommendations?.find { it.name == cardItem.title }
+                            if (rec != null && onRecommendationClick != null) {
+                                onRecommendationClick(rec)
+                            } else {
+                                showToast("Opened recommendation: ${cardItem.title}")
+                            }
+                        }
                     )
                 }
             }
 
             if (trailersList.isNotEmpty()) {
-                item(key = "trailers_section_header") {
+                item(key = "trailers_section", contentType = "trailers_section") {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(
-                                start = dimens.spacing3Xl,
-                                end = dimens.spacing3Xl,
-                                top = dimens.spacing3Xl,
-                                bottom = dimens.spacingL
-                            )
+                            .padding(horizontal = dimens.spacing2Xl)
+                            .padding(top = dimens.spacing3Xl, bottom = dimens.spacingL)
                     ) {
                         Text(
-                            text = "Trailers & More",
-                            style = typography.boldTitle1,
-                            fontSize = 24.sp,
-                            color = PrimaryWhite
-                        )
-                    }
-                }
-
-                items(
-                    items = trailersList,
-                    key = { "trailer_${it.title}" }
-                ) { trailer ->
-                    TrailerRowItem(trailer = trailer)
-                }
-            }
-
-            if (chunkedRecommendations.isNotEmpty()) {
-                item(key = "recommendations_section_header") {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                start = dimens.spacing3Xl,
-                                end = dimens.spacing3Xl,
-                                top = dimens.spacing3Xl,
-                                bottom = dimens.spacingL
-                            )
-                    ) {
-                        Text(
-                            text = "More Like This",
-                            style = typography.boldTitle1,
-                            fontSize = 24.sp,
-                            color = PrimaryWhite
-                        )
-                    }
-                }
-
-                items(
-                    items = chunkedRecommendations,
-                    key = { "rec_row_${it.rowIndex}" }
-                ) { row ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = dimens.spacing3Xl, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        row.items.forEach { cardItem ->
-                            val rawRec = cardItem.rawItem as? SearchResponse
-                                ?: dynamicRecommendations?.firstOrNull { it.name == cardItem.title }
-
-                            MovieDetailsMovieCard(
-                                title = cardItem.title,
-                                type = MovieCardType.POSTER,
-                                size = MovieCardSize.MEDIUM,
-                                posterUrl = cardItem.posterUrl,
-                                backdropUrl = cardItem.backdropUrl,
-                                showBottomTitle = true,
-                                onClick = {
-                                    if (rawRec != null) {
-                                        onRecommendationClick?.invoke(rawRec)
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-
-            item(key = "about_details_card") {
-                val hasAboutData = title.isNotBlank() || castList.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty()
-                if (hasAboutData) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                start = dimens.spacing3Xl,
-                                end = dimens.spacing3Xl,
-                                top = dimens.spacing4Xl,
-                                bottom = dimens.spacing4Xl
-                            )
-                    ) {
-                        val aboutInteractionSource = remember { MutableInteractionSource() }
-                        val isAboutFocused by aboutInteractionSource.collectIsFocusedAsState()
-
-                        val border = if (isAboutFocused) {
-                            BorderStroke(dimens.borderFocus, PrimaryWhite)
-                        } else {
-                            BorderStroke(dimens.borderSubtle, Grey750)
-                        }
-
-                        val scale by animateFloatAsState(
-                            targetValue = if (isAboutFocused) 1.01f else 1f,
-                            animationSpec = MovieDetailsTokens.FastFocusAnimationSpec,
-                            label = "aboutCardScale"
+                            text = stringResource(id = R.string.trailers_and_more),
+                            style = typography.boldTitle2,
+                            fontSize = 22.sp,
+                            color = colors.textPrimary
                         )
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .scale(scale)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Grey850)
-                                .border(border, RoundedCornerShape(8.dp))
-                                .clickable(
-                                    interactionSource = aboutInteractionSource,
-                                    indication = null,
-                                    onClick = {}
-                                )
-                                .focusable(interactionSource = aboutInteractionSource)
-                                .padding(dimens.spacing2Xl)
+                        Spacer(modifier = Modifier.height(dimens.spacingL))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
                         ) {
-                            Column {
-                                Text(
-                                    text = "About $title",
-                                    style = typography.boldTitle2,
-                                    fontSize = 20.sp,
-                                    color = PrimaryWhite
-                                )
-
-                                Spacer(modifier = Modifier.height(dimens.spacingL))
-
-                                if (!creator.isNullOrBlank()) {
-                                    Text(
-                                        text = "Creator: $creator",
-                                        style = typography.regularSmallBody,
-                                        color = Grey200,
-                                        modifier = Modifier.padding(bottom = 6.dp)
+                            trailersList.forEach { trailer ->
+                                Box(modifier = Modifier.weight(1f)) {
+                                    TrailerItemCard(
+                                        trailer = trailer,
+                                        onClick = {
+                                            if (hasTrailers) onTrailerClick()
+                                            else showToast("Playing ${trailer.title}")
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
                                     )
                                 }
+                            }
+                        }
+                    }
+                }
+            }
 
-                                if (castList.isNotEmpty()) {
-                                    Row(modifier = Modifier.padding(bottom = 6.dp)) {
-                                        Text(
-                                            text = "Cast: ",
-                                            style = typography.regularSmallBody,
-                                            color = Grey200
-                                        )
-                                        Text(
-                                            text = castList.joinToString(", "),
-                                            style = typography.regularSmallBody,
-                                            color = PrimaryWhite
-                                        )
-                                    }
-                                }
+            val hasAboutContent = !creator.isNullOrBlank() || castList.isNotEmpty() ||
+                    writers.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty() ||
+                    !maturityRating.isNullOrBlank()
 
-                                if (genres.isNotEmpty()) {
-                                    Row(modifier = Modifier.padding(bottom = 6.dp)) {
-                                        Text(
-                                            text = "Genres: ",
-                                            style = typography.regularSmallBody,
-                                            color = Grey200
-                                        )
-                                        Text(
-                                            text = genres.joinToString(", "),
-                                            style = typography.regularSmallBody,
-                                            color = PrimaryWhite
-                                        )
-                                    }
-                                }
+            if (hasAboutContent) {
+                item(key = "about_section", contentType = "about_section") {
+                    val aboutInteractionSource = remember { MutableInteractionSource() }
+                    val isAboutFocused by aboutInteractionSource.collectIsFocusedAsState()
+                    val aboutBorder = if (isAboutFocused) BorderStroke(dimens.borderFocus, colors.primary) else BorderStroke(1.dp, colors.border)
 
-                                if (moodTags.isNotEmpty()) {
-                                    Row(modifier = Modifier.padding(bottom = 6.dp)) {
-                                        Text(
-                                            text = "This show is: ",
-                                            style = typography.regularSmallBody,
-                                            color = Grey200
-                                        )
-                                        Text(
-                                            text = moodTags.joinToString(", "),
-                                            style = typography.regularSmallBody,
-                                            color = PrimaryWhite
-                                        )
-                                    }
-                                }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.spacing2Xl)
+                            .padding(top = dimens.spacing3Xl, bottom = dimens.spacing3Xl)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MovieDetailsTokens.ShapeCardMedium)
+                                .background(if (isAboutFocused) colors.surfaceElevated else colors.surface)
+                                .border(aboutBorder, MovieDetailsTokens.ShapeCardMedium)
+                                .focusable(interactionSource = aboutInteractionSource)
+                                .padding(dimens.spacing2Xl),
+                            verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.about_title_format, title),
+                                style = typography.boldTitle2,
+                                fontSize = 20.sp,
+                                color = colors.textPrimary
+                            )
 
-                                if (!maturityRating.isNullOrBlank()) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        modifier = Modifier.padding(top = 4.dp)
-                                    ) {
-                                        Text(
-                                            text = "Maturity Rating: ",
-                                            style = typography.regularSmallBody,
-                                            color = Grey200
-                                        )
-                                        MaturityRatingBadge(rating = maturityRating)
-                                        if (!advisories.isNullOrBlank()) {
-                                            Text(
-                                                text = advisories,
-                                                style = typography.regularSmallBody,
-                                                color = Grey100
-                                            )
-                                        }
-                                    }
+                            Spacer(modifier = Modifier.height(dimens.spacingXs))
+
+                            if (!creator.isNullOrBlank()) {
+                                AboutMetadataRow(label = stringResource(id = R.string.creator_label), value = creator)
+                            }
+                            if (castList.isNotEmpty()) {
+                                AboutMetadataRow(label = stringResource(id = R.string.cast_label), value = castList.joinToString(", "))
+                            }
+                            if (writers.isNotEmpty()) {
+                                AboutMetadataRow(label = stringResource(id = R.string.writers_label), value = writers.joinToString(", "))
+                            }
+                            if (genres.isNotEmpty()) {
+                                AboutMetadataRow(label = stringResource(id = R.string.genres_label), value = genres.joinToString(", "))
+                            }
+                            if (moodTags.isNotEmpty()) {
+                                AboutMetadataRow(label = stringResource(id = R.string.mood_tags_label), value = moodTags.joinToString(", "))
+                            }
+                            if (!maturityRating.isNullOrBlank()) {
+                                val ratingDescription = if (!advisories.isNullOrBlank()) {
+                                    "$maturityRating ($advisories)"
+                                } else {
+                                    maturityRating
                                 }
+                                AboutMetadataRow(
+                                    label = stringResource(id = R.string.maturity_rating_label),
+                                    value = ratingDescription
+                                )
                             }
                         }
                     }
@@ -866,76 +933,68 @@ fun MovieDetailsComposeScreen(
 }
 
 @Composable
-private fun EpisodeRowItem(
+fun EpisodeRowItem(
     episode: ResultEpisode,
-    index: Int,
-    onEpisodeClick: () -> Unit,
+    onClick: () -> Unit,
     onDownloadClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val typography = MovieDetailsTheme.typography
-    val dimens = MovieDetailsTheme.dimens
-
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val typography = MovieDetailsTheme.typography
+    val dimens = MovieDetailsTheme.dimens
+    val colors = MovieDetailsTheme.colors
 
-    val scale by animateFloatAsState(
-        targetValue = if (isFocused) 1.015f else 1f,
+    val scaleState = animateFloatAsState(
+        targetValue = if (isFocused) 1.02f else 1f,
         animationSpec = MovieDetailsTokens.FastFocusAnimationSpec,
-        label = "epRowScale"
+        label = "episodeScale"
     )
 
-    val background = when {
-        isFocused -> Grey750
-        else -> Color.Transparent
-    }
-
-    val border = if (isFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else null
-
-    val progress = remember(episode) {
-        val posDur = DataStoreHelper.getViewPos(episode.id)
-        if (posDur != null && posDur.duration > 0) {
-            posDur.position.toFloat() / posDur.duration.toFloat()
-        } else null
-    }
+    val background = if (isFocused) colors.surfaceElevated else colors.surface
+    val border = if (isFocused) BorderStroke(dimens.borderFocus, colors.primary) else null
+    val progress = remember(episode) { episode.getWatchProgress() }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = dimens.spacing3Xl, vertical = 4.dp)
-            .scale(scale)
-            .clip(RoundedCornerShape(6.dp))
+            .zIndex(if (isFocused) 10f else 0f)
+            .graphicsLayer {
+                scaleX = scaleState.value
+                scaleY = scaleState.value
+            }
+            .clip(MovieDetailsTokens.ShapeCardMedium)
             .background(background)
-            .then(if (border != null) Modifier.border(border, RoundedCornerShape(6.dp)) else Modifier)
+            .then(if (border != null) Modifier.border(border, MovieDetailsTokens.ShapeCardMedium) else Modifier)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
                 role = Role.Button,
-                onClick = onEpisodeClick
+                onClick = onClick
             )
             .focusable(interactionSource = interactionSource)
             .padding(dimens.spacingL),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
     ) {
         Text(
-            text = "${episode.episode}",
+            text = episode.episode.toString(),
             style = typography.boldTitle1,
-            fontSize = 22.sp,
-            color = if (isFocused) PrimaryWhite else Grey200,
-            modifier = Modifier.width(36.dp)
+            fontSize = 24.sp,
+            color = colors.textSecondary,
+            modifier = Modifier.width(32.dp)
         )
 
         Box(
             modifier = Modifier
-                .width(130.dp)
-                .height(74.dp)
+                .width(160.dp)
+                .height(90.dp)
                 .clip(MovieDetailsTokens.ShapeCardSmall)
-                .background(Grey800)
+                .background(colors.surface)
         ) {
-            val epPoster = episode.poster
-            if (!epPoster.isNullOrBlank()) {
+            if (!episode.poster.isNullOrBlank()) {
                 AsyncImage(
-                    model = epPoster,
+                    model = episode.poster,
                     contentDescription = episode.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -944,78 +1003,71 @@ private fun EpisodeRowItem(
 
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(TransparentBlack60),
-                contentAlignment = Alignment.Center
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(TransparentBlack60)
+                    .border(BorderStroke(1.dp, PrimaryWhite), CircleShape)
+                    .align(Alignment.Center)
             ) {
-                Box(
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_play_arrow_24),
+                    contentDescription = null,
+                    tint = PrimaryWhite,
                     modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .background(if (isFocused) PrimaryRed else PrimaryWhite.copy(alpha = 0.85f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_play_arrow_24),
-                        contentDescription = "Play Episode",
-                        tint = if (isFocused) PrimaryWhite else PrimaryBlack,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
+                        .size(16.dp)
+                        .align(Alignment.Center)
+                )
             }
 
-            if (progress != null && progress > 0f) {
+            if (progress > 0.05f) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(3.dp)
-                        .align(Alignment.BottomCenter)
-                        .background(Grey700)
+                        .height(4.dp)
+                        .align(Alignment.BottomStart)
+                        .background(colors.border)
                 ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxHeight()
                             .fillMaxWidth(progress.coerceIn(0f, 1f))
-                            .background(PrimaryRed)
+                            .fillMaxHeight()
+                            .background(colors.primary)
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.width(dimens.spacingL))
-
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = episode.name ?: "Episode ${episode.episode}",
+                    text = "${episode.episode}. ${episode.name ?: episode.headerName}",
                     style = typography.mediumBody,
-                    color = PrimaryWhite,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false)
+                    overflow = TextOverflow.Ellipsis
                 )
-
-                if (episode.runTime != null && episode.runTime > 0) {
-                    Text(
-                        text = "${episode.runTime}m",
-                        style = typography.regularCaption1,
-                        color = Grey200,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
+                Text(
+                    text = if (episode.runTime != null) "${episode.runTime}m" else "",
+                    style = typography.regularCaption1,
+                    color = colors.textSecondary
+                )
             }
 
             if (!episode.description.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = episode.description,
-                    style = typography.regularSmallBody,
-                    color = Grey100,
+                    style = typography.regularCaption1,
+                    color = colors.textMuted,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     lineHeight = 18.sp
@@ -1023,11 +1075,9 @@ private fun EpisodeRowItem(
             }
         }
 
-        Spacer(modifier = Modifier.width(dimens.spacingL))
-
         CircleActionButton(
             icon = painterResource(id = R.drawable.baseline_downloading_24),
-            contentDescription = "Download Episode ${episode.episode}",
+            contentDescription = stringResource(id = R.string.download_episode_format, episode.episode),
             onClick = onDownloadClick,
             modifier = Modifier.size(36.dp)
         )
@@ -1035,105 +1085,183 @@ private fun EpisodeRowItem(
 }
 
 @Composable
-private fun TrailerRowItem(
+fun TrailerItemCard(
     trailer: MovieTrailerData,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val typography = MovieDetailsTheme.typography
-    val dimens = MovieDetailsTheme.dimens
-
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val typography = MovieDetailsTheme.typography
+    val dimens = MovieDetailsTheme.dimens
+    val colors = MovieDetailsTheme.colors
 
-    val scale by animateFloatAsState(
-        targetValue = if (isFocused) 1.015f else 1f,
+    val scaleState = animateFloatAsState(
+        targetValue = if (isFocused) MovieDetailsTokens.FOCUS_SCALE_FACTOR else 1f,
         animationSpec = MovieDetailsTokens.FastFocusAnimationSpec,
-        label = "trailerRowScale"
+        label = "trailerScale"
     )
 
-    val background = if (isFocused) Grey750 else Color.Transparent
-    val border = if (isFocused) BorderStroke(dimens.borderFocus, PrimaryWhite) else null
+    val border = if (isFocused) BorderStroke(dimens.borderFocus, colors.primary) else BorderStroke(dimens.borderSubtle, colors.border)
 
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = dimens.spacing3Xl, vertical = 4.dp)
-            .scale(scale)
-            .clip(RoundedCornerShape(6.dp))
-            .background(background)
-            .then(if (border != null) Modifier.border(border, RoundedCornerShape(6.dp)) else Modifier)
+            .zIndex(if (isFocused) 10f else 0f)
+            .graphicsLayer {
+                scaleX = scaleState.value
+                scaleY = scaleState.value
+            }
+            .clip(MovieDetailsTokens.ShapeCardMedium)
+            .background(colors.surfaceElevated)
+            .border(border, MovieDetailsTokens.ShapeCardMedium)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
                 role = Role.Button,
-                onClick = {}
+                onClick = onClick
             )
             .focusable(interactionSource = interactionSource)
-            .padding(dimens.spacingL),
-        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .width(130.dp)
-                .height(74.dp)
-                .clip(MovieDetailsTokens.ShapeCardSmall)
-                .background(Grey800),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .height(130.dp)
+                .background(colors.surface)
         ) {
             Box(
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(42.dp)
                     .clip(CircleShape)
-                    .background(if (isFocused) PrimaryRed else PrimaryWhite.copy(alpha = 0.85f)),
-                contentAlignment = Alignment.Center
+                    .background(TransparentBlack60)
+                    .border(BorderStroke(1.5.dp, PrimaryWhite), CircleShape)
+                    .align(Alignment.Center)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_play_arrow_24),
-                    contentDescription = "Play Trailer",
-                    tint = if (isFocused) PrimaryWhite else PrimaryBlack,
-                    modifier = Modifier.size(18.dp)
+                    contentDescription = null,
+                    tint = PrimaryWhite,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .align(Alignment.Center)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.width(dimens.spacingL))
-
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimens.spacingM),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             Text(
                 text = trailer.title,
                 style = typography.mediumBody,
-                color = PrimaryWhite,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.Bold,
+                color = colors.textPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
+            Text(
+                text = trailer.runtime,
+                style = typography.regularCaption2,
+                color = colors.textSecondary
+            )
+        }
+    }
+}
 
-            if (trailer.runtime.isNotBlank()) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = trailer.runtime,
-                    style = typography.regularCaption1,
-                    color = Grey200
+@Composable
+fun AboutMetadataRow(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    val typography = MovieDetailsTheme.typography
+    val colors = MovieDetailsTheme.colors
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = if (label.endsWith(":")) label else "$label:",
+            style = typography.regularCaption1,
+            color = colors.textSecondary,
+            modifier = Modifier.width(130.dp)
+        )
+        Text(
+            text = value,
+            style = typography.regularCaption1,
+            color = colors.textPrimary,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+fun RecommendationRowView(
+    row: MovieRecommendationRow,
+    onCardClick: (MovieCardItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val dimens = MovieDetailsTheme.dimens
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = dimens.spacing2Xl, vertical = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+    ) {
+        row.items.forEach { cardItem ->
+            Box(modifier = Modifier.weight(1f)) {
+                MovieDetailsMovieCard(
+                    title = cardItem.title,
+                    type = MovieCardType.POSTER,
+                    size = MovieCardSize.MEDIUM,
+                    badge = cardItem.badge,
+                    posterUrl = cardItem.posterUrl,
+                    showLogo = false,
+                    showBottomTitle = true,
+                    onClick = { onCardClick(cardItem) },
+                    modifier = Modifier.fillMaxWidth()
                 )
+            }
+        }
+        if (row.items.size < 6) {
+            repeat(6 - row.items.size) {
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
 }
 
-@Preview(name = "Phone Preview", showBackground = true, backgroundColor = 0xFF141414, device = Devices.PHONE)
-@Preview(name = "TV Preview", showBackground = true, backgroundColor = 0xFF141414, device = Devices.TV_720p)
+@Preview(
+    name = "TV 1080p Landscape",
+    device = "spec:width=1920dp,height=1080dp,dpi=320,orientation=landscape",
+    showBackground = true,
+    backgroundColor = 0xFF141414
+)
 @Composable
-private fun MovieDetailsScreenPreview() {
+private fun MovieDetailsComposeScreenPreview() {
     MovieDetailsTheme {
         MovieDetailsComposeScreen(
-            title = "House of Ninjas",
-            providerName = "CloudStream",
+            title = "HOUSE OF NINJAS",
+            providerName = "SUPERSTREAM",
             matchScore = "98% Match",
             releaseYear = "2024",
             seasonsCount = "1 Season",
-            quality = "UltraHD 4K",
+            quality = "4K Ultra HD",
             maturityRating = "TV-MA",
-            advisories = "violence, language",
-            top10RankText = "#1 in TV Shows Today",
-            synopsis = "Years after retiring from their formidable ninja lives, a dysfunctional family must return to shadowy missions to counteract a string of looming threats."
+            advisories = "smoking, violence, language",
+            top10RankText = "#2 in TV Shows Today",
+            synopsis = "Years after retiring from their formidable ninja lives, a dysfunctional family must return to shadowy missions to counteract a string of looming threats.",
+            cast = listOf("Kento Kaku", "Yosuke Eguchi", "Tae Kimura", "Kengo Kora"),
+            genres = listOf("TV Dramas", "Action", "Japanese", "Suspenseful"),
+            moodTags = listOf("Dark", "Suspenseful", "Exciting"),
+            creator = "Dave Boyle",
+            writers = listOf("Dave Boyle", "Masahiro Yamaura", "Kota Oishi"),
+            isInWatchList = false,
+            hasTrailers = true
         )
     }
 }

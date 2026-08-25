@@ -792,12 +792,28 @@
         <item quantity="other">%d downloads queued</item>
     </plurals>
     <string name="player_is_live">Live</string>
-
-    <!-- Movie Details Badges -->
     <string name="badge_recently_added">Recently Added</string>
     <string name="badge_top_10">Top 10</string>
     <string name="badge_new_season">New Season</string>
     <string name="badge_new_episodes">New Episodes</string>
     <string name="badge_leaving_soon">Leaving Soon</string>
     <string name="badge_must_watch">Must Watch</string>
+    <string name="play_trailer">Play Trailer</string>
+    <string name="add_to_my_list">Add to My List</string>
+    <string name="in_my_list">In My List</string>
+    <string name="select_season">Select Season</string>
+    <string name="trailers_and_more">Trailers &amp; More</string>
+    <string name="more_like_this">More Like This</string>
+    <string name="cast_label">Cast:</string>
+    <string name="genres_label">Genres:</string>
+    <string name="mood_tags_label">This show is:</string>
+    <string name="creator_label">Creator:</string>
+    <string name="writers_label">Writers:</string>
+    <string name="about_title_format">About %1$s</string>
+    <string name="maturity_rating_label">Maturity Rating:</string>
+    <string name="download_episode_format">Download Episode %1$d</string>
+    <string name="episode_number_format">Episode %1$d</string>
+    <string name="audio_description">Audio Description</string>
+    <string name="top_10_badge_text">TOP\n10</string>
+    <string name="close">Close</string>
 </resources>

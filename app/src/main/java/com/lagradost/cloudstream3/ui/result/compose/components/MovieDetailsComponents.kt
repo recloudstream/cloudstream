@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,7 +51,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -62,23 +60,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.ui.result.compose.theme.GreenAccent
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey10
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey100
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey200
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey50
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey500
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey600
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey700
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey800
-import com.lagradost.cloudstream3.ui.result.compose.theme.Grey850
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 import com.lagradost.cloudstream3.ui.result.compose.theme.PrimaryBlack
-import com.lagradost.cloudstream3.ui.result.compose.theme.PrimaryRed
 import com.lagradost.cloudstream3.ui.result.compose.theme.PrimaryWhite
-import com.lagradost.cloudstream3.ui.result.compose.theme.TransparentBlack60
 import com.lagradost.cloudstream3.ui.result.compose.theme.TransparentBlack90
-import com.lagradost.cloudstream3.ui.result.compose.theme.getRatingScoreColor
 
 object MovieDetailsTokens {
     val ShapeCardSmall = RoundedCornerShape(4.dp)
@@ -162,11 +147,13 @@ object MovieCardDefaults {
 fun HeroPlayButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    text: String = "Play",
+    text: String = stringResource(id = R.string.play_movie_button),
+    progress: Float? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val colors = MovieDetailsTheme.colors
 
     val scaleState = animateFloatAsState(
         targetValue = if (isFocused) 1.05f else 1f,
@@ -174,8 +161,9 @@ fun HeroPlayButton(
         label = "heroPlayBtnScale"
     )
 
-    val background = if (isFocused) PrimaryWhite else PrimaryWhite.copy(alpha = 0.95f)
-    val border = if (isFocused) BorderStroke(2.dp, PrimaryRed) else null
+    val background = if (isFocused) colors.primary else colors.primary.copy(alpha = 0.92f)
+    val contentColor = colors.onPrimary
+    val border = if (isFocused) BorderStroke(2.dp, colors.onBackground) else null
 
     Box(
         modifier = modifier
@@ -188,11 +176,11 @@ fun HeroPlayButton(
             )
             .focusable(enabled = enabled, interactionSource = interactionSource)
             .semantics {
-                contentDescription = "$text Video"
+                contentDescription = text
             },
         contentAlignment = Alignment.Center
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .height(42.dp)
                 .zIndex(if (isFocused) 10f else 0f)
@@ -203,22 +191,44 @@ fun HeroPlayButton(
                 .clip(MovieDetailsTokens.ShapeCardSmall)
                 .background(background)
                 .then(if (border != null) Modifier.border(border, MovieDetailsTokens.ShapeCardSmall) else Modifier)
-                .padding(horizontal = 24.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_play_arrow_24),
-                contentDescription = null,
-                tint = PrimaryBlack,
-                modifier = Modifier.size(20.dp)
-            )
-            Text(
-                text = text,
-                color = PrimaryBlack,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(horizontal = 24.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_play_arrow_24),
+                    contentDescription = null,
+                    tint = contentColor,
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = text,
+                    color = contentColor,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            if (progress != null && progress > 0.05f) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(3.dp)
+                        .align(Alignment.BottomStart)
+                        .background(colors.border)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(progress.coerceIn(0f, 1f))
+                            .fillMaxHeight()
+                            .background(contentColor)
+                    )
+                }
+            }
         }
     }
 }
@@ -227,11 +237,12 @@ fun HeroPlayButton(
 fun HeroTrailerButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    text: String = "Trailer",
+    text: String = stringResource(id = R.string.play_trailer),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val colors = MovieDetailsTheme.colors
 
     val scaleState = animateFloatAsState(
         targetValue = if (isFocused) 1.05f else 1f,
@@ -239,8 +250,8 @@ fun HeroTrailerButton(
         label = "heroTrailerBtnScale"
     )
 
-    val background = if (isFocused) Grey600.copy(alpha = 0.9f) else Grey700.copy(alpha = 0.6f)
-    val border = if (isFocused) BorderStroke(2.dp, PrimaryWhite) else BorderStroke(1.dp, PrimaryWhite.copy(alpha = 0.3f))
+    val background = if (isFocused) colors.primary.copy(alpha = 0.9f) else colors.surface.copy(alpha = 0.6f)
+    val border = if (isFocused) BorderStroke(2.dp, colors.onBackground) else BorderStroke(1.dp, colors.border)
 
     Box(
         modifier = modifier
@@ -253,7 +264,7 @@ fun HeroTrailerButton(
             )
             .focusable(enabled = enabled, interactionSource = interactionSource)
             .semantics {
-                contentDescription = "$text Video"
+                contentDescription = text
             },
         contentAlignment = Alignment.Center
     ) {
@@ -275,12 +286,12 @@ fun HeroTrailerButton(
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_ondemand_video_24),
                 contentDescription = null,
-                tint = PrimaryWhite,
+                tint = colors.textPrimary,
                 modifier = Modifier.size(18.dp)
             )
             Text(
                 text = text,
-                color = PrimaryWhite,
+                color = colors.textPrimary,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -300,18 +311,19 @@ fun CircleActionButton(
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
     val dimens = MovieDetailsTheme.dimens
+    val colors = MovieDetailsTheme.colors
 
     val bgColor = when {
-        isFocused -> PrimaryWhite.copy(alpha = 0.3f)
-        isPrimary -> PrimaryWhite
-        else -> TransparentBlack60
+        isFocused -> colors.primary.copy(alpha = 0.4f)
+        isPrimary -> colors.primary
+        else -> colors.surface.copy(alpha = 0.6f)
     }
 
-    val iconTint = if (isPrimary && !isFocused) PrimaryBlack else PrimaryWhite
+    val iconTint = if (isPrimary && !isFocused) colors.onPrimary else colors.textPrimary
     val border = if (isFocused) {
-        BorderStroke(dimens.borderFocus, PrimaryWhite)
+        BorderStroke(dimens.borderFocus, colors.primary)
     } else {
-        BorderStroke(dimens.borderDefault, PrimaryWhite.copy(alpha = MovieDetailsTokens.ALPHA_HIGH))
+        BorderStroke(dimens.borderDefault, colors.border)
     }
 
     Box(
@@ -344,17 +356,19 @@ fun MaturityRatingBadge(
     rating: String,
     modifier: Modifier = Modifier
 ) {
+    val colors = MovieDetailsTheme.colors
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(2.dp))
-            .background(Grey800)
-            .border(BorderStroke(1.dp, Grey500), RoundedCornerShape(2.dp))
+            .background(colors.surface)
+            .border(BorderStroke(1.dp, colors.border), RoundedCornerShape(2.dp))
             .padding(horizontal = 6.dp, vertical = 2.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = rating,
-            color = PrimaryWhite,
+            color = colors.textPrimary,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold
         )
@@ -366,16 +380,18 @@ fun VideoQualityBadge(
     quality: String,
     modifier: Modifier = Modifier
 ) {
+    val colors = MovieDetailsTheme.colors
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(2.dp))
-            .border(BorderStroke(1.dp, Grey500), RoundedCornerShape(2.dp))
+            .border(BorderStroke(1.dp, colors.border), RoundedCornerShape(2.dp))
             .padding(horizontal = 6.dp, vertical = 2.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = quality,
-            color = Grey200,
+            color = colors.textSecondary,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold
         )
@@ -397,6 +413,7 @@ fun DetailsLogoView(
     height: Dp = 48.dp
 ) {
     val typography = MovieDetailsTheme.typography
+    val colors = MovieDetailsTheme.colors
 
     if (!logoUrl.isNullOrBlank()) {
         AsyncImage(
@@ -413,9 +430,9 @@ fun DetailsLogoView(
             text = titleFallback,
             style = typography.boldTitle1,
             color = when (variant) {
-                DetailsLogoVariant.FULL_COLOR -> PrimaryRed
-                DetailsLogoVariant.WHITE_MONO -> PrimaryWhite
-                DetailsLogoVariant.MINIMAL_ICON -> PrimaryWhite
+                DetailsLogoVariant.FULL_COLOR -> colors.primary
+                DetailsLogoVariant.WHITE_MONO -> colors.textPrimary
+                DetailsLogoVariant.MINIMAL_ICON -> colors.textPrimary
             },
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
@@ -436,6 +453,7 @@ fun SeasonDropdown(
     var expanded by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val colors = MovieDetailsTheme.colors
 
     val scale by animateFloatAsState(
         targetValue = if (isFocused) 1.05f else 1f,
@@ -448,16 +466,17 @@ fun SeasonDropdown(
     )
 
     val borderStroke = when {
-        isFocused || expanded -> BorderStroke(2.dp, PrimaryWhite)
-        else -> BorderStroke(1.dp, Color(0xFF666666))
+        isFocused || expanded -> BorderStroke(2.dp, colors.primary)
+        else -> BorderStroke(1.dp, colors.border)
     }
 
     val backgroundColor = when {
-        isFocused || expanded -> Color(0xFF333333)
-        else -> Color(0xFF1E1E1E)
+        isFocused || expanded -> colors.surface.copy(alpha = 0.9f)
+        else -> colors.surface.copy(alpha = 0.6f)
     }
 
     val baseModifier = if (width != null) modifier.width(width) else modifier
+    val defaultSeasonText = stringResource(id = R.string.select_season)
 
     Box(
         modifier = baseModifier
@@ -482,8 +501,8 @@ fun SeasonDropdown(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = selectedOption.ifEmpty { "Select Season" },
-                color = PrimaryWhite,
+                text = selectedOption.ifEmpty { defaultSeasonText },
+                color = colors.textPrimary,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
@@ -494,7 +513,7 @@ fun SeasonDropdown(
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
                 contentDescription = null,
-                tint = PrimaryWhite,
+                tint = colors.textPrimary,
                 modifier = Modifier
                     .size(18.dp)
                     .rotate(rotationAngle)
@@ -505,8 +524,8 @@ fun SeasonDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .background(Color(0xFF232323))
-                .border(BorderStroke(1.dp, Color(0xFF444444)), RoundedCornerShape(4.dp))
+                .background(colors.surface)
+                .border(BorderStroke(1.dp, colors.border), RoundedCornerShape(4.dp))
                 .heightIn(max = 280.dp)
         ) {
             options.forEach { option ->
@@ -515,7 +534,7 @@ fun SeasonDropdown(
                     text = {
                         Text(
                             text = option,
-                            color = if (isSelected) PrimaryRed else PrimaryWhite,
+                            color = if (isSelected) colors.primary else colors.textPrimary,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                             fontSize = 14.sp
                         )
@@ -525,7 +544,7 @@ fun SeasonDropdown(
                         expanded = false
                     },
                     colors = MenuDefaults.itemColors(
-                        textColor = PrimaryWhite
+                        textColor = colors.textPrimary
                     )
                 )
             }
@@ -547,15 +566,17 @@ fun MovieDetailsMovieCard(
     maturityRating: String? = null,
     duration: String? = null,
     quality: String? = null,
+    showLogo: Boolean = false,
     showBottomTitle: Boolean = false,
-    onClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
     val dimens = MovieDetailsTheme.dimens
+    val colors = MovieDetailsTheme.colors
 
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (isFocused) MovieDetailsTokens.FOCUS_SCALE_FACTOR else 1f,
         animationSpec = MovieDetailsTokens.FastFocusAnimationSpec,
         label = "cardScale"
@@ -570,133 +591,146 @@ fun MovieDetailsMovieCard(
     val cardWidth = MovieCardDefaults.cardWidth(type, size)
     val imageUrl = if (type == MovieCardType.POSTER) (posterUrl ?: backdropUrl) else (backdropUrl ?: posterUrl)
 
-    Column(
+    val border = if (isFocused) {
+        BorderStroke(dimens.borderFocus, colors.primary)
+    } else {
+        BorderStroke(dimens.borderSubtle, colors.border)
+    }
+
+    Box(
         modifier = modifier
             .width(cardWidth)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
-            .zIndex(if (isFocused) 5f else 0f)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                enabled = enabled,
-                role = Role.Button,
-                onClick = onClick
+            .then(
+                if (onClick != null) {
+                    Modifier
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            enabled = enabled,
+                            role = Role.Button,
+                            onClick = onClick
+                        )
+                        .focusable(enabled = enabled, interactionSource = interactionSource)
+                } else {
+                    Modifier.focusable(enabled = enabled, interactionSource = interactionSource)
+                }
             )
-            .focusable(enabled = enabled, interactionSource = interactionSource)
             .semantics {
                 contentDescription = title
-            }
+            },
+        contentAlignment = Alignment.Center
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(aspectRatio)
-                .clip(MovieDetailsTokens.ShapeCardSmall)
-                .background(Grey850)
-                .then(
-                    if (isFocused) {
-                        Modifier.border(BorderStroke(dimens.borderFocus, PrimaryWhite), MovieDetailsTokens.ShapeCardSmall)
-                    } else {
-                        Modifier.border(BorderStroke(dimens.borderSubtle, Color.Transparent), MovieDetailsTokens.ShapeCardSmall)
-                    }
-                )
+                .zIndex(if (isFocused) 10f else 0f)
+                .graphicsLayer {
+                    scaleX = scaleState.value
+                    scaleY = scaleState.value
+                }
         ) {
-            if (!imageUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Grey800),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = title.take(2).uppercase(),
-                        color = Grey200,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(aspectRatio)
+                    .clip(MovieDetailsTokens.ShapeCardSmall)
+                    .background(colors.surface)
+                    .border(border, MovieDetailsTokens.ShapeCardSmall)
+            ) {
+                if (!imageUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
                     )
-                }
-            }
-
-            if (type == MovieCardType.POSTER && showBottomTitle) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color.Transparent, TransparentBlack90),
-                                startY = 0f
-                            )
-                        )
-                        .padding(horizontal = 8.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = title,
-                        color = PrimaryWhite,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            if (progress != null && progress > 0f) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(dimens.progressHeight)
-                        .align(Alignment.BottomCenter)
-                        .background(Grey700)
-                ) {
+                } else {
                     Box(
                         modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(progress.coerceIn(0f, 1f))
-                            .background(PrimaryRed)
-                    )
+                            .fillMaxSize()
+                            .background(colors.surface),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = title.take(2).uppercase(),
+                            color = colors.textSecondary,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                if (type == MovieCardType.POSTER && showBottomTitle) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color.Transparent, TransparentBlack90),
+                                    startY = 0f
+                                )
+                            )
+                            .padding(horizontal = 8.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = title,
+                            color = colors.textPrimary,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+
+                if (progress != null && progress > 0f) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(dimens.progressHeight)
+                            .align(Alignment.BottomCenter)
+                            .background(colors.border)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(progress.coerceIn(0f, 1f))
+                                .background(colors.primary)
+                        )
+                    }
+                }
+
+                if (badge != null) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(colors.primary)
+                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = badge.stringRes),
+                            color = colors.onPrimary,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
 
-            if (badge != null) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(PrimaryRed)
-                        .padding(horizontal = 5.dp, vertical = 2.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = badge.stringRes),
-                        color = PrimaryWhite,
-                        fontSize = 9.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+            if (type != MovieCardType.POSTER && showBottomTitle) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = title,
+                    color = if (isFocused) colors.textPrimary else colors.textSecondary,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
-        }
-
-        if (type != MovieCardType.POSTER && showBottomTitle) {
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = title,
-                color = if (isFocused) PrimaryWhite else Grey200,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
         }
     }
 }
