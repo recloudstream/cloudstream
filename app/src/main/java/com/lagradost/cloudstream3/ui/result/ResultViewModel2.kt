@@ -192,6 +192,7 @@ data class ResultData(
     val yearText: UiText?,
     val nextAiringDate: UiText?,
     val nextAiringEpisode: UiText?,
+    val nextAiringUnixTime: Long? = null,
     val plotHeaderText: UiText,
     val posterHeaders: Map<String, String>? = null,
 )
@@ -236,10 +237,12 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
 
     var nextAiringEpisode: UiText? = null
     var nextAiringDate: UiText? = null
+    var nextAiringUnixTime: Long? = null
 
     if (this is EpisodeResponse) {
         val airing = this.nextAiring
         if (airing != null && airing.unixTime > unixTime) {
+            nextAiringUnixTime = airing.unixTime
             val seconds = airing.unixTime - unixTime
             val days = TimeUnit.SECONDS.toDays(seconds)
             val hours: Long = TimeUnit.SECONDS.toHours(seconds) - days * 24
@@ -287,6 +290,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         ),
         nextAiringDate = nextAiringDate,
         nextAiringEpisode = nextAiringEpisode,
+        nextAiringUnixTime = nextAiringUnixTime,
         posterImage = posterUrl ?: backgroundPosterUrl,
         posterHeaders = posterHeaders,
         posterBackgroundImage = backgroundPosterUrl ?: posterUrl,

@@ -39,6 +39,7 @@ import com.lagradost.cloudstream3.ui.result.compose.components.MovieCardType
 import com.lagradost.cloudstream3.ui.result.compose.model.MovieRecommendationRow
 import com.lagradost.cloudstream3.ui.result.compose.model.MovieTrailerData
 import com.lagradost.cloudstream3.ui.result.compose.model.getPlayButtonText
+import com.lagradost.cloudstream3.ui.result.compose.model.resolveAiringSchedule
 import com.lagradost.cloudstream3.ui.result.compose.sections.AboutSection
 import com.lagradost.cloudstream3.ui.result.compose.sections.CastAndCrewSection
 import com.lagradost.cloudstream3.ui.result.compose.sections.EpisodesHeaderSection
@@ -85,6 +86,10 @@ fun MovieDetailsComposeScreen(
     onRangeSelect: ((Int) -> Unit)? = null,
     onPlayLongClick: (() -> Unit)? = null,
     onEpisodeLongClick: ((ResultEpisode) -> Unit)? = null,
+    statusText: String? = null,
+    nextAiringUnixTime: Long? = null,
+    nextAiringEpisode: String? = null,
+    nextAiringDate: String? = null,
     isInWatchList: Boolean = false,
     isFavorite: Boolean = false,
     hasTrailers: Boolean = false,
@@ -167,6 +172,24 @@ fun MovieDetailsComposeScreen(
     }
 
     val episodesToDisplay = dynamicEpisodes ?: emptyList()
+
+    val airingSchedule = remember(
+        statusText,
+        nextAiringUnixTime,
+        nextAiringEpisode,
+        nextAiringDate,
+        episodesToDisplay,
+        context
+    ) {
+        resolveAiringSchedule(
+            context = context,
+            statusText = statusText,
+            nextAiringUnixTime = nextAiringUnixTime,
+            nextAiringEpisode = nextAiringEpisode,
+            nextAiringDate = nextAiringDate,
+            episodes = episodesToDisplay
+        )
+    }
 
     val playButtonText = remember(resumeStatus, episodesToDisplay, isMovie, context) {
         getPlayButtonText(context, resumeStatus, episodesToDisplay, isMovie)
@@ -263,7 +286,8 @@ fun MovieDetailsComposeScreen(
                     synopsis = synopsis,
                     castList = castList,
                     genres = genres,
-                    moodTags = moodTags
+                    moodTags = moodTags,
+                    airingSchedule = airingSchedule
                 )
             }
 
@@ -281,7 +305,8 @@ fun MovieDetailsComposeScreen(
                         rangeOptions = rangeOptions,
                         selectedRangeText = selectedRangeText,
                         onRangeSelect = onRangeSelect,
-                        onRangeTextChange = { selectedRangeText = it }
+                        onRangeTextChange = { selectedRangeText = it },
+                        airingSchedule = airingSchedule
                     )
                 }
 
@@ -397,6 +422,9 @@ private fun MovieDetailsComposeScreenPreview() {
             maturityRating = "16+",
             advisories = "fear, language, violence",
             top10RankText = "#1 in TV Shows Today",
+            statusText = "Ongoing",
+            nextAiringEpisode = "Episode 5",
+            nextAiringDate = "2d 14h",
             synopsis = "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.",
             cast = listOf("Winona Ryder", "David Harbour", "Millie Bobby Brown", "Finn Wolfhard"),
             genres = listOf("Sci-Fi", "Horror", "Drama"),

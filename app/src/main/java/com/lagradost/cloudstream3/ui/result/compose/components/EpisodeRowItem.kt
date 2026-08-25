@@ -21,9 +21,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,7 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,12 +43,94 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 import com.lagradost.cloudstream3.ui.result.compose.theme.PrimaryWhite
 import com.lagradost.cloudstream3.ui.result.compose.theme.TransparentBlack60
+import com.lagradost.cloudstream3.ui.result.getDisplayPosition
 import com.lagradost.cloudstream3.ui.result.getWatchProgress
+import com.lagradost.cloudstream3.utils.AppContextUtils.html
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+@Immutable
+data class EpisodeRowUiState(
+    val episodeNumberText: String,
+    val title: String,
+    val description: String?,
+    val isFiller: Boolean,
+    val isWatched: Boolean,
+    val isUpcoming: Boolean,
+    val watchProgress: Float,
+    val ratingText: String?,
+    val runtimeText: String?,
+    val airDateText: String?
+) {
+    val hasMeta: Boolean
+        get() = ratingText != null || !runtimeText.isNullOrBlank() || !airDateText.isNullOrBlank()
+}
+
+@Composable
+fun rememberEpisodeRowUiState(episode: ResultEpisode): EpisodeRowUiState {
+    val context = LocalContext.current
+    return remember(episode, context) {
+        val nowMs = APIHolder.unixTimeMS
+        val isWatched = episode.videoWatchState == VideoWatchState.Watched ||
+                (episode.getDisplayPosition() >= episode.duration && episode.getDisplayPosition() > 0L)
+        val isUpcoming = episode.airDate != null && nowMs < episode.airDate
+        val progress = episode.getWatchProgress()
+
+        val rating10p = episode.score?.toFloat(10)
+        val ratingText = if (rating10p != null && rating10p > 0.1f) {
+            context.getString(R.string.rated_format).format(rating10p)
+        } else {
+            null
+        }
+
+        val runtimeText = episode.runTime?.times(60L)?.toInt()?.let { secondsToReadable(it, "") }
+
+        val airDateText = if (episode.airDate != null) {
+            if (isUpcoming) {
+                val diffSec = (episode.airDate - nowMs) / 1000
+                context.getString(
+                    R.string.episode_upcoming_format,
+                    secondsToReadable(diffSec.toInt(), "")
+                )
+            } else {
+                SimpleDateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(Date(episode.airDate))
+            }
+        } else {
+            null
+        }
+
+        val title = if (episode.name == null) {
+            "${context.getString(R.string.episode)} ${episode.episode}"
+        } else {
+            "${episode.episode}. ${episode.name}"
+        }
+
+        val description = episode.description?.html()?.toString()?.takeIf { it.isNotBlank() }
+
+        EpisodeRowUiState(
+            episodeNumberText = episode.episode.toString(),
+            title = title,
+            description = description,
+            isFiller = episode.isFiller == true,
+            isWatched = isWatched,
+            isUpcoming = isUpcoming,
+            watchProgress = progress,
+            ratingText = ratingText,
+            runtimeText = runtimeText,
+            airDateText = airDateText
+        )
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -54,6 +140,7 @@ fun EpisodeRowItem(
     modifier: Modifier = Modifier,
     onLongClick: (() -> Unit)? = null
 ) {
+    val state = rememberEpisodeRowUiState(episode)
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val typography = MovieDetailsTheme.typography
@@ -68,7 +155,6 @@ fun EpisodeRowItem(
 
     val background = if (isFocused) colors.surfaceElevated else colors.surface
     val border = if (isFocused) BorderStroke(dimens.borderFocus, colors.primary) else null
-    val progress = remember(episode) { episode.getWatchProgress() }
 
     Row(
         modifier = modifier
@@ -94,7 +180,7 @@ fun EpisodeRowItem(
         horizontalArrangement = Arrangement.spacedBy(dimens.spacingL)
     ) {
         Text(
-            text = episode.episode.toString(),
+            text = state.episodeNumberText,
             style = typography.boldTitle1,
             fontSize = 24.sp,
             color = colors.textSecondary,
@@ -125,8 +211,13 @@ fun EpisodeRowItem(
                     .border(BorderStroke(1.dp, PrimaryWhite), CircleShape)
                     .align(Alignment.Center)
             ) {
+                val iconRes = when {
+                    state.isUpcoming -> R.drawable.hourglass_24
+                    state.isWatched -> R.drawable.ic_baseline_check_24
+                    else -> R.drawable.ic_baseline_play_arrow_24
+                }
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_play_arrow_24),
+                    painter = painterResource(id = iconRes),
                     contentDescription = null,
                     tint = PrimaryWhite,
                     modifier = Modifier
@@ -135,7 +226,7 @@ fun EpisodeRowItem(
                 )
             }
 
-            if (progress > 0.05f) {
+            if (!state.isUpcoming && !state.isWatched && state.watchProgress > 0.05f) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -145,7 +236,7 @@ fun EpisodeRowItem(
                 ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth(progress.coerceIn(0f, 1f))
+                            .fillMaxWidth(state.watchProgress.coerceIn(0f, 1f))
                             .fillMaxHeight()
                             .background(colors.primary)
                     )
@@ -161,27 +252,70 @@ fun EpisodeRowItem(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                if (state.isFiller) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(colors.surfaceElevated)
+                            .border(BorderStroke(1.dp, colors.border), RoundedCornerShape(4.dp))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.filler),
+                            style = typography.regularCaption2,
+                            color = colors.textPrimary,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
                 Text(
-                    text = "${episode.episode}. ${episode.name ?: episode.headerName}",
+                    text = state.title,
                     style = typography.mediumBody,
                     fontWeight = FontWeight.Bold,
                     color = colors.textPrimary,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = if (episode.runTime != null) "${episode.runTime}m" else "",
-                    style = typography.regularCaption1,
-                    color = colors.textSecondary
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false)
                 )
             }
 
-            if (!episode.description.isNullOrBlank()) {
+            if (state.hasMeta) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (state.ratingText != null) {
+                        Text(
+                            text = state.ratingText,
+                            style = typography.regularCaption1,
+                            color = colors.textSecondary
+                        )
+                    }
+                    if (!state.runtimeText.isNullOrBlank()) {
+                        Text(
+                            text = state.runtimeText,
+                            style = typography.regularCaption1,
+                            color = colors.textSecondary
+                        )
+                    }
+                    if (!state.airDateText.isNullOrBlank()) {
+                        Text(
+                            text = state.airDateText,
+                            style = typography.regularCaption1,
+                            color = colors.textSecondary
+                        )
+                    }
+                }
+            }
+
+            if (!state.description.isNullOrBlank()) {
                 Text(
-                    text = episode.description,
+                    text = state.description,
                     style = typography.regularCaption1,
                     color = colors.textMuted,
                     maxLines = 2,

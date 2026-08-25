@@ -26,14 +26,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.result.compose.components.AiringCountdownBadge
 import com.lagradost.cloudstream3.ui.result.compose.components.MaturityRatingBadge
 import com.lagradost.cloudstream3.ui.result.compose.components.MovieDetailsTokens
+import com.lagradost.cloudstream3.ui.result.compose.components.OngoingStatusBadge
 import com.lagradost.cloudstream3.ui.result.compose.components.VideoQualityBadge
+import com.lagradost.cloudstream3.ui.result.compose.model.AiringScheduleUiState
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 import com.lagradost.cloudstream3.ui.result.compose.theme.getRatingScoreColor
 
 @Composable
 fun MovieInfoSynopsisSection(
+    modifier: Modifier = Modifier,
     matchScore: String?,
     releaseYear: String?,
     seasonsCount: String?,
@@ -45,7 +49,7 @@ fun MovieInfoSynopsisSection(
     castList: List<String>,
     genres: List<String>,
     moodTags: List<String>,
-    modifier: Modifier = Modifier
+    airingSchedule: AiringScheduleUiState? = null
 ) {
     val colors = MovieDetailsTheme.colors
     val typography = MovieDetailsTheme.typography
@@ -65,7 +69,8 @@ fun MovieInfoSynopsisSection(
             verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
         ) {
             val hasLine1 = !matchScore.isNullOrBlank() || !releaseYear.isNullOrBlank() ||
-                    !seasonsCount.isNullOrBlank() || !quality.isNullOrBlank()
+                    !seasonsCount.isNullOrBlank() || !quality.isNullOrBlank() ||
+                    airingSchedule != null
 
             if (hasLine1) {
                 Row(
@@ -99,6 +104,17 @@ fun MovieInfoSynopsisSection(
 
                     if (!quality.isNullOrBlank()) {
                         VideoQualityBadge(quality = quality)
+                    }
+
+                    if (!airingSchedule?.statusText.isNullOrBlank()) {
+                        OngoingStatusBadge(
+                            statusText = airingSchedule.statusText,
+                            isOngoing = airingSchedule.isOngoing
+                        )
+                    }
+
+                    if (airingSchedule?.hasAiringInfo == true) {
+                        AiringCountdownBadge(airingSchedule = airingSchedule)
                     }
                 }
             }
