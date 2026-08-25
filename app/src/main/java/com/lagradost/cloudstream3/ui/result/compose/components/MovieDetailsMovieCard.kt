@@ -137,6 +137,67 @@ private fun BoxScope.CardBadge(badge: MovieBadgeType) {
     }
 }
 
+private fun resolveImageUrl(type: MovieCardType, posterUrl: String?, backdropUrl: String?): String? {
+    return if (type == MovieCardType.POSTER) {
+        posterUrl ?: backdropUrl
+    } else {
+        backdropUrl ?: posterUrl
+    }
+}
+
+private fun Modifier.applyCardClickable(
+    enabled: Boolean,
+    interactionSource: MutableInteractionSource,
+    onClick: (() -> Unit)?
+): Modifier {
+    return if (onClick != null) {
+        this
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                enabled = enabled,
+                role = Role.Button,
+                onClick = onClick
+            )
+            .focusable(enabled = enabled, interactionSource = interactionSource)
+    } else {
+        this.focusable(enabled = enabled, interactionSource = interactionSource)
+    }
+}
+
+@Composable
+private fun BoxScope.CardOverlays(
+    type: MovieCardType,
+    showBottomTitle: Boolean,
+    title: String,
+    progress: Float?,
+    badge: MovieBadgeType?
+) {
+    if (type == MovieCardType.POSTER && showBottomTitle) {
+        CardPosterBottomTitle(title = title)
+    }
+    if (progress != null && progress > 0f) {
+        CardProgressBar(progress = progress)
+    }
+    if (badge != null) {
+        CardBadge(badge = badge)
+    }
+}
+
+@Composable
+private fun CardExternalTitle(title: String, isFocused: Boolean) {
+    val colors = MovieDetailsTheme.colors
+    Spacer(modifier = Modifier.height(6.dp))
+    Text(
+        text = title,
+        color = if (isFocused) colors.textPrimary else colors.textSecondary,
+        fontSize = 13.sp,
+        fontWeight = FontWeight.Medium,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
 @Composable
 fun MovieDetailsMovieCard(
     title: String,
@@ -174,7 +235,7 @@ fun MovieDetailsMovieCard(
     }
 
     val cardWidth = MovieCardDefaults.cardWidth(type, size)
-    val imageUrl = if (type == MovieCardType.POSTER) posterUrl ?: backdropUrl else backdropUrl ?: posterUrl
+    val imageUrl = resolveImageUrl(type, posterUrl, backdropUrl)
 
     val border = if (isFocused) {
         BorderStroke(dimens.borderFocus, colors.primary)
@@ -182,24 +243,10 @@ fun MovieDetailsMovieCard(
         BorderStroke(dimens.borderSubtle, colors.border)
     }
 
-    val clickableModifier = if (onClick != null) {
-        Modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                enabled = enabled,
-                role = Role.Button,
-                onClick = onClick
-            )
-            .focusable(enabled = enabled, interactionSource = interactionSource)
-    } else {
-        Modifier.focusable(enabled = enabled, interactionSource = interactionSource)
-    }
-
     Box(
         modifier = modifier
             .width(cardWidth)
-            .then(clickableModifier)
+            .applyCardClickable(enabled, interactionSource, onClick)
             .semantics {
                 contentDescription = title
             },
@@ -223,30 +270,17 @@ fun MovieDetailsMovieCard(
                     .border(border, MovieDetailsTokens.ShapeCardSmall)
             ) {
                 CardImageOrPlaceholder(title = title, imageUrl = imageUrl)
-
-                if (type == MovieCardType.POSTER && showBottomTitle) {
-                    CardPosterBottomTitle(title = title)
-                }
-
-                if (progress != null && progress > 0f) {
-                    CardProgressBar(progress = progress)
-                }
-
-                if (badge != null) {
-                    CardBadge(badge = badge)
-                }
+                CardOverlays(
+                    type = type,
+                    showBottomTitle = showBottomTitle,
+                    title = title,
+                    progress = progress,
+                    badge = badge
+                )
             }
 
             if (type != MovieCardType.POSTER && showBottomTitle) {
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = title,
-                    color = if (isFocused) colors.textPrimary else colors.textSecondary,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                CardExternalTitle(title = title, isFocused = isFocused)
             }
         }
     }

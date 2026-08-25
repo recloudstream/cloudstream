@@ -9,8 +9,8 @@ fun formatRemainingTime(targetUnixTimeSeconds: Long): String {
     val diff = targetUnixTimeSeconds - currentSeconds
     if (diff <= 0) return "Releasing soon"
     val days = diff / 86400
-    val hours = (diff % 86400) / 3600
-    val minutes = (diff % 3600) / 60
+    val hours = diff % 86400 / 3600
+    val minutes = diff % 3600 / 60
     val seconds = diff % 60
     return when {
         days > 0 -> "${days}d ${hours}h ${minutes}m"

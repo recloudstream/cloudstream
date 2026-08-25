@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
@@ -46,7 +47,159 @@ import com.lagradost.cloudstream3.ui.result.compose.sections.EpisodesHeaderSecti
 import com.lagradost.cloudstream3.ui.result.compose.sections.HeroBannerSection
 import com.lagradost.cloudstream3.ui.result.compose.sections.MovieInfoSynopsisSection
 import com.lagradost.cloudstream3.ui.result.compose.sections.RecommendationRowView
+import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsColors
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
+
+private fun LazyListScope.episodesSection(
+    episodesToDisplay: List<ResultEpisode>,
+    seasonOptions: List<String>,
+    selectedSeasonText: String,
+    onSeasonSelect: ((Int) -> Unit)?,
+    onSeasonTextChange: (String) -> Unit,
+    dubOptions: List<String>,
+    selectedDubText: String,
+    onDubSelect: ((Int) -> Unit)?,
+    onDubTextChange: (String) -> Unit,
+    rangeOptions: List<String>,
+    selectedRangeText: String,
+    onRangeSelect: ((Int) -> Unit)?,
+    onRangeTextChange: (String) -> Unit,
+    airingSchedule: com.lagradost.cloudstream3.ui.result.compose.model.AiringScheduleUiState?,
+    onEpisodeClick: ((ResultEpisode) -> Unit)?,
+    onEpisodeLongClick: ((ResultEpisode) -> Unit)?,
+    showToast: (String) -> Unit
+) {
+    if (episodesToDisplay.isEmpty()) return
+
+    item(key = "episodes_header", contentType = "episodes_header") {
+        EpisodesHeaderSection(
+            seasonOptions = seasonOptions,
+            selectedSeasonText = selectedSeasonText,
+            onSeasonSelect = onSeasonSelect,
+            onSeasonTextChange = onSeasonTextChange,
+            dubOptions = dubOptions,
+            selectedDubText = selectedDubText,
+            onDubSelect = onDubSelect,
+            onDubTextChange = onDubTextChange,
+            rangeOptions = rangeOptions,
+            selectedRangeText = selectedRangeText,
+            onRangeSelect = onRangeSelect,
+            onRangeTextChange = onRangeTextChange,
+            airingSchedule = airingSchedule
+        )
+    }
+
+    items(
+        items = episodesToDisplay,
+        key = { ep -> "episode_${ep.id}" },
+        contentType = { "episode_row" }
+    ) { ep ->
+        val onEpClick = remember(ep) {
+            {
+                if (onEpisodeClick != null) onEpisodeClick(ep)
+                else showToast("Playing ${ep.headerName}: ${ep.name}")
+            }
+        }
+        val onEpLongClick = remember(ep) {
+            if (onEpisodeLongClick != null) {
+                { onEpisodeLongClick(ep) }
+            } else null
+        }
+        EpisodeRowItem(
+            episode = ep,
+            onClick = onEpClick,
+            onLongClick = onEpLongClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = MovieDetailsTheme.dimens.spacing2Xl, vertical = 6.dp)
+        )
+    }
+}
+
+private fun LazyListScope.recommendationsSection(
+    chunkedRecommendations: List<MovieRecommendationRow>,
+    dynamicRecommendations: List<SearchResponse>?,
+    onRecommendationClick: ((SearchResponse) -> Unit)?,
+    showToast: (String) -> Unit,
+    colors: MovieDetailsColors
+) {
+    if (chunkedRecommendations.isEmpty()) return
+
+    item(key = "recommendations_header", contentType = "recommendations_header") {
+        Text(
+            text = stringResource(id = R.string.more_like_this),
+            style = MovieDetailsTheme.typography.boldTitle2,
+            fontSize = 22.sp,
+            color = colors.textPrimary,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = MovieDetailsTheme.dimens.spacing2Xl)
+                .padding(top = MovieDetailsTheme.dimens.spacing3Xl, bottom = MovieDetailsTheme.dimens.spacingL)
+        )
+    }
+
+    items(
+        items = chunkedRecommendations,
+        key = { row -> "rec_row_${row.rowIndex}" },
+        contentType = { "recommendation_row" }
+    ) { row ->
+        RecommendationRowView(
+            row = row,
+            onCardClick = { cardItem ->
+                val rec = dynamicRecommendations?.find { it.name == cardItem.title }
+                if (rec != null && onRecommendationClick != null) {
+                    onRecommendationClick(rec)
+                } else {
+                    showToast("Opened recommendation: ${cardItem.title}")
+                }
+            }
+        )
+    }
+}
+
+private fun LazyListScope.castSection(
+    dynamicActors: List<ActorData>?,
+    onActorClick: ((String) -> Unit)?
+) {
+    if (dynamicActors.isNullOrEmpty()) return
+
+    item(key = "cast_and_crew_section", contentType = "cast_section") {
+        CastAndCrewSection(
+            actors = dynamicActors,
+            onActorClick = onActorClick,
+            onActorLongClick = onActorClick
+        )
+    }
+}
+
+private fun LazyListScope.aboutSection(
+    title: String,
+    creator: String?,
+    castList: List<String>,
+    writers: List<String>,
+    genres: List<String>,
+    moodTags: List<String>,
+    maturityRating: String?,
+    advisories: String?
+) {
+    val hasAboutContent = !creator.isNullOrBlank() || castList.isNotEmpty() ||
+            writers.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty() ||
+            !maturityRating.isNullOrBlank()
+    if (!hasAboutContent) return
+
+    item(key = "about_section", contentType = "about_section") {
+        AboutSection(
+            title = title,
+            creator = creator,
+            castList = castList,
+            writers = writers,
+            genres = genres,
+            moodTags = moodTags,
+            maturityRating = maturityRating,
+            advisories = advisories
+        )
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -294,113 +447,49 @@ fun MovieDetailsComposeScreen(
                 )
             }
 
-            if (episodesToDisplay.isNotEmpty()) {
-                item(key = "episodes_header", contentType = "episodes_header") {
-                    EpisodesHeaderSection(
-                        seasonOptions = seasonOptions,
-                        selectedSeasonText = selectedSeasonText,
-                        onSeasonSelect = onSeasonSelect,
-                        onSeasonTextChange = { selectedSeasonText = it },
-                        dubOptions = dubOptions,
-                        selectedDubText = selectedDubText,
-                        onDubSelect = onDubSelect,
-                        onDubTextChange = { selectedDubText = it },
-                        rangeOptions = rangeOptions,
-                        selectedRangeText = selectedRangeText,
-                        onRangeSelect = onRangeSelect,
-                        onRangeTextChange = { selectedRangeText = it },
-                        airingSchedule = airingSchedule
-                    )
-                }
+            episodesSection(
+                episodesToDisplay = episodesToDisplay,
+                seasonOptions = seasonOptions,
+                selectedSeasonText = selectedSeasonText,
+                onSeasonSelect = onSeasonSelect,
+                onSeasonTextChange = { selectedSeasonText = it },
+                dubOptions = dubOptions,
+                selectedDubText = selectedDubText,
+                onDubSelect = onDubSelect,
+                onDubTextChange = { selectedDubText = it },
+                rangeOptions = rangeOptions,
+                selectedRangeText = selectedRangeText,
+                onRangeSelect = onRangeSelect,
+                onRangeTextChange = { selectedRangeText = it },
+                airingSchedule = airingSchedule,
+                onEpisodeClick = onEpisodeClick,
+                onEpisodeLongClick = onEpisodeLongClick,
+                showToast = ::showToast
+            )
 
-                items(
-                    items = episodesToDisplay,
-                    key = { ep -> "episode_${ep.id}" },
-                    contentType = { "episode_row" }
-                ) { ep ->
-                    val onEpClick = remember(ep) {
-                        {
-                            if (onEpisodeClick != null) onEpisodeClick(ep)
-                            else showToast("Playing ${ep.headerName}: ${ep.name}")
-                        }
-                    }
-                    val onEpLongClick = remember(ep) {
-                        if (onEpisodeLongClick != null) {
-                            { onEpisodeLongClick(ep) }
-                        } else null
-                    }
-                    EpisodeRowItem(
-                        episode = ep,
-                        onClick = onEpClick,
-                        onLongClick = onEpLongClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = MovieDetailsTheme.dimens.spacing2Xl, vertical = 6.dp)
-                    )
-                }
-            }
+            recommendationsSection(
+                chunkedRecommendations = chunkedRecommendations,
+                dynamicRecommendations = dynamicRecommendations,
+                onRecommendationClick = onRecommendationClick,
+                showToast = ::showToast,
+                colors = colors
+            )
 
-            if (chunkedRecommendations.isNotEmpty()) {
-                item(key = "recommendations_header", contentType = "recommendations_header") {
-                    Text(
-                        text = stringResource(id = R.string.more_like_this),
-                        style = MovieDetailsTheme.typography.boldTitle2,
-                        fontSize = 22.sp,
-                        color = colors.textPrimary,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = MovieDetailsTheme.dimens.spacing2Xl)
-                            .padding(top = MovieDetailsTheme.dimens.spacing3Xl, bottom = MovieDetailsTheme.dimens.spacingL)
-                    )
-                }
+            castSection(
+                dynamicActors = dynamicActors,
+                onActorClick = onActorClick
+            )
 
-                items(
-                    items = chunkedRecommendations,
-                    key = { row -> "rec_row_${row.rowIndex}" },
-                    contentType = { "recommendation_row" }
-                ) { row ->
-                    RecommendationRowView(
-                        row = row,
-                        onCardClick = { cardItem ->
-                            val rec = dynamicRecommendations?.find { it.name == cardItem.title }
-                            if (rec != null && onRecommendationClick != null) {
-                                onRecommendationClick(rec)
-                            } else {
-                                showToast("Opened recommendation: ${cardItem.title}")
-                            }
-                        }
-                    )
-                }
-            }
-
-            if (!dynamicActors.isNullOrEmpty()) {
-                item(key = "cast_and_crew_section", contentType = "cast_section") {
-                    CastAndCrewSection(
-                        actors = dynamicActors,
-                        onActorClick = onActorClick,
-                        onActorLongClick = onActorClick
-                    )
-                }
-            }
-
-            val hasAboutContent = !creator.isNullOrBlank() || castList.isNotEmpty() ||
-                    writers.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty() ||
-                    !maturityRating.isNullOrBlank()
-
-            if (hasAboutContent) {
-                item(key = "about_section", contentType = "about_section") {
-                    AboutSection(
-                        title = title,
-                        creator = creator,
-                        castList = castList,
-                        writers = writers,
-                        genres = genres,
-                        moodTags = moodTags,
-                        maturityRating = maturityRating,
-                        advisories = advisories
-                    )
-                }
-            }
+            aboutSection(
+                title = title,
+                creator = creator,
+                castList = castList,
+                writers = writers,
+                genres = genres,
+                moodTags = moodTags,
+                maturityRating = maturityRating,
+                advisories = advisories
+            )
         }
     }
 }

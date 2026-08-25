@@ -11,6 +11,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -132,6 +133,178 @@ fun rememberEpisodeRowUiState(episode: ResultEpisode): EpisodeRowUiState {
     }
 }
 
+@Composable
+private fun EpisodePlayStatusBadge(state: EpisodeRowUiState, modifier: Modifier = Modifier) {
+    val iconRes = when {
+        state.isUpcoming -> R.drawable.hourglass_24
+        state.isWatched -> R.drawable.ic_baseline_check_24
+        else -> R.drawable.ic_baseline_play_arrow_24
+    }
+    Box(
+        modifier = modifier
+            .size(36.dp)
+            .clip(CircleShape)
+            .background(TransparentBlack60)
+            .border(BorderStroke(1.dp, PrimaryWhite), CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = null,
+            tint = PrimaryWhite,
+            modifier = Modifier.size(16.dp)
+        )
+    }
+}
+
+@Composable
+private fun BoxScope.EpisodeProgressBar(watchProgress: Float) {
+    val colors = MovieDetailsTheme.colors
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(4.dp)
+            .align(Alignment.BottomStart)
+            .background(colors.border)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(watchProgress.coerceIn(0f, 1f))
+                .fillMaxHeight()
+                .background(colors.primary)
+        )
+    }
+}
+
+@Composable
+private fun EpisodeThumbnail(episode: ResultEpisode, state: EpisodeRowUiState) {
+    val colors = MovieDetailsTheme.colors
+    Box(
+        modifier = Modifier
+            .width(160.dp)
+            .height(90.dp)
+            .clip(MovieDetailsTokens.ShapeCardSmall)
+            .background(colors.surface)
+    ) {
+        if (!episode.poster.isNullOrBlank()) {
+            AsyncImage(
+                model = episode.poster,
+                contentDescription = episode.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        EpisodePlayStatusBadge(
+            state = state,
+            modifier = Modifier.align(Alignment.Center)
+        )
+
+        if (!state.isUpcoming && !state.isWatched && state.watchProgress > 0.05f) {
+            EpisodeProgressBar(watchProgress = state.watchProgress)
+        }
+    }
+}
+
+@Composable
+private fun EpisodeTitleRow(state: EpisodeRowUiState) {
+    val typography = MovieDetailsTheme.typography
+    val colors = MovieDetailsTheme.colors
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (state.isFiller) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(colors.surfaceElevated)
+                    .border(BorderStroke(1.dp, colors.border), RoundedCornerShape(4.dp))
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.filler),
+                    style = typography.regularCaption2,
+                    color = colors.textPrimary,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+        Text(
+            text = state.title,
+            style = typography.mediumBody,
+            fontWeight = FontWeight.Bold,
+            color = colors.textPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false)
+        )
+    }
+}
+
+@Composable
+private fun EpisodeMetaRow(state: EpisodeRowUiState) {
+    if (!state.hasMeta) return
+    val typography = MovieDetailsTheme.typography
+    val colors = MovieDetailsTheme.colors
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (state.ratingText != null) {
+            Text(
+                text = state.ratingText,
+                style = typography.regularCaption1,
+                color = colors.textSecondary
+            )
+        }
+        if (!state.runtimeText.isNullOrBlank()) {
+            Text(
+                text = state.runtimeText,
+                style = typography.regularCaption1,
+                color = colors.textSecondary
+            )
+        }
+        if (!state.airDateText.isNullOrBlank()) {
+            Text(
+                text = state.airDateText,
+                style = typography.regularCaption1,
+                color = colors.textSecondary
+            )
+        }
+    }
+}
+
+@Composable
+private fun EpisodeInfoColumn(state: EpisodeRowUiState, modifier: Modifier = Modifier) {
+    val typography = MovieDetailsTheme.typography
+    val colors = MovieDetailsTheme.colors
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        EpisodeTitleRow(state = state)
+        EpisodeMetaRow(state = state)
+
+        if (!state.description.isNullOrBlank()) {
+            Text(
+                text = state.description,
+                style = typography.regularCaption1,
+                color = colors.textMuted,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 18.sp
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EpisodeRowItem(
@@ -187,142 +360,11 @@ fun EpisodeRowItem(
             modifier = Modifier.width(32.dp)
         )
 
-        Box(
-            modifier = Modifier
-                .width(160.dp)
-                .height(90.dp)
-                .clip(MovieDetailsTokens.ShapeCardSmall)
-                .background(colors.surface)
-        ) {
-            if (!episode.poster.isNullOrBlank()) {
-                AsyncImage(
-                    model = episode.poster,
-                    contentDescription = episode.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+        EpisodeThumbnail(episode = episode, state = state)
 
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(TransparentBlack60)
-                    .border(BorderStroke(1.dp, PrimaryWhite), CircleShape)
-                    .align(Alignment.Center)
-            ) {
-                val iconRes = when {
-                    state.isUpcoming -> R.drawable.hourglass_24
-                    state.isWatched -> R.drawable.ic_baseline_check_24
-                    else -> R.drawable.ic_baseline_play_arrow_24
-                }
-                Icon(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = null,
-                    tint = PrimaryWhite,
-                    modifier = Modifier
-                        .size(16.dp)
-                        .align(Alignment.Center)
-                )
-            }
-
-            if (!state.isUpcoming && !state.isWatched && state.watchProgress > 0.05f) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(4.dp)
-                        .align(Alignment.BottomStart)
-                        .background(colors.border)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(state.watchProgress.coerceIn(0f, 1f))
-                            .fillMaxHeight()
-                            .background(colors.primary)
-                    )
-                }
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (state.isFiller) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(colors.surfaceElevated)
-                            .border(BorderStroke(1.dp, colors.border), RoundedCornerShape(4.dp))
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.filler),
-                            style = typography.regularCaption2,
-                            color = colors.textPrimary,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-                Text(
-                    text = state.title,
-                    style = typography.mediumBody,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false)
-                )
-            }
-
-            if (state.hasMeta) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (state.ratingText != null) {
-                        Text(
-                            text = state.ratingText,
-                            style = typography.regularCaption1,
-                            color = colors.textSecondary
-                        )
-                    }
-                    if (!state.runtimeText.isNullOrBlank()) {
-                        Text(
-                            text = state.runtimeText,
-                            style = typography.regularCaption1,
-                            color = colors.textSecondary
-                        )
-                    }
-                    if (!state.airDateText.isNullOrBlank()) {
-                        Text(
-                            text = state.airDateText,
-                            style = typography.regularCaption1,
-                            color = colors.textSecondary
-                        )
-                    }
-                }
-            }
-
-            if (!state.description.isNullOrBlank()) {
-                Text(
-                    text = state.description,
-                    style = typography.regularCaption1,
-                    color = colors.textMuted,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    lineHeight = 18.sp
-                )
-            }
-        }
+        EpisodeInfoColumn(
+            state = state,
+            modifier = Modifier.weight(1f)
+        )
     }
 }

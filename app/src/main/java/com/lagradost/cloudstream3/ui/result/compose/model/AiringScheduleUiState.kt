@@ -22,7 +22,78 @@ data class AiringScheduleUiState(
     val fallbackDateText: String? = null
 ) {
     val hasAiringInfo: Boolean
-        get() = (targetUnixTimeSeconds != null) || !fallbackDateText.isNullOrBlank()
+        get() = targetUnixTimeSeconds != null || !fallbackDateText.isNullOrBlank()
+}
+
+private fun findUpcomingEpisode(episodes: List<ResultEpisode>?, nowMs: Long): ResultEpisode? {
+    return episodes?.filter { (it.airDate ?: 0L) > nowMs }?.minByOrNull { it.airDate ?: Long.MAX_VALUE }
+}
+
+private fun resolveUpcomingEpisode(
+    context: Context,
+    nextAiringEpisode: String?,
+    upcomingEpisode: ResultEpisode?
+): String? {
+    if (!nextAiringEpisode.isNullOrBlank()) {
+        return nextAiringEpisode
+    }
+    if (upcomingEpisode == null) {
+        return null
+    }
+    return if (upcomingEpisode.season != null && upcomingEpisode.season > 1) {
+        context.getString(R.string.next_season_episode_format, upcomingEpisode.season, upcomingEpisode.episode)
+    } else {
+        context.getString(R.string.next_episode_format, upcomingEpisode.episode)
+    }
+}
+
+private fun resolveUpcomingDate(
+    context: Context,
+    nextAiringDate: String?,
+    upcomingEpisode: ResultEpisode?,
+    nowMs: Long
+): String? {
+    if (!nextAiringDate.isNullOrBlank()) {
+        return nextAiringDate
+    }
+    val airDate = upcomingEpisode?.airDate ?: return null
+    val diffSec = (airDate - nowMs) / 1000
+    return if (diffSec > 0) {
+        context.getString(R.string.episode_upcoming_format, secondsToReadable(diffSec.toInt(), ""))
+    } else {
+        null
+    }
+}
+
+private fun formatAiringDateTime(resolvedUnixTime: Long?): Pair<String?, String?> {
+    if (resolvedUnixTime == null || resolvedUnixTime <= 0) return null to null
+    return try {
+        val date = Date(resolvedUnixTime * 1000)
+        val dayOfWeek = SimpleDateFormat("EEE", Locale.getDefault()).format(date)
+        val releaseDate = SimpleDateFormat("EEEE, dd MMM • HH:mm", Locale.getDefault()).format(date)
+        releaseDate to dayOfWeek
+    } catch (_: Exception) {
+        null to null
+    }
+}
+
+private fun parseEpisodeDisplayLabels(resolvedEpisode: String?): Pair<String?, String?> {
+    if (resolvedEpisode == null) return null to null
+
+    val match = Regex("""(?:Season\s*(\d+)\s*)?(?:Episode|Ep\.?)\s*(\d+)""", RegexOption.IGNORE_CASE).find(resolvedEpisode)
+    if (match != null) {
+        val season = match.groupValues.getOrNull(1)?.takeIf { it.isNotBlank() }
+        val ep = match.groupValues.getOrNull(2)?.takeIf { it.isNotBlank() }
+        return when {
+            season != null && ep != null -> "S$season:E$ep" to "Season $season Episode $ep"
+            ep != null -> "Ep $ep" to "Episode $ep"
+            else -> null to resolvedEpisode
+        }
+    }
+
+    val digitMatch = Regex("""\b(\d+)\b""").find(resolvedEpisode)
+    val shortLabel = digitMatch?.let { "Ep ${it.value}" }
+    return shortLabel to resolvedEpisode
 }
 
 fun resolveAiringSchedule(
@@ -36,7 +107,7 @@ fun resolveAiringSchedule(
 ): AiringScheduleUiState? {
     val nowMs = APIHolder.unixTimeMS
     val nowSec = APIHolder.unixTime
-    val upcomingEpisode = episodes?.filter { (it.airDate ?: 0L) > nowMs }?.minByOrNull { it.airDate ?: Long.MAX_VALUE }
+    val upcomingEpisode = findUpcomingEpisode(episodes, nowMs)
 
     val resolvedUnixTime = if (nextAiringUnixTime != null && nextAiringUnixTime > nowSec) {
         nextAiringUnixTime
@@ -44,72 +115,15 @@ fun resolveAiringSchedule(
         upcomingEpisode?.airDate?.div(1000L)
     }
 
-    val resolvedEpisode = if (!nextAiringEpisode.isNullOrBlank()) {
-        nextAiringEpisode
-    } else if (upcomingEpisode != null) {
-        if (upcomingEpisode.season != null && upcomingEpisode.season > 1) {
-            context.getString(R.string.next_season_episode_format, upcomingEpisode.season, upcomingEpisode.episode)
-        } else {
-            context.getString(R.string.next_episode_format, upcomingEpisode.episode)
-        }
-    } else {
-        null
-    }
-
-    val resolvedDate = if (!nextAiringDate.isNullOrBlank()) {
-        nextAiringDate
-    } else if (upcomingEpisode?.airDate != null) {
-        val diffSec = (upcomingEpisode.airDate - nowMs) / 1000
-        if (diffSec > 0) {
-            context.getString(
-                R.string.episode_upcoming_format,
-                secondsToReadable(diffSec.toInt(), "")
-            )
-        } else {
-            null
-        }
-    } else {
-        null
-    }
+    val resolvedEpisode = resolveUpcomingEpisode(context, nextAiringEpisode, upcomingEpisode)
+    val resolvedDate = resolveUpcomingDate(context, nextAiringDate, upcomingEpisode, nowMs)
 
     if (statusText.isNullOrBlank() && resolvedUnixTime == null && resolvedDate.isNullOrBlank()) {
         return null
     }
 
-    var releaseDateFormatted: String? = null
-    var dayOfWeek: String? = null
-    if (resolvedUnixTime != null && resolvedUnixTime > 0) {
-        try {
-            val date = Date(resolvedUnixTime * 1000)
-            dayOfWeek = SimpleDateFormat("EEE", Locale.getDefault()).format(date)
-            releaseDateFormatted = SimpleDateFormat("EEEE, dd MMM • HH:mm", Locale.getDefault()).format(date)
-        } catch (_: Exception) {}
-    }
-
-    var displayEpisodeShort: String? = null
-    var displayEpisodeLong: String? = null
-    if (resolvedEpisode != null) {
-        val match = Regex("""(?:Season\s*(\d+)\s*)?(?:Episode|Ep\.?)\s*(\d+)""", RegexOption.IGNORE_CASE).find(resolvedEpisode)
-        if (match != null) {
-            val season = match.groupValues.getOrNull(1)?.takeIf { it.isNotBlank() }
-            val ep = match.groupValues.getOrNull(2)?.takeIf { it.isNotBlank() }
-            if (season != null && ep != null) {
-                displayEpisodeShort = "S$season:E$ep"
-                displayEpisodeLong = "Season $season Episode $ep"
-            } else if (ep != null) {
-                displayEpisodeShort = "Ep $ep"
-                displayEpisodeLong = "Episode $ep"
-            } else {
-                displayEpisodeLong = resolvedEpisode
-            }
-        } else {
-            val digitMatch = Regex("""\b(\d+)\b""").find(resolvedEpisode)
-            if (digitMatch != null) {
-                displayEpisodeShort = "Ep ${digitMatch.value}"
-            }
-            displayEpisodeLong = resolvedEpisode
-        }
-    }
+    val (releaseDateFormatted, dayOfWeek) = formatAiringDateTime(resolvedUnixTime)
+    val (displayEpisodeShort, displayEpisodeLong) = parseEpisodeDisplayLabels(resolvedEpisode)
 
     return AiringScheduleUiState(
         statusText = statusText,

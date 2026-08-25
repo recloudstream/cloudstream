@@ -20,6 +20,50 @@ data class MovieRecommendationRow(
     val items: List<MovieCardItem>
 )
 
+private fun formatEpisodeCode(context: Context, season: Int?, episode: Int?): String {
+    val s = season ?: 0
+    val e = episode ?: 0
+    val sShort = context.getString(R.string.season_short)
+    val eShort = context.getString(R.string.episode_short)
+    return when {
+        s > 0 && e > 0 -> "$sShort$s:$eShort$e"
+        e > 0 -> "$eShort$e"
+        else -> ""
+    }
+}
+
+private fun formatWithEpisodeCode(prefix: String, epCode: String): String {
+    return if (epCode.isNotBlank()) "$prefix $epCode" else prefix
+}
+
+private fun resolveResumeButtonText(context: Context, resumeStatus: ResumeWatchingStatus): String {
+    val prefix = if (resumeStatus.progress != null) {
+        context.getString(R.string.resume)
+    } else {
+        context.getString(R.string.play_movie_button)
+    }
+    if (resumeStatus.isMovie) {
+        return prefix
+    }
+    val resumeEp = resumeStatus.result
+    val epCode = formatEpisodeCode(context, resumeEp.season, resumeEp.episode)
+    return formatWithEpisodeCode(prefix, epCode)
+}
+
+private fun resolveFirstEpisodeButtonText(
+    context: Context,
+    episodesToDisplay: List<ResultEpisode>,
+    isMovie: Boolean
+): String {
+    val playStr = context.getString(R.string.play_movie_button)
+    val firstEp = episodesToDisplay.firstOrNull()
+    if (firstEp != null && !isMovie) {
+        val epCode = formatEpisodeCode(context, firstEp.season, firstEp.episode)
+        return formatWithEpisodeCode(playStr, epCode)
+    }
+    return playStr
+}
+
 fun getPlayButtonText(
     context: Context,
     resumeStatus: ResumeWatchingStatus?,
@@ -27,43 +71,7 @@ fun getPlayButtonText(
     isMovie: Boolean
 ): String {
     if (resumeStatus != null) {
-        val resumeEp = resumeStatus.result
-        val prefix = if (resumeStatus.progress != null) {
-            context.getString(R.string.resume)
-        } else {
-            context.getString(R.string.play_movie_button)
-        }
-        if (resumeStatus.isMovie) {
-            return prefix
-        }
-        val sShort = context.getString(R.string.season_short)
-        val eShort = context.getString(R.string.episode_short)
-        val s = resumeEp.season
-        val e = resumeEp.episode
-        val epCode = if (s != null && s > 0 && e > 0) {
-            "$sShort$s:$eShort$e"
-        } else if (e > 0) {
-            "$eShort$e"
-        } else {
-            ""
-        }
-        return if (epCode.isNotBlank()) "$prefix $epCode" else prefix
+        return resolveResumeButtonText(context, resumeStatus)
     }
-    val firstEp = episodesToDisplay.firstOrNull()
-    if (firstEp != null && !isMovie) {
-        val sShort = context.getString(R.string.season_short)
-        val eShort = context.getString(R.string.episode_short)
-        val s = firstEp.season
-        val e = firstEp.episode
-        val epCode = if (s != null && s > 0 && e > 0) {
-            "$sShort$s:$eShort$e"
-        } else if (e > 0) {
-            "$eShort$e"
-        } else {
-            ""
-        }
-        val playStr = context.getString(R.string.play_movie_button)
-        return if (epCode.isNotBlank()) "$playStr $epCode" else playStr
-    }
-    return context.getString(R.string.play_movie_button)
+    return resolveFirstEpisodeButtonText(context, episodesToDisplay, isMovie)
 }

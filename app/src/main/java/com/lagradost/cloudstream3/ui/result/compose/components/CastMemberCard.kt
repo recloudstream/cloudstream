@@ -187,6 +187,44 @@ private fun CastMemberInfo(
     }
 }
 
+@Composable
+private fun resolveRoleText(actorData: ActorData): String? {
+    if (!actorData.roleString.isNullOrBlank()) {
+        return actorData.roleString
+    }
+    return when (actorData.role) {
+        ActorRole.Main -> stringResource(id = R.string.actor_main)
+        ActorRole.Supporting -> stringResource(id = R.string.actor_supporting)
+        ActorRole.Background -> stringResource(id = R.string.actor_background)
+        else -> null
+    }
+}
+
+private fun resolveActiveActors(
+    actorData: ActorData,
+    isInverted: Boolean,
+    hasVoiceActor: Boolean
+): Pair<Actor?, Actor?> {
+    return if (isInverted && hasVoiceActor) {
+        actorData.voiceActor to actorData.actor
+    } else {
+        actorData.actor to actorData.voiceActor
+    }
+}
+
+private fun handleCastLongClick(
+    targetName: String,
+    onActorClick: (String) -> Unit,
+    onActorLongClick: ((String) -> Unit)?
+) {
+    if (targetName.isBlank()) return
+    if (onActorLongClick != null) {
+        onActorLongClick(targetName)
+    } else {
+        onActorClick(targetName)
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CastMemberCard(
@@ -199,8 +237,7 @@ fun CastMemberCard(
     val voiceActor = actorData.voiceActor
     val hasVoiceActor = voiceActor != null && voiceActor.name.isNotBlank()
 
-    val currentMain = if (isInverted && hasVoiceActor) voiceActor else actorData.actor
-    val currentSecondary = if (isInverted && hasVoiceActor) actorData.actor else voiceActor
+    val (currentMain, currentSecondary) = resolveActiveActors(actorData, isInverted, hasVoiceActor)
 
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -219,14 +256,7 @@ fun CastMemberCard(
         BorderStroke(1.dp, colors.border.copy(alpha = 0.35f))
     }
 
-    val roleText = when {
-        !actorData.roleString.isNullOrBlank() -> actorData.roleString
-        actorData.role == ActorRole.Main -> stringResource(id = R.string.actor_main)
-        actorData.role == ActorRole.Supporting -> stringResource(id = R.string.actor_supporting)
-        actorData.role == ActorRole.Background -> stringResource(id = R.string.actor_background)
-        else -> null
-    }
-
+    val roleText = resolveRoleText(actorData)
     val cardWidth = 130.dp
 
     Box(
@@ -244,14 +274,7 @@ fun CastMemberCard(
                     }
                 },
                 onLongClick = {
-                    val targetName = currentMain?.name ?: ""
-                    if (targetName.isNotBlank()) {
-                        if (onActorLongClick != null) {
-                            onActorLongClick(targetName)
-                        } else {
-                            onActorClick(targetName)
-                        }
-                    }
+                    handleCastLongClick(currentMain?.name ?: "", onActorClick, onActorLongClick)
                 }
             )
             .focusable(interactionSource = interactionSource)

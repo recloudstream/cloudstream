@@ -36,6 +36,205 @@ import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 import com.lagradost.cloudstream3.ui.result.compose.theme.getRatingScoreColor
 
 @Composable
+private fun PrimaryMetadataRow(
+    matchScore: String?,
+    releaseYear: String?,
+    seasonsCount: String?,
+    quality: String?,
+    airingSchedule: AiringScheduleUiState?
+) {
+    val hasContent = !matchScore.isNullOrBlank() || !releaseYear.isNullOrBlank() ||
+            !seasonsCount.isNullOrBlank() || !quality.isNullOrBlank() ||
+            airingSchedule != null
+    if (!hasContent) return
+
+    val colors = MovieDetailsTheme.colors
+    val typography = MovieDetailsTheme.typography
+    val dimens = MovieDetailsTheme.dimens
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
+    ) {
+        if (!matchScore.isNullOrBlank()) {
+            Text(
+                text = matchScore,
+                color = getRatingScoreColor(matchScore),
+                style = typography.mediumBody,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        if (!releaseYear.isNullOrBlank()) {
+            Text(
+                text = releaseYear,
+                color = colors.textPrimary,
+                style = typography.regularBody
+            )
+        }
+
+        if (!seasonsCount.isNullOrBlank()) {
+            Text(
+                text = seasonsCount,
+                color = colors.textPrimary,
+                style = typography.regularBody
+            )
+        }
+
+        if (!quality.isNullOrBlank()) {
+            VideoQualityBadge(quality = quality)
+        }
+
+        if (!airingSchedule?.statusText.isNullOrBlank()) {
+            OngoingStatusBadge(
+                statusText = airingSchedule.statusText,
+                isOngoing = airingSchedule.isOngoing
+            )
+        }
+
+        if (airingSchedule?.hasAiringInfo == true) {
+            AiringCountdownBadge(airingSchedule = airingSchedule)
+        }
+    }
+}
+
+@Composable
+private fun MaturityAdvisoriesRow(maturityRating: String?, advisories: String?) {
+    if (maturityRating.isNullOrBlank() && advisories.isNullOrBlank()) return
+
+    val colors = MovieDetailsTheme.colors
+    val typography = MovieDetailsTheme.typography
+    val dimens = MovieDetailsTheme.dimens
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.spacingS)
+    ) {
+        if (!maturityRating.isNullOrBlank()) {
+            MaturityRatingBadge(rating = maturityRating)
+        }
+        if (!advisories.isNullOrBlank()) {
+            Text(
+                text = advisories,
+                color = colors.textMuted,
+                style = typography.regularCaption1
+            )
+        }
+    }
+}
+
+@Composable
+private fun Top10RankBadge(top10RankText: String?) {
+    if (top10RankText.isNullOrBlank()) return
+
+    val colors = MovieDetailsTheme.colors
+    val typography = MovieDetailsTheme.typography
+    val dimens = MovieDetailsTheme.dimens
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
+        modifier = Modifier.padding(vertical = dimens.spacingXs)
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(MovieDetailsTokens.ShapeCardSmall)
+                .background(colors.primary)
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.top_10_badge_text),
+                style = typography.regularCaption2,
+                color = colors.onPrimary,
+                fontWeight = FontWeight.Black
+            )
+        }
+        Text(
+            text = top10RankText,
+            style = typography.mediumBody,
+            fontWeight = FontWeight.Bold,
+            color = colors.textPrimary
+        )
+    }
+}
+
+@Composable
+private fun InteractiveSynopsis(synopsis: String) {
+    if (synopsis.isBlank()) return
+
+    val colors = MovieDetailsTheme.colors
+    val typography = MovieDetailsTheme.typography
+    val dimens = MovieDetailsTheme.dimens
+    val synopsisInteractionSource = remember { MutableInteractionSource() }
+    val isSynopsisFocused by synopsisInteractionSource.collectIsFocusedAsState()
+
+    val background = if (isSynopsisFocused) colors.surfaceElevated.copy(alpha = 0.5f) else Color.Transparent
+    val borderModifier = if (isSynopsisFocused) {
+        Modifier.border(BorderStroke(dimens.borderFocus, colors.primary), MovieDetailsTokens.ShapeCardSmall)
+    } else {
+        Modifier
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(MovieDetailsTokens.ShapeCardSmall)
+            .background(background)
+            .then(borderModifier)
+            .focusable(interactionSource = synopsisInteractionSource)
+            .padding(dimens.spacingS)
+    ) {
+        Text(
+            text = synopsis,
+            style = typography.regularBody,
+            color = if (isSynopsisFocused) colors.textPrimary else colors.textSecondary,
+            lineHeight = 22.sp
+        )
+    }
+}
+
+@Composable
+private fun MovieSideInfoItem(labelRes: Int, items: List<String>, maxLines: Int = Int.MAX_VALUE) {
+    if (items.isEmpty()) return
+
+    val colors = MovieDetailsTheme.colors
+    val typography = MovieDetailsTheme.typography
+
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(
+            text = stringResource(id = labelRes),
+            style = typography.regularCaption2,
+            color = colors.textSecondary
+        )
+        Text(
+            text = items.joinToString(", "),
+            style = typography.regularCaption1,
+            color = colors.textPrimary,
+            maxLines = maxLines,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun MovieSideInfoColumn(
+    castList: List<String>,
+    genres: List<String>,
+    moodTags: List<String>,
+    modifier: Modifier = Modifier
+) {
+    val dimens = MovieDetailsTheme.dimens
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
+    ) {
+        MovieSideInfoItem(labelRes = R.string.cast_label, items = castList, maxLines = 3)
+        MovieSideInfoItem(labelRes = R.string.genres_label, items = genres)
+        MovieSideInfoItem(labelRes = R.string.mood_tags_label, items = moodTags)
+    }
+}
+
+@Composable
 fun MovieInfoSynopsisSection(
     modifier: Modifier = Modifier,
     matchScore: String?,
@@ -51,8 +250,6 @@ fun MovieInfoSynopsisSection(
     moodTags: List<String>,
     airingSchedule: AiringScheduleUiState? = null
 ) {
-    val colors = MovieDetailsTheme.colors
-    val typography = MovieDetailsTheme.typography
     val dimens = MovieDetailsTheme.dimens
     val hasRightColumn = castList.isNotEmpty() || genres.isNotEmpty() || moodTags.isNotEmpty()
 
@@ -68,187 +265,28 @@ fun MovieInfoSynopsisSection(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
         ) {
-            val hasLine1 = !matchScore.isNullOrBlank() || !releaseYear.isNullOrBlank() ||
-                    !seasonsCount.isNullOrBlank() || !quality.isNullOrBlank() ||
-                    airingSchedule != null
-
-            if (hasLine1) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(dimens.spacingM)
-                ) {
-                    if (!matchScore.isNullOrBlank()) {
-                        Text(
-                            text = matchScore,
-                            color = getRatingScoreColor(matchScore),
-                            style = typography.mediumBody,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    if (!releaseYear.isNullOrBlank()) {
-                        Text(
-                            text = releaseYear,
-                            color = colors.textPrimary,
-                            style = typography.regularBody
-                        )
-                    }
-
-                    if (!seasonsCount.isNullOrBlank()) {
-                        Text(
-                            text = seasonsCount,
-                            color = colors.textPrimary,
-                            style = typography.regularBody
-                        )
-                    }
-
-                    if (!quality.isNullOrBlank()) {
-                        VideoQualityBadge(quality = quality)
-                    }
-
-                    if (!airingSchedule?.statusText.isNullOrBlank()) {
-                        OngoingStatusBadge(
-                            statusText = airingSchedule.statusText,
-                            isOngoing = airingSchedule.isOngoing
-                        )
-                    }
-
-                    if (airingSchedule?.hasAiringInfo == true) {
-                        AiringCountdownBadge(airingSchedule = airingSchedule)
-                    }
-                }
-            }
-
-            if (!maturityRating.isNullOrBlank() || !advisories.isNullOrBlank()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(dimens.spacingS)
-                ) {
-                    if (!maturityRating.isNullOrBlank()) {
-                        MaturityRatingBadge(rating = maturityRating)
-                    }
-                    if (!advisories.isNullOrBlank()) {
-                        Text(
-                            text = advisories,
-                            color = colors.textMuted,
-                            style = typography.regularCaption1
-                        )
-                    }
-                }
-            }
-
-            if (!top10RankText.isNullOrBlank()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(dimens.spacingS),
-                    modifier = Modifier.padding(vertical = dimens.spacingXs)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .clip(MovieDetailsTokens.ShapeCardSmall)
-                            .background(colors.primary)
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.top_10_badge_text),
-                            style = typography.regularCaption2,
-                            color = colors.onPrimary,
-                            fontWeight = FontWeight.Black
-                        )
-                    }
-                    Text(
-                        text = top10RankText,
-                        style = typography.mediumBody,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
-                    )
-                }
-            }
-
-            if (synopsis.isNotBlank()) {
-                val synopsisInteractionSource = remember { MutableInteractionSource() }
-                val isSynopsisFocused by synopsisInteractionSource.collectIsFocusedAsState()
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MovieDetailsTokens.ShapeCardSmall)
-                        .background(if (isSynopsisFocused) colors.surfaceElevated.copy(alpha = 0.5f) else Color.Transparent)
-                        .then(
-                            if (isSynopsisFocused) {
-                                Modifier.border(
-                                    BorderStroke(dimens.borderFocus, colors.primary),
-                                    MovieDetailsTokens.ShapeCardSmall
-                                )
-                            } else Modifier
-                        )
-                        .focusable(interactionSource = synopsisInteractionSource)
-                        .padding(dimens.spacingS)
-                ) {
-                    Text(
-                        text = synopsis,
-                        style = typography.regularBody,
-                        color = if (isSynopsisFocused) colors.textPrimary else colors.textSecondary,
-                        lineHeight = 22.sp
-                    )
-                }
-            }
+            PrimaryMetadataRow(
+                matchScore = matchScore,
+                releaseYear = releaseYear,
+                seasonsCount = seasonsCount,
+                quality = quality,
+                airingSchedule = airingSchedule
+            )
+            MaturityAdvisoriesRow(
+                maturityRating = maturityRating,
+                advisories = advisories
+            )
+            Top10RankBadge(top10RankText = top10RankText)
+            InteractiveSynopsis(synopsis = synopsis)
         }
 
         if (hasRightColumn) {
-            Column(
-                modifier = Modifier
-                    .weight(0.35f)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(dimens.spacingM)
-            ) {
-                if (castList.isNotEmpty()) {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(
-                            text = stringResource(id = R.string.cast_label),
-                            style = typography.regularCaption2,
-                            color = colors.textSecondary
-                        )
-                        Text(
-                            text = castList.joinToString(", "),
-                            style = typography.regularCaption1,
-                            color = colors.textPrimary,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-
-                if (genres.isNotEmpty()) {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(
-                            text = stringResource(id = R.string.genres_label),
-                            style = typography.regularCaption2,
-                            color = colors.textSecondary
-                        )
-                        Text(
-                            text = genres.joinToString(", "),
-                            style = typography.regularCaption1,
-                            color = colors.textPrimary
-                        )
-                    }
-                }
-
-                if (moodTags.isNotEmpty()) {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(
-                            text = stringResource(id = R.string.mood_tags_label),
-                            style = typography.regularCaption2,
-                            color = colors.textSecondary
-                        )
-                        Text(
-                            text = moodTags.joinToString(", "),
-                            style = typography.regularCaption1,
-                            color = colors.textPrimary
-                        )
-                    }
-                }
-            }
+            MovieSideInfoColumn(
+                castList = castList,
+                genres = genres,
+                moodTags = moodTags,
+                modifier = Modifier.weight(0.35f)
+            )
         }
     }
 }
