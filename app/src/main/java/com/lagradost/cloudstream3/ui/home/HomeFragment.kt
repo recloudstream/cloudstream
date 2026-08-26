@@ -109,6 +109,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         val errorProfilePic = errorProfilePics.random()
 
+        fun Context.getDisplayName(apiName: String?): String? {
+            return when (apiName) {
+                noneApi.name -> getString(R.string.none)
+                randomApi.name -> getString(R.string.home_random)
+                else -> apiName
+            }
+        }
+
         //fun Activity.loadHomepageList(
         //    item: HomePageList,
         //    deleteCallback: (() -> Unit)? = null,
@@ -502,8 +510,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         addAll(remainingApis)
                     }
 
-                    val names =
-                        currentValidApis.map { if (isMultiLang) "${getFlagFromIso(it.lang)?.plus(" ") ?: ""}${it.name}" else it.name }
+                    val names = currentValidApis.map {
+                        val displayName = getDisplayName(it.name)
+                        if (isMultiLang) "${getFlagFromIso(it.lang)?.plus(" ") ?: ""}$displayName" else displayName
+                    }
                     val index = currentValidApis.map { it.name }.indexOf(currentApiName)
                     listView?.setItemChecked(index, true)
                     arrayAdapter.addAll(names)
@@ -790,9 +800,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
+            val displayApiName = context?.getDisplayName(apiName) ?: apiName
             binding.apply {
-                homeApiFab.text = apiName
-                homeChangeApi.text = apiName
+                homeApiFab.text = displayApiName
+                homeChangeApi.text = displayApiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
                 homePreviewSearchButton.isGone = (apiName == noneApi.name)
             }
