@@ -874,7 +874,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         resultMetaRating.setText(d.ratingText)
                         resultMetaStatus.setText(d.onGoingText)
                         resultMetaContentRating.setText(d.contentRatingText)
-                        resultCastText.setText(d.actorsText)
                         resultNextAiring.setText(d.nextAiringEpisode)
                         resultNextAiringTime.setText(d.nextAiringDate)
                         resultPoster.loadImage(d.posterImage, headers = d.posterHeaders)
