@@ -816,6 +816,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         observe(homeViewModel.page) { data ->
             binding.apply {
+                if (isLayout(TV or EMULATOR)) {
+                    val plugin = APIHolder.getApiFromNameNull(homeViewModel.apiName.value)
+                        ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                    homePreviewSettingsButton.isGone = plugin?.openSettings == null
+                }
+                
                 when (data) {
                     is Resource.Success -> {
                         val d = data.value
@@ -832,11 +838,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         homeMasterRecycler.isVisible = true
                         homeLoadingShimmer.stopShimmer()
 
-                        if (isLayout(TV or EMULATOR)) {
-                            val plugin = APIHolder.getApiFromNameNull(homeViewModel.apiName.value)
-                                ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
-                            homePreviewSettingsButton.isGone = plugin?.openSettings == null
-                        }
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
                             val distinct = d.values
