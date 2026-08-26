@@ -30,6 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -701,6 +702,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeViewModel.queryTextSubmit("")
             }
 
+            homePreviewSettingsButton.setOnClickListener { view ->
+                val apiName = homeViewModel.apiName.value
+                val plugin = APIHolder.getApiFromNameNull(apiName)
+                    ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                val openSettings = plugin?.openSettings
+                if (openSettings != null) {
+                    try {
+                        val activityContext = view.context.getActivity() ?: view.context
+                        openSettings.invoke(activityContext)
+                    } catch (e: Throwable) {
+                        logError(e)
+                    }
+                }
+            }
+
             // Load value for toggling Tv layout real time clock. Hide by default at startup
             // set visibility first, to apply a scroll effect later
             context?.let {
@@ -800,6 +816,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         observe(homeViewModel.page) { data ->
             binding.apply {
+                if (isLayout(TV or EMULATOR)) {
+                    val plugin = APIHolder.getApiFromNameNull(homeViewModel.apiName.value)
+                        ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                    homePreviewSettingsButton.isGone = plugin?.openSettings == null
+                }
+                
                 when (data) {
                     is Resource.Success -> {
                         val d = data.value
@@ -815,6 +837,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         homeLoadingError.isVisible = false
                         homeMasterRecycler.isVisible = true
                         homeLoadingShimmer.stopShimmer()
+
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
                             val distinct = d.values
