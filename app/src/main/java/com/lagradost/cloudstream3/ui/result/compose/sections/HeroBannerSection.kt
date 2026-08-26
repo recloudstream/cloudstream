@@ -1,5 +1,9 @@
 package com.lagradost.cloudstream3.ui.result.compose.sections
 
+import android.graphics.Bitmap
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +24,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -27,7 +33,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -38,6 +46,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.bitmapConfig
+import coil3.request.crossfade
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.result.compose.components.CircleActionButton
 import com.lagradost.cloudstream3.ui.result.compose.components.HeroPlayButton
@@ -45,15 +56,42 @@ import com.lagradost.cloudstream3.ui.result.compose.components.HeroTrailerButton
 import com.lagradost.cloudstream3.ui.result.compose.theme.MovieDetailsTheme
 
 @Composable
-private fun HeroBackdrop(backdropUrl: String?) {
+private fun HeroBackdrop(
+    backdropUrl: String?,
+) {
     if (backdropUrl.isNullOrBlank()) return
+    val alpha = remember(backdropUrl) { Animatable(0f) }
+
+    LaunchedEffect(backdropUrl) {
+        alpha.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(
+                durationMillis = 350,
+                easing = FastOutSlowInEasing,
+            ),
+        )
+    }
+
+    val context = LocalContext.current
+    val backdropRequest = remember(backdropUrl) {
+        ImageRequest.Builder(context)
+            .data(backdropUrl)
+            .size(1280, 720)
+            .bitmapConfig(Bitmap.Config.RGB_565)
+            .crossfade(true)
+            .build()
+    }
+
     AsyncImage(
-        model = backdropUrl,
+        model = backdropRequest,
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier
             .fillMaxSize()
             .clipToBounds()
+            .graphicsLayer {
+                this.alpha = alpha.value
+            },
     )
 }
 
@@ -63,7 +101,7 @@ private fun BoxScope.HeroGradientOverlay() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.85f)
+            .fillMaxHeight(0.7f)
             .align(Alignment.BottomCenter)
             .background(
                 Brush.verticalGradient(
@@ -107,13 +145,21 @@ private fun HeroTitleOrLogo(title: String, logoUrl: String?) {
     val typography = MovieDetailsTheme.typography
 
     if (!logoUrl.isNullOrBlank()) {
+        val context = LocalContext.current
+        val logoRequest = remember(logoUrl) {
+            ImageRequest.Builder(context)
+                .data(logoUrl)
+                .size(480, 240)
+                .crossfade(true)
+                .build()
+        }
         Box(
             modifier = Modifier
                 .height(68.dp)
                 .width(240.dp)
         ) {
             AsyncImage(
-                model = logoUrl,
+                model = logoRequest,
                 contentDescription = title,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxSize()
@@ -315,7 +361,6 @@ fun HeroBannerSection(
     onSearchClick: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
-    val colors = MovieDetailsTheme.colors
     val dimens = MovieDetailsTheme.dimens
 
     Box(
@@ -323,9 +368,10 @@ fun HeroBannerSection(
             .fillMaxWidth()
             .height(heroHeight)
             .clipToBounds()
-            .background(colors.background)
     ) {
-        HeroBackdrop(backdropUrl = backdropUrl)
+        HeroBackdrop(
+            backdropUrl = backdropUrl,
+        )
         HeroGradientOverlay()
         HeroFocusOverlay(
             playButtonFocusRequester = playButtonFocusRequester,
