@@ -261,7 +261,7 @@ fun MovieDetailsComposeScreen(
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
-    val heroHeight = (screenHeight * 0.65f).coerceAtLeast(380.dp)
+    val heroHeight = remember(screenHeight) { (screenHeight * 0.65f).coerceAtLeast(380.dp) }
 
     val colors = MovieDetailsTheme.colors
     val lazyListState = rememberLazyListState()
@@ -287,24 +287,12 @@ fun MovieDetailsComposeScreen(
         mutableStateOf(seasonOptions.getOrElse(selectedSeasonIndex) { seasonOptions.firstOrNull() ?: "" })
     }
 
-    LaunchedEffect(selectedSeasonIndex, seasonOptions) {
-        if (seasonOptions.isNotEmpty()) {
-            selectedSeasonText = seasonOptions.getOrElse(selectedSeasonIndex) { seasonOptions.first() }
-        }
-    }
-
     val dubOptions = remember(dynamicDubs) {
         dynamicDubs ?: emptyList()
     }
 
     var selectedDubText by remember(selectedDubIndex, dubOptions) {
         mutableStateOf(dubOptions.getOrElse(selectedDubIndex) { dubOptions.firstOrNull() ?: "" })
-    }
-
-    LaunchedEffect(selectedDubIndex, dubOptions) {
-        if (dubOptions.isNotEmpty()) {
-            selectedDubText = dubOptions.getOrElse(selectedDubIndex) { dubOptions.first() }
-        }
     }
 
     val rangeOptions = remember(dynamicRanges) {
@@ -315,14 +303,10 @@ fun MovieDetailsComposeScreen(
         mutableStateOf(rangeOptions.getOrElse(selectedRangeIndex) { rangeOptions.firstOrNull() ?: "" })
     }
 
-    LaunchedEffect(selectedRangeIndex, rangeOptions) {
-        if (rangeOptions.isNotEmpty()) {
-            selectedRangeText = rangeOptions.getOrElse(selectedRangeIndex) { rangeOptions.first() }
+    val showToast: (String) -> Unit = remember(context) {
+        { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
-    }
-
-    fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     val episodesToDisplay = dynamicEpisodes ?: emptyList()
@@ -364,21 +348,21 @@ fun MovieDetailsComposeScreen(
         dynamicActors?.map { it.actor.name }?.filter { it.isNotBlank() }?.ifEmpty { cast } ?: cast
     }
 
-    val recommendationCards = remember(dynamicRecommendations) {
-        dynamicRecommendations?.map { rec ->
-            MovieCardItem(
-                title = rec.name,
-                type = MovieCardType.POSTER,
-                posterUrl = rec.posterUrl,
-                showLogo = false,
-                showBottomTitle = true
-            )
-        } ?: emptyList()
-    }
-
-    val chunkedRecommendations = remember(recommendationCards) {
-        recommendationCards.chunked(6).mapIndexed { idx, list ->
-            MovieRecommendationRow(idx, list)
+    val chunkedRecommendations = remember(dynamicRecommendations) {
+        if (dynamicRecommendations.isNullOrEmpty()) {
+            emptyList()
+        } else {
+            dynamicRecommendations.map { rec ->
+                MovieCardItem(
+                    title = rec.name,
+                    type = MovieCardType.POSTER,
+                    posterUrl = rec.posterUrl,
+                    showLogo = false,
+                    showBottomTitle = true
+                )
+            }.chunked(6).mapIndexed { idx, list ->
+                MovieRecommendationRow(idx, list)
+            }
         }
     }
 
@@ -464,14 +448,14 @@ fun MovieDetailsComposeScreen(
                 airingSchedule = airingSchedule,
                 onEpisodeClick = onEpisodeClick,
                 onEpisodeLongClick = onEpisodeLongClick,
-                showToast = ::showToast
+                showToast = showToast
             )
 
             recommendationsSection(
                 chunkedRecommendations = chunkedRecommendations,
                 dynamicRecommendations = dynamicRecommendations,
                 onRecommendationClick = onRecommendationClick,
-                showToast = ::showToast,
+                showToast = showToast,
                 colors = colors
             )
 
