@@ -744,24 +744,24 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
         // WhiteButton = selected/active, BlackButton = unselected — same as speed presets
         fun syncEnableButtons() {
-            val ctx = requireContext()
-            val whiteStyle = com.google.android.material.R.style.Widget_Material3_Button
+            val ctx = context ?: return
             listOf(
                 binding.compressorEnableBtt  to compressor.enabled,
                 binding.compressorDisableBtt to !compressor.enabled,
             ).forEach { (btn, active) ->
-                btn.setBackgroundColor(
-                    if (active) ctx.getColor(android.R.color.white)
-                    else ctx.getColor(android.R.color.transparent)
-                )
-                // Use strokeColor pattern from styles: WhiteButton = textColor bg, BlackButton = iconGrayBackground bg
+                // Apply the full WhiteButton or BlackButton style — backgroundTint only.
+                // Also update setTextColor so we don't get white text on white background.
+                val styleAttr = if (active) R.style.WhiteButton else R.style.BlackButton
                 val ta = ctx.obtainStyledAttributes(
-                    if (active) R.style.WhiteButton else R.style.BlackButton,
-                    intArrayOf(com.google.android.material.R.attr.backgroundTint)
+                    styleAttr,
+                    intArrayOf(
+                        com.google.android.material.R.attr.backgroundTint,
+                        android.R.attr.textColor,
+                    )
                 )
-                val tint = ta.getColorStateList(0)
+                btn.backgroundTintList = ta.getColorStateList(0)
+                ta.getColorStateList(1)?.let { btn.setTextColor(it) }
                 ta.recycle()
-                btn.backgroundTintList = tint
             }
             updateCurrentLabel()
         }
@@ -823,14 +823,18 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         )
 
         fun syncPresetButtons(active: com.google.android.material.button.MaterialButton?) {
-            val ctx = requireContext()
+            val ctx = context ?: return
             allPresets.forEach { btn ->
                 val isActive = btn == active
                 val ta = ctx.obtainStyledAttributes(
                     if (isActive) R.style.WhiteButton else R.style.BlackButton,
-                    intArrayOf(com.google.android.material.R.attr.backgroundTint)
+                    intArrayOf(
+                        com.google.android.material.R.attr.backgroundTint,
+                        android.R.attr.textColor,
+                    )
                 )
                 btn.backgroundTintList = ta.getColorStateList(0)
+                ta.getColorStateList(1)?.let { btn.setTextColor(it) }
                 ta.recycle()
             }
         }
@@ -1376,10 +1380,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             playerBinding?.apply {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
                 playerCompressorBtt.isVisible = playBackCompressorEnabled
-                // Restore compressor settings each time the player UI loads.
-                // CS3IPlayer is recreated between videos so the compressor
-                // object is always fresh — without this the compressor stays
-                // disabled on every video after the first.
                 if (playBackCompressorEnabled) restoreCompressorSettings()
                 playerResizeBtt.isVisible = playerResizeEnabled
                 playerRotateBtt.isVisible =
