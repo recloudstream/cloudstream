@@ -160,6 +160,14 @@ object DataStoreHelper {
             _resultsSortingMode = value.ordinal
         }
 
+    var cacheTimeMinutes: Int by UserPreferenceDelegate(
+        "cache_time_pref",
+        0
+    )
+
+    val isCacheEnabled: Boolean get() = cacheTimeMinutes > 0
+    val cacheTimeSeconds: Long get() = cacheTimeMinutes * 60L
+
     @Serializable
     data class Account(
         @JsonProperty("keyIndex") @SerialName("keyIndex") val keyIndex: Int,
