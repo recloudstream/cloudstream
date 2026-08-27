@@ -35,11 +35,13 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.LiveSearchResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
@@ -71,6 +73,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
+import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral.Companion.pickDownloadPath
 import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
@@ -1450,12 +1453,27 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         val isInvalid = rec.isNullOrEmpty()
         val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
+        val isHorizontal = (viewModel.page.value as? Resource.Success)?.value?.isHorizontalRecommendations == true ||
+            APIHolder.isApiHorizontal(matchAgainst) ||
+            rec?.any { it.type == TvType.Live || it is LiveSearchResponse || !it.backgroundPosterUrl.isNullOrEmpty() } == true
 
         recommendationBinding?.apply {
             root.isGone = isInvalid
+            resultRecommendationsList.spanCount = root.context.getSpanCount(isHorizontal)
+            val currentAdapter = resultRecommendationsList.adapter as? SearchAdapter
+            val adapter = if (currentAdapter != null) {
+                currentAdapter
+            } else {
+                SearchAdapter(
+                    resultRecommendationsList,
+                    isHorizontal = isHorizontal,
+                ) { callback ->
+                    SearchHelper.handleSearchClickCallback(callback)
+                }.also { resultRecommendationsList.adapter = it }
+            }
             root.post {
                 rec?.let { list ->
-                    (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(list.filter { it.apiName == matchAgainst })
+                    adapter.submitList(list.filter { it.apiName == matchAgainst })
                 }
             }
         }

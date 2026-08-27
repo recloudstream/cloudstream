@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
@@ -145,11 +146,17 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
         } else false
 
         val firstProvider = providers?.firstOrNull()
+        val isHorizontal = if (isSingleProvider && firstProvider != null) {
+            APIHolder.isApiHorizontal(firstProvider)
+        } else false
+
         if (isSingleProvider && firstProvider != null) {
             binding.quickSearchAutofitResults.apply {
+                spanCount = context.getSpanCount(isHorizontal)
                 setRecycledViewPool(SearchAdapter.sharedPool)
                 adapter = SearchAdapter(
                     this,
+                    isHorizontal = isHorizontal,
                 ) { callback ->
                     SearchHelper.handleSearchClickCallback(callback)
                 }

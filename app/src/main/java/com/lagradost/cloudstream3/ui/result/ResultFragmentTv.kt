@@ -18,12 +18,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.LiveSearchResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentResultTvBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
@@ -152,11 +155,29 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         currentRecommendations = rec ?: emptyList()
         val isInvalid = rec.isNullOrEmpty()
+        val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
+        val isHorizontal = (viewModel.page.value as? Resource.Success)?.value?.isHorizontalRecommendations == true ||
+            APIHolder.isApiHorizontal(matchAgainst) ||
+            rec?.any { it.type == TvType.Live || it is LiveSearchResponse || !it.backgroundPosterUrl.isNullOrEmpty() } == true
         binding?.apply {
             resultRecommendationsList.isGone = isInvalid
             resultRecommendationsHolder.isGone = isInvalid
+            resultRecommendationsList.spanCount = if (isHorizontal) 4 else 8
+            val currentAdapter = resultRecommendationsList.adapter as? SearchAdapter
+            val adapter = if (currentAdapter != null) {
+                currentAdapter
+            } else {
+                SearchAdapter(
+                    resultRecommendationsList,
+                    isHorizontal = isHorizontal,
+                ) { callback ->
+                    if (callback.action == SEARCH_ACTION_FOCUSED) {
+                        toggleEpisodes(false)
+                    } else SearchHelper.handleSearchClickCallback(callback)
+                }.also { resultRecommendationsList.adapter = it }
+            }
             val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
-            (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(rec?.filter { it.apiName == matchAgainst }
+            adapter.submitList(rec?.filter { it.apiName == matchAgainst }
                 ?: emptyList())
 
             rec?.map { it.apiName }?.distinct()?.let { apiNames ->

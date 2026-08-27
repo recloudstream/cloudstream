@@ -288,6 +288,7 @@ object DataStoreHelper {
         @Transient override var score: Score? = null,
         @Transient open val tags: List<String>? = null,
     ) : SearchResponse {
+        @Transient override var backgroundPosterUrl: String? = null
         @JsonProperty("rating", access = JsonProperty.Access.WRITE_ONLY)
         @SerialName("rating")
         @Deprecated(
@@ -506,6 +507,7 @@ object DataStoreHelper {
         @JsonProperty("quality") @SerialName("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") @SerialName("posterHeaders") override var posterHeaders: Map<String, String>? = null,
         @JsonProperty("score") @SerialName("score") override var score: Score? = null,
+        @JsonProperty("backgroundPosterUrl") @SerialName("backgroundPosterUrl") override var backgroundPosterUrl: String? = null,
     ) : SearchResponse
 
     /**

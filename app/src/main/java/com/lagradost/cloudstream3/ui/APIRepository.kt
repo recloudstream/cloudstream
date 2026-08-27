@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui
 
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.DubStatus
@@ -158,7 +159,7 @@ class APIRepository(val api: MainAPI) {
             withTimeout(getTimeout(api.getMainPageTimeoutMs)) {
                 api.lastHomepageRequest = unixTimeMS
 
-                nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
+                val result = nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
                     listOf(
                         api.getMainPage(
                             page,
@@ -191,6 +192,16 @@ class APIRepository(val api: MainAPI) {
                         }
                     }
                 }
+
+                result.forEach { response ->
+                    response?.items?.forEach { list ->
+                        if (list.isHorizontalImages) {
+                            APIHolder.markApiAsHorizontal(api.name)
+                        }
+                    }
+                }
+
+                result
             }
         }
     }

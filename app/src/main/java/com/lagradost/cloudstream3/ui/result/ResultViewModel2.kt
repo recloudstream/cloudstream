@@ -193,6 +193,7 @@ data class ResultData(
     val nextAiringDate: UiText?,
     val nextAiringEpisode: UiText?,
     val plotHeaderText: UiText,
+    val isHorizontalRecommendations: Boolean = false,
     val posterHeaders: Map<String, String>? = null,
 )
 
@@ -305,6 +306,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         backgroundPosterUrl = backgroundPosterUrl,
         logoUrl = logoUrl,
         title = name,
+        isHorizontalRecommendations = this.isHorizontalRecommendations || (APIHolder.getApiFromNameNull(this.apiName)?.hasHorizontalRecommendations == true) || APIHolder.isApiHorizontal(this.apiName) || type == TvType.Live,
         typeText = txt(
             when (type) {
                 TvType.TvSeries -> R.string.tv_series_singular
@@ -2559,6 +2561,7 @@ class ResultViewModel2 : ViewModel() {
         override var duration: Int? = null,
         override var trailers: MutableList<TrailerData> = mutableListOf(),
         override var recommendations: List<SearchResponse>? = null,
+        override var isHorizontalRecommendations: Boolean = false,
         override var actors: List<ActorData>? = null,
         override var comingSoon: Boolean = false,
         override var syncData: MutableMap<String, String> = mutableMapOf(),
