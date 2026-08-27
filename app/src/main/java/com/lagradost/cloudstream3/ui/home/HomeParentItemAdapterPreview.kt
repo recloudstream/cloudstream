@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -547,10 +548,6 @@ class HomeParentItemAdapterPreview(
                 alternateHeadProfilePic?.loadImage(currentAccount?.image)
             }
 
-            headProfilePicCard?.setOnClickListener {
-                activity?.showAccountSelectLinear()
-            }
-
             fun showAccountEditBox(context: Context): Boolean {
                 val currentAccount = DataStoreHelper.getCurrentAccount()
                 return if (currentAccount != null) {
@@ -578,6 +575,9 @@ class HomeParentItemAdapterPreview(
             }
 
             alternateHeadProfilePicCard?.setOnClickListener {
+                activity?.showAccountSelectLinear()
+            }
+            headProfilePicCard?.setOnClickListener {
                 activity?.showAccountSelectLinear()
             }
 
@@ -651,8 +651,35 @@ class HomeParentItemAdapterPreview(
             }
         }
 
+        private fun clearPreview() {
+            previewAdapter.submitList(listOf())
+            previewViewpager.setCurrentItem(0, false)
+            (binding as? FragmentHomeHeadTvBinding)?.apply {
+                homePreviewText.text = ""
+                homePreviewDescription.text = ""
+                homePreviewDescription.isGone = true
+                homePreviewScore.text = ""
+                homePreviewScore.isGone = true
+                homePreviewYear.text = ""
+                homePreviewYear.isGone = true
+                homePreviewDuration.text = ""
+                homePreviewDuration.isGone = true
+                homePreviewCast.text = ""
+                homePreviewCast.isGone = true
+                homePreviewTags.isGone = true
+                homeBackgroundPosterWatermarkBadgeHolder.setImageDrawable(null)
+                homeBackgroundPosterWatermarkBadgeHolder.isGone = true
+                homePreviewInfoBtt.setOnClickListener(null)
+            }
+            (binding as? FragmentHomeHeadBinding)?.apply {
+                homePreviewPlay.setOnClickListener(null)
+                homePreviewInfo.setOnClickListener(null)
+                homePreviewBookmark.setOnClickListener(null)
+            }
+        }
+
         private fun updatePreview(preview: Resource<Pair<Boolean, List<LoadResponse>>>) {
-            if (preview is Resource.Success) {
+            if (preview is Resource.Success || preview is Resource.Loading) {
                 homeNonePadding.apply {
                     val params = layoutParams
                     params.height = 0
@@ -684,23 +711,48 @@ class HomeParentItemAdapterPreview(
                     alternativeAccountPadding?.isVisible = false
                     (binding as? FragmentHomeHeadTvBinding)?.apply {
                         homePreviewInfoBtt.isVisible = true
+                        homePreviewViewpagerText.isVisible = true
                     }
-                    // Explicitly bind the current item to ensure instant loading
+                    (binding as? FragmentHomeHeadBinding)?.apply {
+                        homePreviewTitleHolder.isVisible = true
+                    }
+
                     val currentPos = previewViewpager.currentItem
-                    val item = preview.value.second.getOrNull(currentPos)
+                    val items = preview.value.second
+                    val (item, pos) = if (currentPos in items.indices) {
+                        items[currentPos] to currentPos
+                    } else {
+                        items.firstOrNull()?.let { it to 0 } ?: (null to 0)
+                    }
                     if (item != null) {
-                        onSelect(item, currentPos)
+                        onSelect(item, pos)
+                    }
+                }
+
+                is Resource.Loading -> {
+                    clearPreview()
+                    previewViewpager.isInvisible = true
+                    previewViewpagerText.isVisible = true
+                    alternativeAccountPadding?.isVisible = false
+                    (binding as? FragmentHomeHeadTvBinding)?.apply {
+                        homePreviewInfoBtt.isVisible = true
+                        homePreviewViewpagerText.isInvisible = true
+                    }
+                    (binding as? FragmentHomeHeadBinding)?.apply {
+                        homePreviewTitleHolder.isInvisible = true
                     }
                 }
 
                 else -> {
-                    previewAdapter.submitList(listOf())
-                    previewViewpager.setCurrentItem(0, false)
+                    clearPreview()
                     previewViewpager.isVisible = false
                     previewViewpagerText.isVisible = false
                     alternativeAccountPadding?.isVisible = true
                     (binding as? FragmentHomeHeadTvBinding)?.apply {
                         homePreviewInfoBtt.isVisible = false
+                    }
+                    (binding as? FragmentHomeHeadBinding)?.apply {
+                        homePreviewTitleHolder.isVisible = false
                     }
                     //previewHeader.isVisible = false
                 }

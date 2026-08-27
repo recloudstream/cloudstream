@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.newSearchResponseList
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.CoroutineScope
@@ -62,6 +63,10 @@ class APIRepository(val api: MainAPI) {
         fun getTimeout(desired: Long?): Long {
             return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
         }
+
+        fun clearCache() {
+            cache.clear()
+        }
     }
 
     private fun afterPluginsLoaded(forceReload: Boolean) {
@@ -88,31 +93,37 @@ class APIRepository(val api: MainAPI) {
                 if (isInvalidData(url)) throw ErrorLoadingException()
                 val fixedUrl = api.fixUrl(url)
                 val lookingForHash = Pair(api.name, fixedUrl)
+                val cacheTtl = DataStoreHelper.cacheTimeSeconds
+                val isCacheEnabled = DataStoreHelper.isCacheEnabled
 
-                val cached = cache.withLock {
-                    var found: LoadResponse? = null
-                    for (item in cache) {
-                        // 10 min save
-                        if (item.hash == lookingForHash && (unixTime - item.unixTime) < 60 * 10) {
-                            found = item.response
-                            break
+                if (isCacheEnabled) {
+                    val cached = cache.withLock {
+                        var found: LoadResponse? = null
+                        for (item in cache) {
+                            if (item.hash == lookingForHash && (unixTime - item.unixTime) < cacheTtl) {
+                                found = item.response
+                                break
+                            }
                         }
+                        found
                     }
-                    found
+
+                    if (cached != null) return@withTimeout cached
                 }
 
-                if (cached != null) return@withTimeout cached
                 api.load(fixedUrl)?.also { response ->
                     // Remove all blank tags as early as possible
                     response.tags = response.tags?.filter { it.isNotBlank() }
                     val add = SavedLoadResponse(unixTime, response, lookingForHash)
 
-                    cache.withLock {
-                        if (cache.size > CACHE_SIZE) {
-                            cache[cacheIndex] = add // rolling cache
-                            cacheIndex = (cacheIndex + 1) % CACHE_SIZE
-                        } else {
-                            cache.add(add)
+                    if (isCacheEnabled) {
+                        cache.withLock {
+                            if (cache.size > CACHE_SIZE) {
+                                cache[cacheIndex] = add // rolling cache
+                                cacheIndex = (cacheIndex + 1) % CACHE_SIZE
+                            } else {
+                                cache.add(add)
+                            }
                         }
                     }
                 } ?: throw ErrorLoadingException()
