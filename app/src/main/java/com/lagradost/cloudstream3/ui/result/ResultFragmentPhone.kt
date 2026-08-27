@@ -35,13 +35,11 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
-import com.lagradost.cloudstream3.LiveSearchResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
@@ -1453,16 +1451,14 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         val isInvalid = rec.isNullOrEmpty()
         val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
-        val isHorizontal = (viewModel.page.value as? Resource.Success)?.value?.isHorizontalRecommendations == true ||
-            APIHolder.isApiHorizontal(matchAgainst) ||
-            rec?.any { it.type == TvType.Live || it is LiveSearchResponse || !it.backgroundPosterUrl.isNullOrEmpty() } == true
+        val isHorizontal = viewModel.isRecommendationsHorizontal(rec)
 
         recommendationBinding?.apply {
             root.isGone = isInvalid
             resultRecommendationsList.spanCount = root.context.getSpanCount(isHorizontal)
             val currentAdapter = resultRecommendationsList.adapter as? SearchAdapter
             val adapter = if (currentAdapter != null) {
-                currentAdapter
+                currentAdapter.apply { this.isHorizontal = isHorizontal }
             } else {
                 SearchAdapter(
                     resultRecommendationsList,

@@ -3,11 +3,8 @@ package com.lagradost.cloudstream3.ui.search
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import com.lagradost.cloudstream3.APIHolder
-import com.lagradost.cloudstream3.LiveSearchResponse
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.isHorizontalCard
 import com.lagradost.cloudstream3.databinding.SearchResultGridBinding
 import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -51,10 +48,6 @@ class SearchAdapter(
 
     var hasNext: Boolean = false
 
-    val coverRatio: Double get() = if (isHorizontal) 1.8 else 0.68
-
-    private val coverHeight: Int get() = (resView.itemWidth / coverRatio).roundToInt()
-
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
         val inflater = LayoutInflater.from(parent.context)
 
@@ -82,29 +75,21 @@ class SearchAdapter(
     }
 
     override fun onBindContent(holder: ViewHolderState<Any>, item: SearchResponse, position: Int) {
-        val isCardHorizontal = isHorizontal ||
-            item.type == TvType.Live ||
-            item is LiveSearchResponse ||
-            !item.backgroundPosterUrl.isNullOrEmpty() ||
-            APIHolder.isApiHorizontal(item.apiName)
+        val isCardHorizontal = item.isHorizontalCard(isHorizontal)
 
         val currentRatio = if (isCardHorizontal) 1.8 else 0.68
         val currentCoverHeight = (resView.itemWidth / currentRatio).roundToInt()
 
-        when (val binding = holder.view) {
-            is SearchResultGridExpandedBinding -> {
-                val cardParams = binding.backgroundCard.layoutParams
-                if (cardParams.height != currentCoverHeight) {
-                    cardParams.height = currentCoverHeight
-                    binding.backgroundCard.layoutParams = cardParams
-                }
-            }
-            is SearchResultGridBinding -> {
-                val cardParams = binding.backgroundCard.layoutParams
-                if (cardParams.height != currentCoverHeight) {
-                    cardParams.height = currentCoverHeight
-                    binding.backgroundCard.layoutParams = cardParams
-                }
+        val backgroundCard = when (val binding = holder.view) {
+            is SearchResultGridExpandedBinding -> binding.backgroundCard
+            is SearchResultGridBinding -> binding.backgroundCard
+            else -> null
+        }
+        backgroundCard?.let {
+            val cardParams = it.layoutParams
+            if (cardParams.height != currentCoverHeight) {
+                cardParams.height = currentCoverHeight
+                it.layoutParams = cardParams
             }
         }
         SearchResultBuilder.bind(clickCallback, item, position, holder.view.root, isHorizontal = isCardHorizontal)

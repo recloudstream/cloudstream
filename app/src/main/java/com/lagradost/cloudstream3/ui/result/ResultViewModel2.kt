@@ -43,6 +43,7 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.SeasonData
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.SimklSyncServices
+import com.lagradost.cloudstream3.isHorizontalCard
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TorrentLoadResponse
 import com.lagradost.cloudstream3.TrackerType
@@ -493,6 +494,12 @@ class ResultViewModel2 : ViewModel() {
     private val _page: MutableLiveData<Resource<ResultData>?> =
         MutableLiveData(null)
     val page: LiveData<Resource<ResultData>?> = _page
+
+    /** Whether the currently loaded content's recommendations should render as horizontal cards. */
+    fun isRecommendationsHorizontal(rec: List<SearchResponse>?): Boolean {
+        return (page.value as? Resource.Success)?.value?.isHorizontalRecommendations == true ||
+            rec?.any { it.isHorizontalCard() } == true
+    }
 
     private val _episodes: MutableLiveData<Resource<List<ResultEpisode>>?> =
         MutableLiveData(Resource.Loading())

@@ -11,14 +11,13 @@ import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.AnimeSearchResponse
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LiveSearchResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.isHorizontalCard
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -135,12 +134,7 @@ object SearchResultBuilder {
         cardText?.text = card.name
         cardText?.isVisible = showTitle
         cardView.isVisible = true
-        val isHorizontalCard = isHorizontal ||
-            card.type == TvType.Live ||
-            card is LiveSearchResponse ||
-            !card.backgroundPosterUrl.isNullOrEmpty() ||
-            APIHolder.isApiHorizontal(card.apiName)
-        val poster = if (isHorizontalCard) card.backgroundPosterUrl ?: card.posterUrl else card.posterUrl
+        val poster = if (card.isHorizontalCard(isHorizontal)) card.backgroundPosterUrl ?: card.posterUrl else card.posterUrl
         if (!poster.isNullOrEmpty()) {
             cardView.loadImage(poster, card.posterHeaders) {
                 error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }

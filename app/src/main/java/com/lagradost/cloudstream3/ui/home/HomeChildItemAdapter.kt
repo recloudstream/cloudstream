@@ -7,11 +7,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.preference.PreferenceManager
 import androidx.viewbinding.ViewBinding
-import com.lagradost.cloudstream3.APIHolder
-import com.lagradost.cloudstream3.LiveSearchResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.HomeRemoveGridBinding
 import com.lagradost.cloudstream3.databinding.HomeRemoveGridExpandedBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridBinding
@@ -211,15 +208,6 @@ open class HomeChildItemAdapter(
         item: SearchResponse,
         position: Int
     ) {
-        val isCardHorizontal = isHorizontal ||
-            item.type == TvType.Live ||
-            item is LiveSearchResponse ||
-            !item.backgroundPosterUrl.isNullOrEmpty() ||
-            APIHolder.isApiHorizontal(item.apiName)
-
-        if (isCardHorizontal != isHorizontal) {
-            this.isHorizontal = isCardHorizontal
-        }
         applyBinding(holder, position == 0)
 
         SearchResultBuilder.bind(
@@ -235,7 +223,7 @@ open class HomeChildItemAdapter(
             holder.itemView,
             nextFocusUp,
             nextFocusDown,
-            isHorizontal = isCardHorizontal
+            isHorizontal = isHorizontal
         )
 
         holder.itemView.tag = position

@@ -31,7 +31,6 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.AnimeSearchResponse
-import com.lagradost.cloudstream3.LiveSearchResponse
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKeys
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -42,6 +41,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.isHorizontalCard
 import com.lagradost.cloudstream3.databinding.FragmentSearchBinding
 import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -473,9 +473,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     it.value.let { data ->
                         val list = data.list
                         if (list.isNotEmpty()) {
-                            val isHorizontal = list.any { item ->
-                                item.type == TvType.Live || item is LiveSearchResponse || !item.backgroundPosterUrl.isNullOrEmpty() || APIHolder.isApiHorizontal(item.apiName)
-                            }
+                            val isHorizontal = list.any { it.isHorizontalCard() }
                             binding.searchAutofitResults.spanCount = view?.context?.getSpanCount(isHorizontal) ?: currentSpan
                             (binding.searchAutofitResults.adapter as? SearchAdapter)?.apply {
                                 this.isHorizontal = isHorizontal
@@ -519,9 +517,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                         val dataListFiltered =
                             context?.filterSearchResultByFilmQuality(dataList) ?: dataList
 
-                        val isHorizontal = dataListFiltered.any {
-                            it.type == TvType.Live || it is LiveSearchResponse || !it.backgroundPosterUrl.isNullOrEmpty()
-                        } || APIHolder.isApiHorizontal(providerName)
+                        val isHorizontal = dataListFiltered.any { it.isHorizontalCard() } ||
+                            APIHolder.isApiHorizontal(providerName)
 
                         val homePageList = HomePageList(
                             providerName,

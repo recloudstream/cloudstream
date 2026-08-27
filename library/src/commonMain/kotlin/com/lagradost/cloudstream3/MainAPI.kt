@@ -138,24 +138,11 @@ object APIHolder {
         initMap(true)
     }
 
-    var horizontalApiCache: AtomicList<String> = atomicListOf()
-
-    fun markApiAsHorizontal(name: String) {
-        horizontalApiCache.withLock {
-            if (!horizontalApiCache.contains(name)) {
-                horizontalApiCache = horizontalApiCache + name
-            }
-        }
-    }
-
     fun isApiHorizontal(name: String?): Boolean {
         if (name == null) return false
-        val api = getApiFromNameNull(name) ?: return horizontalApiCache.contains(name)
+        val api = getApiFromNameNull(name) ?: return false
         return api.hasHorizontalSearch ||
-            api.hasMainPageHorizontalImages ||
-            api.supportedTypes.all { it == TvType.Live } ||
-            horizontalApiCache.contains(name) ||
-            horizontalApiCache.contains(api.name)
+            (api.supportedTypes.isNotEmpty() && api.supportedTypes.all { it == TvType.Live })
     }
 
     fun removePluginMapping(plugin: MainAPI) {
@@ -495,26 +482,19 @@ fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): Hom
     return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
 }
 
-@kotlin.jvm.JvmOverloads
 fun newSearchResponseList(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
-    isHorizontalImages: Boolean = false,
 ): SearchResponseList {
     @Suppress("DEPRECATION_ERROR")
     return SearchResponseList(
         list,
-        hasNext = hasNext ?: list.isNotEmpty(),
-        isHorizontalImages = isHorizontalImages
+        hasNext = hasNext ?: list.isNotEmpty()
     )
 }
 
-@kotlin.jvm.JvmOverloads
-fun List<SearchResponse>.toNewSearchResponseList(
-    hasNext: Boolean? = null,
-    isHorizontalImages: Boolean = false,
-) : SearchResponseList {
-    return newSearchResponseList(this, hasNext, isHorizontalImages)
+fun List<SearchResponse>.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
+    return newSearchResponseList(this, hasNext)
 }
 
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
@@ -658,9 +638,6 @@ abstract class MainAPI {
     //emptyList<MainPageData>() //
     open val mainPage = listOf(MainPageData("", "", false))
 
-    val hasMainPageHorizontalImages: Boolean
-        get() = try { mainPage.any { it.horizontalImages } } catch (_: Throwable) { false }
-
     // @WorkerThread
     open suspend fun getMainPage(
         page: Int,
@@ -673,11 +650,7 @@ abstract class MainAPI {
     open suspend fun search(query: String, page: Int): SearchResponseList? {
         val searchResults = search(query) ?: return null
 
-        return newSearchResponseList(
-            searchResults,
-            false,
-            isHorizontalImages = hasHorizontalSearch || hasMainPageHorizontalImages
-        )
+        return newSearchResponseList(searchResults, false)
     }
 
     // @WorkerThread
@@ -1326,8 +1299,7 @@ data class SearchResponseList
 @Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
 constructor(
     val items: List<SearchResponse>,
-    val hasNext: Boolean = false,
-    val isHorizontalImages: Boolean = false
+    val hasNext: Boolean = false
 )
 
 /** enum class holds search quality.
@@ -1557,6 +1529,18 @@ fun SearchResponse.addPoster(url: String?, headers: Map<String, String>? = null,
  * */
 fun SearchResponse.addBackgroundPoster(url: String?) {
     this.backgroundPosterUrl = url
+}
+
+/** True if this item should be rendered as a horizontal (16:9-ish) card,
+ * either because the surrounding context already is ([contextHorizontal]),
+ * or because the item itself signals it (live stream, backdrop poster, or
+ * a provider that opted into horizontal search results). */
+fun SearchResponse.isHorizontalCard(contextHorizontal: Boolean = false): Boolean {
+    return contextHorizontal ||
+        type == TvType.Live ||
+        this is LiveSearchResponse ||
+        !backgroundPosterUrl.isNullOrEmpty() ||
+        APIHolder.isApiHorizontal(apiName)
 }
 
 /** Extension function that adds poster to [LoadResponse]

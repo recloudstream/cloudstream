@@ -146,11 +146,8 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
         } else false
 
         val firstProvider = providers?.firstOrNull()
-        val isHorizontal = if (isSingleProvider && firstProvider != null) {
-            APIHolder.isApiHorizontal(firstProvider)
-        } else false
-
         if (isSingleProvider && firstProvider != null) {
+            val isHorizontal = APIHolder.isApiHorizontal(firstProvider)
             binding.quickSearchAutofitResults.apply {
                 spanCount = context.getSpanCount(isHorizontal)
                 setRecycledViewPool(SearchAdapter.sharedPool)
