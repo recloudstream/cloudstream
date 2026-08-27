@@ -211,11 +211,11 @@ class HomeViewModel : ViewModel() {
 
     private var onGoingLoad: Job? = null
     private var isCurrentlyLoadingName: String? = null
-    private fun loadAndCancel(api: MainAPI) {
+    private fun loadAndCancel(api: MainAPI, forceReload: Boolean = false) {
         //println("loaded ${api.name}")
         onGoingLoad?.cancel()
         isCurrentlyLoadingName = api.name
-        onGoingLoad = load(api)
+        onGoingLoad = load(api, forceReload)
     }
 
     data class ExpandableHomepageList(
@@ -316,7 +316,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun load(api: MainAPI): Job = ioSafe {
+    private fun load(api: MainAPI, forceReload: Boolean = false): Job = ioSafe {
         repo = //if (api != null) {
             APIRepository(api)
         //} else {
@@ -325,6 +325,11 @@ class HomeViewModel : ViewModel() {
 
         _apiName.postValue(repo?.name)
         _randomItems.postValue(listOf())
+        _preview.postValue(Resource.Loading())
+        previewResponses.clear()
+        previewResponsesAdded.clear()
+        currentShuffledList = emptyList()
+        addJob?.cancel()
 
         if (repo?.hasMainPage != true) {
             _page.postValue(Resource.Success(emptyMap()))
@@ -333,14 +338,11 @@ class HomeViewModel : ViewModel() {
         }
 
 
-        if (!APIRepository.hasHomePageCache(api.name, 1, null)) {
+        if (forceReload || !APIRepository.hasHomePageCache(api.name, 1, null)) {
             _page.postValue(Resource.Loading())
-            _preview.postValue(Resource.Loading())
         }
-        // cancel the current preview expand as that is no longer relevant
-        addJob?.cancel()
 
-        when (val data = repo?.getMainPage(1, null)) {
+        when (val data = repo?.getMainPage(1, null, forceReload)) {
             is Resource.Success -> {
                 try {
                     expandable.clear()
@@ -443,7 +445,7 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun afterPluginsLoaded(forceReload: Boolean) {
-        loadAndCancel(DataStoreHelper.currentHomePage, forceReload)
+        loadAndCancel(DataStoreHelper.currentHomePage, false)
     }
 
     private fun afterMainPluginsLoaded(unused: Boolean = false) {
@@ -507,7 +509,7 @@ class HomeViewModel : ViewModel() {
     // only save the key if it is from UI, as we don't want internal functions changing the setting
     fun loadAndCancel(
         preferredApiName: String?,
-        forceReload: Boolean = true,
+        forceReload: Boolean = false,
         fromUI: Boolean = false
     ) =
         ioSafe {
@@ -523,31 +525,31 @@ class HomeViewModel : ViewModel() {
                 return@ioSafe
             }
 
-            if (forceReload) {
-                APIRepository.clearCache()
+            if (forceReload && preferredApiName != null) {
+                APIRepository.clearCache(preferredApiName)
             }
 
             val api = getApiFromNameNull(preferredApiName)
             if (preferredApiName == noneApi.name) {
                 // just set to random
                 if (fromUI) DataStoreHelper.currentHomePage = noneApi.name
-                loadAndCancel(noneApi)
+                loadAndCancel(noneApi, forceReload)
             } else if (preferredApiName == randomApi.name) {
                 // randomize the api, if none exist like if not loaded or not installed
                 // then use nothing
                 val validAPIs = context?.filterProviderByPreferredMedia()
                 if (validAPIs.isNullOrEmpty()) {
-                    loadAndCancel(noneApi)
+                    loadAndCancel(noneApi, forceReload)
                 } else {
                     val apiRandom = validAPIs.random()
-                    loadAndCancel(apiRandom)
+                    loadAndCancel(apiRandom, forceReload)
                     if (fromUI) DataStoreHelper.currentHomePage = apiRandom.name
                 }
             } else if (api == null) {
                 // API is not found aka not loaded or removed, post the loading
                 // progress if waiting for plugins, otherwise nothing
                 if (PluginManager.loadedOnlinePlugins || PluginManager.isSafeMode()) {
-                    loadAndCancel(noneApi)
+                    loadAndCancel(noneApi, forceReload)
                 } else {
                     _page.postValue(Resource.Loading())
                     if (preferredApiName != null)
@@ -556,7 +558,7 @@ class HomeViewModel : ViewModel() {
             } else {
                 // if the api is found, then set it to it and save key
                 if (fromUI) DataStoreHelper.currentHomePage = api.name
-                loadAndCancel(api)
+                loadAndCancel(api, forceReload)
             }
             reloadAccount()
         }
