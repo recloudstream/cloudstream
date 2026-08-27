@@ -811,8 +811,6 @@ public abstract class com/lagradost/cloudstream3/MainAPI {
 	public fun getGetMainPageTimeoutMs ()Ljava/lang/Long;
 	public fun getHasChromecastSupport ()Z
 	public fun getHasDownloadSupport ()Z
-	public fun getHasHorizontalRecommendations ()Z
-	public fun getHasHorizontalSearch ()Z
 	public fun getHasMainPage ()Z
 	public fun getHasQuickSearch ()Z
 	public fun getInstantLinkLoading ()Z
@@ -918,8 +916,6 @@ public final class com/lagradost/cloudstream3/MainAPIKt {
 	public static final fun isAudioType (Lcom/lagradost/cloudstream3/TvType;)Z
 	public static final fun isEpisodeBased (Lcom/lagradost/cloudstream3/LoadResponse;)Z
 	public static final fun isEpisodeBased (Lcom/lagradost/cloudstream3/TvType;)Z
-	public static final fun isHorizontalCard (Lcom/lagradost/cloudstream3/SearchResponse;Z)Z
-	public static synthetic fun isHorizontalCard$default (Lcom/lagradost/cloudstream3/SearchResponse;ZILjava/lang/Object;)Z
 	public static final fun isLiveStream (Lcom/lagradost/cloudstream3/TvType;)Z
 	public static final fun isMovieType (Lcom/lagradost/cloudstream3/TvType;)Z
 	public static final fun isUpcoming (Ljava/lang/String;)Z
