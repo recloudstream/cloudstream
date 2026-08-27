@@ -56,9 +56,19 @@ class APIRepository(val api: MainAPI) {
             val hash: Pair<String, String>
         )
 
+        data class SavedHomePageResponse(
+            val unixTime: Long,
+            val response: List<HomePageResponse?>,
+            val hash: Pair<String, Pair<Int, Int?>>
+        )
+
         private val cache = atomicListOf<SavedLoadResponse>()
         private var cacheIndex: Int = 0
         const val CACHE_SIZE = 20
+
+        private val homeCache = atomicListOf<SavedHomePageResponse>()
+        private var homeCacheIndex: Int = 0
+        const val HOME_CACHE_SIZE = 20
 
         fun getTimeout(desired: Long?): Long {
             return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
@@ -66,12 +76,13 @@ class APIRepository(val api: MainAPI) {
 
         fun clearCache() {
             cache.clear()
+            homeCache.clear()
         }
     }
 
     private fun afterPluginsLoaded(forceReload: Boolean) {
         if (forceReload) {
-            cache.clear()
+            clearCache()
         }
     }
 
@@ -165,11 +176,30 @@ class APIRepository(val api: MainAPI) {
     }
 
     suspend fun getMainPage(page: Int, nameIndex: Int? = null): Resource<List<HomePageResponse?>> {
+        val lookingForHash = Pair(api.name, Pair(page, nameIndex))
+        val cacheTtl = DataStoreHelper.cacheTimeSeconds
+        val isCacheEnabled = DataStoreHelper.isCacheEnabled
+
+        if (isCacheEnabled) {
+            val cached = homeCache.withLock {
+                var found: List<HomePageResponse?>? = null
+                for (item in homeCache) {
+                    if (item.hash == lookingForHash && (unixTime - item.unixTime) < cacheTtl) {
+                        found = item.response
+                        break
+                    }
+                }
+                found
+            }
+
+            if (cached != null) return Resource.Success(cached)
+        }
+
         return safeApiCall {
             withTimeout(getTimeout(api.getMainPageTimeoutMs)) {
                 api.lastHomepageRequest = unixTimeMS
 
-                nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
+                val res = nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
                     listOf(
                         api.getMainPage(
                             page,
@@ -202,6 +232,20 @@ class APIRepository(val api: MainAPI) {
                         }
                     }
                 }
+
+                if (isCacheEnabled && res.isNotEmpty()) {
+                    val add = SavedHomePageResponse(unixTime, res, lookingForHash)
+                    homeCache.withLock {
+                        if (homeCache.size > HOME_CACHE_SIZE) {
+                            homeCache[homeCacheIndex] = add // rolling cache
+                            homeCacheIndex = (homeCacheIndex + 1) % HOME_CACHE_SIZE
+                        } else {
+                            homeCache.add(add)
+                        }
+                    }
+                }
+
+                res
             }
         }
     }
