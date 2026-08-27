@@ -139,11 +139,15 @@ object APIHolder {
     }
 
     fun isApiHorizontal(name: String?): Boolean {
+        if (TEST_FORCE_HORIZONTAL) return true // TODO TEST-ONLY: revert before commit
         if (name == null) return false
         val api = getApiFromNameNull(name) ?: return false
         return api.hasHorizontalSearch ||
             (api.supportedTypes.isNotEmpty() && api.supportedTypes.all { it == TvType.Live })
     }
+
+    // TODO TEST-ONLY: revert before commit
+    private const val TEST_FORCE_HORIZONTAL = true
 
     fun removePluginMapping(plugin: MainAPI) {
         apis.withLock {
