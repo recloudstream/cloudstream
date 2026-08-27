@@ -710,6 +710,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         //}
     }
 
+    @SuppressLint("ResourceType")
     private fun showCompressorDialog() {
         val act = activity ?: return
         val compressor = (player as? CS3IPlayer)?.compressor ?: return
