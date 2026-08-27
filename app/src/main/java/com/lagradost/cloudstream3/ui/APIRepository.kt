@@ -111,7 +111,7 @@ class APIRepository(val api: MainAPI) {
                     val cached = cache.withLock {
                         var found: LoadResponse? = null
                         for (item in cache) {
-                            if (item.hash == lookingForHash && (unixTime - item.unixTime) < cacheTtl) {
+                            if (item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl) {
                                 found = item.response
                                 break
                             }
@@ -184,7 +184,7 @@ class APIRepository(val api: MainAPI) {
             val cached = homeCache.withLock {
                 var found: List<HomePageResponse?>? = null
                 for (item in homeCache) {
-                    if (item.hash == lookingForHash && (unixTime - item.unixTime) < cacheTtl) {
+                    if (item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl) {
                         found = item.response
                         break
                     }
