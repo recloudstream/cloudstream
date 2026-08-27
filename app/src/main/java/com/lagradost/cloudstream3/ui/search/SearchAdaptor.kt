@@ -91,19 +91,20 @@ class SearchAdapter(
         val currentRatio = if (isCardHorizontal) 1.8 else 0.68
         val currentCoverHeight = (resView.itemWidth / currentRatio).roundToInt()
 
-        val imageView = when (val binding = holder.view) {
-            is SearchResultGridExpandedBinding -> binding.imageView
-            is SearchResultGridBinding -> binding.imageView
-            else -> null
-        }
-
-        if (imageView != null) {
-            val params = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                currentCoverHeight
-            )
-            if (imageView.layoutParams.width != params.width || imageView.layoutParams.height != params.height) {
-                imageView.layoutParams = params
+        when (val binding = holder.view) {
+            is SearchResultGridExpandedBinding -> {
+                val cardParams = binding.backgroundCard.layoutParams
+                if (cardParams.height != currentCoverHeight) {
+                    cardParams.height = currentCoverHeight
+                    binding.backgroundCard.layoutParams = cardParams
+                }
+            }
+            is SearchResultGridBinding -> {
+                val cardParams = binding.backgroundCard.layoutParams
+                if (cardParams.height != currentCoverHeight) {
+                    cardParams.height = currentCoverHeight
+                    binding.backgroundCard.layoutParams = cardParams
+                }
             }
         }
         SearchResultBuilder.bind(clickCallback, item, position, holder.view.root, isHorizontal = isCardHorizontal)

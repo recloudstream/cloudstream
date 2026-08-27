@@ -150,11 +150,12 @@ object APIHolder {
 
     fun isApiHorizontal(name: String?): Boolean {
         if (name == null) return false
-        val api = getApiFromNameNull(name)
-        return api?.hasHorizontalSearch == true ||
-            api?.hasMainPageHorizontalImages == true ||
-            api?.supportedTypes?.all { it == TvType.Live } == true ||
-            horizontalApiCache.contains(name)
+        val api = getApiFromNameNull(name) ?: return horizontalApiCache.contains(name)
+        return api.hasHorizontalSearch ||
+            api.hasMainPageHorizontalImages ||
+            api.supportedTypes.all { it == TvType.Live } ||
+            horizontalApiCache.contains(name) ||
+            horizontalApiCache.contains(api.name)
     }
 
     fun removePluginMapping(plugin: MainAPI) {
@@ -494,6 +495,7 @@ fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): Hom
     return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
 }
 
+@kotlin.jvm.JvmOverloads
 fun newSearchResponseList(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
@@ -507,6 +509,7 @@ fun newSearchResponseList(
     )
 }
 
+@kotlin.jvm.JvmOverloads
 fun List<SearchResponse>.toNewSearchResponseList(
     hasNext: Boolean? = null,
     isHorizontalImages: Boolean = false,
