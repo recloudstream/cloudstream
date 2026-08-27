@@ -538,7 +538,7 @@
     <string name="compressor_enabled_key" translatable="false">compressor_button_enabled</string>
     <string name="compressor_enable">Enabled</string>
     <string name="compressor_on">On</string>
-    <string name="compressor_on_format">On · %d dB / +%d dB</string>
+    <string name="compressor_on_format">On · %1$d dB / +%2$d dB</string>
     <string name="compressor_off">Off</string>
     <string name="compressor_preset_label">Presets</string>
     <string name="compressor_preset_light">Light</string>
