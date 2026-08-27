@@ -1,19 +1,17 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
-import android.text.format.Formatter.formatShortFileSize
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.edit
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
-import com.lagradost.cloudstream3.ui.home.HomeCache
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
@@ -40,24 +38,18 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.settings_providers, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
+        val cachePref = getPref(R.string.cache_time_key)
         val cacheNames = resources.getStringArray(R.array.cache_time_names)
         val cacheValues = resources.getIntArray(R.array.cache_time_values)
 
         fun updateCacheSummary() {
-            val currentVal = DataStoreHelper.cacheTimeMinutes
-            val index = cacheValues.indexOf(currentVal)
-            getPref(R.string.cache_time_key)?.summary = if (index != -1) {
-                cacheNames.getOrNull(index)
-            } else {
-                "${currentVal}m"
-            }
+            val idx = cacheValues.indexOf(DataStoreHelper.cacheTimeMinutes)
+            cachePref?.summary = cacheNames.getOrNull(idx) ?: "${DataStoreHelper.cacheTimeMinutes}m"
         }
         updateCacheSummary()
 
-        getPref(R.string.cache_time_key)?.setOnPreferenceClickListener {
-            val currentVal = DataStoreHelper.cacheTimeMinutes
-            val currentIndex = cacheValues.indexOf(currentVal).let { if (it == -1) 0 else it }
-
+        cachePref?.setOnPreferenceClickListener {
+            val currentIndex = cacheValues.indexOf(DataStoreHelper.cacheTimeMinutes).coerceAtLeast(0)
             activity?.showBottomDialog(
                 cacheNames.toList(),
                 currentIndex,
@@ -65,37 +57,21 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
                 false,
                 {}
             ) { selectedIndex ->
-                val selectedMinutes = cacheValues.getOrNull(selectedIndex) ?: 0
-                DataStoreHelper.cacheTimeMinutes = selectedMinutes
+                DataStoreHelper.cacheTimeMinutes = cacheValues.getOrElse(selectedIndex) { 0 }
                 updateCacheSummary()
             }
-            return@setOnPreferenceClickListener true
+            true
         }
 
-        getPref(R.string.clear_provider_cache_key)?.let { pref ->
-            fun updateSummary() {
-                try {
-                    val size = HomeCache.getCacheSize(pref.context)
-                    pref.summary = formatShortFileSize(pref.context, size)
-                } catch (e: Exception) {
-                    logError(e)
-                }
+        getPref(R.string.clear_provider_cache_key)?.setOnPreferenceClickListener {
+            try {
+                APIRepository.clearCache()
+                RepoLinkGenerator.cache.clear()
+                showToast(R.string.clear_provider_cache_cleared, Toast.LENGTH_SHORT)
+            } catch (e: Exception) {
+                logError(e)
             }
-
-            updateSummary()
-
-            pref.setOnPreferenceClickListener {
-                try {
-                    HomeCache.clearAll(context)
-                    APIRepository.clearCache()
-                    RepoLinkGenerator.cache.clear()
-                    updateSummary()
-                    showToast(R.string.clear_provider_cache_cleared, Toast.LENGTH_SHORT)
-                } catch (e: Exception) {
-                    logError(e)
-                }
-                return@setOnPreferenceClickListener true
-            }
+            true
         }
 
         getPref(R.string.display_sub_key)?.setOnPreferenceClickListener {

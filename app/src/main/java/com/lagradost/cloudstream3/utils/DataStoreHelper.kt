@@ -64,15 +64,17 @@ class UserPreferenceDelegate<T : Any>(
     private val default: T,
 ) {
     private val klass: KClass<out T> = default::class
+    private var cache: T? = null
     private val realKey get() = "${DataStoreHelper.currentAccount}/$key"
     operator fun getValue(self: Any?, property: KProperty<*>) =
-        getKeyClass(realKey, klass.java) ?: default
+        cache ?: getKeyClass(realKey, klass.java).also { newCache -> cache = newCache } ?: default
 
     operator fun setValue(
         self: Any?,
         property: KProperty<*>,
         t: T?,
     ) {
+        cache = t
         if (t == null) {
             removeKey(realKey)
         } else {
