@@ -333,10 +333,8 @@ class HomeViewModel : ViewModel() {
         }
 
 
-        if (expandable.isEmpty()) {
-            _page.postValue(Resource.Loading())
-            _preview.postValue(Resource.Loading())
-        }
+        _page.postValue(Resource.Loading())
+        _preview.postValue(Resource.Loading())
         // cancel the current preview expand as that is no longer relevant
         addJob?.cancel()
 
