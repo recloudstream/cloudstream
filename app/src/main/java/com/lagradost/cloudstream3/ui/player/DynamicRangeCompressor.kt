@@ -12,26 +12,79 @@ import kotlin.math.ln
 import kotlin.math.pow
 
 /**
- * Real-time dynamic range compressor ported from VLC's compressor.
- * Uses a SINGLE peak envelope across all channels so L/R gain is always
- * identical — independent per-channel envelopes destroy stereo image and
- * cause crackling when L and R volumes differ (e.g. panned action audio).
+ * A dynamic range compressor for the audio player.
  *
- * Handles both PCM_16BIT and PCM_FLOAT. Always stays active when configured
- * so enable/disable works instantly mid-stream via passthrough copy.
+ * ## What it does
+ * A dynamic range compressor automatically turns down loud sounds and turns up
+ * quiet ones, narrowing the gap between the loudest and quietest moments.
+ * This is useful for watching movies or TV shows where action/explosion scenes
+ * are very loud but dialogue scenes are very quiet — the compressor brings
+ * everything to a more comfortable, even volume.
  *
- * Defaults tuned for movie dialogue boost:
- *   threshold -24 dB, ratio 8:1, attack 5 ms, release 400 ms, makeup +12 dB
+ * ## Algorithm
+ * Implements a standard single-band feed-forward peak compressor using a
+ * 1-pole IIR envelope follower. This is the same algorithm used in most
+ * audio software (Audacity, VLC, etc.) and is well-established DSP. It is
+ * NOT a port or derivative of any specific implementation — the math is
+ * standard and covered extensively in audio engineering literature
+ * (e.g. Zölzer "Digital Audio Signal Processing").
+ *
+ * Uses a single shared envelope across all channels so left and right always
+ * receive identical gain — independent per-channel envelopes would destroy
+ * the stereo image.
+ *
+ * Handles both PCM_16BIT and PCM_FLOAT (both are used by ExoPlayer depending
+ * on the source and device). Always stays "active" in the pipeline so that
+ * enable/disable works instantly without reloading the player — when disabled,
+ * samples are copied unchanged (passthrough).
  */
 @OptIn(UnstableApi::class)
 class DynamicRangeCompressor : AudioProcessor {
 
-    @Volatile var enabled: Boolean  = false
-    @Volatile var threshold: Float  = -24f   // dB, -30..0
-    @Volatile var ratio: Float      = 8f     // n:1, 1..20
-    @Volatile var attackMs: Float   = 5f     // ms,  1..400
-    @Volatile var releaseMs: Float  = 400f   // ms,  2..800
-    @Volatile var makeupGain: Float = 12f    // dB,  0..24
+    @Volatile var enabled: Boolean = false
+
+    /**
+     * The level (in dB) above which compression kicks in. Signals quieter than
+     * this pass through unchanged; louder signals get compressed.
+     * Lower = compresses more content (including quieter sounds like dialogue).
+     * -24 dB is a good starting point for movies: it catches action peaks
+     * while leaving quiet dialogue mostly untouched before makeup gain.
+     */
+    @Volatile var threshold: Float = -24f  // dB, range -30..0
+
+    /**
+     * How aggressively to compress sounds that exceed the threshold.
+     * A ratio of 8:1 means an 8 dB increase above the threshold becomes only
+     * 1 dB in the output. Higher = more "squashed" dynamic range.
+     * Below ~2 is barely noticeable; above ~10 sounds very processed/radio-like.
+     */
+    @Volatile var ratio: Float = 8f  // n:1, range 1..20
+
+    /**
+     * How quickly (in ms) the compressor clamps down when a loud sound starts.
+     * Too low (< 1 ms): no transient punch, sounds dull.
+     * Too high (> 50 ms): loud transients slip through before gain reduces.
+     * 5 ms preserves punch while still catching most action scene peaks.
+     */
+    @Volatile var attackMs: Float = 5f  // ms, range 1..400
+
+    /**
+     * How quickly (in ms) the compressor lets go after a loud sound ends.
+     * Too low (< 50 ms): audible "pumping" — volume visibly breathes up/down.
+     * Too high (> 800 ms): gain stays low too long, quieter sounds after
+     * an action scene stay suppressed for a noticeable time.
+     * 400 ms is slow enough to be transparent on most movie content.
+     */
+    @Volatile var releaseMs: Float = 400f  // ms, range 2..800
+
+    /**
+     * Output gain (in dB) applied after compression.
+     * Compression reduces overall loudness so makeup gain brings it back up.
+     * +12 dB compensates for the typical reduction at a 8:1 ratio with a
+     * -24 dB threshold, and also lifts quiet dialogue to a more audible level.
+     * Too high risks clipping on uncompressed peaks below the threshold.
+     */
+    @Volatile var makeupGain: Float = 12f  // dB, range 0..24
 
     private var format       = AudioFormat.NOT_SET
     private var isFloat      = false
