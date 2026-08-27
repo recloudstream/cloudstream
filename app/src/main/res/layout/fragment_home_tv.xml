@@ -29,9 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="60dp"
             android:orientation="vertical"
-            android:paddingTop="40dp"
             app:shimmer_auto_start="true"
             app:shimmer_base_alpha="0.2"
             app:shimmer_duration="@integer/loading_time"
@@ -42,39 +41,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <FrameLayout
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="125dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center"
-                        android:layout_margin="@dimen/loading_margin"
-                        android:background="@color/grayShimmer"
-                        android:translationX="-164dp"
-                        app:cardCornerRadius="@dimen/loading_radius" />
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="148dp"
-                        android:layout_height="234dp"
-                        android:layout_gravity="center"
-                        android:layout_margin="@dimen/loading_margin"
-                        android:background="@color/grayShimmer"
-                        app:cardCornerRadius="@dimen/loading_radius" />
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="125dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center"
-                        android:layout_margin="@dimen/loading_margin"
-                        android:background="@color/grayShimmer"
-                        android:translationX="164dp"
-                        app:cardCornerRadius="@dimen/loading_radius" />
-                </FrameLayout>
-
-                <include layout="@layout/loading_line_short_center" />
+                    android:layout_height="400dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/grayShimmer"
+                    app:cardCornerRadius="@dimen/rounded_image_radius" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
