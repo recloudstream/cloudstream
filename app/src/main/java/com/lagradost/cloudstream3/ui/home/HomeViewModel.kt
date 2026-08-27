@@ -361,30 +361,37 @@ class HomeViewModel : ViewModel() {
                             context?.filterSearchResultByFilmQuality(shuffled)
                                 ?: shuffled
 
-                        previewResponses.clear()
-                        previewResponsesAdded.clear()
-
-                        updatePreviewResponses(
-                            previewResponses,
-                            previewResponsesAdded,
-                            randomItems,
-                            3
-                        )
-
-                        _randomItems.postValue(randomItems)
                         currentShuffledList = randomItems
+                        _randomItems.postValue(randomItems)
+
+                        // Lazy Hero Banner: Fetch banner details asynchronously in background
+                        addJob?.cancel()
+                        addJob = ioSafe {
+                            previewResponses.clear()
+                            previewResponsesAdded.clear()
+
+                            updatePreviewResponses(
+                                previewResponses,
+                                previewResponsesAdded,
+                                randomItems,
+                                3
+                            )
+
+                            if (previewResponses.isEmpty()) {
+                                _preview.postValue(
+                                    Resource.Failure(
+                                        false,
+                                        "No homepage responses"
+                                    )
+                                )
+                            } else {
+                                _preview.postValue(Resource.Success((previewResponsesAdded.size < currentShuffledList.size) to previewResponses))
+                            }
+                        }
                     }
                 }
-            }
-            if (previewResponses.isEmpty()) {
-                _preview.postValue(
-                    Resource.Failure(
-                        false,
-                        "No homepage responses"
-                    )
-                )
             } else {
-                _preview.postValue(Resource.Success((previewResponsesAdded.size < currentShuffledList.size) to previewResponses))
+                _preview.postValue(Resource.Failure(false, "No homepage responses"))
             }
         } catch (e: Exception) {
             _randomItems.postValue(emptyList())
@@ -535,7 +542,7 @@ class HomeViewModel : ViewModel() {
     // only save the key if it is from UI, as we don't want internal functions changing the setting
     fun loadAndCancel(
         preferredApiName: String?,
-        forceReload: Boolean = true,
+        forceReload: Boolean = false,
         fromUI: Boolean = false
     ) =
         ioSafe {

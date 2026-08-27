@@ -30,9 +30,9 @@ object HomeCache {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class CachedSearchResponse(
-        @JsonProperty("name") val name: String,
-        @JsonProperty("url") val url: String,
-        @JsonProperty("apiName") val apiName: String,
+        @JsonProperty("name") val name: String = "",
+        @JsonProperty("url") val url: String = "",
+        @JsonProperty("apiName") val apiName: String = "",
         @JsonProperty("type") val type: TvType? = null,
         @JsonProperty("posterUrl") val posterUrl: String? = null,
         @JsonProperty("posterHeaders") val posterHeaders: Map<String, String>? = null,
@@ -154,8 +154,8 @@ object HomeCache {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class CachedHomePageList(
-        @JsonProperty("name") val name: String,
-        @JsonProperty("list") val list: List<CachedSearchResponse>,
+        @JsonProperty("name") val name: String = "",
+        @JsonProperty("list") val list: List<CachedSearchResponse> = emptyList(),
         @JsonProperty("isHorizontalImages") val isHorizontalImages: Boolean = false
     ) {
         @Suppress("DEPRECATION_ERROR")
@@ -180,7 +180,7 @@ object HomeCache {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class CachedHomePageResponse(
-        @JsonProperty("items") val items: List<CachedHomePageList>,
+        @JsonProperty("items") val items: List<CachedHomePageList> = emptyList(),
         @JsonProperty("hasNext") val hasNext: Boolean = false
     ) {
         @Suppress("DEPRECATION_ERROR")
@@ -203,8 +203,8 @@ object HomeCache {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class CachedHomeData(
-        @JsonProperty("unixTime") val unixTime: Long,
-        @JsonProperty("responses") val responses: List<CachedHomePageResponse>
+        @JsonProperty("unixTime") val unixTime: Long = 0L,
+        @JsonProperty("responses") val responses: List<CachedHomePageResponse> = emptyList()
     )
 
     private val memoryCache = ConcurrentHashMap<String, Pair<Long, List<HomePageResponse?>>>()
