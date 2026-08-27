@@ -2,22 +2,21 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
 import android.os.Looper
-import androidx.annotation.OptIn
-import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.Renderer
-import androidx.media3.exoplayer.audio.AudioSink
-import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.text.TextRenderer
+import androidx.annotation.OptIn
+import androidx.media3.common.audio.AudioProcessor
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
+import androidx.media3.exoplayer.audio.AudioSink
+import androidx.media3.exoplayer.audio.DefaultAudioSink
 
 @UnstableApi
 class FixedNextRenderersFactory(
     context: Context,
     private val compressor: DynamicRangeCompressor? = null,
 ) : NextRenderersFactory(context) {
-
     /** Somehow the nextlib authors decided that we need a text renderer that causes
      * "ERROR_CODE_FAILED_RUNTIME_CHECK".
      *
@@ -33,6 +32,7 @@ class FixedNextRenderersFactory(
     ) {
         out.add(TextRenderer(output, outputLooper))
     }
+
 
     @OptIn(UnstableApi::class)
     override fun buildAudioSink(
