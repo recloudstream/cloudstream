@@ -139,15 +139,11 @@ object APIHolder {
     }
 
     fun isApiHorizontal(name: String?): Boolean {
-        if (TEST_FORCE_HORIZONTAL) return true // TODO TEST-ONLY: revert before commit
         if (name == null) return false
         val api = getApiFromNameNull(name) ?: return false
         return api.hasHorizontalSearch ||
             (api.supportedTypes.isNotEmpty() && api.supportedTypes.all { it == TvType.Live })
     }
-
-    // TODO TEST-ONLY: revert before commit
-    private const val TEST_FORCE_HORIZONTAL = true
 
     fun removePluginMapping(plugin: MainAPI) {
         apis.withLock {
@@ -636,7 +632,14 @@ abstract class MainAPI {
 
     open val vpnStatus = VPNStatus.None
     open val providerType = ProviderType.DirectProvider
+
+
+    /**
+     * These horizontal options are only affecting extension search and load recommendations.
+     * */
+    @Prerelease
     open val hasHorizontalSearch: Boolean = false
+    @Prerelease
     open val hasHorizontalRecommendations: Boolean = false
 
     //emptyList<MainPageData>() //
@@ -1539,6 +1542,7 @@ fun SearchResponse.addBackgroundPoster(url: String?) {
  * either because the surrounding context already is ([contextHorizontal]),
  * or because the item itself signals it (live stream, backdrop poster, or
  * a provider that opted into horizontal search results). */
+@Prerelease
 fun SearchResponse.isHorizontalCard(contextHorizontal: Boolean = false): Boolean {
     return contextHorizontal ||
         type == TvType.Live ||
@@ -1868,6 +1872,7 @@ interface LoadResponse {
     var trailers: MutableList<TrailerData>
 
     var recommendations: List<SearchResponse>?
+    @Prerelease
     var isHorizontalRecommendations: Boolean
         get() = false
         set(value) {}

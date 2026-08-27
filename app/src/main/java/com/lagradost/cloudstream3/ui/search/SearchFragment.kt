@@ -517,13 +517,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                         val dataListFiltered =
                             context?.filterSearchResultByFilmQuality(dataList) ?: dataList
 
-                        val isHorizontal = dataListFiltered.any { it.isHorizontalCard() } ||
-                            APIHolder.isApiHorizontal(providerName)
-
                         val homePageList = HomePageList(
                             providerName,
                             dataListFiltered,
-                            isHorizontalImages = isHorizontal
+                            isHorizontalImages = false
                         )
 
                         HomeViewModel.ExpandableHomepageList(
