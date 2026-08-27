@@ -226,7 +226,7 @@ class HomeViewModel : ViewModel() {
 
     private val expandable: MutableMap<String, ExpandableHomepageList> = mutableMapOf()
     private val _page =
-        MutableLiveData<Resource<Map<String, ExpandableHomepageList>>>(Resource.Loading())
+        MutableLiveData<Resource<Map<String, ExpandableHomepageList>>>()
     val page: LiveData<Resource<Map<String, ExpandableHomepageList>>> = _page
 
     val lock: MutableSet<String> = mutableSetOf()
@@ -333,8 +333,10 @@ class HomeViewModel : ViewModel() {
         }
 
 
-        _page.postValue(Resource.Loading())
-        _preview.postValue(Resource.Loading())
+        if (!APIRepository.hasHomePageCache(api.name, 1, null)) {
+            _page.postValue(Resource.Loading())
+            _preview.postValue(Resource.Loading())
+        }
         // cancel the current preview expand as that is no longer relevant
         addJob?.cancel()
 
