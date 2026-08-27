@@ -307,7 +307,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         backgroundPosterUrl = backgroundPosterUrl,
         logoUrl = logoUrl,
         title = name,
-        isHorizontalRecommendations = this.isHorizontalRecommendations || (APIHolder.getApiFromNameNull(this.apiName)?.hasHorizontalRecommendations == true) || APIHolder.isApiHorizontal(this.apiName) || type == TvType.Live,
+        isHorizontalRecommendations = this.isHorizontalRecommendations || APIHolder.getApiFromNameNull(this.apiName)?.hasHorizontalRecommendations == true || APIHolder.isApiHorizontal(this.apiName) || type == TvType.Live,
         typeText = txt(
             when (type) {
                 TvType.TvSeries -> R.string.tv_series_singular
