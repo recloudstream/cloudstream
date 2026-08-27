@@ -25,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
+import kotlinx.serialization.Serializable
 
 class APIRepository(val api: MainAPI) {
     companion object {
@@ -57,6 +58,7 @@ class APIRepository(val api: MainAPI) {
             val hash: Pair<String, String>
         )
 
+        @Serializable
         data class SavedHomePageResponse(
             val unixTime: Long,
             val response: List<HomePageResponse?>,
