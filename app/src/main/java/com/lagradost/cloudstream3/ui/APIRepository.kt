@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
-import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.SubtitleFile
@@ -78,10 +77,21 @@ class APIRepository(val api: MainAPI) {
             return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
         }
 
-        fun clearCache() {
-            cache.clear()
-            homeCache.clear()
-            CloudStreamApp.removeKeys(HOME_CACHE_FOLDER)
+        fun clearCache(apiName: String? = null) {
+            if (apiName == null) {
+                cache.clear()
+                homeCache.clear()
+                CloudStreamApp.removeKeys(HOME_CACHE_FOLDER)
+            } else {
+                homeCache.withLock {
+                    homeCache.removeAll { it.hash.first == apiName }
+                }
+                CloudStreamApp.getKeys(HOME_CACHE_FOLDER)?.forEach { key ->
+                    if (key.startsWith("${apiName}_")) {
+                        CloudStreamApp.removeKey(HOME_CACHE_FOLDER, key)
+                    }
+                }
+            }
         }
 
         fun hasHomePageCache(apiName: String, page: Int = 1, nameIndex: Int? = null): Boolean {
@@ -96,16 +106,6 @@ class APIRepository(val api: MainAPI) {
             val onDisk = CloudStreamApp.getKey<SavedHomePageResponse>(HOME_CACHE_FOLDER, diskKey)
             return onDisk != null && unixTime - onDisk.unixTime < cacheTtl
         }
-    }
-
-    private fun afterPluginsLoaded(forceReload: Boolean) {
-        if (forceReload) {
-            clearCache()
-        }
-    }
-
-    init {
-        afterPluginsLoadedEvent += ::afterPluginsLoaded
     }
 
     val hasMainPage = api.hasMainPage
@@ -193,13 +193,13 @@ class APIRepository(val api: MainAPI) {
         delay(delta)
     }
 
-    suspend fun getMainPage(page: Int, nameIndex: Int? = null): Resource<List<HomePageResponse?>> {
+    suspend fun getMainPage(page: Int, nameIndex: Int? = null, forceReload: Boolean = false): Resource<List<HomePageResponse?>> {
         val lookingForHash = Pair(api.name, Pair(page, nameIndex))
         val cacheTtl = DataStoreHelper.cacheTimeSeconds
         val isCacheEnabled = DataStoreHelper.isCacheEnabled
         val diskKey = "${api.name}_${page}_${nameIndex}"
 
-        if (isCacheEnabled) {
+        if (isCacheEnabled && !forceReload) {
             val cached = homeCache.withLock {
                 var found: List<HomePageResponse?>? = null
                 for (item in homeCache) {
@@ -211,7 +211,9 @@ class APIRepository(val api: MainAPI) {
                 found
             }
 
-            if (cached != null) return Resource.Success(cached)
+            if (cached != null) {
+                return Resource.Success(cached)
+            }
 
             val cachedOnDisk = CloudStreamApp.getKey<SavedHomePageResponse>(HOME_CACHE_FOLDER, diskKey)
             if (cachedOnDisk != null && unixTime - cachedOnDisk.unixTime < cacheTtl) {
