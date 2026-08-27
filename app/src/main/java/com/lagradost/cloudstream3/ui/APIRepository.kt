@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.newSearchResponseList
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -69,6 +70,7 @@ class APIRepository(val api: MainAPI) {
         private val homeCache = atomicListOf<SavedHomePageResponse>()
         private var homeCacheIndex: Int = 0
         const val HOME_CACHE_SIZE = 20
+        const val HOME_CACHE_FOLDER = "home_cache"
 
         fun getTimeout(desired: Long?): Long {
             return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
@@ -77,6 +79,20 @@ class APIRepository(val api: MainAPI) {
         fun clearCache() {
             cache.clear()
             homeCache.clear()
+            CloudStreamApp.removeKeys(HOME_CACHE_FOLDER)
+        }
+
+        fun hasHomePageCache(apiName: String, page: Int = 1, nameIndex: Int? = null): Boolean {
+            if (!DataStoreHelper.isCacheEnabled) return false
+            val lookingForHash = Pair(apiName, Pair(page, nameIndex))
+            val cacheTtl = DataStoreHelper.cacheTimeSeconds
+            val inRam = homeCache.withLock {
+                homeCache.any { it.hash == lookingForHash && unixTime - it.unixTime < cacheTtl }
+            }
+            if (inRam) return true
+            val diskKey = "${apiName}_${page}_${nameIndex}"
+            val onDisk = CloudStreamApp.getKey<SavedHomePageResponse>(HOME_CACHE_FOLDER, diskKey)
+            return onDisk != null && unixTime - onDisk.unixTime < cacheTtl
         }
     }
 
@@ -179,6 +195,7 @@ class APIRepository(val api: MainAPI) {
         val lookingForHash = Pair(api.name, Pair(page, nameIndex))
         val cacheTtl = DataStoreHelper.cacheTimeSeconds
         val isCacheEnabled = DataStoreHelper.isCacheEnabled
+        val diskKey = "${api.name}_${page}_${nameIndex}"
 
         if (isCacheEnabled) {
             val cached = homeCache.withLock {
@@ -193,6 +210,19 @@ class APIRepository(val api: MainAPI) {
             }
 
             if (cached != null) return Resource.Success(cached)
+
+            val cachedOnDisk = CloudStreamApp.getKey<SavedHomePageResponse>(HOME_CACHE_FOLDER, diskKey)
+            if (cachedOnDisk != null && unixTime - cachedOnDisk.unixTime < cacheTtl) {
+                homeCache.withLock {
+                    if (homeCache.size > HOME_CACHE_SIZE) {
+                        homeCache[homeCacheIndex] = cachedOnDisk
+                        homeCacheIndex = (homeCacheIndex + 1) % HOME_CACHE_SIZE
+                    } else {
+                        homeCache.add(cachedOnDisk)
+                    }
+                }
+                return Resource.Success(cachedOnDisk.response)
+            }
         }
 
         return safeApiCall {
@@ -243,6 +273,7 @@ class APIRepository(val api: MainAPI) {
                             homeCache.add(add)
                         }
                     }
+                    CloudStreamApp.setKey(HOME_CACHE_FOLDER, diskKey, add)
                 }
 
                 res
