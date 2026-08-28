@@ -41,6 +41,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="500dp"
+                    android:alpha="0.25"
                     android:background="@color/grayShimmer" />
 
                 <LinearLayout
