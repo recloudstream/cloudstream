@@ -34,7 +34,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/home_preview_info_btt"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="260dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
@@ -69,15 +69,15 @@
                     android:layout_marginStart="@dimen/navbar_width"
                     android:gravity="bottom"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
                     <ImageView
                         android:id="@+id/home_background_poster_watermark_badge_holder"
                         android:layout_width="wrap_content"
-                        android:layout_height="72dp"
+                        android:layout_height="48dp"
                         android:contentDescription="LogoURL"
-                        android:minHeight="72dp"
-                        android:maxWidth="220dp"
+                        android:minHeight="48dp"
+                        android:maxWidth="200dp"
                         android:scaleType="fitStart"
                         android:adjustViewBounds="true" />
 
@@ -87,10 +87,10 @@
                         android:id="@+id/home_preview_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="4dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textSize="25sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"
                         android:shadowColor="#B0000000"
                         android:shadowDx="0"
@@ -102,7 +102,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="4dp"
                         android:layout_marginBottom="4dp"
                         android:gravity="center_vertical">
 
@@ -142,9 +142,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:maxLines="3"
-                        android:paddingBottom="5dp"
-                        android:textSize="15sp"
+                        android:maxLines="2"
+                        android:paddingBottom="4dp"
+                        android:textSize="14sp"
                         android:textColor="@color/textColor"
                         android:shadowColor="#B0000000"
                         android:shadowDx="0"
@@ -158,9 +158,9 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textColor="@color/gray_400"
-                        android:paddingBottom="5dp"
+                        android:paddingBottom="2dp"
                         tools:text="Cast: Actor One, Actor Two" />
 
                     <com.google.android.material.chip.ChipGroup
