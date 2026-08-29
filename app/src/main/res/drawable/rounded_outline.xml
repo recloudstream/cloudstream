@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@android:color/white">
-
-    <item>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
         <shape android:shape="oval">
-            <stroke
-                android:width="2dp"
-                android:color="?attr/white" />
-            <corners android:radius="10dp" />
+            <stroke android:width="4dp" android:color="@android:color/white" />
         </shape>
     </item>
-</ripple>
+    <item android:state_hovered="true">
+        <shape android:shape="oval">
+            <stroke android:width="4dp" android:color="@android:color/white" />
+        </shape>
+    </item>
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <stroke android:width="4dp" android:color="@android:color/white" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval" />
+    </item>
+</selector>

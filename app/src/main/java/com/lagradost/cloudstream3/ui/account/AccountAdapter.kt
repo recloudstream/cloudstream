@@ -1,11 +1,8 @@
 package com.lagradost.cloudstream3.ui.account
 
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import coil3.transform.RoundedCornersTransformation
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountListItemAddBinding
 import com.lagradost.cloudstream3.databinding.AccountListItemBinding
@@ -47,45 +44,23 @@ class AccountAdapter(
         when (val binding = holder.view) {
             is AccountListItemBinding -> binding.apply {
                 val isTv = isLayout(TV or EMULATOR) || !root.isInTouchMode
-
                 val isLastUsedAccount = item.keyIndex == DataStoreHelper.selectedKeyIndex
 
                 accountName.text = item.name
                 accountImage.loadImage(item.image)
                 lockIcon.isVisible = item.lockPin != null
-                outline.isVisible = !isTv && isLastUsedAccount
 
-                if (isTv) {
-                    // For emulator but this is fine on TV also
-                    root.isFocusableInTouchMode = true
-                    if (isLastUsedAccount) {
-                        root.requestFocus()
-                    }
+                if (isLastUsedAccount) root.requestFocus()
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        root.foreground = ContextCompat.getDrawable(
-                            root.context,
-                            R.drawable.outline_drawable
-                        )
-                    }
-                } else {
+                if (!isTv) {
                     root.setOnLongClickListener {
                         showAccountEditDialog(
                             context = root.context,
                             account = item,
                             isNewAccount = false,
-                            accountEditCallback = { account ->
-                                accountEditCallback.invoke(
-                                    account
-                                )
-                            },
-                            accountDeleteCallback = { account ->
-                                accountDeleteCallback.invoke(
-                                    account
-                                )
-                            }
+                            accountEditCallback = { account -> accountEditCallback.invoke(account) },
+                            accountDeleteCallback = { account -> accountDeleteCallback.invoke(account) }
                         )
-
                         true
                     }
                 }
@@ -96,31 +71,13 @@ class AccountAdapter(
             }
 
             is AccountListItemEditBinding -> binding.apply {
-                val isTv = isLayout(TV or EMULATOR) || !root.isInTouchMode
-
                 val isLastUsedAccount = item.keyIndex == DataStoreHelper.selectedKeyIndex
 
                 accountName.text = item.name
-                accountImage.loadImage(item.image) {
-                    RoundedCornersTransformation(10f)
-                }
+                accountImage.loadImage(item.image)
                 lockIcon.isVisible = item.lockPin != null
-                outline.isVisible = !isTv && isLastUsedAccount
 
-                if (isTv) {
-                    // For emulator but this is fine on TV also
-                    root.isFocusableInTouchMode = true
-                    if (isLastUsedAccount) {
-                        root.requestFocus()
-                    }
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        root.foreground = ContextCompat.getDrawable(
-                            root.context,
-                            R.drawable.outline_drawable
-                        )
-                    }
-                }
+                if (isLastUsedAccount) root.requestFocus()
 
                 root.setOnClickListener {
                     showAccountEditDialog(
@@ -128,11 +85,7 @@ class AccountAdapter(
                         account = item,
                         isNewAccount = false,
                         accountEditCallback = { account -> accountEditCallback.invoke(account) },
-                        accountDeleteCallback = { account ->
-                            accountDeleteCallback.invoke(
-                                account
-                            )
-                        }
+                        accountDeleteCallback = { account -> accountDeleteCallback.invoke(account) }
                     )
                 }
             }
@@ -142,6 +95,9 @@ class AccountAdapter(
     override fun onBindFooter(holder: ViewHolderState<Any>) {
         val binding = holder.view as? AccountListItemAddBinding ?: return
         binding.apply {
+            if (isLayout(TV or EMULATOR) || !root.isInTouchMode) {
+                root.isFocusableInTouchMode = true
+            }
             root.setOnClickListener {
                 val accounts = this@AccountAdapter.immutableCurrentList
 

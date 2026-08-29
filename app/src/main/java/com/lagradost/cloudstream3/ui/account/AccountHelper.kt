@@ -56,6 +56,7 @@ object AccountHelper {
 
         var currentEditAccount = account
         val dialog = builder.show()
+        binding.accountImageHolder.requestFocus()
 
         if (!isNewAccount) binding.title.setText(R.string.edit_account)
 
@@ -100,7 +101,7 @@ object AccountHelper {
 
         // Handle the profile picture and its interactions
         binding.accountImage.loadImage(account.image)
-        binding.accountImage.setOnClickListener {
+        binding.accountImageHolder.setOnClickListener {
             // Roll the image forwards once
             currentEditAccount = currentEditAccount.copy(customImage = null)
             currentEditAccount =
@@ -166,7 +167,7 @@ object AccountHelper {
 
         canSetPin = true
 
-        binding.editProfilePhotoButton.setOnClickListener {
+        binding.editProfilePhotoButtonHolder.setOnClickListener {
             val bottomSheetDialog = BottomSheetDialog(context)
             val sheetBinding = BottomInputDialogBinding.inflate(LayoutInflater.from(context))
             bottomSheetDialog.setContentView(sheetBinding.root)

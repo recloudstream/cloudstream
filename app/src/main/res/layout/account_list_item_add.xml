@@ -1,29 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_view"
-    android:layout_width="110dp"
-    android:layout_height="110dp"
-    android:animateLayoutChanges="true"
-    android:backgroundTint="?attr/primaryGrayBackground"
-    android:foreground="?attr/selectableItemBackground"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     android:layout_margin="10dp"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:focusable="true"
-    app:cardCornerRadius="@dimen/rounded_image_radius"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintDimensionRatio="1"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHeight_percent="0.4"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    android:focusableInTouchMode="true">
 
-    <ImageView
-        android:layout_gravity="center"
-        android:src="@drawable/ic_baseline_add_24"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/add_account" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="?attr/primaryGrayBackground"
+        android:foreground="@drawable/rounded_outline"
+        android:duplicateParentState="true"
+        app:cardCornerRadius="100dp"
+        app:cardElevation="0dp">
 
-</androidx.cardview.widget.CardView>
+        <ImageView
+            android:layout_gravity="center"
+            android:src="@drawable/ic_baseline_add_24"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/add_account"
+            app:tint="@color/textColor" />
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textColor="@color/textColor"
+        android:textSize="15sp"
+        android:text="@string/add_account" />
+
+</LinearLayout>

@@ -37,32 +37,59 @@
         android:layout_marginBottom="60dp"
         android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="@dimen/account_select_linear_item_size"
-            android:layout_height="@dimen/account_select_linear_item_size"
-            android:layout_gravity="center"
-            app:cardCornerRadius="@dimen/rounded_image_radius">
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
 
-            <ImageView
-                android:id="@+id/account_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/account_image_holder"
+                android:layout_width="@dimen/account_select_linear_item_size"
+                android:layout_height="@dimen/account_select_linear_item_size"
                 android:layout_gravity="center"
-                android:contentDescription="@string/preview_background_img_des"
+                android:foreground="@drawable/rounded_outline"
                 android:focusable="true"
-                android:foreground="@drawable/outline_drawable_forced_round"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile_bg_blue" />
+                android:nextFocusRight="@id/edit_profile_photo_button_holder"
+                android:nextFocusDown="@id/edit_profile_photo_button_holder"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp">
 
-            <ImageView
-                android:id="@+id/edit_profile_photo_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                <requestFocus />
+
+                <ImageView
+                    android:id="@+id/account_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/preview_background_img_des"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_bg_blue" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/edit_profile_photo_button_holder"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_gravity="bottom|end"
-                android:background="@color/skipOpTransparent"
-                android:padding="5dp"
-                android:src="@drawable/ic_baseline_edit_24" />
-        </androidx.cardview.widget.CardView>
+                android:focusable="true"
+                android:clickable="true"
+                android:foreground="@drawable/rounded_outline"
+                android:nextFocusLeft="@id/account_image_holder"
+                android:nextFocusUp="@id/account_image_holder"
+                android:nextFocusDown="@id/account_name"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground">
+
+                <ImageView
+                    android:id="@+id/edit_profile_photo_button"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_edit_24"
+                    app:tint="@color/textColor" />
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
 
         <EditText
             android:id="@+id/account_name"
@@ -71,9 +98,8 @@
             android:autofillHints="username"
             android:hint="@string/default_account"
             android:inputType="text"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusDown="@id/site_url_input"
+            android:nextFocusUp="@id/edit_profile_photo_button_holder"
+            android:nextFocusDown="@id/lockProfileCheckbox"
             android:requiresFadingEdge="vertical"
             android:textColorHint="?attr/grayTextColor"
             tools:ignore="LabelFor" />
@@ -83,9 +109,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="?attr/textColor"
+            android:focusable="true"
+            android:nextFocusUp="@id/account_name"
+            android:nextFocusDown="@id/apply_btt"
             android:text="@string/lock_profile"
             android:textColor="?attr/grayTextColor" />
-
 
     </LinearLayout>
 
@@ -104,6 +132,8 @@
             android:layout_width="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_gravity="center_vertical"
+            android:focusable="true"
+            android:nextFocusUp="@id/lockProfileCheckbox"
             android:nextFocusRight="@id/apply_btt"
             android:text="@string/delete" />
 
@@ -113,6 +143,9 @@
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_toStartOf="@+id/cancel_btt"
+            android:focusable="true"
+            android:nextFocusUp="@id/lockProfileCheckbox"
+            android:nextFocusDown="@id/cancel_btt"
             android:nextFocusLeft="@id/delete_btt"
             android:nextFocusRight="@id/cancel_btt"
             android:text="@string/sort_apply" />
@@ -123,6 +156,9 @@
             android:layout_width="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_gravity="center_vertical|end"
+            android:focusable="true"
+            android:nextFocusUp="@id/apply_btt"
+            android:nextFocusDown="@id/apply_btt"
             android:nextFocusLeft="@id/apply_btt"
             android:text="@string/sort_cancel" />
 
