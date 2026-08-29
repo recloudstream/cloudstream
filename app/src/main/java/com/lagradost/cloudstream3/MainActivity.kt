@@ -194,6 +194,15 @@ import kotlin.math.absoluteValue
 import kotlin.reflect.full.createInstance
 import kotlin.system.exitProcess
 
+internal fun shouldFocusSearchOnReselection(
+    currentDestinationId: Int?,
+    selectedDestinationId: Int,
+    isPhoneLayout: Boolean,
+): Boolean =
+    isPhoneLayout &&
+        currentDestinationId == R.id.navigation_search &&
+        selectedDestinationId == R.id.navigation_search
+
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
         var activityResultLauncher: ActivityResultLauncher<Intent>? = null
@@ -759,11 +768,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val destinationId = item.itemId
 
         // Check if we are already at the selected destination
-        if (navController.currentDestination?.id == destinationId) {
-            if (destinationId == R.id.navigation_search) {
-                (navHostFragment.childFragmentManager.primaryNavigationFragment as? SearchFragment)
-                    ?.focusSearchInput()
-            }
+        val currentDestinationId = navController.currentDestination?.id
+        if (shouldFocusSearchOnReselection(currentDestinationId, destinationId, isLayout(PHONE))) {
+            (navHostFragment.childFragmentManager.primaryNavigationFragment as? SearchFragment)
+                ?.focusSearchInput()
+        }
+        if (currentDestinationId == destinationId) {
             return false
         }
 
