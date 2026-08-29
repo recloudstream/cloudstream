@@ -6613,6 +6613,7 @@ public final class com/lagradost/cloudstream3/metaproviders/SyncRedirector {
 }
 
 public final class com/lagradost/cloudstream3/metaproviders/TmdbLink {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbLink$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -6632,6 +6633,21 @@ public final class com/lagradost/cloudstream3/metaproviders/TmdbLink {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbLink$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbLink$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbLink;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbLink;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbLink$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public class com/lagradost/cloudstream3/metaproviders/TmdbProvider : com/lagradost/cloudstream3/MainAPI {
 	public fun <init> ()V
 	public fun fetchContentRating (Ljava/lang/Integer;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -6648,6 +6664,684 @@ public class com/lagradost/cloudstream3/metaproviders/TmdbProvider : com/lagrado
 	public fun loadFromTmdb (I)Lcom/lagradost/cloudstream3/LoadResponse;
 	public fun loadFromTmdb (ILjava/util/List;)Lcom/lagradost/cloudstream3/LoadResponse;
 	public fun search (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCharacter ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getProfilePath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCastMember$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCountry ()Ljava/lang/String;
+	public final fun getRating ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRating$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;Ljava/util/List;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResults ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;Ljava/util/List;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCast ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/Integer;
+	public final fun component5 ()Ljava/lang/Integer;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/Double;
+	public final fun component9 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAirDate ()Ljava/lang/String;
+	public final fun getEpisodeNumber ()Ljava/lang/Integer;
+	public final fun getExternalIds ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;
+	public final fun getId ()Ljava/lang/Integer;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getOverview ()Ljava/lang/String;
+	public final fun getSeasonNumber ()Ljava/lang/Integer;
+	public final fun getStillPath ()Ljava/lang/String;
+	public final fun getVoteAverage ()Ljava/lang/Double;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbEpisode$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/String;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre;Ljava/lang/Integer;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()Ljava/lang/Integer;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbGenre$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Integer;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImdbId ()Ljava/lang/String;
+	public final fun getTvdbId ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;
+	public final fun component12 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;
+	public final fun component13 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;
+	public final fun component14 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public final fun component15 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public final fun component16 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/Double;
+	public final fun component8 ()Ljava/util/List;
+	public final fun component9 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCredits ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;
+	public final fun getDisplayTitle ()Ljava/lang/String;
+	public final fun getExternalIds ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;
+	public final fun getGenres ()Ljava/util/List;
+	public final fun getId ()Ljava/lang/Integer;
+	public final fun getImdbId ()Ljava/lang/String;
+	public final fun getOriginalTitle ()Ljava/lang/String;
+	public final fun getOverview ()Ljava/lang/String;
+	public final fun getPosterPath ()Ljava/lang/String;
+	public final fun getRecommendations ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public final fun getReleaseDate ()Ljava/lang/String;
+	public final fun getReleaseDates ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;
+	public final fun getRuntime ()Ljava/lang/Integer;
+	public final fun getSimilar ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public final fun getTitle ()Ljava/lang/String;
+	public final fun getVideos ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;
+	public final fun getVoteAverage ()Ljava/lang/Double;
+	public final fun getYear ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMovieDetail$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult;Ljava/util/List;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResults ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbMultiResult$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Ljava/util/List;Ljava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResults ()Ljava/util/List;
+	public final fun getTotalPages ()Ljava/lang/Integer;
+	public final fun getTotalResults ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Integer;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCertification ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateEntry$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCountry ()Ljava/lang/String;
+	public final fun getReleaseDates ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDateResult$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;Ljava/util/List;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResults ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbReleaseDates$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/Double;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDisplayTitle ()Ljava/lang/String;
+	public final fun getFirstAirDate ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/Integer;
+	public final fun getMediaType ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getOriginalName ()Ljava/lang/String;
+	public final fun getOriginalTitle ()Ljava/lang/String;
+	public final fun getPosterPath ()Ljava/lang/String;
+	public final fun getReleaseDate ()Ljava/lang/String;
+	public final fun getTitle ()Ljava/lang/String;
+	public final fun getVoteAverage ()Ljava/lang/Double;
+	public final fun getYear ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public final fun isTv ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSearchResult$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/Integer;Ljava/util/List;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail;Ljava/lang/Integer;Ljava/util/List;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEpisodes ()Ljava/util/List;
+	public final fun getSeasonNumber ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonDetail$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary;Ljava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEpisodeCount ()Ljava/lang/Integer;
+	public final fun getSeasonNumber ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbSeasonSummary$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component10 ()Ljava/util/List;
+	public final fun component11 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;
+	public final fun component12 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;
+	public final fun component13 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;
+	public final fun component14 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public final fun component15 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public final fun component16 ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/Double;
+	public final fun component8 ()Ljava/util/List;
+	public final fun component9 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContentRatings ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbContentRatings;
+	public final fun getCredits ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbCredits;
+	public final fun getDisplayTitle ()Ljava/lang/String;
+	public final fun getEpisodeRunTime ()Ljava/util/List;
+	public final fun getExternalIds ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbIds;
+	public final fun getFirstAirDate ()Ljava/lang/String;
+	public final fun getGenres ()Ljava/util/List;
+	public final fun getId ()Ljava/lang/Integer;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getOriginalName ()Ljava/lang/String;
+	public final fun getOverview ()Ljava/lang/String;
+	public final fun getPosterPath ()Ljava/lang/String;
+	public final fun getRecommendations ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public final fun getSeasons ()Ljava/util/List;
+	public final fun getSimilar ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbPageResult;
+	public final fun getVideos ()Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;
+	public final fun getVoteAverage ()Ljava/lang/Double;
+	public final fun getYear ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbTvDetail$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getSite ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideo$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos {
+	public static final field Companion Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;Ljava/util/List;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResults ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class com/lagradost/cloudstream3/metaproviders/TmdbProvider$TmdbVideos$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public class com/lagradost/cloudstream3/metaproviders/TraktProvider : com/lagradost/cloudstream3/MainAPI {
@@ -7235,6 +7929,10 @@ public final class com/lagradost/cloudstream3/mvvm/ArchComponentExtKt {
 	public static final fun throwAbleToResource (Ljava/lang/Throwable;)Lcom/lagradost/cloudstream3/mvvm/Resource;
 }
 
+public final class com/lagradost/cloudstream3/mvvm/ArchComponentExt_jvmCommonKt {
+	public static final fun platformThrowAbleToResource (Ljava/lang/Throwable;)Lcom/lagradost/cloudstream3/mvvm/Resource;
+}
+
 public final class com/lagradost/cloudstream3/mvvm/DebugException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;)V
 }
@@ -7438,6 +8136,10 @@ public final class com/lagradost/cloudstream3/utils/Coroutines {
 	public final fun threadSafeListOf ([Ljava/lang/Object;)Ljava/util/List;
 }
 
+public final class com/lagradost/cloudstream3/utils/Coroutines_jvmCommonKt {
+	public static final fun getWorkerDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+}
+
 public final class com/lagradost/cloudstream3/utils/Coroutines_jvmKt {
 	public static final fun runOnMainThreadNative (Lkotlin/jvm/functions/Function0;)V
 }
@@ -7623,44 +8325,6 @@ public final class com/lagradost/cloudstream3/utils/ExtractorLinkType : java/lan
 public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser {
 	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser;
 	public final fun parse (Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$HlsMultivariantPlaylist;
-}
-
-public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$C {
-	public static final field CENC_TYPE_cbc1 Ljava/lang/String;
-	public static final field CENC_TYPE_cbcs Ljava/lang/String;
-	public static final field CENC_TYPE_cenc Ljava/lang/String;
-	public static final field CENC_TYPE_cens Ljava/lang/String;
-	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$C;
-	public static final field ROLE_FLAG_ALTERNATE I
-	public static final field ROLE_FLAG_CAPTION I
-	public static final field ROLE_FLAG_COMMENTARY I
-	public static final field ROLE_FLAG_DESCRIBES_MUSIC_AND_SOUND I
-	public static final field ROLE_FLAG_DESCRIBES_VIDEO I
-	public static final field ROLE_FLAG_DUB I
-	public static final field ROLE_FLAG_EASY_TO_READ I
-	public static final field ROLE_FLAG_EMERGENCY I
-	public static final field ROLE_FLAG_ENHANCED_DIALOG_INTELLIGIBILITY I
-	public static final field ROLE_FLAG_MAIN I
-	public static final field ROLE_FLAG_SIGN I
-	public static final field ROLE_FLAG_SUBTITLE I
-	public static final field ROLE_FLAG_SUPPLEMENTARY I
-	public static final field ROLE_FLAG_TRANSCRIBES_DIALOG I
-	public static final field ROLE_FLAG_TRICK_PLAY I
-	public static final field SELECTION_FLAG_AUTOSELECT I
-	public static final field SELECTION_FLAG_DEFAULT I
-	public static final field SELECTION_FLAG_FORCED I
-	public static final field TRACK_TYPE_AUDIO I
-	public static final field TRACK_TYPE_CAMERA_MOTION I
-	public static final field TRACK_TYPE_DEFAULT I
-	public static final field TRACK_TYPE_IMAGE I
-	public static final field TRACK_TYPE_METADATA I
-	public static final field TRACK_TYPE_NONE I
-	public static final field TRACK_TYPE_TEXT I
-	public static final field TRACK_TYPE_UNKNOWN I
-	public static final field TRACK_TYPE_VIDEO I
-	public final fun getCLEARKEY_UUID ()Ljava/util/UUID;
-	public final fun getPLAYREADY_UUID ()Ljava/util/UUID;
-	public final fun getWIDEVINE_UUID ()Ljava/util/UUID;
 }
 
 public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$DrmInitData {
@@ -7928,7 +8592,7 @@ public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$ParserExce
 
 public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$PsshAtomUtil {
 	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$PsshAtomUtil;
-	public final fun buildPsshAtom (Ljava/util/UUID;[Ljava/util/UUID;[B)[B
+	public final fun buildPsshAtom (Lkotlin/uuid/Uuid;[Lkotlin/uuid/Uuid;[B)[B
 }
 
 public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$Rendition {
@@ -7949,19 +8613,19 @@ public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$Rendition 
 }
 
 public final class com/lagradost/cloudstream3/utils/HlsPlaylistParser$SchemeData {
-	public fun <init> (Ljava/util/UUID;Ljava/lang/String;Ljava/lang/String;[B)V
-	public synthetic fun <init> (Ljava/util/UUID;Ljava/lang/String;Ljava/lang/String;[BILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Ljava/util/UUID;
+	public fun <init> (Lkotlin/uuid/Uuid;Ljava/lang/String;Ljava/lang/String;[B)V
+	public synthetic fun <init> (Lkotlin/uuid/Uuid;Ljava/lang/String;Ljava/lang/String;[BILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlin/uuid/Uuid;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()[B
-	public final fun copy (Ljava/util/UUID;Ljava/lang/String;Ljava/lang/String;[B)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$SchemeData;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$SchemeData;Ljava/util/UUID;Ljava/lang/String;Ljava/lang/String;[BILjava/lang/Object;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$SchemeData;
+	public final fun copy (Lkotlin/uuid/Uuid;Ljava/lang/String;Ljava/lang/String;[B)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$SchemeData;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$SchemeData;Lkotlin/uuid/Uuid;Ljava/lang/String;Ljava/lang/String;[BILjava/lang/Object;)Lcom/lagradost/cloudstream3/utils/HlsPlaylistParser$SchemeData;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getData ()[B
 	public final fun getLicenseServerUrl ()Ljava/lang/String;
 	public final fun getMimeType ()Ljava/lang/String;
-	public final fun getUuid ()Ljava/util/UUID;
+	public final fun getUuid ()Lkotlin/uuid/Uuid;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

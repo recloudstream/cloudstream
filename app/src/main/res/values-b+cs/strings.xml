@@ -660,7 +660,7 @@
     <string name="starting_plugin_update_manually">Spouštím proces aktualizace doplňků!</string>
     <string name="no_plugins_updated_manually">Nebyly aktualizovány žádné doplňky.</string>
     <string name="sort_button_episode">Ep %s</string>
-    <string name="plugins_updated_manually">Úspěšně aktualizováno %d doplňků!</string>
+    <string name="plugins_updated_manually">Úspěšně aktualizováno %d doplňků</string>
     <string name="sort_episodes_number_desc">Epizoda (sestupně)</string>
     <string name="sort_episodes_rating_low_high">Hodnocení (nejnižší)</string>
     <string name="update_plugins_manually">Ručně aktualizovat doplňky</string>
@@ -754,4 +754,15 @@
     <string name="video_singular">Video</string>
     <string name="skip_type_preview">Náhled</string>
     <string name="player_is_live">Živě</string>
+    <string name="profile_settings">Nastavení profilu</string>
+    <string name="profile_hide_negative_sources">Skrýt zdroje s negativní prioritou</string>
+    <string name="profile_hide_error_sources">Skrýt zdroje s chybami</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d skrytý odkaz</item>
+        <item quantity="few">%d skryté odkazy</item>
+        <item quantity="many">%d skrytých odkazů</item>
+        <item quantity="other">%d skrytých odkazů</item>
+    </plurals>
+    <string name="tv_layout_clock_settings">Zobrazit hodiny s reálným časem</string>
+    <string name="tv_layout_clock_settings_des">Zobrazit hodiny s reálným časem v horní části obrazovky. Platí pro domovskou obrazovku a přehrávač</string>
 </resources>

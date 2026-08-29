@@ -225,7 +225,7 @@
     <string name="live_singular">Livestream</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="other_singular">Altro</string>
-    <string name="source_error">Errore sorgente</string>
+    <string name="source_error">Errore fonte</string>
     <string name="remote_error">Errore remoto</string>
     <string name="render_error">Errore del renderer</string>
     <string name="unexpected_error">Errore imprevisto del lettore</string>
@@ -247,7 +247,7 @@
     <string name="check_for_update">Controlla aggiornamenti</string>
     <string name="video_lock">Blocca</string>
     <string name="video_aspect_ratio_resize">Ridimensiona</string>
-    <string name="video_source">Sorgente</string>
+    <string name="video_source">Fonte</string>
     <string name="video_skip_op">Salta OP</string>
     <string name="dont_show_again">Non mostrare di nuovo</string>
     <string name="skip_update">Salta questo aggiornamento</string>
@@ -346,7 +346,7 @@
     <string name="actor_main">Protagonista</string>
     <string name="actor_supporting">Supporto</string>
     <string name="actor_background">Secondario</string>
-    <string name="home_source">Sorgente</string>
+    <string name="home_source">Fonte</string>
     <string name="home_random">Casuale</string>
     <string name="coming_soon">Prossimamente…</string>
     <string name="quality_cam">Cam</string>
@@ -670,7 +670,7 @@
     <string name="sort_episodes_date_oldest">Data di messa in onda (più vecchia)</string>
     <string name="sort_button_rating">Valutazione %s</string>
     <string name="starting_plugin_update_manually">Avvio del processo di aggiornamento plugin!</string>
-    <string name="plugins_updated_manually">%d plugin aggiornati con successo!</string>
+    <string name="plugins_updated_manually">%d plugin aggiornati correttamente</string>
     <string name="no_plugins_updated_manually">Nessun plugin è stato aggiornato.</string>
     <string name="player_notification_channel_name">Notifiche lettore</string>
     <string name="player_notification_channel_description">La notifica del lettore per controllare la riproduzione in background</string>
@@ -733,7 +733,7 @@
     <string name="clear_suggestions">Cancella suggerimenti</string>
     <string name="show_cast_in_details">Mostra pannello cast</string>
     <string name="video_info">Info sui media</string>
-    <string name="source_name">Nome sorgente</string>
+    <string name="source_name">Nome fonte</string>
     <string name="extra_brightness_settings">Luminosità extra</string>
     <string name="extra_brightness_settings_des">Attiva il filtro di luminosità quando viene superato il 100% della luminosità dello schermo</string>
     <string name="extra_brightness_key">extra_brightness_enabled</string>
@@ -753,10 +753,20 @@
         <item quantity="many">%d download in coda</item>
         <item quantity="other">%d download in coda</item>
     </plurals>
-    <string name="source_priority">Priorità sorgente</string>
-    <string name="source_priority_help">Decidi come le sorgenti video devono essere ordinate nel lettore</string>
+    <string name="source_priority">Priorità fonti</string>
+    <string name="source_priority_help">Decidi come le fonti video devono essere ordinate nel lettore</string>
     <string name="show_player_metadata_overlay">Mostra sovrapposizione metadati lettore</string>
     <string name="video_singular">Video</string>
     <string name="skip_type_preview">Anteprima</string>
     <string name="player_is_live">Live</string>
+    <string name="profile_settings">Impostazioni profilo</string>
+    <string name="profile_hide_negative_sources">Nascondi fonti con priorità negativa</string>
+    <string name="profile_hide_error_sources">Nascondi fonti con errori</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d collegamento nascosto</item>
+        <item quantity="many">%d collegamenti nascosti</item>
+        <item quantity="other">%d collegamenti nascosti</item>
+    </plurals>
+    <string name="tv_layout_clock_settings">Mostra orologio in tempo reale</string>
+    <string name="tv_layout_clock_settings_des">Mostra un orologio in tempo reale nella parte superiore dello schermo. Si applica alla homepage e al lettore</string>
 </resources>

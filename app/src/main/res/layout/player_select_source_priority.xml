@@ -160,6 +160,13 @@
         <!--            android:layout_gravity="center"-->
         <!--            android:src="@drawable/outline_edit_24" />-->
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/settings_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/title_settings" />
+
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"

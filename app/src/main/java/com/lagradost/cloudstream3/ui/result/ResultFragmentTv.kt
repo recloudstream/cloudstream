@@ -874,10 +874,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         resultMetaRating.setText(d.ratingText)
                         resultMetaStatus.setText(d.onGoingText)
                         resultMetaContentRating.setText(d.contentRatingText)
-                        resultCastText.setText(d.actorsText)
                         resultNextAiring.setText(d.nextAiringEpisode)
                         resultNextAiringTime.setText(d.nextAiringDate)
-                        resultPoster.loadImage(d.posterImage)
+                        resultPoster.loadImage(d.posterImage, headers = d.posterHeaders)
 
                         var isExpanded = false
                         resultDescription.apply {
@@ -910,7 +909,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             R.drawable.profile_bg_teal
                         ).random()
 
-                        backgroundPoster.loadImage(d.posterBackgroundImage) {
+                        backgroundPoster.loadImage(d.posterBackgroundImage, headers = d.posterHeaders) {
                             error { getImageFromDrawable(context ?: return@error null, error) }
                         }
 
@@ -932,6 +931,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             true
                         )
 
+                        resultCastText.setText(if (showCast) d.actorsText else null)
                         resultCastItems.isGone = !showCast || d.actors.isNullOrEmpty()
                         (resultCastItems.adapter as? ActorAdaptor)?.submitList(if (showCast) d.actors else emptyList())
 

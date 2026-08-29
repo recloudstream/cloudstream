@@ -631,6 +631,18 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 </LinearLayout>
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/result_cast_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?attr/grayTextColor"
+                android:textSize="15sp"
+                tools:text="Cast: Joe Ligma" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/result_cast_items"
                 android:layout_width="match_parent"
@@ -654,7 +666,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:paddingTop="50dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:text="@string/coming_soon"
                 android:textColor="?attr/textColor"
                 android:textSize="20sp"
@@ -993,17 +1006,6 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             </LinearLayout>
 
             <TextView
-                android:id="@+id/result_cast_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textColor="?attr/grayTextColor"
-                android:textSize="15sp"
-                tools:text="Cast: Joe Ligma" />
-
-            <TextView
                 android:id="@+id/result_vpn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -1036,7 +1038,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:paddingTop="50dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:text="@string/coming_soon"
                 android:textColor="?attr/textColor"
                 android:textSize="20sp"

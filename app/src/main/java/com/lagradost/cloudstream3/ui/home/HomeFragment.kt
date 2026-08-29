@@ -24,11 +24,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI
@@ -43,6 +47,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.plugins.Plugin
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.BaseFragment
@@ -63,6 +68,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettin
 import com.lagradost.cloudstream3.utils.AppContextUtils.isNetworkAvailable
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
+import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
@@ -105,6 +111,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         )
 
         val errorProfilePic = errorProfilePics.random()
+
+        fun Context.getDisplayName(apiName: String?): String? {
+            return when (apiName) {
+                noneApi.name -> getString(R.string.none)
+                randomApi.name -> getString(R.string.home_random)
+                else -> apiName
+            }
+        }
 
         //fun Activity.loadHomepageList(
         //    item: HomePageList,
@@ -424,11 +438,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             .inflate(R.layout.sort_bottom_single_provider_choice, parent, false)
                         val titleText = view.findViewById<TextView>(R.id.text1)
                         val pinIcon = view.findViewById<ImageView>(R.id.pinicon)
+                        val settingsIcon = view.findViewById<ImageView>(R.id.action_settings)
+
                         val name = getItem(position)
                         titleText?.text = name
+                        val providerApi = currentValidApis[position]
                         val isPinned =
-                            pinnedphashset.contains(currentValidApis[position].name)
+                            pinnedphashset.contains(providerApi.name)
                         pinIcon.visibility = if (isPinned) View.VISIBLE else View.GONE
+
+                        val pluginInstance = providerApi.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                        val isDownloadedPluginWithSettings = pluginInstance?.openSettings != null && !isLayout(TV)
+
+                        settingsIcon.visibility = if (isDownloadedPluginWithSettings) View.VISIBLE else View.GONE
+                        if (isDownloadedPluginWithSettings) {
+                            settingsIcon.setOnClickListener {
+                                try {
+                                    val activityContext = it.context.getActivity() ?: it.context
+                                    pluginInstance.openSettings?.invoke(activityContext)
+                                } catch (e: Throwable) {
+                                    logError(e)
+                                }
+                            }
+                        }
+
                         return view
                     }
                 }
@@ -480,8 +513,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         addAll(remainingApis)
                     }
 
-                    val names =
-                        currentValidApis.map { if (isMultiLang) "${getFlagFromIso(it.lang)?.plus(" ") ?: ""}${it.name}" else it.name }
+                    val names = currentValidApis.map {
+                        val displayName = getDisplayName(it.name)
+                        if (isMultiLang) "${getFlagFromIso(it.lang)?.plus(" ") ?: ""}$displayName" else displayName
+                    }
                     val index = currentValidApis.map { it.name }.indexOf(currentApiName)
                     listView?.setItemChecked(index, true)
                     arrayAdapter.addAll(names)
@@ -679,6 +714,38 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeViewModel.queryTextSubmit("")
             }
 
+            homePreviewSettingsButton.setOnClickListener { view ->
+                val apiName = homeViewModel.apiName.value
+                val plugin = APIHolder.getApiFromNameNull(apiName)
+                    ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                val openSettings = plugin?.openSettings
+                if (openSettings != null) {
+                    try {
+                        val activityContext = view.context.getActivity() ?: view.context
+                        openSettings.invoke(activityContext)
+                    } catch (e: Throwable) {
+                        logError(e)
+                    }
+                }
+            }
+
+            // Load value for toggling Tv layout real time clock. Hide by default at startup
+            // set visibility first, to apply a scroll effect later
+            context?.let {
+                if (isLayout(TV)) {
+                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
+                    val toggleClock =
+                        settingsManager.getBoolean(
+                            getString(R.string.tv_layout_clock_key),
+                            false
+                        )
+                    binding.homeClock.isVisible = toggleClock
+                } else {
+                    binding.homeClock.isVisible = false
+                }
+            }
+
+
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (isLayout(PHONE)) {
@@ -718,6 +785,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             view.getLocationInWindow(rect)
                             scrollParent.isVisible = true
                             scrollParent.translationY = rect[1].toFloat() - 60.toPx
+
+                            // Move the TV layout real time clock out of the way too
+                            // We check if we have the correct layout and if the clock is enabled
+                            if(isLayout(TV) && binding.homeClock.isVisible) {
+                                val scrollParent = binding.homeClock
+
+                                val rect = IntArray(2)
+                                view.getLocationInWindow(rect)
+                                scrollParent.isVisible = true
+                                scrollParent.translationY = rect[1].toFloat() - 60.toPx
+                            }
                         }
                     }
                     super.onScrolled(recyclerView, dx, dy)
@@ -740,9 +818,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
+            val displayApiName = context?.getDisplayName(apiName) ?: apiName
             binding.apply {
-                homeApiFab.text = apiName
-                homeChangeApi.text = apiName
+                homeApiFab.text = displayApiName
+                homeChangeApi.text = displayApiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
                 homePreviewSearchButton.isGone = (apiName == noneApi.name)
             }
@@ -750,6 +829,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         observe(homeViewModel.page) { data ->
             binding.apply {
+                if (isLayout(TV or EMULATOR)) {
+                    val plugin = APIHolder.getApiFromNameNull(homeViewModel.apiName.value)
+                        ?.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin
+                    homePreviewSettingsButton.isGone = plugin?.openSettings == null
+                }
+                
                 when (data) {
                     is Resource.Success -> {
                         val d = data.value
@@ -765,6 +850,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         homeLoadingError.isVisible = false
                         homeMasterRecycler.isVisible = true
                         homeLoadingShimmer.stopShimmer()
+
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
                             val distinct = d.values
@@ -785,26 +871,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             homeRandomButtonTv.isGone = true
                         }
                     }
-
+                    //Open browser directly, without a menu.
                     is Resource.Failure -> {
                         homeLoadingShimmer.stopShimmer()
                         homeReloadConnectionerror.setOnClickListener(apiChangeClickListener)
-                        homeReloadConnectionOpenInBrowser.setOnClickListener { view ->
-                            val validAPIs = apis//.filter { api -> api.hasMainPage }
-
-                            view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api ->
-                                Pair(
-                                    index,
-                                    api.name
-                                )
-                            }) {
-                                try {
-                                    val i = Intent(Intent.ACTION_VIEW)
-                                    i.data = validAPIs[itemId].mainUrl.toUri()
-                                    startActivity(i)
-                                } catch (e: Exception) {
-                                    logError(e)
-                                }
+                        homeReloadConnectionOpenInBrowser.setOnClickListener {
+                            val currentApi = currentApiName?.let { getApiFromNameNull(it) }
+                                ?: homeViewModel.apiName.value?.let { getApiFromNameNull(it) }
+                            val mainUrl = currentApi?.mainUrl
+                            if (!mainUrl.isNullOrBlank()) {
+                                context?.openBrowser(mainUrl)
                             }
                         }
 

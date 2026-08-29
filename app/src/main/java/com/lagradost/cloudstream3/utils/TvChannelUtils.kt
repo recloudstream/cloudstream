@@ -149,10 +149,12 @@ object TvChannelUtils {
             .setInputId(inputId)
             .build()
 
-        val channelUri = context.contentResolver.insert(
-            TvContractCompat.Channels.CONTENT_URI,
-            channel.toContentValues()
-        )
+        val channelUri = runCatching {
+            context.contentResolver.insert(
+                TvContractCompat.Channels.CONTENT_URI,
+                channel.toContentValues()
+            )
+        }.getOrNull()
 
         channelUri?.let {
             val channelId = ContentUris.parseId(it)

@@ -21,9 +21,10 @@ package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.base64DecodeArray
 import io.ktor.http.Url
-import java.io.IOException
-import java.nio.ByteBuffer
-import java.util.UUID
+import kotlinx.io.Buffer
+import kotlinx.io.IOException
+import kotlinx.io.readByteArray
+import kotlin.uuid.Uuid
 
 @Suppress("unused")
 object HlsPlaylistParser {
@@ -186,13 +187,13 @@ object HlsPlaylistParser {
 
     data class SchemeData(
         /**
-         * The {@link UUID} of the DRM scheme, or {@link C#UUID_NIL} if the data is universal (i.e.
+         * The [Uuid] of the DRM scheme, or [C.UUID_NIL] if the data is universal (i.e.
          * applies to all schemes).
          */
-        val uuid: UUID,
+        val uuid: Uuid,
         /** The URL of the server to which license requests should be made. May be null if unknown. */
         val licenseServerUrl: String? = null,
-        /** The mimeType of {@link #data}. */
+        /** The mimeType of [data]. */
         val mimeType: String,
         /** The initialization data. May be null for scheme support checks only. */
         val data: ByteArray
@@ -454,14 +455,14 @@ object HlsPlaylistParser {
                 // "." or "..", remove the appropriate segments of the path.
                 if (i == segmentStart + 1 && url[segmentStart] == '.') {
                     // Given "abc/def/./ghi", remove "./" to get "abc/def/ghi".
-                    url.delete(segmentStart, nextSegmentStart)
+                    url.deleteRange(segmentStart, nextSegmentStart)
                     limit -= nextSegmentStart - segmentStart
                     i = segmentStart
                 } else if (i == segmentStart + 2 && url[segmentStart] == '.' && url[segmentStart + 1] == '.') {
                     // Given "abc/def/../ghi", remove "def/../" to get "abc/ghi".
                     val prevSegmentStart = url.lastIndexOf("/", segmentStart - 2) + 1
                     val removeFrom = if (prevSegmentStart > offset) prevSegmentStart else offset
-                    url.delete(removeFrom, nextSegmentStart)
+                    url.deleteRange(removeFrom, nextSegmentStart)
                     limit -= nextSegmentStart - removeFrom
                     segmentStart = prevSegmentStart
                     i = prevSegmentStart
@@ -532,31 +533,31 @@ object HlsPlaylistParser {
         }
     }
 
-    object C {
+    private object C {
         /**
-         * UUID for the ClearKey DRM scheme.
+         * [Uuid] for the ClearKey DRM scheme.
          *
          *
          * ClearKey is supported on Android devices running Android 5.0 (API Level 21) and up.
          */
-        val CLEARKEY_UUID = UUID(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
+        val CLEARKEY_UUID = Uuid.fromLongs(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
 
         /**
-         * UUID for the Widevine DRM scheme.
+         * [Uuid] for the Widevine DRM scheme.
          *
          *
          * Widevine is supported on Android devices running Android 4.3 (API Level 18) and up.
          */
-        val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
+        val WIDEVINE_UUID = Uuid.fromLongs(-0x121074568629b532L, -0x5c37d8232ae2de13L)
 
         /**
-         * UUID for the PlayReady DRM scheme.
+         * [Uuid] for the PlayReady DRM scheme.
          *
          *
          * PlayReady is supported on all AndroidTV devices. Note that most other Android devices do not
          * provide PlayReady support.
          */
-        val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
+        val PLAYREADY_UUID = Uuid.fromLongs(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
 
 
         /** "cenc" scheme type name as defined in ISO/IEC 23001-7:2016.  */
@@ -1066,7 +1067,7 @@ object HlsPlaylistParser {
 
     object PsshAtomUtil {
         fun buildPsshAtom(
-            systemId: UUID, keyIds: Array<UUID>?, data: ByteArray?
+            systemId: Uuid, keyIds: Array<Uuid>?, data: ByteArray?
         ): ByteArray {
             val dataLength = data?.size ?: 0
             var psshBoxLength: Int =
@@ -1074,26 +1075,30 @@ object HlsPlaylistParser {
             if (keyIds != null) {
                 psshBoxLength += 4 /* KID_count */ + (keyIds.size * 16) /* KIDs */
             }
-            val psshBox: ByteBuffer = ByteBuffer.allocate(psshBoxLength)
-            psshBox.putInt(psshBoxLength)
-            psshBox.putInt(Mp4Box.TYPE_pssh)
-            psshBox.putInt(if (keyIds != null) 0x01000000 else 0 /* version=(buildV1Atom ? 1 : 0), flags=0 */)
-            psshBox.putLong(systemId.mostSignificantBits)
-            psshBox.putLong(systemId.leastSignificantBits)
+            val buffer = Buffer()
+            buffer.writeInt(psshBoxLength)
+            buffer.writeInt(Mp4Box.TYPE_pssh)
+            buffer.writeInt(if (keyIds != null) 0x01000000 else 0 /* version=(buildV1Atom ? 1 : 0), flags=0 */)
+            systemId.toLongs { mostSignificantBits, leastSignificantBits ->
+                buffer.writeLong(mostSignificantBits)
+                buffer.writeLong(leastSignificantBits)
+            }
             if (keyIds != null) {
-                psshBox.putInt(keyIds.size)
+                buffer.writeInt(keyIds.size)
                 for (keyId in keyIds) {
-                    psshBox.putLong(keyId.mostSignificantBits)
-                    psshBox.putLong(keyId.leastSignificantBits)
+                    keyId.toLongs { mostSignificantBits, leastSignificantBits ->
+                        buffer.writeLong(mostSignificantBits)
+                        buffer.writeLong(leastSignificantBits)
+                    }
                 }
             }
             if (data != null && data.size != 0) {
-                psshBox.putInt(data.size)
-                psshBox.put(data)
+                buffer.writeInt(data.size)
+                buffer.write(data)
             } else {
-                psshBox.putInt(0)
+                buffer.writeInt(0)
             }
-            return psshBox.array()
+            return buffer.readByteArray()
         }
     }
 
