@@ -13,6 +13,7 @@ import android.util.Log
 import android.util.Rational
 import android.widget.FrameLayout
 import androidx.annotation.AnyThread
+import com.lagradost.nicehttp.ignoreAllSSLErrors
 import androidx.annotation.MainThread
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
@@ -754,6 +755,15 @@ class CS3IPlayer : IPlayer {
         }
 
         fun tryCreateEngine(context: Context, diskCacheSize: Long): CronetEngine? {
+            // Cronet has its own native network stack — it ignores OkHttp proxy settings
+            // AND JVM system proxy properties (socksProxyHost etc.). When a VPN proxy is
+            // active we must disable Cronet entirely so all ExoPlayer requests go through
+            // OkHttpDataSource, which correctly uses the configured SOCKS5 proxy.
+            if (com.lagradost.cloudstream3.network.currentVpnServer != null) {
+                Log.d(TAG, "VPN active — skipping CronetEngine, using OkHttp for all streams")
+                return null
+            }
+
             // Fast case, no need to recreate it
             cronetEngine?.let {
                 return it
@@ -797,12 +807,26 @@ class CS3IPlayer : IPlayer {
             }?.value ?: USER_AGENT
 
             val source = if (interceptor == null) {
-                if (engine == null) {
-                    Log.d(TAG, "Using DefaultHttpDataSource for $link")
-                    OkHttpDataSource.Factory(app.baseClient).setUserAgent(userAgent)
+                // Cronet has its own network stack and ignores OkHttp's proxy settings.
+                // When a VPN proxy is active we must use OkHttpDataSource so traffic
+                // is routed through the configured SOCKS5 proxy.
+                val vpnServer = com.lagradost.cloudstream3.network.currentVpnServer
+                val canUseCronet = engine != null && vpnServer == null
+                Log.d(TAG, "VPN_DEBUG createVideoSource: vpnServer=$vpnServer engine=${engine != null} canUseCronet=$canUseCronet")
+                Log.d(TAG, "VPN_DEBUG baseClient proxy=${app.baseClient.proxy}")
+                if (!canUseCronet) {
+                    // When VPN insecure mode is enabled, build a client that also skips SSL
+                    // validation so MITM proxies can tunnel HTTPS streams without errors.
+                    val client = if (vpnServer != null && com.lagradost.cloudstream3.network.vpnAllowInsecure) {
+                        app.baseClient.newBuilder().ignoreAllSSLErrors().build()
+                    } else {
+                        app.baseClient
+                    }
+                    Log.d(TAG, "Using OkHttpDataSource for $link (vpn=${vpnServer?.host})")
+                    OkHttpDataSource.Factory(client).setUserAgent(userAgent)
                 } else {
                     Log.d(TAG, "Using CronetDataSource for $link")
-                    CronetDataSource.Factory(engine, Executors.newSingleThreadExecutor())
+                    CronetDataSource.Factory(engine!!, Executors.newSingleThreadExecutor())
                         .setUserAgent(userAgent)
                         .setConnectionTimeoutMs(CRONET_TIMEOUT_MS)
                         .setReadTimeoutMs(CRONET_TIMEOUT_MS)

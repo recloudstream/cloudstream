@@ -48,6 +48,11 @@
     <string name="provider_lang_key">provider_lang_key</string>
     <string name="dns_key">dns_key</string>
     <string name="jsdelivr_proxy_key">jsdelivr_proxy_key</string>
+    <string name="vpn_key">vpn_key</string>
+    <string name="vpn_pref_key">vpn_pref_key</string>
+    <string name="vpn_country_pref_key">vpn_country_pref_key</string>
+    <string name="vpn_ssl_key">vpn_ssl_key</string>
+    <string name="vpn_ssl_pref_key">vpn_ssl_pref_key</string>
     <string name="download_path_key">download_path_key</string>
     <string name="download_parallel_key">download_parallel_key</string>
     <string name="download_concurrent_key">download_concurrent_key</string>
