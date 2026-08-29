@@ -1263,6 +1263,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         R.id.result_favorite_Button,
                         R.id.result_subscribe_Button,
                         R.id.result_search_Button,
+                        R.id.result_sync_Button,
                         R.id.result_episodes_show_button,
                     )
 

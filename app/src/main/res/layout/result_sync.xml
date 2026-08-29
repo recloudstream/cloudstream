@@ -9,8 +9,11 @@
     <ScrollView
         android:id="@+id/result_sync_holder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:layout_height="match_parent"
+        android:paddingTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -24,71 +27,65 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="MyAnimeList, AniList"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="MyAnimeList, AniList" />
 
             <LinearLayout
+                android:id="@+id/result_sync_episodes_holder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="visible">
+                android:orientation="vertical" >
 
-                <ImageView
-                    android:id="@+id/result_sync_sub_episode"
+                <LinearLayout
+                    android:id="@+id/result_sync_episodes_counter_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="10dp"
+                        android:text="@string/episodes"
+                        android:textColor="?attr/textColor"
+                        android:textSize="17sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/result_sync_episodes_text"
+                        style="@style/BlackButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="0dp"
+                        android:minWidth="0dp"
+                        tools:text="7/10" />
+                </LinearLayout>
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/result_sync_episodes_slider"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:padding="10dp"
-                    android:src="@drawable/baseline_remove_24"
-                    app:tint="?attr/textColor" />
+                    android:layout_marginStart="-5dp"
+                    android:layout_marginEnd="-5dp"
+                    android:focusable="true"
+                    android:nextFocusUp="@id/result_sync_episodes_slider"
+                    android:nextFocusDown="@id/result_sync_rating"
+                    android:stepSize="1"
+                    android:value="4"
+                    android:valueFrom="0"
+                    android:valueTo="10"
+                    app:labelStyle="@style/BlackLabel"
+                    app:thumbHeight="20dp"
+                    app:thumbRadius="10dp"
+                    app:tickVisible="false"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
 
-                <EditText
-                    android:id="@+id/result_sync_current_episodes"
-                    style="@style/AppEditStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:autofillHints="no"
-                    android:inputType="number"
-                    android:textColorHint="?attr/grayTextColor"
-                    android:textSize="20sp"
-                    tools:hint="20"
-                    tools:ignore="LabelFor" />
-
-                <TextView
-                    android:id="@+id/result_sync_max_episodes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingBottom="1dp"
-                    android:textColor="?attr/textColor"
-                    android:textSize="20sp"
-                    tools:text="30" />
-
-                <ImageView
-                    android:id="@+id/result_sync_add_episode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_baseline_add_24"
-                    app:tint="?attr/textColor" />
             </LinearLayout>
-
-            <androidx.core.widget.ContentLoadingProgressBar
-                android:id="@+id/result_sync_episodes"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:layout_gravity="end|center_vertical"
-                android:indeterminate="false"
-                android:max="100"
-                android:padding="10dp"
-                android:progress="0"
-                android:progressBackgroundTint="?attr/colorPrimary"
-                tools:visibility="visible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -113,7 +110,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="0dp"
                     android:minWidth="0dp"
-                    android:text="7/10" />
+                    tools:text="7/10" />
             </LinearLayout>
 
             <com.google.android.material.slider.Slider
@@ -122,12 +119,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="-5dp"
                 android:layout_marginEnd="-5dp"
-                app:thumbHeight="20dp"
+                android:focusable="true"
+                android:nextFocusUp="@id/result_sync_episodes_slider"
+                android:nextFocusDown="@id/result_sync_check"
                 android:stepSize="1"
                 android:value="4"
                 android:valueFrom="0"
                 android:valueTo="10"
                 app:labelStyle="@style/BlackLabel"
+                app:thumbHeight="20dp"
                 app:thumbRadius="10dp"
                 app:tickVisible="false" />
 
@@ -159,6 +159,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_rowWeight="1"
+                android:focusable="true"
+                android:nextFocusLeft="@id/result_sync_Button"
+                android:nextFocusRight="@id/result_sync_set_score"
                 tools:listitem="@layout/sort_bottom_single_choice" />
 
             <com.google.android.material.button.MaterialButton
@@ -173,6 +176,11 @@
                 style="@style/BlackButton"
                 android:layout_width="match_parent"
                 android:layout_marginTop="10dp"
+                android:focusable="true"
+                android:nextFocusLeft="@id/result_sync_Button"
+                android:nextFocusRight="@id/result_sync_set_score"
+                android:nextFocusUp="@id/result_sync_check"
+                android:nextFocusDown="@id/result_sync_set_score"
                 android:text="@string/upload_sync"
                 app:icon="@drawable/baseline_sync_24" />
         </LinearLayout>
@@ -190,8 +198,8 @@
         app:shimmer_base_alpha="0.2"
         app:shimmer_duration="@integer/loading_time"
         app:shimmer_highlight_alpha="0.3"
-        tools:visibility="gone"
-        tools:ignore="MissingClass">
+        tools:ignore="MissingClass"
+        tools:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
