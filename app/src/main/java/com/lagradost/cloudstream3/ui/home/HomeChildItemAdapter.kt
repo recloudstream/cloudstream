@@ -222,7 +222,8 @@ open class HomeChildItemAdapter(
             position,
             holder.itemView,
             nextFocusUp,
-            nextFocusDown
+            nextFocusDown,
+            isHorizontal = isHorizontal
         )
 
         holder.itemView.tag = position

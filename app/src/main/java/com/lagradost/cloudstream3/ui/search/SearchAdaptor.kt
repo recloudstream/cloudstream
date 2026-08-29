@@ -3,8 +3,8 @@ package com.lagradost.cloudstream3.ui.search
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.isHorizontalCard
 import com.lagradost.cloudstream3.databinding.SearchResultGridBinding
 import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -32,7 +32,7 @@ class SearchClickCallback(
 
 class SearchAdapter(
     private val resView: AutofitRecyclerView,
-    private val isHorizontal:Boolean = false,
+    var isHorizontal: Boolean = false,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) : NoStateAdapter<SearchResponse>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
     if (a.id != null || b.id != null) {
@@ -47,10 +47,6 @@ class SearchAdapter(
     }
 
     var hasNext: Boolean = false
-
-    private val coverRatio = if(isHorizontal) 1.8 else 0.68
-
-    private val coverHeight: Int get() = (resView.itemWidth / coverRatio).roundToInt()
 
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
         val inflater = LayoutInflater.from(parent.context)
@@ -79,21 +75,23 @@ class SearchAdapter(
     }
 
     override fun onBindContent(holder: ViewHolderState<Any>, item: SearchResponse, position: Int) {
-        val imageView = when (val binding = holder.view) {
-            is SearchResultGridExpandedBinding -> binding.imageView
-            is SearchResultGridBinding -> binding.imageView
+        val isCardHorizontal = item.isHorizontalCard(isHorizontal)
+
+        val currentRatio = if (isCardHorizontal) 1.8 else 0.68
+        val currentCoverHeight = (resView.itemWidth / currentRatio).roundToInt()
+
+        val backgroundCard = when (val binding = holder.view) {
+            is SearchResultGridExpandedBinding -> binding.backgroundCard
+            is SearchResultGridBinding -> binding.backgroundCard
             else -> null
         }
-
-        if (imageView != null) {
-            val params = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                coverHeight
-            )
-            if (imageView.layoutParams.width != params.width || imageView.layoutParams.height != params.height) {
-                imageView.layoutParams = params
+        backgroundCard?.let {
+            val cardParams = it.layoutParams
+            if (cardParams.height != currentCoverHeight) {
+                cardParams.height = currentCoverHeight
+                it.layoutParams = cardParams
             }
         }
-        SearchResultBuilder.bind(clickCallback, item, position, holder.view.root)
+        SearchResultBuilder.bind(clickCallback, item, position, holder.view.root, isHorizontal = isCardHorizontal)
     }
 }

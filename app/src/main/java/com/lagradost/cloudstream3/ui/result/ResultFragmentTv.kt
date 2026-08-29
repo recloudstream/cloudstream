@@ -152,11 +152,26 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         currentRecommendations = rec ?: emptyList()
         val isInvalid = rec.isNullOrEmpty()
+        val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
+        val isHorizontal = viewModel.isRecommendationsHorizontal(rec)
         binding?.apply {
             resultRecommendationsList.isGone = isInvalid
             resultRecommendationsHolder.isGone = isInvalid
-            val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
-            (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(rec?.filter { it.apiName == matchAgainst }
+            resultRecommendationsList.spanCount = if (isHorizontal) 4 else 8
+            val currentAdapter = resultRecommendationsList.adapter as? SearchAdapter
+            val adapter = if (currentAdapter != null) {
+                currentAdapter.apply { this.isHorizontal = isHorizontal }
+            } else {
+                SearchAdapter(
+                    resultRecommendationsList,
+                    isHorizontal = isHorizontal,
+                ) { callback ->
+                    if (callback.action == SEARCH_ACTION_FOCUSED) {
+                        toggleEpisodes(false)
+                    } else SearchHelper.handleSearchClickCallback(callback)
+                }.also { resultRecommendationsList.adapter = it }
+            }
+            adapter.submitList(rec?.filter { it.apiName == matchAgainst }
                 ?: emptyList())
 
             rec?.map { it.apiName }?.distinct()?.let { apiNames ->

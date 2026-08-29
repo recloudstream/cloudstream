@@ -27,6 +27,7 @@ import androidx.core.view.doOnLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.AnimeSearchResponse
@@ -40,6 +41,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.isHorizontalCard
 import com.lagradost.cloudstream3.databinding.FragmentSearchBinding
 import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -48,6 +50,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseFragment
+import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.currentSpan
@@ -234,6 +237,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         binding: FragmentSearchBinding,
         savedInstanceState: Bundle?
     ) {
+        context?.let { HomeChildItemAdapter.updatePosterSize(it) }
         reloadRepos()
         binding.apply {
             val adapter =
@@ -469,9 +473,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     it.value.let { data ->
                         val list = data.list
                         if (list.isNotEmpty()) {
-                            (binding.searchAutofitResults.adapter as? SearchAdapter)?.submitList(
-                                list
-                            )
+                            val isHorizontal = list.any { it.isHorizontalCard() }
+                            binding.searchAutofitResults.spanCount = view?.context?.getSpanCount(isHorizontal) ?: currentSpan
+                            (binding.searchAutofitResults.adapter as? SearchAdapter)?.apply {
+                                this.isHorizontal = isHorizontal
+                                submitList(list)
+                            }
                         }
                     }
                     searchExitIcon?.alpha = 1f
@@ -512,7 +519,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
                         val homePageList = HomePageList(
                             providerName,
-                            dataListFiltered
+                            dataListFiltered,
+                            isHorizontalImages = false
                         )
 
                         HomeViewModel.ExpandableHomepageList(
