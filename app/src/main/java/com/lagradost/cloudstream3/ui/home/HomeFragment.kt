@@ -32,6 +32,7 @@ import com.google.android.material.chip.Chip
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI
@@ -67,6 +68,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettin
 import com.lagradost.cloudstream3.utils.AppContextUtils.isNetworkAvailable
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
+import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
@@ -869,26 +871,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             homeRandomButtonTv.isGone = true
                         }
                     }
-
+                    //Open browser directly, without a menu.
                     is Resource.Failure -> {
                         homeLoadingShimmer.stopShimmer()
                         homeReloadConnectionerror.setOnClickListener(apiChangeClickListener)
-                        homeReloadConnectionOpenInBrowser.setOnClickListener { view ->
-                            val validAPIs = apis//.filter { api -> api.hasMainPage }
-
-                            view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api ->
-                                Pair(
-                                    index,
-                                    api.name
-                                )
-                            }) {
-                                try {
-                                    val i = Intent(Intent.ACTION_VIEW)
-                                    i.data = validAPIs[itemId].mainUrl.toUri()
-                                    startActivity(i)
-                                } catch (e: Exception) {
-                                    logError(e)
-                                }
+                        homeReloadConnectionOpenInBrowser.setOnClickListener {
+                            val currentApi = currentApiName?.let { getApiFromNameNull(it) }
+                                ?: homeViewModel.apiName.value?.let { getApiFromNameNull(it) }
+                            val mainUrl = currentApi?.mainUrl
+                            if (!mainUrl.isNullOrBlank()) {
+                                context?.openBrowser(mainUrl)
                             }
                         }
 

@@ -722,7 +722,7 @@
     <string name="no_account">Inget konto</string>
     <string name="slide_up_again_to_exceed_100">Dra uppåt igen för att gå över 100%</string>
     <string name="starting_plugin_update_manually">Startar plugin uppdateringsprocessen!</string>
-    <string name="plugins_updated_manually">%d plugin(s) har uppdaterats!</string>
+    <string name="plugins_updated_manually">%d plugin(s) har uppdaterats</string>
     <string name="no_plugins_updated_manually">Inga plugins blev uppdaterade.</string>
     <string name="player_notification_channel_name">Spelarnotiser</string>
     <string name="player_notification_channel_description">Spelarnotisen för att styra uppspelningen i bakgrunden</string>
