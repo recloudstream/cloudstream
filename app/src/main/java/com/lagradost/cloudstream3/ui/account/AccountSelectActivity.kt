@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.account
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
@@ -11,6 +12,8 @@ import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.MainActivity.Companion.EXTRA_SHARED_URL
+import com.lagradost.cloudstream3.MainActivity.Companion.EXTRA_SHARED_URL_ID
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
 import com.lagradost.cloudstream3.mvvm.observe
@@ -35,6 +38,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.enableEdgeToEdgeCompat
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.openActivity
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import java.util.UUID
 
 class AccountSelectActivity : FragmentActivity(), BiometricCallback {
 
@@ -205,8 +209,33 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
     private fun navigateToMainActivity() {
         hasLoggedIn = true
         // We want to propagate any intent we get here to MainActivity since this is just an intermediary
-        openActivity(MainActivity::class.java, baseIntent = intent)
+        openActivity(MainActivity::class.java, baseIntent = intent.withExtractedSharedUrl())
         finish() // Finish the account selection activity
+    }
+
+    private fun Intent.withExtractedSharedUrl(): Intent {
+        val url = extractSharedUrl() ?: return this
+        return Intent(this).apply {
+            putExtra(EXTRA_SHARED_URL, url)
+            putExtra(EXTRA_SHARED_URL_ID, getStringExtra(EXTRA_SHARED_URL_ID) ?: UUID.randomUUID().toString())
+        }
+    }
+
+    private fun Intent.extractSharedUrl(): String? {
+        val candidates = listOfNotNull(
+            dataString,
+            getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString(),
+            @Suppress("DEPRECATION")
+            getParcelableExtra<android.net.Uri>(Intent.EXTRA_STREAM)?.toString(),
+        )
+
+        return candidates.firstNotNullOfOrNull { value ->
+            value
+                .lineSequence()
+                .flatMap { it.splitToSequence(Regex("\\s+")) }
+                .map { it.trimEnd('.', ',', ';', ':', '!', '?', ')', ']', '}', '>', '\'', '"') }
+                .firstOrNull { it.startsWith("http://") || it.startsWith("https://") }
+        }
     }
 
     override fun onAuthenticationSuccess() {
