@@ -31,6 +31,8 @@
         android:layout_height="match_parent"
         android:layout_rowWeight="1"
         android:layout_marginBottom="60dp"
+        android:nextFocusLeft="@id/skip_btt"
+        android:nextFocusRight="@id/next_btt"
         android:paddingTop="10dp"
         android:requiresFadingEdge="vertical"
         tools:listitem="@layout/sort_bottom_single_choice" />
