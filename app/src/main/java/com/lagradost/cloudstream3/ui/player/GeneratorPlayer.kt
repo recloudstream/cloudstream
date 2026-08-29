@@ -47,6 +47,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -101,6 +102,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
+import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.AppContextUtils.getShortSeasonText
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
@@ -112,7 +114,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
@@ -1195,8 +1197,14 @@ class GeneratorPlayer : FullScreenPlayer() {
                     ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
                 subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
 
+                val unknownGroupName = ctx.getString(R.string.subtitles_group_unknown)
+                fun groupName(sub: SubtitleData): String {
+                    return fromTagToLanguageName(sub.getIETF_tag())?.takeIf { it.isNotBlank() }
+                        ?: unknownGroupName
+                }
+
                 val subtitlesGrouped =
-                    currentSubtitles.groupBy { it.originalName }.map { (key, value) ->
+                    currentSubtitles.groupBy { groupName(it) }.map { (key, value) ->
                         key to value.sortedBy { it.nameSuffix.toIntOrNull() ?: 0 }
                     }.toMap()
                 val subtitlesGroupedList = subtitlesGrouped.entries.toList()
@@ -1204,11 +1212,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val subtitles = subtitlesGrouped.map { it.key.html() }
 
                 val subtitleGroupIndexStart =
-                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
+                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.let { groupName(it) }) + 1
                 var subtitleGroupIndex = subtitleGroupIndexStart
 
                 val subtitleOptionIndexStart =
-                    subtitlesGrouped[currentSelectedSubtitles?.originalName]?.indexOfFirst { it.nameSuffix == currentSelectedSubtitles?.nameSuffix }
+                    subtitlesGrouped[currentSelectedSubtitles?.let { groupName(it) }]?.indexOfFirst { it.nameSuffix == currentSelectedSubtitles?.nameSuffix }
                         ?: 0
                 var subtitleOptionIndex = subtitleOptionIndexStart
 
@@ -1232,8 +1240,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val subtitleOptions =
                         subtitlesGroupedList
                             .getOrNull(subtitleGroupIndex - 1)?.value?.map { subtitle ->
-                                val nameSuffix = subtitle.nameSuffix.html()
-                                nameSuffix.ifBlank {
+                                val label = subtitle.originalName.html()
+                                label.ifBlank {
                                     when (subtitle.origin) {
                                         SubtitleOrigin.URL -> txt(R.string.subtitles_from_online)
                                         SubtitleOrigin.DOWNLOADED_FILE -> txt(R.string.downloaded)
@@ -2264,12 +2272,10 @@ class GeneratorPlayer : FullScreenPlayer() {
             viewModel.filterSubByLang =
                 settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
             if (viewModel.filterSubByLang) {
-                val langFromPrefMedia = settingsManager.getStringSet(
-                    this.getString(R.string.provider_lang_key), mutableSetOf("en")
-                )
-                viewModel.langFilterList = langFromPrefMedia?.mapNotNull {
-                    fromTagToEnglishLanguageName(it)?.lowercase() ?: return@mapNotNull null
-                } ?: listOf()
+                viewModel.langFilterList = ctx.getApiProviderLangSettings().map { tag ->
+                    if (tag == AllLanguagesName) tag
+                    else fromCodeToLangTagIETF(tag)?.lowercase() ?: tag.lowercase()
+                }
             }
 
             // Set up TV clock visibility
