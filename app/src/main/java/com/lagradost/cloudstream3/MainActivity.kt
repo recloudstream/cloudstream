@@ -764,7 +764,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             // when first loading up the app
 
             // R.id.navigation_home -> R.id.home_preview_change_api
-            R.id.navigation_search -> R.id.main_search
+            R.id.navigation_search -> R.id.search_autofit_results
             R.id.navigation_library -> R.id.main_search
             R.id.navigation_downloads -> R.id.download_appbar
             else -> null
