@@ -198,8 +198,9 @@ object DownloadQueueManager {
         }
     }
 
-    /** Removes all queued items */
+    /** Removes all queued items and cancels active downloads */
     fun removeAllFromQueue() {
+        downloadInstances.value.forEach { it.cancelDownload() }
         removeAll().forEach { wrapper ->
             setQueueStatus(wrapper.id, VideoDownloadManager.DownloadType.IsStopped)
         }
