@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Follows the speed_dialog.xml pattern exactly:
+    - Single panel, 500dp wide, vertical
+    - Current value shown at top as text
+    - Slider flanked by FAB -/+ buttons for precise TV adjustment
+    - Preset BlackButtons below (active one switched to WhiteButton in Kotlin)
+    - On/Off as two BlackButtons — active one switched to WhiteButton in Kotlin
+    - Apply / Reset / Cancel at the bottom (matches subtitle_offset.xml)
+
+    TV D-pad flow (top to bottom):
+    On | Off  →down→  slider row  →down→  presets row  →down→  stays (wraps)
+    Apply / Reset / Cancel reachable via nextFocusDown from slider row
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:minWidth="300dp">
+
+    <!-- Current value display — updated programmatically -->
+    <TextView
+        android:id="@+id/compressor_current_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center_horizontal"
+        android:textSize="20sp"
+        tools:text="Compressor: Off" />
+
+    <!-- On / Off row — styled like speed preset buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginBottom="4dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/compressor_enable_btt"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusRight="@id/compressor_disable_btt"
+            android:nextFocusDown="@id/compressor_threshold_bar"
+            android:nextFocusUp="@id/apply_btt"
+            android:text="@string/compressor_on">
+            <requestFocus />
+        </com.google.android.material.button.MaterialButton>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/compressor_disable_btt"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/compressor_enable_btt"
+            android:nextFocusDown="@id/compressor_threshold_bar"
+            android:nextFocusUp="@id/apply_btt"
+            android:text="@string/compressor_off" />
+
+    </LinearLayout>
+
+    <!-- Threshold row: FAB minus | slider | FAB plus -->
+    <TextView
+        android:id="@+id/compressor_threshold_label"
+        style="@style/WatchHeaderText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingTop="8dp"
+        tools:text="Threshold: -24 dB" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/threshold_minus"
+            style="@style/ExtendedFloatingActionButton"
+            android:layout_gravity="center_vertical"
+            android:foreground="@drawable/outline_drawable"
+            android:nextFocusRight="@id/compressor_threshold_bar"
+            android:nextFocusUp="@id/compressor_enable_btt"
+            android:nextFocusDown="@id/ratio_minus"
+            android:src="@drawable/media3_icon_minus"
+            app:tint="?attr/textColor" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/compressor_threshold_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/threshold_minus"
+            android:nextFocusRight="@id/threshold_plus"
+            android:nextFocusUp="@id/compressor_enable_btt"
+            android:nextFocusDown="@id/compressor_ratio_bar"
+            android:valueFrom="-30"
+            android:valueTo="0"
+            android:stepSize="1"
+            android:value="-24"
+            app:labelStyle="@style/BlackLabel"
+            app:thumbColor="?attr/white"
+            app:tickVisible="false"
+            app:trackColorActive="?attr/white"
+            app:trackColorInactive="?attr/primaryGrayBackground" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/threshold_plus"
+            style="@style/ExtendedFloatingActionButton"
+            android:layout_gravity="center_vertical"
+            android:foreground="@drawable/outline_drawable"
+            android:nextFocusLeft="@id/compressor_threshold_bar"
+            android:nextFocusUp="@id/compressor_disable_btt"
+            android:nextFocusDown="@id/ratio_plus"
+            android:src="@drawable/media3_icon_plus"
+            app:tint="?attr/textColor" />
+
+    </LinearLayout>
+
+    <!-- Makeup Gain row: FAB minus | slider | FAB plus -->
+    <TextView
+        android:id="@+id/compressor_makeup_label"
+        style="@style/WatchHeaderText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingTop="4dp"
+        tools:text="Makeup Gain: +12 dB" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/ratio_minus"
+            style="@style/ExtendedFloatingActionButton"
+            android:layout_gravity="center_vertical"
+            android:foreground="@drawable/outline_drawable"
+            android:nextFocusRight="@id/compressor_ratio_bar"
+            android:nextFocusUp="@id/threshold_minus"
+            android:nextFocusDown="@id/compressor_preset_light"
+            android:src="@drawable/media3_icon_minus"
+            app:tint="?attr/textColor" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/compressor_ratio_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/ratio_minus"
+            android:nextFocusRight="@id/ratio_plus"
+            android:nextFocusUp="@id/compressor_threshold_bar"
+            android:nextFocusDown="@id/compressor_preset_light"
+            android:valueFrom="0"
+            android:valueTo="24"
+            android:stepSize="1"
+            android:value="12"
+            app:labelStyle="@style/BlackLabel"
+            app:thumbColor="?attr/white"
+            app:tickVisible="false"
+            app:trackColorActive="?attr/white"
+            app:trackColorInactive="?attr/primaryGrayBackground" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/ratio_plus"
+            style="@style/ExtendedFloatingActionButton"
+            android:layout_gravity="center_vertical"
+            android:foreground="@drawable/outline_drawable"
+            android:nextFocusLeft="@id/compressor_ratio_bar"
+            android:nextFocusUp="@id/threshold_plus"
+            android:nextFocusDown="@id/compressor_preset_heavy"
+            android:src="@drawable/media3_icon_plus"
+            app:tint="?attr/textColor" />
+
+    </LinearLayout>
+
+    <!-- Preset buttons — BlackButton in XML, active one set to WhiteButton in Kotlin -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/compressor_preset_light"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/compressor_preset_heavy"
+            android:nextFocusRight="@id/compressor_preset_dialog"
+            android:nextFocusUp="@id/ratio_minus"
+            android:nextFocusDown="@id/compressor_preset_light"
+            android:text="@string/compressor_preset_light" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/compressor_preset_dialog"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/compressor_preset_light"
+            android:nextFocusRight="@id/compressor_preset_heavy"
+            android:nextFocusUp="@id/compressor_ratio_bar"
+            android:nextFocusDown="@id/compressor_preset_dialog"
+            android:text="@string/compressor_preset_dialog" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/compressor_preset_heavy"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/compressor_preset_dialog"
+            android:nextFocusRight="@id/compressor_preset_light"
+            android:nextFocusUp="@id/ratio_plus"
+            android:nextFocusDown="@id/compressor_preset_heavy"
+            android:text="@string/compressor_preset_heavy" />
+
+    </LinearLayout>
+
+    <!-- Apply / Reset / Cancel — exactly like subtitle_offset.xml -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:gravity="bottom|end"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apply_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:nextFocusRight="@id/reset_btt"
+            android:nextFocusUp="@id/compressor_preset_light"
+            android:nextFocusDown="@id/compressor_enable_btt"
+            android:text="@string/sort_apply" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reset_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusUp="@id/compressor_preset_dialog"
+            android:nextFocusDown="@id/compressor_enable_btt"
+            android:text="@string/reset_btn" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:nextFocusLeft="@id/reset_btt"
+            android:nextFocusUp="@id/compressor_preset_heavy"
+            android:nextFocusDown="@id/compressor_disable_btt"
+            android:text="@string/sort_cancel" />
+
+    </LinearLayout>
+
+</LinearLayout>
+
+</ScrollView>
