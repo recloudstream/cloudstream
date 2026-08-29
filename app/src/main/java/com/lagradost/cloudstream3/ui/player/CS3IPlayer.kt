@@ -658,7 +658,9 @@ class CS3IPlayer : IPlayer {
     }
 
     companion object {
-        private const val CRONET_TIMEOUT_MS = 15_000
+        // 30 s instead of 15 s: TV network stacks are slower than phones
+        // and were timing out before the stream could start (error 2004/2001).
+        private const val CRONET_TIMEOUT_MS = 30_000
 
         /**
          * Single shared engine, to minimize the overhead of maintaining many as:
