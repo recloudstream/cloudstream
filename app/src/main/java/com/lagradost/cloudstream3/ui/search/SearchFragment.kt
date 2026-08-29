@@ -157,6 +157,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         afterPluginsLoadedEvent -= ::reloadRepos
     }
 
+    internal fun focusSearchInput() {
+        binding?.mainSearch?.requestFocusFromTouch()
+    }
+
     var selectedSearchTypes = mutableListOf<TvType>()
     var selectedApis = mutableSetOf<String>()
 
