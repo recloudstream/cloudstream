@@ -94,10 +94,22 @@ class APIRepository(val api: MainAPI) {
             }
         }
 
-        fun hasHomePageCache(apiName: String, page: Int = 1, nameIndex: Int? = null): Boolean {
-            if (!DataStoreHelper.isCacheEnabled) return false
+        fun getEffectiveHomepageCacheTtl(maxHomepageCacheTimeMs: Long?): Long {
+            val userCacheTtl = DataStoreHelper.cacheTimeSeconds
+            if (userCacheTtl <= 0L) return 0L
+            val providerMaxSeconds = maxHomepageCacheTimeMs?.let { it / 1000L } ?: return userCacheTtl
+            return if (providerMaxSeconds <= 0L) 0L else minOf(userCacheTtl, providerMaxSeconds)
+        }
+
+        fun hasHomePageCache(
+            apiName: String,
+            maxHomepageCacheTimeMs: Long? = null,
+            page: Int = 1,
+            nameIndex: Int? = null
+        ): Boolean {
+            val cacheTtl = getEffectiveHomepageCacheTtl(maxHomepageCacheTimeMs)
+            if (cacheTtl <= 0L) return false
             val lookingForHash = Pair(apiName, Pair(page, nameIndex))
-            val cacheTtl = DataStoreHelper.cacheTimeSeconds
             val inRam = homeCache.withLock {
                 homeCache.any { it.hash == lookingForHash && unixTime - it.unixTime < cacheTtl }
             }
@@ -126,11 +138,9 @@ class APIRepository(val api: MainAPI) {
                 val isCacheEnabled = DataStoreHelper.isCacheEnabled
 
                 if (isCacheEnabled) {
-                    val cached = cache.withLock {
+                    cache.withLock {
                         cache.firstOrNull { item -> item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl }?.response
-                    }
-
-                    if (cached != null) return@withTimeout cached
+                    }?.let { return@withTimeout it }
                 }
 
                 api.load(fixedUrl)?.also { response ->
@@ -188,18 +198,14 @@ class APIRepository(val api: MainAPI) {
 
     suspend fun getMainPage(page: Int, nameIndex: Int? = null, forceReload: Boolean = false): Resource<List<HomePageResponse?>> {
         val lookingForHash = Pair(api.name, Pair(page, nameIndex))
-        val cacheTtl = DataStoreHelper.cacheTimeSeconds
-        val isCacheEnabled = DataStoreHelper.isCacheEnabled
+        val cacheTtl = getEffectiveHomepageCacheTtl(api.maxHomepageCacheTime)
+        val isCacheEnabled = cacheTtl > 0L
         val diskKey = "${api.name}_${page}_${nameIndex}"
 
         if (isCacheEnabled && !forceReload) {
-            val cached = homeCache.withLock {
+            homeCache.withLock {
                 homeCache.firstOrNull { item -> item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl }?.response
-            }
-
-            if (cached != null) {
-                return Resource.Success(cached)
-            }
+            }?.let { return Resource.Success(it) }
 
             val cachedOnDisk = CloudStreamApp.getKey<SavedHomePageResponse>(HOME_CACHE_FOLDER, diskKey)
             if (cachedOnDisk != null && unixTime - cachedOnDisk.unixTime < cacheTtl) {
