@@ -338,7 +338,7 @@ class HomeViewModel : ViewModel() {
         }
 
 
-        if (forceReload || !APIRepository.hasHomePageCache(api.name, api.maxHomepageCacheTime, 1, null)) {
+        if (forceReload || !APIRepository.hasHomePageCache(api.name, api.maxHomepageCacheTime)) {
             _page.postValue(Resource.Loading())
         }
 
