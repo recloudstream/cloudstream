@@ -620,7 +620,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private val apiChangeClickListener = View.OnClickListener { view ->
         view.context.selectHomepage(currentApiName) { api ->
-            homeViewModel.loadAndCancel(api, forceReload = true, fromUI = true)
+            homeViewModel.loadAndCancel(api, forceReload = false, fromUI = true)
         }
         /*val validAPIs = view.context?.filterProviderByPreferredMedia()?.toMutableList() ?: mutableListOf()
 

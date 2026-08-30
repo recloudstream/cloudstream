@@ -792,4 +792,32 @@
         <item quantity="other">%d downloads queued</item>
     </plurals>
     <string name="player_is_live">Live</string>
+
+    <string name="cache_time_key">cache_time_key</string>
+    <string name="cache_time_settings">Cache Expiry Time</string>
+    <string name="cache_time_summary">Control how long Home &amp; Detail data is cached. Set to 0 to disable cache and always fetch latest updates.</string>
+
+    <string-array name="cache_time_names">
+        <item>Off (Default - Always Reload)</item>
+        <item>10 Minutes</item>
+        <item>30 Minutes</item>
+        <item>1 Hour</item>
+        <item>3 Hours</item>
+        <item>6 Hours</item>
+        <item>1 Day</item>
+        <item>3 Days</item>
+        <item>1 Week</item>
+    </string-array>
+
+    <integer-array name="cache_time_values">
+        <item>0</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>1440</item>
+        <item>4320</item>
+        <item>10080</item>
+    </integer-array>
 </resources>

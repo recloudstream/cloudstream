@@ -64,15 +64,17 @@ class UserPreferenceDelegate<T : Any>(
     private val default: T,
 ) {
     private val klass: KClass<out T> = default::class
+    private var cache: T? = null
     private val realKey get() = "${DataStoreHelper.currentAccount}/$key"
     operator fun getValue(self: Any?, property: KProperty<*>) =
-        getKeyClass(realKey, klass.java) ?: default
+        cache ?: getKeyClass(realKey, klass.java).also { newCache -> cache = newCache } ?: default
 
     operator fun setValue(
         self: Any?,
         property: KProperty<*>,
         t: T?,
     ) {
+        cache = t
         if (t == null) {
             removeKey(realKey)
         } else {
@@ -159,6 +161,14 @@ object DataStoreHelper {
         set(value) {
             _resultsSortingMode = value.ordinal
         }
+
+    var cacheTimeMinutes: Int by UserPreferenceDelegate(
+        "cache_time_pref",
+        0
+    )
+
+    val isCacheEnabled: Boolean get() = cacheTimeMinutes > 0
+    val cacheTimeSeconds: Long get() = cacheTimeMinutes * 60L
 
     @Serializable
     data class Account(

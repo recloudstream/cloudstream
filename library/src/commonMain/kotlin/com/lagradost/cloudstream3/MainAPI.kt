@@ -39,9 +39,15 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.parse
 import kotlinx.datetime.toInstant
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonContentPolymorphicSerializer
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.io.encoding.Base64
 import kotlin.jvm.JvmName
 import kotlin.math.absoluteValue
@@ -530,6 +536,14 @@ abstract class MainAPI {
     /** in milliseconds, this can be used to add more delay between homepage requests when scrolling */
     open var sequentialMainPageScrollDelay: Long = 0L
 
+    /**
+     * In milliseconds, the maximum cache time allowed for the homepage.
+     * Providers generating ephemeral homepage data (e.g. temporary page URLs with a lifetime of an hour or so)
+     * can override this to limit or disable caching (e.g. 0L or 30.minutes).
+     * If null, the cache duration will fall back to the user's setting / app default.
+     */
+    open var maxHomepageCacheTime: Long? = null
+
     /** used to keep track when last homepage request was in unixtime ms */
     var lastHomepageRequest: Long = 0L
 
@@ -902,6 +916,7 @@ enum class ShowStatus {
     Ongoing,
 }
 
+@Serializable
 enum class DubStatus(val id: Int) {
     None(-1),
     Dubbed(1),
@@ -1116,6 +1131,7 @@ class Score private constructor(
     }
 }
 
+@Serializable
 @Suppress("UNUSED_PARAMETER")
 enum class TvType(value: Int?) {
     Movie(1),
@@ -1267,6 +1283,7 @@ suspend fun newAudioFile(
  * @property items List of [HomePageList] items.
  * @property hasNext if there is a next page or not.
  * */
+@Serializable
 data class HomePageResponse
 @Deprecated("Use newHomePageResponse method", level = DeprecationLevel.ERROR)
 constructor(
@@ -1279,6 +1296,7 @@ constructor(
  * @property list list of [SearchResponse] items that will be added to the category.
  * @property isHorizontalImages here you can control how the items' cards will be appeared on the UI (Horizontal or Vertical) cards.
  * */
+@Serializable
 data class HomePageList(
     val name: String,
     var list: List<SearchResponse>,
@@ -1289,6 +1307,7 @@ data class HomePageList(
  * @property items list of [SearchResponse] items that will be added to the search row.
  * @property hasNext if there is a next page or not.
  * */
+@Serializable
 data class SearchResponseList
 @Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
 constructor(
@@ -1299,6 +1318,7 @@ constructor(
 /** enum class holds search quality.
  *
  * [Movie release types](https://en.wikipedia.org/wiki/Pirated_movie_release_types)**/
+@Serializable
 @Suppress("UNUSED_PARAMETER")
 enum class SearchQuality(value: Int?) {
     Cam(1),
@@ -1402,7 +1422,22 @@ fun MainAPI.updateUrl(url: String): String {
     }
 }
 
+object SearchResponseSerializer : JsonContentPolymorphicSerializer<SearchResponse>(SearchResponse::class) {
+    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<SearchResponse> {
+        val json = element.jsonObject
+        val type = json["type"]?.jsonPrimitive?.contentOrNull
+        return when {
+            type == "Torrent" -> TorrentSearchResponse.serializer()
+            type == "Live" || json.containsKey("lang") -> LiveSearchResponse.serializer()
+            json.containsKey("dubStatus") || type == "Anime" || type == "AnimeMovie" || type == "OVA" -> AnimeSearchResponse.serializer()
+            json.containsKey("episodes") || type == "TvSeries" || type == "Cartoon" || type == "Documentary" || type == "AsianDrama" -> TvSeriesSearchResponse.serializer()
+            else -> MovieSearchResponse.serializer()
+        }
+    }
+}
+
 /** Abstract interface of SearchResponse. */
+@Serializable(with = SearchResponseSerializer::class)
 interface SearchResponse {
     val name: String
     val url: String
@@ -1552,6 +1587,7 @@ data class ActorData(
 /** Data class of [SearchResponse] interface for Anime.
  * @see newAnimeSearchResponse
  * */
+@Serializable
 data class AnimeSearchResponse
 @Deprecated("Use newAnimeSearchResponse", level = DeprecationLevel.ERROR)
 constructor(
@@ -1618,6 +1654,7 @@ fun AnimeSearchResponse.addDubStatus(status: String, episodes: Int? = null) {
 /** Data class of [SearchResponse] interface for Torrent.
  * @see newTorrentSearchResponse
  * */
+@Serializable
 data class TorrentSearchResponse
 @Deprecated("Use newTorrentSearchResponse", level = DeprecationLevel.ERROR)
 constructor(
@@ -1652,6 +1689,7 @@ constructor(
 /** Data class of [SearchResponse] interface for Movies.
  * @see newMovieSearchResponse
  * */
+@Serializable
 data class MovieSearchResponse
 @Deprecated("Use newMovieSearchResponse", level = DeprecationLevel.ERROR)
 constructor(
@@ -1688,6 +1726,7 @@ constructor(
 /** Data class of [SearchResponse] interface for Live streams.
  * @see newLiveSearchResponse
  * */
+@Serializable
 data class LiveSearchResponse
 @Deprecated("Use newLiveSearchResponse", level = DeprecationLevel.ERROR)
 constructor(
@@ -1724,6 +1763,7 @@ constructor(
 /** Data class of [SearchResponse] interface for Tv series.
  * @see newTvSeriesSearchResponse
  * */
+@Serializable
 data class TvSeriesSearchResponse
 @Deprecated("Use newTvSeriesSearchResponse", level = DeprecationLevel.ERROR)
 constructor(

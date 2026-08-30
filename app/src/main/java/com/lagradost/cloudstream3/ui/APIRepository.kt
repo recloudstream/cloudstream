@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
-import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.SubtitleFile
@@ -17,12 +16,15 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.newSearchResponseList
+import com.lagradost.cloudstream3.CloudStreamApp
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
+import kotlinx.serialization.Serializable
 
 class APIRepository(val api: MainAPI) {
     companion object {
@@ -55,23 +57,62 @@ class APIRepository(val api: MainAPI) {
             val hash: Pair<String, String>
         )
 
+        @Serializable
+        data class SavedHomePageResponse(
+            val unixTime: Long,
+            val response: List<HomePageResponse?>,
+            val hash: Pair<String, Pair<Int, Int?>>
+        )
+
         private val cache = atomicListOf<SavedLoadResponse>()
         private var cacheIndex: Int = 0
         const val CACHE_SIZE = 20
 
+        private val homeCache = atomicListOf<SavedHomePageResponse>()
+        private var homeCacheIndex: Int = 0
+        const val HOME_CACHE_SIZE = 20
+        const val HOME_CACHE_FOLDER = "home_cache"
+
         fun getTimeout(desired: Long?): Long {
             return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
         }
-    }
 
-    private fun afterPluginsLoaded(forceReload: Boolean) {
-        if (forceReload) {
-            cache.clear()
+        fun clearCache(apiName: String? = null) {
+            if (apiName == null) {
+                cache.clear()
+                homeCache.clear()
+                CloudStreamApp.removeKeys(HOME_CACHE_FOLDER)
+            } else {
+                homeCache.withLock {
+                    homeCache.removeAll { it.hash.first == apiName }
+                }
+                CloudStreamApp.getKeys(HOME_CACHE_FOLDER)?.forEach { key ->
+                    if (key.startsWith("${apiName}_")) {
+                        CloudStreamApp.removeKey(HOME_CACHE_FOLDER, key)
+                    }
+                }
+            }
         }
-    }
 
-    init {
-        afterPluginsLoadedEvent += ::afterPluginsLoaded
+        fun getEffectiveHomepageCacheTtl(maxHomepageCacheTimeMs: Long?): Long {
+            val userTtl = DataStoreHelper.cacheTimeSeconds.coerceAtLeast(0L)
+            return maxHomepageCacheTimeMs?.let { minOf(userTtl, it / 1000L).coerceAtLeast(0L) } ?: userTtl
+        }
+
+        fun hasHomePageCache(
+            apiName: String,
+            maxHomepageCacheTimeMs: Long? = null,
+            page: Int = 1,
+            nameIndex: Int? = null
+        ): Boolean {
+            val cacheTtl = getEffectiveHomepageCacheTtl(maxHomepageCacheTimeMs)
+            if (cacheTtl <= 0L) return false
+            val lookingForHash = Pair(apiName, Pair(page, nameIndex))
+            return homeCache.withLock {
+                homeCache.any { it.hash == lookingForHash && unixTime - it.unixTime < cacheTtl }
+            } || CloudStreamApp.getKey<SavedHomePageResponse>(HOME_CACHE_FOLDER, "${apiName}_${page}_${nameIndex}")
+                ?.let { unixTime - it.unixTime < cacheTtl } == true
+        }
     }
 
     val hasMainPage = api.hasMainPage
@@ -88,31 +129,28 @@ class APIRepository(val api: MainAPI) {
                 if (isInvalidData(url)) throw ErrorLoadingException()
                 val fixedUrl = api.fixUrl(url)
                 val lookingForHash = Pair(api.name, fixedUrl)
+                val cacheTtl = DataStoreHelper.cacheTimeSeconds
+                val isCacheEnabled = DataStoreHelper.isCacheEnabled
 
-                val cached = cache.withLock {
-                    var found: LoadResponse? = null
-                    for (item in cache) {
-                        // 10 min save
-                        if (item.hash == lookingForHash && (unixTime - item.unixTime) < 60 * 10) {
-                            found = item.response
-                            break
-                        }
-                    }
-                    found
+                if (isCacheEnabled) {
+                    cache.withLock {
+                        cache.firstOrNull { item -> item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl }?.response
+                    }?.let { return@withTimeout it }
                 }
 
-                if (cached != null) return@withTimeout cached
                 api.load(fixedUrl)?.also { response ->
                     // Remove all blank tags as early as possible
                     response.tags = response.tags?.filter { it.isNotBlank() }
                     val add = SavedLoadResponse(unixTime, response, lookingForHash)
 
-                    cache.withLock {
-                        if (cache.size > CACHE_SIZE) {
-                            cache[cacheIndex] = add // rolling cache
-                            cacheIndex = (cacheIndex + 1) % CACHE_SIZE
-                        } else {
-                            cache.add(add)
+                    if (isCacheEnabled) {
+                        cache.withLock {
+                            if (cache.size > CACHE_SIZE) {
+                                cache[cacheIndex] = add // rolling cache
+                                cacheIndex = (cacheIndex + 1) % CACHE_SIZE
+                            } else {
+                                cache.add(add)
+                            }
                         }
                     }
                 } ?: throw ErrorLoadingException()
@@ -153,12 +191,36 @@ class APIRepository(val api: MainAPI) {
         delay(delta)
     }
 
-    suspend fun getMainPage(page: Int, nameIndex: Int? = null): Resource<List<HomePageResponse?>> {
+    suspend fun getMainPage(page: Int, nameIndex: Int? = null, forceReload: Boolean = false): Resource<List<HomePageResponse?>> {
+        val lookingForHash = Pair(api.name, Pair(page, nameIndex))
+        val cacheTtl = getEffectiveHomepageCacheTtl(api.maxHomepageCacheTime)
+        val isCacheEnabled = cacheTtl > 0L
+        val diskKey = "${api.name}_${page}_${nameIndex}"
+
+        if (isCacheEnabled && !forceReload) {
+            homeCache.withLock {
+                homeCache.firstOrNull { item -> item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl }?.response
+            }?.let { return Resource.Success(it) }
+
+            val cachedOnDisk = CloudStreamApp.getKey<SavedHomePageResponse>(HOME_CACHE_FOLDER, diskKey)
+            if (cachedOnDisk != null && unixTime - cachedOnDisk.unixTime < cacheTtl) {
+                homeCache.withLock {
+                    if (homeCache.size > HOME_CACHE_SIZE) {
+                        homeCache[homeCacheIndex] = cachedOnDisk
+                        homeCacheIndex = (homeCacheIndex + 1) % HOME_CACHE_SIZE
+                    } else {
+                        homeCache.add(cachedOnDisk)
+                    }
+                }
+                return Resource.Success(cachedOnDisk.response)
+            }
+        }
+
         return safeApiCall {
             withTimeout(getTimeout(api.getMainPageTimeoutMs)) {
                 api.lastHomepageRequest = unixTimeMS
 
-                nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
+                val res = nameIndex?.let { api.mainPage.getOrNull(it) }?.let { data ->
                     listOf(
                         api.getMainPage(
                             page,
@@ -191,6 +253,21 @@ class APIRepository(val api: MainAPI) {
                         }
                     }
                 }
+
+                if (isCacheEnabled && res.isNotEmpty()) {
+                    val add = SavedHomePageResponse(unixTime, res, lookingForHash)
+                    homeCache.withLock {
+                        if (homeCache.size > HOME_CACHE_SIZE) {
+                            homeCache[homeCacheIndex] = add // rolling cache
+                            homeCacheIndex = (homeCacheIndex + 1) % HOME_CACHE_SIZE
+                        } else {
+                            homeCache.add(add)
+                        }
+                    }
+                    CloudStreamApp.setKey(HOME_CACHE_FOLDER, diskKey, add)
+                }
+
+                res
             }
         }
     }
