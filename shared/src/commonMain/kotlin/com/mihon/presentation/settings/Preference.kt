@@ -2,7 +2,10 @@ package com.mihon.presentation.settings
 
 import androidx.annotation.IntRange
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.none
@@ -15,7 +18,7 @@ sealed class Preference {
 
     sealed class PreferenceItem<T, R> : Preference() {
         abstract val subtitle: String?
-        abstract val icon: ImageVector?
+        abstract val icon: Painter?
         abstract val onValueChanged: suspend (value: T) -> R
 
         /**
@@ -28,7 +31,7 @@ sealed class Preference {
             val widget: @Composable (() -> Unit)? = null,
             val onClick: (() -> Unit)? = null,
         ) : PreferenceItem<String, Unit>() {
-            override val icon: ImageVector? = null
+            override val icon: Painter? = null
             override val onValueChanged: suspend (value: String) -> Unit = {}
         }
 
@@ -42,7 +45,7 @@ sealed class Preference {
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: Boolean) -> Boolean = { true },
         ) : PreferenceItem<Boolean, Boolean>() {
-            override val icon: ImageVector? = null
+            override val icon: Painter? = null
         }
 
         /**
@@ -58,7 +61,7 @@ sealed class Preference {
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: Int) -> Unit = {},
         ) : PreferenceItem<Int, Unit>() {
-            override val icon: ImageVector? = null
+            override val icon: Painter? = null
         }
 
         /**
@@ -72,7 +75,7 @@ sealed class Preference {
             override val subtitle: String? = "%s",
             val subtitleProvider: @Composable (value: T, entries: Map<T, String>) -> String? =
                 { v, e -> subtitle?.format(e[v]) },
-            override val icon: ImageVector? = null,
+            override val icon: Painter? = null,
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: T) -> Boolean = { true },
         ) : PreferenceItem<T, Boolean>() {
@@ -94,7 +97,7 @@ sealed class Preference {
             override val subtitle: String? = "%s",
             val subtitleProvider: @Composable (value: String, entries: Map<String, String>) -> String? =
                 { v, e -> subtitle?.format(e[v]) },
-            override val icon: ImageVector? = null,
+            override val icon: Painter? = null,
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: String) -> Unit = {},
         ) : PreferenceItem<String, Unit>()
@@ -119,7 +122,7 @@ sealed class Preference {
                         ?: stringResource(Res.string.none)
                     subtitle?.format(combined)
                 },
-            override val icon: ImageVector? = null,
+            override val icon: Painter? = null,
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: Set<T>) -> Boolean = { true },
         ) : PreferenceItem<Set<T>, Boolean>() {
@@ -141,7 +144,7 @@ sealed class Preference {
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: String) -> Boolean = { true },
         ) : PreferenceItem<String, Boolean>() {
-            override val icon: ImageVector? = null
+            override val icon: Painter? = null
         }
 
         /**
@@ -164,7 +167,7 @@ sealed class Preference {
         ) : PreferenceItem<String, Unit>() {
             override val enabled: Boolean = true
             override val subtitle: String? = null
-            override val icon: ImageVector? = null
+            override val icon: Painter? = null
             override val onValueChanged: suspend (value: String) -> Unit = {}
         }
 
@@ -174,7 +177,7 @@ sealed class Preference {
         ) : PreferenceItem<Unit, Unit>() {
             override val enabled: Boolean = true
             override val subtitle: String? = null
-            override val icon: ImageVector? = null
+            override val icon: Painter? = null
             override val onValueChanged: suspend (value: Unit) -> Unit = {}
         }
     }
@@ -185,4 +188,10 @@ sealed class Preference {
 
         val preferenceItems: List<PreferenceItem<out Any, out Any>>,
     ) : Preference()
+}
+
+@Composable
+fun <T> PreferenceData<T>.collectAsState(): State<T> {
+    val flow = remember(this) { changes() }
+    return flow.collectAsState(initial = get())
 }

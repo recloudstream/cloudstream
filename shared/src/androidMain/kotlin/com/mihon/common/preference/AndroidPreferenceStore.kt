@@ -1,10 +1,8 @@
-package com.lagradost.cloudstream4.mihon.common.preference
+package com.mihon.common.preference
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import com.mihon.common.preference.PreferenceData
-import com.mihon.common.preference.PreferenceStore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 

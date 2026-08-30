@@ -1,9 +1,8 @@
-package com.lagradost.cloudstream4.mihon.common.preference
+package com.mihon.common.preference
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import androidx.core.content.edit
-import com.mihon.common.preference.PreferenceData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

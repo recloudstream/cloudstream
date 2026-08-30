@@ -110,6 +110,11 @@ object CloudStreamTheme {
 }
 
 @Composable
+fun CloudStreamPreviewTheme(content: @Composable () -> Unit) {
+    CloudStreamTheme(content = content)
+}
+
+@Composable
 fun CloudStreamTheme(
     mode: CloudStreamThemeMode = CloudStreamThemeMode.FollowSystem,
     primaryColor: CloudStreamPrimaryColor = CloudStreamPrimaryColor.NORMAL,
