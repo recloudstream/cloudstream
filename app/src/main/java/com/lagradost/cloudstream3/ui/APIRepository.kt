@@ -127,14 +127,7 @@ class APIRepository(val api: MainAPI) {
 
                 if (isCacheEnabled) {
                     val cached = cache.withLock {
-                        var found: LoadResponse? = null
-                        for (item in cache) {
-                            if (item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl) {
-                                found = item.response
-                                break
-                            }
-                        }
-                        found
+                        cache.firstOrNull { item -> item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl }?.response
                     }
 
                     if (cached != null) return@withTimeout cached
@@ -201,14 +194,7 @@ class APIRepository(val api: MainAPI) {
 
         if (isCacheEnabled && !forceReload) {
             val cached = homeCache.withLock {
-                var found: List<HomePageResponse?>? = null
-                for (item in homeCache) {
-                    if (item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl) {
-                        found = item.response
-                        break
-                    }
-                }
-                found
+                homeCache.firstOrNull { item -> item.hash == lookingForHash && unixTime - item.unixTime < cacheTtl }?.response
             }
 
             if (cached != null) {
