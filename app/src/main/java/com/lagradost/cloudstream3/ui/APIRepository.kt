@@ -95,10 +95,8 @@ class APIRepository(val api: MainAPI) {
         }
 
         fun getEffectiveHomepageCacheTtl(maxHomepageCacheTimeMs: Long?): Long {
-            val userCacheTtl = DataStoreHelper.cacheTimeSeconds
-            if (userCacheTtl <= 0L) return 0L
-            val providerMaxSeconds = maxHomepageCacheTimeMs?.let { it / 1000L } ?: return userCacheTtl
-            return if (providerMaxSeconds <= 0L) 0L else minOf(userCacheTtl, providerMaxSeconds)
+            val userTtl = DataStoreHelper.cacheTimeSeconds.coerceAtLeast(0L)
+            return maxHomepageCacheTimeMs?.let { minOf(userTtl, it / 1000L).coerceAtLeast(0L) } ?: userTtl
         }
 
         fun hasHomePageCache(
@@ -110,13 +108,10 @@ class APIRepository(val api: MainAPI) {
             val cacheTtl = getEffectiveHomepageCacheTtl(maxHomepageCacheTimeMs)
             if (cacheTtl <= 0L) return false
             val lookingForHash = Pair(apiName, Pair(page, nameIndex))
-            val inRam = homeCache.withLock {
+            return homeCache.withLock {
                 homeCache.any { it.hash == lookingForHash && unixTime - it.unixTime < cacheTtl }
-            }
-            if (inRam) return true
-            val diskKey = "${apiName}_${page}_${nameIndex}"
-            val onDisk = CloudStreamApp.getKey<SavedHomePageResponse>(HOME_CACHE_FOLDER, diskKey)
-            return onDisk != null && unixTime - onDisk.unixTime < cacheTtl
+            } || CloudStreamApp.getKey<SavedHomePageResponse>(HOME_CACHE_FOLDER, "${apiName}_${page}_${nameIndex}")
+                ?.let { unixTime - it.unixTime < cacheTtl } == true
         }
     }
 
