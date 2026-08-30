@@ -289,6 +289,7 @@ dependencies {
     implementation(libs.nicehttp) // HTTP Lib
 
     implementation(project(":library"))
+    implementation(project(":shared"))
 }
 
 tasks.register<Jar>("androidSourcesJar") {

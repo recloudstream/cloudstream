@@ -1,7 +1,7 @@
 # https://docs.gradle.org/current/userguide/plugins.html#sec:version_catalog_plugin_application
 # https://docs.gradle.org/current/userguide/dependency_versions.html#sec:strict-version
 [versions]
-activityKtx = "1.13.0"
+activity = "1.13.0"
 androidGradlePlugin = "9.1.1"
 animeDb = "1.0.2"
 annotation = "1.10.0"
@@ -55,6 +55,9 @@ tvprovider = "1.1.0"
 video = "1.0.0"
 workRuntimeKtx = "2.11.2"
 zipline = "1.27.0"
+composeMaterial3 = "1.12.0-alpha03"
+composeMultiplatform = "1.12.0"
+lifecycleViewmodelCompose = "2.11.0"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
@@ -66,7 +69,8 @@ versionCode = "68"
 versionName = "4.8.0"
 
 [libraries]
-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 anime-db = { module = "com.github.recloudstream:anime-db", version.ref = "animeDb" }
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -136,6 +140,16 @@ video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 zipline = { module = "app.cash.zipline:zipline-android", version.ref = "zipline" }
 
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
+compose-resources  = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
+compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
+compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-lint = { id = "com.android.lint", version.ref = "androidGradlePlugin" }
@@ -146,6 +160,9 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm" , version.ref = "kotlinGradlePlug
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlinGradlePlugin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinGradlePlugin" }
 
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinGradlePlugin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+
 [bundles]
 coil = ["coil", "coil-network-okhttp"]
 cryptography = ["cryptography-core", "cryptography-provider-optimal"]
@@ -153,3 +170,4 @@ lifecycle = ["lifecycle-livedata-ktx", "lifecycle-viewmodel-ktx"]
 media3 = ["media3-cast", "media3-common", "media3-container", "media3-datasource-cronet", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
 navigation = ["navigation-fragment-ktx", "navigation-ui-ktx"]
 nextlib = ["nextlib-media3ext", "nextlib-mediainfo"]
+compose = ["compose-foundation", "compose-material3", "compose-resources", "compose-runtime", "compose-ui", "compose-ui-tooling", "compose-ui-tooling-preview", "lifecycle-viewmodel-compose", "coil-compose"]
