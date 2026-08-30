@@ -536,6 +536,14 @@ abstract class MainAPI {
     /** in milliseconds, this can be used to add more delay between homepage requests when scrolling */
     open var sequentialMainPageScrollDelay: Long = 0L
 
+    /**
+     * In milliseconds, the maximum cache time allowed for the homepage.
+     * Providers generating ephemeral homepage data (e.g. temporary page URLs with a lifetime of an hour or so)
+     * can override this to limit or disable caching (e.g. 0L or 30.minutes).
+     * If null, the cache duration will fall back to the user's setting / app default.
+     */
+    open var maxHomepageCacheTime: Long? = null
+
     /** used to keep track when last homepage request was in unixtime ms */
     var lastHomepageRequest: Long = 0L
 
