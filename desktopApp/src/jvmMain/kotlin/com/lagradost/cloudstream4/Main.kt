@@ -27,7 +27,6 @@ fun main() = application {
     ) {
         CloudStreamTheme(mode = CloudStreamThemeMode.Dark) {
             Scaffold(
-                modifier = Modifier.fillMaxSize(),
                 containerColor = colors.background,
                 contentColor = colors.onBackground
             ) {
