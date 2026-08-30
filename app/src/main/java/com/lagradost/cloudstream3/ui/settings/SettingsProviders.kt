@@ -2,17 +2,13 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.content.edit
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
-import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
@@ -63,16 +59,6 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
             true
         }
 
-        getPref(R.string.clear_provider_cache_key)?.setOnPreferenceClickListener {
-            try {
-                APIRepository.clearCache()
-                RepoLinkGenerator.cache.clear()
-                showToast(R.string.clear_provider_cache_cleared, Toast.LENGTH_SHORT)
-            } catch (e: Exception) {
-                logError(e)
-            }
-            true
-        }
 
         getPref(R.string.display_sub_key)?.setOnPreferenceClickListener {
             activity?.getApiDubstatusSettings()?.let { current ->
