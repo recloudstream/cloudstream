@@ -797,11 +797,6 @@
     <string name="cache_time_settings">Cache Expiry Time</string>
     <string name="cache_time_summary">Control how long Home &amp; Detail data is cached. Set to 0 to disable cache and always fetch latest updates.</string>
 
-    <string name="clear_provider_cache_key">clear_provider_cache_key</string>
-    <string name="clear_provider_cache_settings">Clear Provider Cache</string>
-    <string name="clear_provider_cache_summary">Delete all saved homepage, detail, and extractor cache</string>
-    <string name="clear_provider_cache_cleared">Provider cache cleared</string>
-
     <string-array name="cache_time_names">
         <item>Off (Default - Always Reload)</item>
         <item>10 Minutes</item>
