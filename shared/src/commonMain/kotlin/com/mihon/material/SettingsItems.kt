@@ -1,8 +1,8 @@
 package com.mihon.material
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
@@ -27,8 +27,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -48,10 +46,13 @@ import androidx.compose.ui.unit.dp
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.arrow_downward
 import com.lagradost.cloudstream4.generated.resources.arrow_upward
+import com.lagradost.cloudstream4.generated.resources.preview
+import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.mihon.common.preference.PreferenceData
 import com.mihon.common.preference.toggle
 import com.mihon.presentation.secondaryItemAlpha
 import com.mihon.presentation.settings.collectAsState
+import com.mihon.presentation.settings.widget.PrefsHorizontalPadding
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -207,6 +208,7 @@ fun BaseSliderItem(
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
     subtitleStyle: TextStyle = MaterialTheme.typography.bodySmall,
     pillColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+    icon: Painter? = null,
 ) {
     val haptic = LocalHapticFeedback.current
     Column(
@@ -219,6 +221,17 @@ fun BaseSliderItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
         ) {
+            if(icon != null) {
+                Box(
+                    modifier = Modifier.padding(end = PrefsHorizontalPadding)
+                ) {
+                    Icon(
+                        painter = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                    )
+                }
+            }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -254,7 +267,7 @@ fun BaseSliderItem(
 @Composable
 @PreviewLightDark
 fun SliderItemPreview() {
-    MaterialTheme(if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()) {
+    CloudStreamPreviewTheme {
         var value by remember { mutableIntStateOf(0) }
         Surface {
             BaseSliderItem(
@@ -267,6 +280,7 @@ fun SliderItemPreview() {
                     horizontal = SettingsItemsPaddings.Horizontal,
                     vertical = SettingsItemsPaddings.Vertical,
                 ),
+                icon = painterResource(Res.drawable.preview)
             )
         }
     }

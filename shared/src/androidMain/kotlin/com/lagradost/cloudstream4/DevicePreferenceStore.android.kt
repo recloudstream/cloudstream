@@ -1,11 +1,19 @@
 package com.lagradost.cloudstream4
 
 import android.content.Context
-import com.lagradost.api.getContext
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import com.mihon.common.preference.AndroidPreferenceStore
-import com.mihon.common.preference.PreferenceStore
 
-internal actual object DevicePreferenceStore {
-    // Let's hope this does not crash, no idea about the initialization order
-    actual val store: PreferenceStore = AndroidPreferenceStore(getContext() as Context)
+
+@Composable
+actual fun rememberAppSettings() : AppSettings {
+    val context = LocalContext.current
+    val value = remember(context) { AppSettings(context) }
+    return value
+}
+
+fun AppSettings(context: Context) : AppSettings {
+    return AppSettings(preferences = AndroidPreferenceStore(context))
 }

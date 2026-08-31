@@ -1,22 +1,17 @@
 package com.mihon.presentation.settings.widget
 
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.window.DialogProperties
+import com.lagradost.cloudstream4.compose.MultiSelectDialog
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.cancel
 import com.lagradost.cloudstream4.generated.resources.ok
 import org.jetbrains.compose.resources.stringResource
-import com.mihon.material.LabeledCheckbox
 
 @Composable
 fun <T> MultiSelectListPreferenceWidget(
@@ -37,11 +32,25 @@ fun <T> MultiSelectListPreferenceWidget(
     )
 
     if (isDialogShown) {
-        val selected = remember {
-            entries.keys
-                .filter { values.contains(it) }
-                .toMutableStateList()
-        }
+        MultiSelectDialog(
+            title = title,
+            entries = entries,
+            properties = DialogProperties(
+                usePlatformDefaultWidth = true,
+            ),
+            confirmText = stringResource(Res.string.ok),
+            confirm = { selection ->
+                onValuesChange(selection)
+                isDialogShown = false
+            },
+            dismissText = stringResource(Res.string.cancel),
+            dismiss = {
+                isDialogShown = false
+            },
+            selectedKeys = values,
+        )
+
+        /*
         AlertDialog(
             onDismissRequest = { isDialogShown = false },
             title = { Text(text = title) },
@@ -83,6 +92,6 @@ fun <T> MultiSelectListPreferenceWidget(
                     Text(text = stringResource(Res.string.cancel))
                 }
             },
-        )
+        )*/
     }
 }

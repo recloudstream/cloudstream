@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.info
+import com.lagradost.cloudstream4.generated.resources.lorem_content
 import com.lagradost.cloudstream4.generated.resources.lorem_title
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import org.jetbrains.compose.resources.painterResource
@@ -46,7 +47,7 @@ internal fun InfoWidget(text: String) {
 private fun InfoWidgetPreview() {
     CloudStreamPreviewTheme {
         Surface {
-            InfoWidget(text = stringResource(Res.string.lorem_title))
+            InfoWidget(text = stringResource(Res.string.lorem_content))
         }
     }
 }

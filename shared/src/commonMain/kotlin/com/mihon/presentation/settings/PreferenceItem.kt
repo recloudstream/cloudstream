@@ -1,4 +1,4 @@
-package eu.kanade.presentation.more.settings
+package com.mihon.presentation.settings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -15,8 +15,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mihon.presentation.settings.Preference
-import com.mihon.presentation.settings.collectAsState
 import com.mihon.presentation.settings.widget.EditTextPreferenceWidget
 import com.mihon.presentation.settings.widget.InfoWidget
 import com.mihon.presentation.settings.widget.ListPreferenceWidget
@@ -98,6 +96,7 @@ internal fun PreferenceItem(
                         horizontal = PrefsHorizontalPadding,
                         vertical = PrefsVerticalPadding,
                     ),
+                    icon = item.icon
                 )
             }
             is Preference.PreferenceItem.ListPreference<*> -> {

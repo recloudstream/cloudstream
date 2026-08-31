@@ -59,7 +59,10 @@ composeMaterial3 = "1.12.0-alpha03"
 composeMultiplatform = "1.12.0"
 lifecycleViewmodelCompose = "2.11.0"
 
-jvmTarget = "1.8"
+# jvmTarget = "11" is needed for compose, otherwise you will get
+# "Cannot inline bytecode built with JVM target 11 into bytecode" or
+# "Error was captured in composition. java.lang.AbstractMethodError"
+jvmTarget = "11"
 jdkToolchain = "17"
 minSdk = "23"
 compileSdk = "37"

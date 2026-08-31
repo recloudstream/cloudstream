@@ -6,7 +6,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.none
 import com.mihon.common.preference.PreferenceData
@@ -30,8 +29,8 @@ sealed class Preference {
             override val enabled: Boolean = true,
             val widget: @Composable (() -> Unit)? = null,
             val onClick: (() -> Unit)? = null,
-        ) : PreferenceItem<String, Unit>() {
             override val icon: Painter? = null
+        ) : PreferenceItem<String, Unit>() {
             override val onValueChanged: suspend (value: String) -> Unit = {}
         }
 
@@ -44,9 +43,8 @@ sealed class Preference {
             override val subtitle: String? = null,
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: Boolean) -> Boolean = { true },
-        ) : PreferenceItem<Boolean, Boolean>() {
             override val icon: Painter? = null
-        }
+        ) : PreferenceItem<Boolean, Boolean>()
 
         /**
          * A [PreferenceItem] that provides a slider to select an integer number.
@@ -60,9 +58,8 @@ sealed class Preference {
             @IntRange(from = 0) val steps: Int = with(valueRange) { (last - first) - 1 },
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: Int) -> Unit = {},
-        ) : PreferenceItem<Int, Unit>() {
             override val icon: Painter? = null
-        }
+        ) : PreferenceItem<Int, Unit>()
 
         /**
          * A [PreferenceItem] that displays a list of entries as a dialog.
