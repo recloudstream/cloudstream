@@ -26,6 +26,16 @@ class AppSettings internal constructor(
     val player = PlayerPreferences(preferences)
     val provider = ProviderPreferences(preferences)
     val ui = UIPreferences(preferences)
+    val security = SecurityPreferences(preferences)
+}
+
+class SecurityPreferences(preferences: PreferenceStore) {
+    val biometrics = preferences.getBoolean(
+        "biometric_key", false
+    )
+    val skipAccountSelection = preferences.getBoolean(
+        "skip_startup_account_select_key", false
+    )
 }
 
 class UIPreferences(preferences: PreferenceStore) {
