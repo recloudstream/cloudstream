@@ -137,7 +137,7 @@
 
     <fragment
         android:id="@+id/navigation_settings_player"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsPlayer"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsPlayer2"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"

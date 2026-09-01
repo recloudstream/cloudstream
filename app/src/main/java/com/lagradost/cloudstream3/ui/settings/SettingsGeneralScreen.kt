@@ -85,7 +85,7 @@ class SettingsGeneralScreen : SearchableSettings {
                 value = locale,
                 entries = appLanguages.associate { (name, code) -> (code to (name to code).nameNextToFlagEmoji()) },
                 title = stringResource(R.string.app_language),
-                icon = painterResource(R.drawable.ic_baseline_language_24),
+                icon = painterResource(R.drawable.language_korean_latin_24px),
                 onValueChanged = { value ->
                     settings.general.locale.set(value)
                     activity?.recreate()
