@@ -247,7 +247,7 @@
 
     <fragment
         android:id="@+id/navigation_settings_providers"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsProviders"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsProviders2"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"

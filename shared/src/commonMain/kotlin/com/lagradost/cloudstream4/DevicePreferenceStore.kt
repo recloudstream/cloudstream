@@ -1,6 +1,9 @@
 package com.lagradost.cloudstream4
 
 import androidx.compose.runtime.Composable
+import com.lagradost.cloudstream3.AllLanguagesName
+import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.TvType
 import com.mihon.common.preference.PreferenceStore
 
 @Composable
@@ -19,23 +22,35 @@ class AppSettings internal constructor(
 ) {
     val general = GeneralPreferences(preferences)
     val player = PlayerPreferences(preferences)
+    val provider = ProviderPreferences(preferences)
 }
 
-/*
-enum class ShowPlayerInfo {
-    Name,
-    Resolution,
-    VideoInfo,
-}*/
+class ProviderPreferences(preferences: PreferenceStore) {
+    companion object {
+        private val defaultPreferredMedia = TvType.entries
+            .filter { it != TvType.NSFW }
+            .map { it.ordinal.toString() }.toSet()
+        private val defaultDub = DubStatus.entries
+            .map { it.name }.toSet()
+    }
+
+    val preferredMedia = preferences.getStringSet(
+        "prefer_media_type_key_2", defaultPreferredMedia
+    )
+
+    val extentionLanguages = preferences.getStringSet(
+        "provider_lang_key", setOf(AllLanguagesName)
+    )
+
+    val displayDubSub = preferences.getStringSet(
+        "display_sub_key", defaultDub
+    )
+}
 
 class PlayerPreferences(preferences: PreferenceStore) {
     val episodeSync = preferences.getBoolean("episode_sync_enabled_key", true)
     val defaultPlayer = preferences.getString("player_default_key", "")
     val limitPlayerTitle = preferences.getInt("prefer_limit_title_key", 0)
-    /*val showPlayerInfo = preferences.getEnumSet(
-        "prefer_limit_show_player_info",
-        setOf(ShowPlayerInfo.Name, ShowPlayerInfo.Resolution)
-    )*/
     val hidePlayerControlNames = preferences.getBoolean("hide_player_control_names_key", false)
     val showName = preferences.getBoolean("show_name", true)
     val showResolution = preferences.getBoolean("show_resolution", true)

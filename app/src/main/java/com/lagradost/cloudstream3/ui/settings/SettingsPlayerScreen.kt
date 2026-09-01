@@ -152,13 +152,13 @@ class SettingsPlayerScreen : SearchableSettings {
                         preference = settings.player.autoRotateEnabled,
                         title = stringResource(R.string.auto_rotate_video),
                         subtitle = stringResource(R.string.auto_rotate_video_desc),
-                        icon = painterResource(R.drawable.screen_rotation),
+                        icon = painterResource(R.drawable.screen_rotation_alt_24px),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.rotateButtonEnabled,
                         title = stringResource(R.string.rotate_video),
                         subtitle = stringResource(R.string.rotate_video_desc),
-                        icon = painterResource(R.drawable.screen_rotation_alt_24px),
+                        icon = painterResource(R.drawable.screen_rotation),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.previewBarEnabled,
@@ -257,26 +257,30 @@ class SettingsPlayerScreen : SearchableSettings {
                     Preference.PreferenceItem.ListPreference(
                         preference = settings.player.limitPlayerTitle,
                         title = stringResource(R.string.limit_title),
-                        icon = painterResource(R.drawable.ic_baseline_text_format_24),
+                        icon = painterResource(R.drawable.match_word_24px),
                         entries = integerArrayResource(R.array.limit_title_pref_values).zip(
                             stringArrayResource(R.array.limit_title_pref_names)
                         ).toMap()
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.hidePlayerControlNames,
+                        icon = painterResource(R.drawable.visibility_off_24px),
                         title = stringResource(R.string.hide_player_control_names),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.showName,
+                        icon = painterResource(R.drawable.label_24px),
                         title = stringResource(R.string.source_name),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.showMediaInfo,
+                        icon = painterResource(R.drawable.movie_info_24px),
                         title = stringResource(R.string.video_info),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.showResolution,
                         title = stringResource(R.string.resolution),
+                        icon = painterResource(R.drawable.high_res_24px),
                     ),
 
                     // Unsure if we want to have MultiSelectListPreference or boolean
