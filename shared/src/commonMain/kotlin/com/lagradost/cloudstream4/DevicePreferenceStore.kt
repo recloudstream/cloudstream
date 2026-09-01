@@ -3,8 +3,10 @@ package com.lagradost.cloudstream4
 import androidx.compose.runtime.Composable
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.TvType
 import com.mihon.common.preference.PreferenceStore
+import com.mihon.common.preference.getEnumSet
 
 @Composable
 expect fun rememberAppSettings(): AppSettings
@@ -23,15 +25,91 @@ class AppSettings internal constructor(
     val general = GeneralPreferences(preferences)
     val player = PlayerPreferences(preferences)
     val provider = ProviderPreferences(preferences)
+    val ui = UIPreferences(preferences)
+}
+
+class UIPreferences(preferences: PreferenceStore) {
+    val primaryColor = preferences.getString(
+        "primary_color_key", "Normal"
+    )
+    val theme = preferences.getString(
+        "app_theme_key", "AmoledLight"
+    )
+    val layout = preferences.getInt(
+        "app_layout_key", -1
+    )
+    val bottomTitle = preferences.getBoolean(
+        "bottom_title_key", true
+    )
+    val advancedSearch = preferences.getBoolean(
+        "advanced_search", true
+    )
+    val searchSuggestions = preferences.getBoolean(
+        "search_suggestions_enabled", true
+    )
+    val kitsuPostersEnabled = preferences.getBoolean(
+        "show_kitsu_posters_key", true
+    )
+    val trailersEnabled = preferences.getBoolean(
+        "show_trailers_key", true
+    )
+    val castEnabled = preferences.getBoolean(
+        "show_cast_in_details_key", true
+    )
+    val fillersEnabled = preferences.getBoolean(
+        "show_fillers_key", false
+    )
+    val showMetadataOverlay = preferences.getBoolean(
+        "show_player_metadata_key", true
+    )
+    val overscanDp = preferences.getInt(
+        "overscan_key", 0
+    )
+    val posterSize = preferences.getInt(
+        "poster_size_key", 0
+    )
+    val posterShowHd = preferences.getBoolean(
+        "show_hd_key", true
+    )
+    val posterShowDub = preferences.getBoolean(
+        "show_dub_key", true
+    )
+    val posterShowSub = preferences.getBoolean(
+        "show_sub_key", true
+    )
+    val posterShowRating = preferences.getBoolean(
+        "show_rating_key", true
+    )
+    val posterShowTitle = preferences.getBoolean(
+        "show_title_key", true
+    )
+    val posterShowEpisode = preferences.getBoolean(
+        "show_episode_text_key", true
+    )
+    val showClock = preferences.getBoolean(
+        "tv_layout_clock_key", false
+    )
+
+    val randomButtonEnabled = preferences.getBoolean(
+        "random_button_key", false
+    )
+
+    val confirmExit = preferences.getInt(
+        "confirm_exit_key", -1
+    )
+
+    // TODO use this instead of the old key for the UI
+    /** This had to be refactored to use enumSet because the old system is prone to bugs */
+    val filterQuality = preferences.getEnumSet<SearchQuality>(
+        "pref_filter_search_quality_key2", emptySet()
+    )
 }
 
 class ProviderPreferences(preferences: PreferenceStore) {
     companion object {
-        private val defaultPreferredMedia = TvType.entries
-            .filter { it != TvType.NSFW }
-            .map { it.ordinal.toString() }.toSet()
-        private val defaultDub = DubStatus.entries
-            .map { it.name }.toSet()
+        private val defaultPreferredMedia =
+            TvType.entries.filter { it != TvType.NSFW }.map { it.ordinal.toString() }.toSet()
+        private val defaultDub = DubStatus.entries.map { it.name }.toSet()
     }
 
     val preferredMedia = preferences.getStringSet(

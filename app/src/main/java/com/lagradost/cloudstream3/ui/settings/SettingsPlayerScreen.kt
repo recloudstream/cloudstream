@@ -140,7 +140,7 @@ class SettingsPlayerScreen : SearchableSettings {
                         preference = settings.player.autoPlayEnabled,
                         title = stringResource(R.string.autoplay_next_settings),
                         subtitle = stringResource(R.string.autoplay_next_settings_des),
-                        icon = painterResource(R.drawable.ic_baseline_skip_next_24),
+                        icon = painterResource(R.drawable.skip_next_24px),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.skipOpEnabled,

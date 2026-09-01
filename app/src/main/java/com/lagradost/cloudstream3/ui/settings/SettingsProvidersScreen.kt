@@ -20,7 +20,7 @@ class SettingsProvidersScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.category_providers)
 
-    fun mapTvTypeToName(type: TvType) = when (type) {
+    fun TvType.toStringRes() = when (this) {
         TvType.TvSeries -> R.string.tv_series_singular
         TvType.Anime -> R.string.anime_singular
         TvType.OVA -> R.string.ova_singular
@@ -66,7 +66,7 @@ class SettingsProvidersScreen : SearchableSettings {
             icon = painterResource(R.drawable.movie_edit_24px),
             preference = settings.provider.preferredMedia,
             entries = TvType.entries.associate {
-                    it.ordinal.toString() to stringResource(mapTvTypeToName(it))
+                    it.ordinal.toString() to stringResource(it.toStringRes())
                 }), Preference.PreferenceItem.MultiSelectListPreference(
             title = stringResource(R.string.display_subbed_dubbed_settings),
             icon = painterResource(R.drawable.ic_outline_voice_over_off_24),
