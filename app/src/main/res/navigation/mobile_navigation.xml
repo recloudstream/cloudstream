@@ -256,7 +256,7 @@
 
     <fragment
         android:id="@+id/navigation_settings_updates"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsUpdates"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsUpdates2"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"

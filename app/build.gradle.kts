@@ -292,6 +292,7 @@ dependencies {
 
     implementation(libs.bundles.compose)
     implementation(libs.activity.compose)
+    implementation(libs.kotlinx.io.core) // Logcat parser
 
     implementation(project(":library"))
     implementation(project(":shared"))

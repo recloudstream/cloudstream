@@ -130,7 +130,7 @@ class SettingsGeneralScreen : SearchableSettings {
 
                             TextPreferenceWidget(
                                 title = stringResource(R.string.battery_dialog_title),
-                                icon = painterResource(R.drawable.ic_battery),
+                                icon = painterResource(R.drawable.battery_alert_24px),
                                 onPreferenceClick = {
                                     if (isAppRestricted(context)) {
                                         isBatteryShown = true
@@ -141,7 +141,7 @@ class SettingsGeneralScreen : SearchableSettings {
 
                             if (isBatteryShown) {
                                 ActionDialog(
-                                    icon = painterResource(R.drawable.ic_battery),
+                                    icon = painterResource(R.drawable.battery_alert_24px),
                                     title = stringResource(R.string.battery_dialog_title),
                                     text = stringResource(R.string.battery_dialog_message),
                                     confirmText = stringResource(R.string.ok),
@@ -169,7 +169,7 @@ class SettingsGeneralScreen : SearchableSettings {
                     Preference.PreferenceItem.TextPreference(
                         title = stringResource(R.string.add_site_pref),
                         subtitle = stringResource(R.string.add_site_summary),
-                        icon = painterResource(R.drawable.ic_baseline_add_24),
+                        icon = painterResource(R.drawable.copy_all_24px),
                         onClick = {
                             // TODO refactor into compose
                             if (SettingsGeneral.getCurrent().isEmpty()) {
@@ -182,7 +182,7 @@ class SettingsGeneralScreen : SearchableSettings {
                     Preference.PreferenceItem.ListPreference(
                         title = stringResource(R.string.dns_pref),
                         subtitle = stringResource(R.string.dns_pref_summary),
-                        icon = painterResource(R.drawable.ic_baseline_dns_24),
+                        icon = painterResource(R.drawable.dns_24px),
                         preference = settings.general.dns,
                         entries = integerArrayResource(R.array.dns_pref_values).zip(
                             stringArrayResource(R.array.dns_pref)
@@ -199,7 +199,7 @@ class SettingsGeneralScreen : SearchableSettings {
                     Preference.PreferenceItem.SwitchPreference(
                         title = stringResource(R.string.jsdelivr_proxy),
                         subtitle = stringResource(R.string.jsdelivr_proxy_summary),
-                        icon = painterResource(R.drawable.ic_github_logo),
+                        icon = painterResource(R.drawable.wifi_proxy_24px),
                         preference = settings.general.jsdelivrProxy
                     )
                 )

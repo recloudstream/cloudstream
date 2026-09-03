@@ -68,7 +68,7 @@ class SettingsPlayerScreen : SearchableSettings {
                     Preference.PreferenceItem.TextPreference(
                         title = stringResource(R.string.player_subtitles_settings),
                         subtitle = stringResource(R.string.player_subtitles_settings_des),
-                        icon = painterResource(R.drawable.ic_outline_subtitles_24),
+                        icon = painterResource(R.drawable.subtitles_gear_24px),
                         onClick = {
                             SubtitlesFragment.push(activity, false)
                         }),
@@ -86,7 +86,7 @@ class SettingsPlayerScreen : SearchableSettings {
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.ListPreference(
                         title = stringResource(R.string.player_pref),
-                        icon = painterResource(R.drawable.netflix_play),
+                        icon = painterResource(R.drawable.play_arrow_24px),
                         preference = settings.player.defaultPlayer,
                         entries = players,
                     ),
@@ -113,14 +113,14 @@ class SettingsPlayerScreen : SearchableSettings {
                         preference = settings.player.pipEnabled,
                         title = stringResource(R.string.picture_in_picture),
                         subtitle = stringResource(R.string.picture_in_picture_des),
-                        icon = painterResource(R.drawable.ic_baseline_picture_in_picture_alt_24),
+                        icon = painterResource(R.drawable.pip_24px),
                     ),
 
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.resizeEnabled,
                         title = stringResource(R.string.player_size_settings),
                         subtitle = stringResource(R.string.player_size_settings_des),
-                        icon = painterResource(R.drawable.ic_baseline_aspect_ratio_24),
+                        icon = painterResource(R.drawable.aspect_ratio_24px),
                     ),
 
                     Preference.PreferenceItem.SwitchPreference(
@@ -179,13 +179,13 @@ class SettingsPlayerScreen : SearchableSettings {
                         preference = settings.player.extraBrightnessEnabled,
                         title = stringResource(R.string.extra_brightness_settings),
                         subtitle = stringResource(R.string.extra_brightness_settings_des),
-                        icon = painterResource(R.drawable.sun_7_24),
+                        icon = painterResource(R.drawable.light_mode_24px),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.episodeSync,
                         title = stringResource(R.string.episode_sync_settings),
                         subtitle = stringResource(R.string.episode_sync_settings_des),
-                        icon = painterResource(R.drawable.baseline_sync_24)
+                        icon = painterResource(R.drawable.autorenew_24px)
                     ),
                 ),
             ),
@@ -208,13 +208,13 @@ class SettingsPlayerScreen : SearchableSettings {
                         preference = settings.player.doubleTapToSeekEnabled,
                         title = stringResource(R.string.double_tap_to_seek_settings),
                         subtitle = stringResource(R.string.double_tap_to_seek_settings_des),
-                        icon = painterResource(R.drawable.ic_baseline_touch_app_24),
+                        icon = painterResource(R.drawable.touch_double_24px),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.doubleTapToPauseEnabled,
                         title = stringResource(R.string.double_tap_to_pause_settings),
                         subtitle = stringResource(R.string.double_tap_to_pause_settings_des),
-                        icon = painterResource(R.drawable.ic_baseline_touch_app_24),
+                        icon = painterResource(R.drawable.touch_double_24px),
                     ),
 
                     Preference.PreferenceItem.SliderPreference(
@@ -303,7 +303,7 @@ class SettingsPlayerScreen : SearchableSettings {
                         preference = settings.player.bufferDiskMB,
                         title = stringResource(R.string.video_buffer_disk_settings),
                         subtitle = "%s\n" + stringResource(R.string.video_disk_description),
-                        icon = painterResource(R.drawable.ic_baseline_storage_24),
+                        icon = painterResource(R.drawable.hard_drive_24px),
                         entries = integerArrayResource(R.array.video_buffer_size_values).zip(
                             stringArrayResource(R.array.video_buffer_size_names)
                         ).toMap()
