@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -17,6 +18,7 @@ import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -175,68 +177,25 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 putString(context.getString(R.string.download_path_key_visual), visual)
             }
         }
-    }
-
-    private val pathPicker = getChooseFolderLauncher { uri, path ->
-        pickDownloadPath(uri, path)
-    }
-
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        hideKeyboard()
-        setPreferencesFromResource(R.xml.settings_general, rootKey)
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         fun getCurrent(): MutableList<CustomSite> {
             return getKey<Array<CustomSite>>(USER_PROVIDER_API)?.toMutableList()
                 ?: mutableListOf()
         }
-
-        getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
-            val current = getCurrentLocale(pref.context)
-            val languageTagsIETF = appLanguages.map { it.second }
-            val languageNames = appLanguages.map { it.nameNextToFlagEmoji() }
-            val currentIndex = languageTagsIETF.indexOf(current)
-
-            activity?.showDialog(
-                languageNames, currentIndex, getString(R.string.app_language), true, { }
-            ) { selectedLangIndex ->
-                try {
-                    val langTagIETF = languageTagsIETF[selectedLangIndex]
-                    CommonActivity.setLocale(activity, langTagIETF)
-                    settingsManager.edit {
-                        putString(getString(R.string.locale_key), langTagIETF)
-                    }
-                    activity?.recreate()
-                } catch (e: Exception) {
-                    logError(e)
-                }
-            }
-            return@setOnPreferenceClickListener true
-        }
-
-        getPref(R.string.battery_optimisation_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
-            val ctx = context ?: return@setOnPreferenceClickListener false
-
-            if (isAppRestricted(ctx)) {
-                ctx.showBatteryOptimizationDialog()
-            } else {
-                showToast(R.string.app_unrestricted_toast)
-            }
-
-            true
-        }
-
         fun showAdd() {
             val providers = allProviders.distinctBy { it::class }.sortedBy { it.name }
-            activity?.showDialog(
+            val context = activity
+            context?.showDialog(
                 providers.map { "${it.name} (${it.mainUrl})" },
                 -1,
-                context?.getString(R.string.add_site_pref) ?: return,
+                context.getString(R.string.add_site_pref) ?: return,
                 true,
                 {}) { selection ->
                 val provider = providers.getOrNull(selection) ?: return@showDialog
 
-                val binding : AddSiteInputBinding = AddSiteInputBinding.inflate(layoutInflater,null,false)
+                val binding : AddSiteInputBinding = AddSiteInputBinding.inflate(LayoutInflater.from(
+                    context
+                ),null,false)
 
                 val builder =
                     AlertDialog.Builder(context ?: return@showDialog, R.style.AlertDialogCustom)
@@ -274,11 +233,11 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
 
         fun showDelete() {
             val current = getCurrent()
-
-            activity?.showMultiDialog(
+            val context = activity
+            context?.showMultiDialog(
                 current.map { it.name },
                 listOf(),
-                context?.getString(R.string.remove_site_pref) ?: return,
+                context.getString(R.string.remove_site_pref),
                 {}) { indexes ->
                 current.removeAll(indexes.map { current[it] })
                 setKey(USER_PROVIDER_API, current.toTypedArray())
@@ -286,7 +245,12 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         }
 
         fun showAddOrDelete() {
-            val binding : AddRemoveSitesBinding = AddRemoveSitesBinding.inflate(layoutInflater,null,false)
+            val context = activity
+
+            val binding : AddRemoveSitesBinding = AddRemoveSitesBinding.inflate(
+                LayoutInflater.from(
+                    context
+                ),null,false)
             val builder =
                 AlertDialog.Builder(context ?: return, R.style.AlertDialogCustom)
                     .setView(binding.root)
@@ -303,6 +267,54 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 dialog.dismissSafe(activity)
             }
         }
+    }
+
+    private val pathPicker = getChooseFolderLauncher { uri, path ->
+        pickDownloadPath(uri, path)
+    }
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        hideKeyboard()
+        setPreferencesFromResource(R.xml.settings_general, rootKey)
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+
+        getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
+            val current = getCurrentLocale(pref.context)
+            val languageTagsIETF = appLanguages.map { it.second }
+            val languageNames = appLanguages.map { it.nameNextToFlagEmoji() }
+            val currentIndex = languageTagsIETF.indexOf(current)
+
+            activity?.showDialog(
+                languageNames, currentIndex, getString(R.string.app_language), true, { }
+            ) { selectedLangIndex ->
+                try {
+                    val langTagIETF = languageTagsIETF[selectedLangIndex]
+                    CommonActivity.setLocale(activity, langTagIETF)
+                    settingsManager.edit {
+                        putString(getString(R.string.locale_key), langTagIETF)
+                    }
+                    activity?.recreate()
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.battery_optimisation_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
+            val ctx = context ?: return@setOnPreferenceClickListener false
+
+            if (isAppRestricted(ctx)) {
+                ctx.showBatteryOptimizationDialog()
+            } else {
+                showToast(R.string.app_unrestricted_toast)
+            }
+
+            true
+        }
+
+
 
         getPref(R.string.override_site_key)?.setOnPreferenceClickListener { _ ->
 
@@ -329,7 +341,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
             val prefValues = resources.getIntArray(R.array.dns_pref_values)
 
             val currentDns =
-                settingsManager.getInt(getString(R.string.dns_pref), 0)
+                settingsManager.getInt(getString(R.string.dns_key), 0)
 
             activity?.showBottomDialog(
                 prefNames.toList(),
@@ -337,7 +349,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 getString(R.string.dns_pref),
                 true,
                 {}) {
-                settingsManager.edit { putInt(getString(R.string.dns_pref), prefValues[it]) }
+                settingsManager.edit { putInt(getString(R.string.dns_key), prefValues[it]) }
                 (context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true

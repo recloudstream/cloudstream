@@ -137,7 +137,7 @@
 
     <fragment
         android:id="@+id/navigation_settings_player"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsPlayer"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsPlayer2"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -161,7 +161,7 @@
 
     <fragment
         android:id="@+id/navigation_settings_ui"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsUI"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsUI2"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -179,7 +179,7 @@
 
     <fragment
         android:id="@+id/navigation_settings_general"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsGeneral"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsGeneral2"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -247,7 +247,7 @@
 
     <fragment
         android:id="@+id/navigation_settings_providers"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsProviders"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsProviders2"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -256,7 +256,7 @@
 
     <fragment
         android:id="@+id/navigation_settings_updates"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsUpdates"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsUpdates2"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -265,7 +265,7 @@
 
     <fragment
         android:id="@+id/navigation_settings_account"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsAccount"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsAccount2"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"

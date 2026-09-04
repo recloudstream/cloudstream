@@ -1,0 +1,194 @@
+package com.mihon.presentation.settings
+
+import androidx.annotation.IntRange
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.painter.Painter
+import com.lagradost.cloudstream4.generated.resources.Res
+import com.lagradost.cloudstream4.generated.resources.none
+import com.mihon.common.preference.PreferenceData
+import org.jetbrains.compose.resources.stringResource
+
+sealed class Preference {
+    abstract val title: String
+    abstract val enabled: Boolean
+
+    sealed class PreferenceItem<T, R> : Preference() {
+        abstract val subtitle: String?
+        abstract val icon: Painter?
+        abstract val onValueChanged: suspend (value: T) -> R
+
+        /**
+         * A basic [PreferenceItem] that only displays texts.
+         */
+        data class TextPreference(
+            override val title: String,
+            override val subtitle: String? = null,
+            override val enabled: Boolean = true,
+            val widget: @Composable (() -> Unit)? = null,
+            val onClick: (() -> Unit)? = null,
+            override val icon: Painter? = null
+        ) : PreferenceItem<String, Unit>() {
+            override val onValueChanged: suspend (value: String) -> Unit = {}
+        }
+
+        /**
+         * A [PreferenceItem] that provides a two-state toggleable option.
+         */
+        data class SwitchPreference(
+            val preference: PreferenceData<Boolean>,
+            override val title: String,
+            override val subtitle: String? = null,
+            override val enabled: Boolean = true,
+            override val onValueChanged: suspend (value: Boolean) -> Boolean = { true },
+            override val icon: Painter? = null
+        ) : PreferenceItem<Boolean, Boolean>()
+
+        /**
+         * A [PreferenceItem] that provides a slider to select an integer number.
+         */
+        data class SliderPreference(
+            val value: Int,
+            override val title: String,
+            override val subtitle: String? = null,
+            val valueString: String? = null,
+            val valueRange: IntProgression = 0..1,
+            @IntRange(from = 0) val steps: Int = with(valueRange) { (last - first) - 1 },
+            override val enabled: Boolean = true,
+            override val onValueChanged: suspend (value: Int) -> Unit = {},
+            override val icon: Painter? = null
+        ) : PreferenceItem<Int, Unit>()
+
+        /**
+         * A [PreferenceItem] that displays a list of entries as a dialog.
+         */
+        @Suppress("UNCHECKED_CAST")
+        data class ListPreference<T>(
+            val preference: PreferenceData<T>,
+            val entries: Map<T, String>,
+            override val title: String,
+            override val subtitle: String? = "%s",
+            val subtitleProvider: @Composable (value: T, entries: Map<T, String>) -> String? =
+                { v, e -> subtitle?.format(e[v]) },
+            override val icon: Painter? = null,
+            override val enabled: Boolean = true,
+            override val onValueChanged: suspend (value: T) -> Boolean = { true },
+        ) : PreferenceItem<T, Boolean>() {
+            internal fun internalSet(value: Any) = preference.set(value as T)
+            internal suspend fun internalOnValueChanged(value: Any) = onValueChanged(value as T)
+
+            @Composable
+            internal fun internalSubtitleProvider(value: Any?, entries: Map<out Any?, String>) =
+                subtitleProvider(value as T, entries as Map<T, String>)
+        }
+
+        /**
+         * [ListPreference] but with no connection to a [PreferenceData]
+         */
+        data class BasicListPreference(
+            val value: String,
+            val entries: Map<String, String>,
+            override val title: String,
+            override val subtitle: String? = "%s",
+            val subtitleProvider: @Composable (value: String, entries: Map<String, String>) -> String? =
+                { v, e -> subtitle?.format(e[v]) },
+            override val icon: Painter? = null,
+            override val enabled: Boolean = true,
+            override val onValueChanged: suspend (value: String) -> Unit = {},
+        ) : PreferenceItem<String, Unit>()
+
+        /**
+         * A [PreferenceItem] that displays a list of entries as a dialog.
+         * Multiple entries can be selected at the same time.
+         */
+        @Suppress("UNCHECKED_CAST")
+        data class MultiSelectListPreference<T>(
+            val preference: PreferenceData<Set<T>>,
+            val entries: Map<T, String>,
+            override val title: String,
+            override val subtitle: String? = "%s",
+            val subtitleProvider: @Composable (value: Set<T>, entries: Map<T, String>) -> String? =
+                { v, e ->
+                    val combined = remember(v, e) {
+                        v.mapNotNull { e[it] }
+                            .joinToString()
+                            .takeUnless { it.isBlank() }
+                    }
+                        ?: stringResource(Res.string.none)
+                    subtitle?.format(combined)
+                },
+            override val icon: Painter? = null,
+            override val enabled: Boolean = true,
+            override val onValueChanged: suspend (value: Set<T>) -> Boolean = { true },
+        ) : PreferenceItem<Set<T>, Boolean>() {
+            internal fun internalSet(value: Set<Any?>) = preference.set(value as Set<T>)
+            internal suspend fun internalOnValueChanged(value: Set<Any?>) = onValueChanged(value as Set<T>)
+
+            @Composable
+            internal fun internalSubtitleProvider(value: Set<Any?>, entries: Map<out Any?, String>) =
+                subtitleProvider(value as Set<T>, entries as Map<T, String>)
+        }
+
+        /**
+         * A [PreferenceItem] that shows a EditText in the dialog.
+         */
+        data class EditTextPreference(
+            val preference: PreferenceData<String>,
+            override val title: String,
+            override val subtitle: String? = "%s",
+            override val enabled: Boolean = true,
+            override val onValueChanged: suspend (value: String) -> Boolean = { true },
+        ) : PreferenceItem<String, Boolean>() {
+            override val icon: Painter? = null
+        }
+
+        /**
+         * A [PreferenceItem] for individual tracker.
+         */
+        /*data class TrackerPreference(
+            val tracker: Tracker,
+            val login: () -> Unit,
+            val logout: () -> Unit,
+        ) : PreferenceItem<String, Unit>() {
+            override val title: String = ""
+            override val enabled: Boolean = true
+            override val subtitle: String? = null
+            override val icon: ImageVector? = null
+            override val onValueChanged: suspend (value: String) -> Unit = {}
+        }*/
+
+        data class InfoPreference(
+            override val title: String,
+        ) : PreferenceItem<String, Unit>() {
+            override val enabled: Boolean = true
+            override val subtitle: String? = null
+            override val icon: Painter? = null
+            override val onValueChanged: suspend (value: String) -> Unit = {}
+        }
+
+        data class CustomPreference(
+            override val title: String,
+            val content: @Composable () -> Unit,
+        ) : PreferenceItem<Unit, Unit>() {
+            override val enabled: Boolean = true
+            override val subtitle: String? = null
+            override val icon: Painter? = null
+            override val onValueChanged: suspend (value: Unit) -> Unit = {}
+        }
+    }
+
+    data class PreferenceGroup(
+        override val title: String,
+        override val enabled: Boolean = true,
+
+        val preferenceItems: List<PreferenceItem<out Any, out Any>>,
+    ) : Preference()
+}
+
+@Composable
+fun <T> PreferenceData<T>.collectAsState(): State<T> {
+    val flow = remember(this) { changes() }
+    return flow.collectAsState(initial = get())
+}

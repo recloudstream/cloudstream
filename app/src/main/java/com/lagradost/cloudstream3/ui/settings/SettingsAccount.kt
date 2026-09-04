@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -76,7 +77,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
         /** Used by nginx plugin too */
         @SuppressLint("StringFormatInvalid")
         fun showLoginInfo(
-            activity: FragmentActivity?,
+            activity: Activity?,
             api: AuthRepo,
             info: AuthUser?,
             index: Int,
@@ -121,7 +122,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
             }
         }
 
-        private fun showAccountSwitch(activity: FragmentActivity, api: AuthRepo) {
+        private fun showAccountSwitch(activity: Activity, api: AuthRepo) {
             val accounts = api.accounts
             val binding: AccountSwitchBinding =
                 AccountSwitchBinding.inflate(activity.layoutInflater, null, false)
@@ -153,7 +154,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
 
 
         @UiThread
-        fun showPin(activity: FragmentActivity, api: AuthRepo) {
+        fun showPin(activity: Activity, api: AuthRepo) {
             val binding: DeviceAuthBinding =
                 DeviceAuthBinding.inflate(activity.layoutInflater, null, false)
 
@@ -273,8 +274,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
         }
 
 
-        fun showAppLogin(activity: FragmentActivity, api: AuthRepo) {
-
+        fun showAppLogin(activity: Activity, api: AuthRepo) {
             val binding: AddAccountInputBinding =
                 AddAccountInputBinding.inflate(activity.layoutInflater, null, false)
             val builder =
@@ -315,7 +315,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
             binding.createAccount.setOnClickListener {
                 openBrowser(
                     api.createAccountUrl ?: return@setOnClickListener,
-                    activity
+                    activity,
                 )
                 dialog.dismissSafe()
             }
@@ -391,7 +391,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
         }
 
         @UiThread
-        fun addAccount(activity: FragmentActivity, api: AuthRepo) {
+        fun addAccount(activity: Activity, api: AuthRepo) {
             try {
                 if (api.hasPin && !isLayout(PHONE)) {
                     showPin(activity, api)
