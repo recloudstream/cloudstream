@@ -1,0 +1,7 @@
+﻿<svg width="192" height="192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="white"/>
+  <!-- Background circle -->
+  <circle cx="96" cy="96" r="86" fill="#0066CC"/>
+  <!-- Play symbol -->
+  <polygon points="70,70 70,122 128,96" fill="white"/>
+</svg>

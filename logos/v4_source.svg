@@ -1,0 +1,12 @@
+﻿<svg width="192" height="192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="white"/>
+  <!-- Cloud outline -->
+  <g stroke="#0066CC" stroke-width="3" fill="none">
+    <path d="M 66,64 Q 56,49 66,44"/>
+    <path d="M 96,39 Q 81,29 96,34"/>
+    <path d="M 96,34 Q 111,29 96,39"/>
+    <path d="M 126,44 Q 136,49 126,64"/>
+  </g>
+  <!-- Play button -->
+  <polygon points="96,153 68,118 124,118" fill="#0066CC"/>
+</svg>

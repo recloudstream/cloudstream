@@ -1,0 +1,9 @@
+﻿<svg width="192" height="192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="white"/>
+  <!-- Cloud shape -->
+  <circle cx="66" cy="64" r="24" fill="#0066CC"/>
+  <circle cx="96" cy="44" r="28" fill="#0066CC"/>
+  <circle cx="126" cy="64" r="24" fill="#0066CC"/>
+  <!-- Play button -->
+  <polygon points="96,148 72,112 120,112" fill="#0066CC"/>
+</svg>
