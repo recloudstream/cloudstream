@@ -33,7 +33,7 @@ class AppSettings internal constructor(
 }
 
 class PluginPreferences(preferences: PreferenceStore) {
-    val autoUpdate = preferences.getBoolean("auto_update_plugins_key", true)
+    val autoUpdate = preferences.getBoolean("auto_update_plugins", true)
     val autoDownload = preferences.getInt("auto_download_plugins_key2", 0)
 }
 
@@ -126,7 +126,6 @@ class UIPreferences(preferences: PreferenceStore) {
         "confirm_exit_key", -1
     )
 
-    // TODO use this instead of the old key for the UI
     /** This had to be refactored to use enumSet because the old system is prone to bugs */
     val filterQuality = preferences.getEnumSet<SearchQuality>(
         "pref_filter_search_quality_key2", emptySet()
@@ -144,7 +143,7 @@ class ProviderPreferences(preferences: PreferenceStore) {
         "prefer_media_type_key_2", defaultPreferredMedia
     )
 
-    val extentionLanguages = preferences.getStringSet(
+    val extensionLanguages = preferences.getStringSet(
         "provider_lang_key", setOf(AllLanguagesName)
     )
 
@@ -194,6 +193,7 @@ class GeneralPreferences(preferences: PreferenceStore) {
     /** Please note that it used R.array.dns_pref before, this was a bug and caused this setting to be language sensitive **/
     val dns = preferences.getInt("dns_key", 0)
 
+    /** Very weird setKey based usage, just having this setting might not do it */
     val jsdelivrProxy = preferences.getBoolean("jsdelivr_proxy_key", false)
 
     /** This should honesty be refactored to a single setting */

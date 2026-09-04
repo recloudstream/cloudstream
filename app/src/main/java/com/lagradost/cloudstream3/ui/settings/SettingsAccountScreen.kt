@@ -34,6 +34,8 @@ import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream4.AppSettings
+import com.lagradost.cloudstream4.compose.PHONE
+import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
@@ -113,29 +115,32 @@ class SettingsAccountScreen : SearchableSettings, BiometricAuthenticator.Biometr
                     icon = painterResource(R.drawable.ic_outline_account_circle_24)
                 ),
             ), Preference.PreferenceGroup(
-                enabled = hasSecurity,
+                enabled = hasSecurity && isLayout(PHONE),
                 title = stringResource(R.string.pref_category_security),
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
-                    preference = settings.security.biometrics,
-                    title = stringResource(R.string.biometric_setting),
-                    subtitle = stringResource(R.string.biometric_setting_summary),
-                    icon = painterResource(R.drawable.ic_fingerprint),
-                    onValueChanged = { _ ->
-                        val activity =
-                            activity as? FragmentActivity ?: return@SwitchPreference false
+                        preference = settings.security.biometrics,
+                        title = stringResource(R.string.biometric_setting),
+                        subtitle = stringResource(R.string.biometric_setting_summary),
+                        icon = painterResource(R.drawable.ic_fingerprint),
+                        onValueChanged = { _ ->
+                            val activity =
+                                activity as? FragmentActivity ?: return@SwitchPreference false
 
-                        if (deviceHasPasswordPinLock(activity)) {
-                            startBiometricAuthentication(
-                                activity, R.string.biometric_authentication_title, false
-                            )
-                            promptInfo?.let {
-                                authCallback = this
-                                biometricPrompt?.authenticate(it)
+                            if (deviceHasPasswordPinLock(activity)) {
+                                startBiometricAuthentication(
+                                    activity, R.string.biometric_authentication_title, false
+                                )
+                                promptInfo?.let {
+                                    authCallback = this
+                                    biometricPrompt?.authenticate(it)
+                                }
                             }
-                        }
 
-                        return@SwitchPreference true
-                    }))))
+                            return@SwitchPreference true
+                        })
+                )
+            )
+        )
     }
 }

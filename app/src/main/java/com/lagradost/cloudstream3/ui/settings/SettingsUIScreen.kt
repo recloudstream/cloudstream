@@ -17,6 +17,8 @@ import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream4.compose.TV
+import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
@@ -120,6 +122,7 @@ class SettingsUIScreen : SearchableSettings {
                         subtitle = stringResource(R.string.overscan_settings_des),
                         valueRange = 0..100,
                         icon = painterResource(R.drawable.arrows_input_24px),
+                        enabled = isLayout(TV),
                         onValueChanged = { newValue ->
                             settings.ui.overscanDp.set(newValue)
                             val padding = newValue.toPx
@@ -169,7 +172,8 @@ class SettingsUIScreen : SearchableSettings {
                         preference = settings.ui.showClock,
                         title = stringResource(R.string.tv_layout_clock_settings),
                         subtitle = stringResource(R.string.tv_layout_clock_settings_des),
-                        icon = painterResource(R.drawable.ic_baseline_clock_24)
+                        icon = painterResource(R.drawable.ic_baseline_clock_24),
+                        enabled = isLayout(TV),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.ui.randomButtonEnabled,

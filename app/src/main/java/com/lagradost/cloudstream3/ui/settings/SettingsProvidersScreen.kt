@@ -60,7 +60,7 @@ class SettingsProvidersScreen : SearchableSettings {
                     lang
                 ) ?: lang)
             },
-            preference = settings.provider.extentionLanguages
+            preference = settings.provider.extensionLanguages
         ), Preference.PreferenceItem.MultiSelectListPreference(
             title = stringResource(R.string.preferred_media_settings),
             icon = painterResource(R.drawable.movie_edit_24px),

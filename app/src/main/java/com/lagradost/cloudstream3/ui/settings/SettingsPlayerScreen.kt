@@ -21,6 +21,10 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getFold
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream4.compose.EMULATOR
+import com.lagradost.cloudstream4.compose.PHONE
+import com.lagradost.cloudstream4.compose.TV
+import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
@@ -162,6 +166,7 @@ class SettingsPlayerScreen : SearchableSettings {
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.previewBarEnabled,
+                        enabled = isLayout(PHONE or EMULATOR),
                         title = stringResource(R.string.preview_seekbar),
                         subtitle = stringResource(R.string.preview_seekbar_desc),
                         icon = painterResource(R.drawable.picture_in_picture_center_24px),
@@ -229,7 +234,7 @@ class SettingsPlayerScreen : SearchableSettings {
             ),
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_android_tv),
-                // TODO enabled by TV
+                enabled = isLayout(TV or EMULATOR),
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SliderPreference(
                         value = tvSeekOnTime,
@@ -263,6 +268,7 @@ class SettingsPlayerScreen : SearchableSettings {
                         ).toMap()
                     ),
                     Preference.PreferenceItem.SwitchPreference(
+                        enabled = isLayout(PHONE or EMULATOR),
                         preference = settings.player.hidePlayerControlNames,
                         icon = painterResource(R.drawable.visibility_off_24px),
                         title = stringResource(R.string.hide_player_control_names),

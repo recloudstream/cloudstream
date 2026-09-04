@@ -28,13 +28,14 @@ import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestrict
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.showRequestIgnoreBatteryOptDialog
 import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.compose.ActionDialog
+import com.lagradost.cloudstream4.compose.PHONE
+import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.lagradost.safefile.SafeFile
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import com.mihon.presentation.settings.collectAsState
-import com.mihon.presentation.settings.widget.TextPreferenceWidget
 import kotlinx.collections.immutable.persistentListOf
 
 class SettingsGeneralScreen : SearchableSettings {
@@ -80,6 +81,29 @@ class SettingsGeneralScreen : SearchableSettings {
         val downloadPathVisual by settings.general.downloadPathVisual.collectAsState()
         //val downloadPath by settings.general.downloadPath.collectAsState()
 
+        var isBatteryShown by remember { mutableStateOf(false) }
+        val context = LocalContext.current
+
+        if (isBatteryShown) {
+            ActionDialog(
+                icon = painterResource(R.drawable.battery_alert_24px),
+                title = stringResource(R.string.battery_dialog_title),
+                text = stringResource(R.string.battery_dialog_message),
+                confirmText = stringResource(R.string.ok),
+                dismissText = stringResource(R.string.cancel),
+                dismiss = {
+                    isBatteryShown = false
+                    settings.general.batterOptimization.set(false)
+                },
+                confirm = {
+                    isBatteryShown = false
+                    // The og impl never modified it to true?
+                    // settings.general.batterOptimization.set(true)
+                    context.showRequestIgnoreBatteryOptDialog()
+                }
+            )
+        }
+
         return persistentListOf(
             Preference.PreferenceItem.BasicListPreference(
                 value = locale,
@@ -122,41 +146,15 @@ class SettingsGeneralScreen : SearchableSettings {
                         subtitle = stringResource(R.string.concurrent_connections_settings_des),
                         onValueChanged = settings.general.concurrentConnections::set,
                     ),
-                    Preference.PreferenceItem.CustomPreference(
+                    Preference.PreferenceItem.TextPreference(
                         title = stringResource(R.string.battery_dialog_title),
-                        content = {
-                            var isBatteryShown by remember { mutableStateOf(false) }
-                            val context = LocalContext.current
-
-                            TextPreferenceWidget(
-                                title = stringResource(R.string.battery_dialog_title),
-                                icon = painterResource(R.drawable.battery_alert_24px),
-                                onPreferenceClick = {
-                                    if (isAppRestricted(context)) {
-                                        isBatteryShown = true
-                                    } else {
-                                        showToast(R.string.app_unrestricted_toast)
-                                    }
-                                })
-
-                            if (isBatteryShown) {
-                                ActionDialog(
-                                    icon = painterResource(R.drawable.battery_alert_24px),
-                                    title = stringResource(R.string.battery_dialog_title),
-                                    text = stringResource(R.string.battery_dialog_message),
-                                    confirmText = stringResource(R.string.ok),
-                                    dismissText = stringResource(R.string.cancel),
-                                    dismiss = {
-                                        isBatteryShown = false
-                                        settings.general.batterOptimization.set(false)
-                                    },
-                                    confirm = {
-                                        isBatteryShown = false
-                                        // The og impl never modified it to true?
-                                        // settings.general.batterOptimization.set(true)
-                                        context.showRequestIgnoreBatteryOptDialog()
-                                    }
-                                )
+                        icon = painterResource(R.drawable.battery_alert_24px),
+                        enabled = isLayout(PHONE),
+                        onClick = {
+                            if (isAppRestricted(context)) {
+                                isBatteryShown = true
+                            } else {
+                                showToast(R.string.app_unrestricted_toast)
                             }
                         }
                     ),
