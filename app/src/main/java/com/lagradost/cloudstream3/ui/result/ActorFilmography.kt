@@ -13,6 +13,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.Actor
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.ActorFilmographyBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.BaseBottomSheetDialogFragment
@@ -54,8 +56,16 @@ class ActorFilmography : BaseBottomSheetDialogFragment<ActorFilmographyBinding>(
         }
     }
 
+    private enum class FilmographyFilter {
+        ALL,
+        MOVIES,
+        SERIES,
+    }
+
     private var loadJob: Job? = null
     private val repository = ActorFilmographyRepository()
+    private var allCredits: List<SearchResponse> = emptyList()
+    private var activeFilter = FilmographyFilter.ALL
 
     override fun onStart() {
         super.onStart()
@@ -114,8 +124,30 @@ class ActorFilmography : BaseBottomSheetDialogFragment<ActorFilmographyBinding>(
                 }
             }
         }
+        binding.filmographyFilters.setOnCheckedStateChangeListener { _, checkedIds ->
+            activeFilter = when (checkedIds.firstOrNull()) {
+                R.id.filmography_filter_movies -> FilmographyFilter.MOVIES
+                R.id.filmography_filter_series -> FilmographyFilter.SERIES
+                else -> FilmographyFilter.ALL
+            }
+            applyFilter()
+        }
         binding.filmographyRetry.setOnClickListener { loadFilmography() }
         loadFilmography()
+    }
+
+    private fun applyFilter() {
+        val binding = binding ?: return
+        val filtered = when (activeFilter) {
+            FilmographyFilter.ALL -> allCredits
+            FilmographyFilter.MOVIES -> allCredits.filter { it.type == TvType.Movie }
+            FilmographyFilter.SERIES -> allCredits.filter { it.type == TvType.TvSeries }
+        }
+
+        (binding.filmographyResults.adapter as? SearchAdapter)?.submitList(filtered)
+        binding.filmographyResults.isVisible = filtered.isNotEmpty()
+        binding.filmographyStatus.setText(R.string.actor_filmography_empty)
+        binding.filmographyStatus.isVisible = filtered.isEmpty() && !binding.filmographyLoading.isVisible
     }
 
     private fun loadFilmography() {
@@ -125,6 +157,7 @@ class ActorFilmography : BaseBottomSheetDialogFragment<ActorFilmographyBinding>(
             image = arguments?.getString(ACTOR_IMAGE),
         )
         loadJob?.cancel()
+        allCredits = emptyList()
         binding.filmographyLoading.isVisible = true
         binding.filmographyStatus.isVisible = false
         binding.filmographyRetry.isVisible = false
@@ -132,11 +165,9 @@ class ActorFilmography : BaseBottomSheetDialogFragment<ActorFilmographyBinding>(
 
         loadJob = viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val credits = withContext(Dispatchers.IO) { repository.load(actor) }
-                (binding.filmographyResults.adapter as? SearchAdapter)?.submitList(credits)
-                binding.filmographyResults.isVisible = credits.isNotEmpty()
-                binding.filmographyStatus.setText(R.string.actor_filmography_empty)
-                binding.filmographyStatus.isVisible = credits.isEmpty()
+                allCredits = withContext(Dispatchers.IO) { repository.load(actor) }
+                binding.filmographyLoading.isVisible = false
+                applyFilter()
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (error: Exception) {
@@ -158,6 +189,7 @@ class ActorFilmography : BaseBottomSheetDialogFragment<ActorFilmographyBinding>(
     override fun onDestroyView() {
         loadJob?.cancel()
         loadJob = null
+        allCredits = emptyList()
         binding?.filmographyResults?.adapter = null
         super.onDestroyView()
     }
