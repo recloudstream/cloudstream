@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="actor_filmography_hint">Movies and series from TMDB. Select a title to search your providers.</string>
+    <string name="actor_filmography_empty">No movies or series were found for this actor.</string>
+    <string name="actor_filmography_error">Could not load filmography. Please try again.</string>
+    <string name="actor_filmography_retry">Try again</string>
+</resources>

@@ -96,12 +96,15 @@ class ActorAdaptor(
                 }
 
                 itemView.setOnClickListener {
-                    inverted[item] = !isInverted
-                    this.onUpdateContent(holder, getItem(position), position)
+                    // Anime cast entries may describe a character; look up the real performer.
+                    ActorFilmography.show(itemView.context, item.voiceActor ?: item.actor)
                 }
 
                 itemView.setOnLongClickListener {
-                    if (isLayout(PHONE)) {
+                    if (item.voiceActor != null) {
+                        inverted[item] = !isInverted
+                        this.onUpdateContent(holder, item, position)
+                    } else if (isLayout(PHONE)) {
                         Intent(Intent.ACTION_WEB_SEARCH).apply {
                             putExtra(SearchManager.QUERY, item.actor.name)
                         }.also { intent ->
