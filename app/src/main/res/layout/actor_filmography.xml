@@ -30,7 +30,7 @@
             android:layout_height="48dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/home_expanded_hide"
-            android:nextFocusDown="@id/filmography_results"
+            android:nextFocusDown="@id/filmography_filter_all"
             android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
             app:tint="?attr/textColor" />
     </LinearLayout>
@@ -40,9 +40,52 @@
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="12dp"
+        android:paddingBottom="4dp"
         android:text="@string/actor_filmography_hint"
         android:textColor="?attr/textColor" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="false"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/filmography_filters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="8dp"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/filmography_filter_all"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:nextFocusDown="@id/filmography_results"
+                android:text="All" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/filmography_filter_movies"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:nextFocusDown="@id/filmography_results"
+                android:text="Movies" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/filmography_filter_series"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:nextFocusDown="@id/filmography_results"
+                android:text="Series" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -54,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:descendantFocusability="afterDescendants"
-            android:nextFocusUp="@id/filmography_close"
+            android:nextFocusUp="@id/filmography_filter_all"
             android:visibility="gone"
             tools:listitem="@layout/search_result_grid" />
 
