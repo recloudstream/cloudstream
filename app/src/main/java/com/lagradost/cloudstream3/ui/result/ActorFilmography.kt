@@ -7,6 +7,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.Actor
@@ -66,20 +67,40 @@ class ActorFilmography : BaseBottomSheetDialogFragment<ActorFilmographyBinding>(
         }
     }
 
+    private fun configureFilmographyGrid(context: Context) {
+        val results = binding?.filmographyResults ?: return
+        val columns = context.getSpanCount()
+
+        // AutofitRecyclerView uses its internal span count to size SearchAdapter cards.
+        results.spanCount = columns
+
+        // Its custom GrdLayoutManager only returns already-attached views during D-pad focus
+        // searches. On TV this traps focus on the initially visible rows (often ~12 cards).
+        // A regular GridLayoutManager can lay out and scroll to off-screen rows as focus moves.
+        val manager = results.layoutManager as? GridLayoutManager
+        if (manager == null || manager::class == GridLayoutManager::class) {
+            if (manager == null || manager.spanCount != columns) {
+                results.layoutManager = GridLayoutManager(context, columns)
+            }
+        } else {
+            results.layoutManager = GridLayoutManager(context, columns)
+        }
+    }
+
     override fun fixLayout(view: View) {
         fixSystemBarsPadding(view)
         view.layoutParams?.let {
             it.height = (resources.displayMetrics.heightPixels * 0.85).toInt()
             view.layoutParams = it
         }
-        binding?.filmographyResults?.spanCount = view.context.getSpanCount()
+        configureFilmographyGrid(view.context)
     }
 
     override fun onBindingCreated(binding: ActorFilmographyBinding) {
         binding.filmographyActor.text = arguments?.getString(ACTOR_NAME)
         binding.filmographyClose.setOnClickListener { dismiss() }
         binding.filmographyResults.apply {
-            spanCount = context.getSpanCount()
+            configureFilmographyGrid(context)
             setRecycledViewPool(SearchAdapter.sharedPool)
             adapter = SearchAdapter(this) { callback ->
                 when (callback.action) {
