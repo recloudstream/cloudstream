@@ -747,4 +747,12 @@
     <string name="player_is_live">Live</string>
     <string name="video_singular">Video</string>
     <string name="skip_type_preview">Pratinjau</string>
+    <string name="tv_layout_clock_settings">Tampilkan jam waktu nyata</string>
+    <string name="tv_layout_clock_settings_des">Tampilkan jam waktu nyata di bagian atas layar. Berlaku untuk halaman rumah dan pemain</string>
+    <string name="profile_settings">Pengaturan profil</string>
+    <string name="profile_hide_negative_sources">Sembunyikan sumber dengan prioritas negatif</string>
+    <string name="profile_hide_error_sources">Sembunyikan sumber dengan kesalahan</string>
+    <plurals name="links_hidden">
+        <item quantity="other">%d link tersembunyi</item>
+    </plurals>
 </resources>

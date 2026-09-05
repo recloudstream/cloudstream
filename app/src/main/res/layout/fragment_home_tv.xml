@@ -200,10 +200,27 @@
             android:gravity="center"
             android:nextFocusLeft="@id/navigation_home"
             tools:text="Hello!"
-            android:nextFocusRight="@id/home_preview_reload_provider"
+            android:nextFocusRight="@id/home_preview_settings_button"
             android:nextFocusDown="@id/home_preview_info_btt" >
             <requestFocus />
         </com.google.android.material.button.MaterialButton>
+
+        <ImageView
+            android:id="@+id/home_preview_settings_button"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@drawable/player_button_tv_attr_no_bg"
+            android:contentDescription="@string/title_settings"
+            android:focusable="true"
+            android:nextFocusLeft="@id/home_change_api"
+            android:nextFocusRight="@id/home_preview_reload_provider"
+            android:nextFocusDown="@id/home_preview_info_btt"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_tune_24"
+            android:tag="@string/tv_no_focus_tag"
+            android:visibility="gone"
+            app:tint="@color/player_on_button_tv_attr" />
 
         <ImageView
             android:id="@+id/home_preview_reload_provider"
@@ -213,7 +230,7 @@
             android:background="@drawable/player_button_tv_attr_no_bg"
             android:contentDescription="@string/reload_provider"
             android:focusable="true"
-            android:nextFocusLeft="@id/home_change_api"
+            android:nextFocusLeft="@id/home_preview_settings_button"
             android:nextFocusRight="@id/home_preview_search_button"
             android:nextFocusUp="@id/home_preview_reload_provider"
             android:nextFocusDown="@id/home_preview_info_btt"

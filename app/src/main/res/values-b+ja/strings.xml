@@ -383,7 +383,7 @@
     <string name="favorite">お気に入り</string>
     <string name="biometric_unsupported">生体認証は、このデバイスではサポートされていません</string>
     <string name="biometric_setting_summary">指紋、顔ID、PIN、パターン、パスワードでアプリをロック解除します.</string>
-    <string name="device_pin_url_message">スマホやPCで<b>%s</b>にアクセスし、上記のコードを入力してください</string>
+    <string name="device_pin_url_message">スマホやパソコンで <b>%s</b> にアクセスし、上記のコードを入力してください</string>
     <string name="device_pin_expired_message">PINコードが期限切れになりました！</string>
     <string name="empty_library_no_accounts_message">ライブラリが空です :(\nライブラリアカウントにログインするか、ローカルライブラリに表示を追加してください。</string>
     <string name="empty_library_logged_in_message">このリストは空です。 別のものに切り替えてみてください。</string>
@@ -645,7 +645,7 @@
     <string name="torrent_not_accepted">アプリを再起動し、ポップアップに同意して続行します。</string>
     <string name="software_decoding">ソフトウェアデコーディング</string>
     <string name="software_decoding_desc">ソフトウェアデコーディングにより、機器でサポートされていないビデオファイルを再生できますが、高解像度で遅延や不安定な再生を引き起こす可能性があります。</string>
-    <string name="plugins_updated_manually">%d 個のプラグインを正常に更新しました！</string>
+    <string name="plugins_updated_manually">%d 個のプラグインを更新しました</string>
     <string name="no_plugins_updated_manually">更新されたプラグインはありません。</string>
     <string name="player_notification_channel_name">プレーヤー通知</string>
     <string name="player_notification_channel_description">バックグラウンドから再生を制御するためのプレーヤー通知</string>
@@ -733,4 +733,12 @@
     <string name="video_singular">動画</string>
     <string name="skip_type_preview">プレビュー</string>
     <string name="player_is_live">ライブ</string>
+    <string name="tv_layout_clock_settings">現地時刻を表示</string>
+    <string name="tv_layout_clock_settings_des">画面上部に現地時刻を表示します。ホーム画面とプレイヤーに適用されます</string>
+    <string name="profile_settings">プロフィール設定</string>
+    <string name="profile_hide_negative_sources">優先度がマイナスのソースを非表示</string>
+    <string name="profile_hide_error_sources">エラーが発生したソースを非表示</string>
+    <plurals name="links_hidden">
+        <item quantity="other">%d件の非表示リンク</item>
+    </plurals>
 </resources>

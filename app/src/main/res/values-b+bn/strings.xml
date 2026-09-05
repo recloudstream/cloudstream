@@ -387,4 +387,18 @@
     <string name="podcast_singular">পডকাস্ট</string>
     <string name="video_singular">ভিডিও</string>
     <string name="encoding_error">এনকোডিং ত্রুটি</string>
+    <string name="unsupported_error">অসমর্থিত ত্রুটি</string>
+    <string name="episode_action_cast_mirror">কাস্ট মিরর</string>
+    <string name="episode_action_play_mirror">প্লে মিরর</string>"
+    <string name="show_rating">রেটিং লেবেল</string>
+    <string name="show_episode_text">পর্বের বিবরণ</string>
+    <string name="android_tv_interface_on_seek_settings">প্লেয়ারে প্রদর্শিত - স্কিপের পরিমাণ</string>
+    <string name="android_tv_interface_on_seek_settings_summary">প্লেয়ার দৃশ্যমান থাকলে যে সময় পরিমাণ স্কিপ করা হয়</string>
+    <string name="jsdelivr_enabled">GitHub-এর সাথে সংযোগ করা যায়নি। jsDelivr proxy চালু করা হচ্ছে।</string>
+    <string name="jsdelivr_proxy_summary">jsDelivr ব্যবহার করে GitHub-এর সরাসরি লিংক ব্লক করা এড়িয়ে যান। এতে আপডেট কয়েকদিন বিলম্বিত হতে পারে।</string>
+    <string name="pref_category_security">নিরাপত্তা</string>
+    <string name="pref_category_accounts">অ্যাকাউন্টসমূহ</string>
+    <string name="tv_layout_clock_settings">লাইভ ঘড়ি দেখান</string>
+    <string name="tv_layout_clock_settings_des">পর্দার উপরের অংশে লাইভ ঘড়ি দেখায়। হোমপেজ ও প্লেয়ারে প্রযোজ্য</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
 </resources>

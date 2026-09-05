@@ -739,4 +739,15 @@
     <string name="video_singular">Видео</string>
     <string name="skip_type_preview">Предпросмотр</string>
     <string name="player_is_live">Прямой эфир</string>
+    <string name="tv_layout_clock_settings">Отображать текущее время</string>
+    <string name="tv_layout_clock_settings_des">Отображать в верхней части экрана часы с текущим временем. Применяется к главной странице и плееру</string>
+    <string name="profile_settings">Настройки профиля</string>
+    <string name="profile_hide_negative_sources">Скрывать источники с отрицательным приоритетом</string>
+    <string name="profile_hide_error_sources">Скрывать источники с ошибками</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d скрытая ссылка</item>
+        <item quantity="few">%d скрытые ссылки</item>
+        <item quantity="many">%d скрытых ссылок</item>
+        <item quantity="other">%d скрытых ссылок</item>
+    </plurals>
 </resources>
