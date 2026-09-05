@@ -71,11 +71,11 @@ jobs:
         run: chmod +x gradlew
 
       # ------------------------------------------------------------------ #
-      # 5. Build AAB variante prereleaseRelease
-      #    Equivalente a: Build > Generate Signed Bundle > prereleaseRelease
+      # 5. Build AAB variante stableRelease (applicationId: com.mg.cloudstream3)
+      #    Equivalente a: Build > Generate Signed Bundle > stableRelease
       # ------------------------------------------------------------------ #
-      - name: Build AAB (prereleaseRelease)
-        run: ./gradlew bundlePrereleaseRelease
+      - name: Build AAB (stableRelease)
+        run: ./gradlew bundleStableRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
@@ -89,7 +89,7 @@ jobs:
       - name: Locate and rename AAB
         id: find_aab
         run: |
-          AAB_PATH=$(find app/build/outputs/bundle/prereleaseRelease -name "*.aab" | head -1)
+          AAB_PATH=$(find app/build/outputs/bundle/stableRelease -name "*.aab" | head -1)
           if [ -z "$AAB_PATH" ]; then
             echo "ERROR: AAB not found!"
             exit 1
@@ -110,7 +110,7 @@ jobs:
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v6
         with:
-          name: app-prereleaseRelease-${{ steps.find_aab.outputs.version_name }}
+          name: app-stableRelease-${{ steps.find_aab.outputs.version_name }}
           path: ${{ steps.find_aab.outputs.aab_path }}
           retention-days: 7
 
@@ -130,7 +130,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJson: /tmp/gp_service_account.json
-          packageName: com.lagradost.cloudstream3.prerelease
+          packageName: com.mg.cloudstream3
           releaseFiles: ${{ steps.find_aab.outputs.aab_path }}
           track: ${{ github.event.inputs.track }}
           status: completed
