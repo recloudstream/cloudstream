@@ -664,7 +664,7 @@
     <string name="update_plugins">플러그인 업데이트하기</string>
     <string name="update_plugins_manually">수동으로 플러그인 업데이트 하기</string>
     <string name="starting_plugin_update_manually">플러그인 업데이트 절차를 시작합니다!</string>
-    <string name="plugins_updated_manually">성공적으로 %d 플러그인을 업데이트 하였습니다!</string>
+    <string name="plugins_updated_manually">플러그인 %d개를 성공적으로 업데이트했습니다</string>
     <string name="no_plugins_updated_manually">업데이트 된 플러그인이 없습니다.</string>
     <string name="player_notification_channel_name">플레이어 알림</string>
     <string name="player_notification_channel_description">백그라운드에서 재생을 제어하기 위한 플레이어 알림</string>
@@ -733,4 +733,12 @@
     <string name="video_singular">비디오</string>
     <string name="skip_type_preview">프리뷰</string>
     <string name="player_is_live">라이브</string>
+    <string name="profile_settings">프로필 설정</string>
+    <string name="profile_hide_error_sources">오류가 있는 소스 숨기기</string>
+    <string name="profile_hide_negative_sources">우선순위가 음수인 소스 숨기기</string>
+    <plurals name="links_hidden">
+        <item quantity="other">숨겨진 링크 %d개</item>
+    </plurals>
+    <string name="tv_layout_clock_settings">실시간 시계 표시</string>
+    <string name="tv_layout_clock_settings_des">화면 상단에 실시간 시계를 표시합니다. 홈페이지와 플레이어에 적용됩니다</string>
 </resources>
