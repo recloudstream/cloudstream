@@ -13,6 +13,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -68,6 +69,7 @@ import com.lagradost.cloudstream3.utils.txt
 import kotlin.math.roundToInt
 
 private const val SUBTITLE_DELAY_BUNDLE_KEY = "subtitle_delay"
+private const val SECONDARY_SUBTITLE_DELAY_BUNDLE_KEY = "secondary_subtitle_delay"
 
 // All the UI Logic for the player
 @OptIn(UnstableApi::class)
@@ -108,6 +110,19 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
         get() = try {
             -player.getSubtitleOffset()
+        } catch (e: Exception) {
+            logError(e)
+            0L
+        }
+
+    protected var secondarySubtitleDelay
+        set(value) = try {
+            player.setSecondarySubtitleOffset(-value)
+        } catch (e: Exception) {
+            logError(e)
+        }
+        get() = try {
+            -player.getSecondarySubtitleOffset()
         } catch (e: Exception) {
             logError(e)
             0L
@@ -352,8 +367,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             track.sampleMimeType == MimeTypes.APPLICATION_MEDIA3_CUES
         }
         // Subtitle offset is not possible on built-in media3 tracks
+        val hasSecondarySub = player.getCurrentSecondarySubtitle() != null
         playerBinding?.playerSubtitleOffsetBtt?.isGone =
-            isBuiltinSubtitles || tracks.currentTextTracks.isEmpty()
+            (isBuiltinSubtitles || tracks.currentTextTracks.isEmpty()) && !hasSecondarySub
     }
 
     private fun restoreOrientationWithSensor(activity: Activity) {
@@ -496,7 +512,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         player.seekTime(85000) // skip 85s
     }
 
-    private fun showSubtitleOffsetDialog() {
+    private fun showSubtitleOffsetDialog(isSecondary: Boolean = false) {
         val ctx = context ?: return
         // Pause player because the subtitles cannot be continuously updated to follow playback.
         player.handleEvent(
@@ -517,8 +533,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             ctx.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
         fixSystemBarsPadding(binding.root, fixIme = isPortrait)
 
-        var currentOffset = subtitleDelay
+        var currentOffset = if (isSecondary) secondarySubtitleDelay else subtitleDelay
         binding.apply {
+            if (isSecondary) {
+                subtitleOffsetTitleText?.setText(R.string.secondary_subtitle_offset_title)
+            }
             var subtitleAdapter: SubtitleOffsetItemAdapter? = null
 
             subtitleOffsetInput.doOnTextChanged { text, _, _, _ ->
@@ -534,6 +553,10 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                         ?.let { subtitlePos ->
                             subtitleOffsetRecyclerview.scrollToPosition(subtitlePos)
                         }
+
+                    if (isSecondary) {
+                        player.setSecondarySubtitleOffset(-currentOffset)
+                    }
 
                     val str = when {
                         time > 0L -> {
@@ -554,7 +577,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             subtitleOffsetInput.text =
                 Editable.Factory.getInstance()?.newEditable(currentOffset.toString())
 
-            val subtitles = player.getSubtitleCues().toMutableList()
+            val subtitles = (if (isSecondary) player.getSecondarySubtitleCues() else player.getSubtitleCues()).toMutableList()
 
             subtitleOffsetRecyclerview.isVisible = subtitles.isNotEmpty()
             noSubtitlesLoadedNotice.isVisible = subtitles.isEmpty()
@@ -605,13 +628,23 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
             applyBtt.setOnClickListener {
                 selectSubtitlesDialog = null
-                subtitleDelay = currentOffset
+                if (isSecondary) {
+                    secondarySubtitleDelay = currentOffset
+                    player.setSecondarySubtitleOffset(-currentOffset)
+                } else {
+                    subtitleDelay = currentOffset
+                }
                 dialog.dismissSafe(activity)
                 player.seekTime(1L)
             }
             resetBtt.setOnClickListener {
                 selectSubtitlesDialog = null
-                subtitleDelay = 0
+                if (isSecondary) {
+                    secondarySubtitleDelay = 0
+                    player.setSecondarySubtitleOffset(0)
+                } else {
+                    subtitleDelay = 0
+                }
                 dialog.dismissSafe(activity)
                 player.seekTime(1L)
             }
@@ -851,12 +884,27 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     override fun playerStatusChanged() {
         super.playerStatusChanged()
         scheduleMetadataVisibility()
+        val secView = subtitleHolder?.findViewById<View>(R.id.secondary_subtitle_view)
+            ?: playerBinding?.root?.findViewById<View>(R.id.secondary_subtitle_view)
+            ?: binding?.root?.findViewById<View>(R.id.secondary_subtitle_view)
+        val isPaused = currentPlayerStatus == CSPlayerLoading.IsPaused
+        if (player.getCurrentSecondarySubtitle() != null) {
+            secView?.visibility = if (isPaused || DataStoreHelper.alwaysShowSecondarySubtitles) View.VISIBLE else View.GONE
+        }
     }
 
     // When the hold-speedup gesture fires, hide controls so the video is unobstructed.
     // The speedup button show/hide and speed change are handled by PlayerView.
     override fun onHoldSpeedUp(show: Boolean) {
         if (show && isShowing) onClickChange()
+    }
+
+    override fun onHoldSecondarySubtitle(show: Boolean) {
+        val secView = subtitleHolder?.findViewById<View>(R.id.secondary_subtitle_view)
+            ?: playerBinding?.root?.findViewById<View>(R.id.secondary_subtitle_view)
+            ?: binding?.root?.findViewById<View>(R.id.secondary_subtitle_view)
+        Log.i("FullScreenPlayer", "onHoldSecondarySubtitle: show=$show, secView=$secView")
+        secView?.visibility = if (show || DataStoreHelper.alwaysShowSecondarySubtitles) View.VISIBLE else View.GONE
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -1090,6 +1138,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     override fun onSaveInstanceState(outState: Bundle) {
         // As this is video specific it is better to not do any setKey/getKey
         outState.putLong(SUBTITLE_DELAY_BUNDLE_KEY, subtitleDelay)
+        outState.putLong(SECONDARY_SUBTITLE_DELAY_BUNDLE_KEY, secondarySubtitleDelay)
         super.onSaveInstanceState(outState)
     }
 
@@ -1113,6 +1162,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         setPlayBackSpeed(DataStoreHelper.playBackSpeed)
         savedInstanceState?.getLong(SUBTITLE_DELAY_BUNDLE_KEY)?.let {
             subtitleDelay = it
+        }
+        savedInstanceState?.getLong(SECONDARY_SUBTITLE_DELAY_BUNDLE_KEY)?.let {
+            secondarySubtitleDelay = it
         }
 
         // handle tv controls directly based on player state
@@ -1252,7 +1304,35 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
 
             playerSubtitleOffsetBtt.setOnClickListener {
-                showSubtitleOffsetDialog()
+                if (player.getCurrentSecondarySubtitle() != null) {
+                    val activity = activity ?: return@setOnClickListener
+                    val options = listOf(
+                        getString(R.string.subtitle_offset_title),
+                        getString(R.string.secondary_subtitle_offset_title)
+                    )
+                    com.lagradost.cloudstream3.utils.SingleSelectionHelper.run {
+                        activity.showDialog(
+                            items = options,
+                            selectedIndex = 0,
+                            name = getString(R.string.subtitle_offset),
+                            showApply = false,
+                            dismissCallback = {},
+                            callback = { index: Int ->
+                                showSubtitleOffsetDialog(isSecondary = index == 1)
+                            }
+                        )
+                    }
+                } else {
+                    showSubtitleOffsetDialog(isSecondary = false)
+                }
+            }
+            playerSubtitleOffsetBtt.setOnLongClickListener {
+                if (player.getCurrentSecondarySubtitle() != null) {
+                    showSubtitleOffsetDialog(isSecondary = true)
+                    true
+                } else {
+                    false
+                }
             }
 
             playerGoBack.setOnClickListener {
