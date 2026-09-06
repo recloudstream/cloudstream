@@ -11,6 +11,7 @@ import android.media.audiofx.LoudnessEnhancer
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.provider.Settings
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -132,11 +133,35 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     /** Hold / speed-up */
     val holdHandler = Handler(Looper.getMainLooper())
     var hasTriggeredSpeedUp = false
-    val holdRunnable = Runnable {
+    val holdRunnable: Runnable = Runnable {
+        holdHandler.removeCallbacks(subRevealRunnable)
         playerView.player.setPlaybackSpeed(2.0f)
         showOrHideSpeedUp(true)
         playerView.callbacks?.onHoldSpeedUp(true)
         hasTriggeredSpeedUp = true
+    }
+
+    var hasTriggeredSubReveal = false
+    private var subRevealWasPlaying = false
+    val subRevealRunnable: Runnable = Runnable {
+        holdHandler.removeCallbacks(holdRunnable)
+        hasTriggeredSubReveal = true
+        subRevealWasPlaying = playerView.player.getIsPlaying()
+        if (subRevealWasPlaying) {
+            playerView.player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
+        }
+        Log.i(TAG, "subRevealRunnable triggered -> pausing and showing secondary subtitle")
+        playerView.callbacks?.onHoldSecondarySubtitle(true)
+    }
+
+    var hasTriggeredDualSub = false
+    val dualSubRunnable: Runnable = Runnable {
+        holdHandler.removeCallbacks(holdRunnable)
+        holdHandler.removeCallbacks(subRevealRunnable)
+        hasTriggeredDualSub = true
+        context.vibrateDevice(50L)
+        Log.i(TAG, "dualSubRunnable triggered -> opening dual subtitle comparison dialog")
+        playerView.callbacks?.onOpenDualSubtitleDialog()
     }
 
     enum class TouchAction { Brightness, Volume, Time }
@@ -1066,6 +1091,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
         if ((event.pointerCount >= 2 || lastPan != null) && isFullScreen && !isLocked
                 && !hasTriggeredSpeedUp && currentTouchAction == null) {
             holdHandler.removeCallbacks(holdRunnable) // Remove 2x speed.
+            holdHandler.removeCallbacks(subRevealRunnable)
+            holdHandler.removeCallbacks(dualSubRunnable)
             isCurrentTouchValid = false // Prevent other touches
             return handleZoomPanGesture(
                 event = event,
@@ -1091,7 +1118,19 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                 if (isCurrentTouchValid) {
                     playerView.callbacks?.onTouchDown()
                     hasTriggeredSpeedUp = false
-                    if (speedupEnabled && playerView.player.getIsPlaying() && !isLocked) {
+                    hasTriggeredSubReveal = false
+                    hasTriggeredDualSub = false
+                    holdHandler.removeCallbacks(holdRunnable)
+                    holdHandler.removeCallbacks(subRevealRunnable)
+                    holdHandler.removeCallbacks(dualSubRunnable)
+                    val isTopRightCorner = event.x >= view.width * 0.75f && event.y <= view.height * 0.25f
+                    val isRight30Percent = event.x >= view.width * 0.7f && !isTopRightCorner
+                    Log.i(TAG, "ACTION_DOWN: isTopRightCorner=$isTopRightCorner, isRight30Percent=$isRight30Percent (x=${event.x}, y=${event.y}, w=${view.width}, h=${view.height}), secSub=${playerView.player.getCurrentSecondarySubtitle()}")
+                    if (isTopRightCorner && !isLocked) {
+                        holdHandler.postDelayed(dualSubRunnable, 400)
+                    } else if (isRight30Percent && !isLocked && playerView.player.getCurrentSecondarySubtitle() != null) {
+                        holdHandler.postDelayed(subRevealRunnable, 200)
+                    } else if (speedupEnabled && playerView.player.getIsPlaying() && !isLocked) {
                         holdHandler.postDelayed(holdRunnable, 500)
                     }
                     isVolumeLocked = currentRequestedVolume < 1.0f
@@ -1109,7 +1148,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (hasTriggeredSpeedUp) return true
+                if (hasTriggeredSpeedUp || hasTriggeredSubReveal || hasTriggeredDualSub) return true
                 if (!isCurrentTouchValid) return true
 
                 if (currentTouchAction == null && startTouch != null) {
@@ -1117,6 +1156,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                     if (swipeVerticalEnabled) {
                         if (abs(diffFromStart.y * 100 / screenHeightWithOrientation) > MINIMUM_VERTICAL_SWIPE) {
                             holdHandler.removeCallbacks(holdRunnable)
+                            holdHandler.removeCallbacks(subRevealRunnable)
+                            holdHandler.removeCallbacks(dualSubRunnable)
                             uiShowingBeforeGesture = playerView.callbacks?.isUIShowing() ?: false
                             playerView.callbacks?.onHidePlayerUI()
                             currentTouchAction = if ((startTouch.x) >= view.width / 2f)
@@ -1126,6 +1167,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                     if (swipeHorizontalEnabled && !isLocked) {
                         if (abs(diffFromStart.x * 100 / screenHeightWithOrientation) > MINIMUM_HORIZONTAL_SWIPE) {
                             holdHandler.removeCallbacks(holdRunnable)
+                            holdHandler.removeCallbacks(subRevealRunnable)
+                            holdHandler.removeCallbacks(dualSubRunnable)
                             currentTouchAction = TouchAction.Time
                         }
                     }
@@ -1165,6 +1208,29 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
 
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                 holdHandler.removeCallbacks(holdRunnable)
+                holdHandler.removeCallbacks(subRevealRunnable)
+                holdHandler.removeCallbacks(dualSubRunnable)
+                if (hasTriggeredDualSub) {
+                    hasTriggeredDualSub = false
+                    isCurrentTouchValid = false
+                    currentTouchStart = null
+                    currentLastTouchAction = null
+                    currentTouchAction = null
+                    currentTouchStartPlayerTime = null
+                    currentTouchLast = null
+                    currentTouchStartTime = null
+                    uiShowingBeforeGesture = false
+                    return true
+                }
+                if (hasTriggeredSubReveal) {
+                    hasTriggeredSubReveal = false
+                    val wasPlaying = subRevealWasPlaying
+                    subRevealWasPlaying = false
+                    playerView.callbacks?.onHoldSecondarySubtitle(false)
+                    if (wasPlaying) {
+                        playerView.player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+                    }
+                }
                 if (hasTriggeredSpeedUp) {
                     playerView.player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
                     showOrHideSpeedUp(false)

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.annotation.OptIn
 import androidx.annotation.StringRes
@@ -49,6 +50,7 @@ abstract class AbstractPlayerFragment<T : ViewBinding>(
         }
 
     val subView: SubtitleView? get() = playerHostView?.subView
+    val subtitleHolder: FrameLayout? get() = playerHostView?.subtitleHolder
     val playerPausePlay: ImageView? get() = playerHostView?.playerPausePlay
 
     /** The underlying [androidx.media3.ui.PlayerView] widget (named to avoid conflict with our [PlayerView]). */

@@ -178,6 +178,16 @@
                 android:text="@string/subs_download_languages" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/always_show_secondary_subtitles"
+                style="@style/SettingsItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/google_sans"
+                android:text="@string/always_show_secondary_subtitles"
+                app:trackTint="@color/toggle_selector"
+                app:drawableEndCompat="@null" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/subtitles_remove_bloat"
                 style="@style/SettingsItem"
                 android:layout_width="match_parent"

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Primary Subtitle Text (Left side) -->
+        <TextView
+            android:id="@+id/primary_sub_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start|center_vertical"
+            android:lineSpacingMultiplier="1.15"
+            android:paddingEnd="12dp"
+            android:textColor="?attr/white"
+            android:textSize="15sp"
+            tools:text="Hello, how are you today?" />
+
+        <!-- Center Timestamp Badge -->
+        <TextView
+            android:id="@+id/timestamp_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.8"
+            android:gravity="center"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="3dp"
+            android:textColor="?attr/grayTextColor"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="01:23" />
+
+        <!-- Secondary Subtitle Text (Right side) -->
+        <TextView
+            android:id="@+id/secondary_sub_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start|center_vertical"
+            android:lineSpacingMultiplier="1.15"
+            android:paddingStart="12dp"
+            android:textColor="#00E5FF"
+            android:textSize="15sp"
+            tools:text="Salam, bu gün necəsən?" />
+    </LinearLayout>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/dual_sub_progress"
+        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="6dp"
+        android:max="1000"
+        android:progressBackgroundTint="?attr/white"
+        android:progressTint="?attr/white"
+        android:visibility="gone"
+        tools:progress="50"
+        tools:visibility="visible" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:alpha="0.1"
+        android:background="?attr/white" />
+</LinearLayout>

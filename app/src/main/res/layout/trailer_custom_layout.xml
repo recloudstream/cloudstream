@@ -107,6 +107,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.media3.ui.SubtitleView
+            android:id="@+id/secondary_subtitle_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:clipChildren="false"
+            android:clipToPadding="false" />
+
         <View
             android:id="@+id/shadow_overlay"
             android:layout_width="match_parent"

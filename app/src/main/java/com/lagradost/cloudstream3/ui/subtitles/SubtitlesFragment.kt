@@ -36,6 +36,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
 import com.lagradost.cloudstream3.ui.BaseDialogFragment
 import com.lagradost.cloudstream3.ui.BaseFragment
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.ui.player.CustomDecoder
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.setSubtitleAlignment
 import com.lagradost.cloudstream3.ui.player.OutlineSpan
@@ -588,6 +589,11 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     state.edgeSize = fontSizes.map { it.first }[index]
                     textView.context.updateState()
                 }
+            }
+
+            alwaysShowSecondarySubtitles.isChecked = DataStoreHelper.alwaysShowSecondarySubtitles
+            alwaysShowSecondarySubtitles.setOnCheckedChangeListener { _, b ->
+                DataStoreHelper.alwaysShowSecondarySubtitles = b
             }
 
             subtitlesRemoveBloat.isChecked = state.removeBloat
