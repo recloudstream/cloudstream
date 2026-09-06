@@ -1201,7 +1201,20 @@ class GeneratorPlayer : FullScreenPlayer() {
                     }.toMap()
                 val subtitlesGroupedList = subtitlesGrouped.entries.toList()
 
-                val subtitles = subtitlesGrouped.map { it.key.html() }
+                fun getSubGroupLabel(key: String, list: List<SubtitleData>): Spanned {
+                    val currentSec = viewModel.state.secondarySubtitle
+                    val isSecondary = currentSec != null && list.any { it.getId() == currentSec.getId() }
+                    return if (isSecondary) {
+                        "<b><font color=\"#00E5FF\">✓ [2nd] </font></b>${key}".html()
+                    } else {
+                        key.html()
+                    }
+                }
+
+                fun getSubtitleLabels(): List<Spanned> =
+                    subtitlesGrouped.map { getSubGroupLabel(it.key, it.value) }
+
+                val subtitles = getSubtitleLabels()
 
                 val subtitleGroupIndexStart =
                     subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
@@ -1227,18 +1240,31 @@ class GeneratorPlayer : FullScreenPlayer() {
                 subtitleOptionList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
                 fun updateSubtitleOptionList() {
+                    subsArrayAdapter.clear()
+                    subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
+                    subsArrayAdapter.addAll(getSubtitleLabels())
+                    subtitleList.setItemChecked(subtitleGroupIndex, true)
+
                     subsOptionsArrayAdapter.clear()
 
+                    val currentSec = viewModel.state.secondarySubtitle
                     val subtitleOptions =
                         subtitlesGroupedList
                             .getOrNull(subtitleGroupIndex - 1)?.value?.map { subtitle ->
                                 val nameSuffix = subtitle.nameSuffix.html()
-                                nameSuffix.ifBlank {
+                                val baseLabel = nameSuffix.ifBlank {
                                     when (subtitle.origin) {
                                         SubtitleOrigin.URL -> txt(R.string.subtitles_from_online)
                                         SubtitleOrigin.DOWNLOADED_FILE -> txt(R.string.downloaded)
                                         SubtitleOrigin.EMBEDDED_IN_VIDEO -> txt(R.string.subtitles_from_embedded)
                                     }.asString(ctx).toSpanned()
+                                }
+                                if (currentSec?.getId() == subtitle.getId()) {
+                                    "<b><font color=\"#00E5FF\">✓ [2nd] </font></b>".html().let { prefix ->
+                                        android.text.TextUtils.concat(prefix, baseLabel) as Spanned
+                                    }
+                                } else {
+                                    baseLabel
                                 }
                             }
                             ?: emptyList()
@@ -1252,6 +1278,33 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     subtitleOptionList.setSelection(subtitleOptionIndex)
                     subtitleOptionList.setItemChecked(subtitleOptionIndex, true)
+                }
+
+                fun toggleSecondarySubtitle(subtitle: SubtitleData?) {
+                    ctx.vibrateDevice(55L)
+                    val current = viewModel.state.secondarySubtitle
+                    val next = if (subtitle != null && current?.getId() == subtitle.getId()) null else subtitle
+                    viewModel.setSecondarySubtitle(next)
+                    subtitleList.post { updateSubtitleOptionList() }
+                }
+
+                subtitleList.setOnItemLongClickListener { _, _, which, _ ->
+                    if (which == 0) {
+                        toggleSecondarySubtitle(null)
+                        true
+                    } else {
+                        subtitlesGroupedList.getOrNull(which - 1)?.value?.firstOrNull()?.let {
+                            toggleSecondarySubtitle(it)
+                        }
+                        true
+                    }
+                }
+
+                subtitleOptionList.setOnItemLongClickListener { _, _, which, _ ->
+                    subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(which)?.let {
+                        toggleSecondarySubtitle(it)
+                    }
+                    true
                 }
 
                 updateSubtitleOptionList()
@@ -2333,6 +2386,10 @@ class GeneratorPlayer : FullScreenPlayer() {
             if (subtitles.lastOrNull()?.origin != SubtitleOrigin.DOWNLOADED_FILE) {
                 autoSelectSubtitles()
             }
+        }
+        observe(viewModel.currentSecondarySubtitle) { (subtitle, instance) ->
+            if (instance != viewModel.state.instance) return@observe
+            player.setSecondarySubtitles(subtitle)
         }
         observe(viewModel.loadingLinks) { (loading, instance) ->
             if (instance != viewModel.state.instance) return@observe // Outdated observe
