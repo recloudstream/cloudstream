@@ -435,6 +435,7 @@
     <string name="subtitle_offset">Sync subs</string>
     <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Subtitle delay</string>
+    <string name="secondary_subtitle_offset_title">Secondary subtitle delay</string>
     <string name="subtitle_offset_extra_hint_later_format">Use this if the subtitles are shown %d ms too early</string>
     <string name="subtitle_offset_extra_hint_before_format">Use this if subtitles are shown %d ms too late</string>
     <string name="subtitle_offset_extra_hint_none_format">No subtitle delay</string>
@@ -486,6 +487,7 @@
     <string name="error">Error</string>
     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
     <string name="subtitles_remove_bloat">Remove bloat from subtitles</string>
+    <string name="always_show_secondary_subtitles">Always show secondary subtitle</string>
     <string name="subtitles_filter_lang">Filter by preferred media language</string>
     <string name="extras">Extras</string>
     <string name="trailer">Trailer</string>
