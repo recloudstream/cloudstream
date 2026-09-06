@@ -222,6 +222,9 @@ interface IPlayer {
     fun getSubtitleOffset(): Long // in ms
     fun setSubtitleOffset(offset: Long) // in ms
 
+    fun getSecondarySubtitleOffset(): Long = 0L
+    fun setSecondarySubtitleOffset(offset: Long) {}
+
     @AnyThread
     fun initCallbacks(
         @MainThread eventHandler: ((PlayerEvent) -> Unit),
@@ -257,6 +260,9 @@ interface IPlayer {
     fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean // returns true if the player requires a reload, null for nothing
     fun getCurrentPreferredSubtitle(): SubtitleData?
 
+    fun setSecondarySubtitles(subtitle: SubtitleData?) {}
+    fun getCurrentSecondarySubtitle(): SubtitleData? = null
+
     fun handleEvent(event: CSPlayerEvent, source: PlayerEventSource = PlayerEventSource.UI)
 
     fun onStop()
@@ -291,4 +297,5 @@ interface IPlayer {
 
     /** Get the current subtitle cues, for use with syncing */
     fun getSubtitleCues(): List<SubtitleCue>
+    fun getSecondarySubtitleCues(): List<SubtitleCue> = emptyList()
 }
