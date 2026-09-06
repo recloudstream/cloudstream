@@ -110,11 +110,23 @@ import com.lagradost.cloudstream3.utils.WIDEVINE_DRM_UUID
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import kotlinx.coroutines.delay
 import okhttp3.Interceptor
+import okhttp3.Request
 import org.chromium.net.CronetEngine
 import java.io.File
 import java.security.SecureRandom
 import java.util.UUID
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
+import androidx.media3.common.text.Cue
+import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.fixSubtitleAlignment
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
+import com.lagradost.cloudstream3.CommonActivity.showToast
+import android.graphics.Color
+import android.view.View
+import com.lagradost.cloudstream3.CloudStreamApp
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -171,6 +183,20 @@ class CS3IPlayer : IPlayer {
     private var playbackPosition: Long = 0
 
     private val subtitleHelper = PlayerSubtitleHelper()
+
+    private var secondarySubtitleExecutor: ExecutorService = newSecondarySubtitleExecutor()
+    private fun newSecondarySubtitleExecutor(): ExecutorService = Executors.newSingleThreadExecutor {
+        Thread(it, "secondary-subtitle-decoder").apply { isDaemon = true }
+    }
+    private val secondarySubtitleGeneration = AtomicLong(0L)
+    @Volatile private var secondarySubtitleFuture: Future<*>? = null
+    @Volatile private var currentSecondarySubtitle: SubtitleData? = null
+    @Volatile private var secondaryCues: List<SubtitleCue> = emptyList()
+    private var lastSecondaryCueSignature: List<String> = emptyList()
+
+    private val primarySubtitleGeneration = AtomicLong(0L)
+    @Volatile private var primarySubtitleFuture: Future<*>? = null
+    @Volatile private var primaryCues: List<SubtitleCue> = emptyList()
 
     /** If we want to play the audio only in the background when the app is not open */
     private var isAudioOnlyBackground = false
@@ -284,6 +310,7 @@ class CS3IPlayer : IPlayer {
             saveData()
         } else {
             currentSubtitles = subtitle
+            loadPrimaryCues(subtitle)
             playbackPosition = 0
         }
 
@@ -498,6 +525,7 @@ class CS3IPlayer : IPlayer {
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
         Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
+        loadPrimaryCues(subtitle)
         val trackSelector = exoPlayer?.trackSelector as? DefaultTrackSelector ?: return false
         // Disable subtitles if null
         if (subtitle == null) {
@@ -538,6 +566,7 @@ class CS3IPlayer : IPlayer {
     }
 
     private var currentSubtitleOffset: Long = 0
+    private var currentSecondarySubtitleOffset: Long = 0
 
     override fun setSubtitleOffset(offset: Long) {
         currentSubtitleOffset = offset
@@ -555,16 +584,174 @@ class CS3IPlayer : IPlayer {
         return currentSubtitleOffset
     }
 
+    override fun setSecondarySubtitleOffset(offset: Long) {
+        currentSecondarySubtitleOffset = offset
+        lastSecondaryCueSignature = emptyList()
+        pushSecondaryCues()
+    }
+
+    override fun getSecondarySubtitleOffset(): Long {
+        return currentSecondarySubtitleOffset
+    }
+
     override fun getSubtitleCues(): List<SubtitleCue> {
-        return currentSubtitleDecoder?.getSubtitleCues() ?: emptyList()
+        val active = getCurrentPreferredSubtitle()
+        if (primaryCues.isNotEmpty()) return primaryCues
+        val decoderCues = currentSubtitleDecoder?.getSubtitleCues()
+        if (!decoderCues.isNullOrEmpty()) return decoderCues
+        if (active != null && active.origin != SubtitleOrigin.EMBEDDED_IN_VIDEO) {
+            try {
+                primarySubtitleFuture?.get(1500, TimeUnit.MILLISECONDS)
+                if (primaryCues.isNotEmpty()) return primaryCues
+            } catch (_: Throwable) {}
+        }
+        return primaryCues
+    }
+
+    private fun fetchSubtitleFromUrl(subtitle: SubtitleData): ByteArray? {
+        val fixedUrl = subtitle.getFixedUrl()
+        val reqHeaders = subtitle.headers.toMutableMap()
+        if (reqHeaders.keys.none { it.equals("User-Agent", ignoreCase = true) }) {
+            reqHeaders["User-Agent"] = USER_AGENT
+        }
+        if (reqHeaders.keys.none { it.equals("Referer", ignoreCase = true) }) {
+            try {
+                val uri = Uri.parse(fixedUrl)
+                if (uri.scheme != null && uri.host != null) {
+                    reqHeaders["Referer"] = "${uri.scheme}://${uri.host}/"
+                }
+            } catch (_: Throwable) {}
+        }
+        return app.baseClient.newCall(
+            Request.Builder().url(fixedUrl).apply {
+                reqHeaders.forEach { (key, value) -> addHeader(key, value) }
+            }.build()
+        ).execute().use { resp ->
+            val body = resp.body.bytes()
+            if (body.size > 200) {
+                val preview = String(body.take(200).toByteArray())
+                if (preview.contains("<html", ignoreCase = true) || preview.contains("Just a moment", ignoreCase = true)) {
+                    Log.e(TAG, "Subtitle response blocked by Cloudflare: $fixedUrl")
+                    null
+                } else body
+            } else body
+        }
+    }
+
+    private fun fetchSubtitleBytes(subtitle: SubtitleData): ByteArray? {
+        return when (subtitle.origin) {
+            SubtitleOrigin.URL -> fetchSubtitleFromUrl(subtitle)
+            SubtitleOrigin.DOWNLOADED_FILE -> CloudStreamApp.context?.contentResolver
+                ?.openInputStream(Uri.parse(subtitle.url))?.use { it.readBytes() }
+            SubtitleOrigin.EMBEDDED_IN_VIDEO -> null
+        }
+    }
+
+    private fun loadPrimaryCues(subtitle: SubtitleData?) {
+        val generation = primarySubtitleGeneration.incrementAndGet()
+        primarySubtitleFuture?.cancel(true)
+        primarySubtitleFuture = null
+        if (subtitle == null || subtitle.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) {
+            primaryCues = emptyList()
+            return
+        }
+        if (secondarySubtitleExecutor.isShutdown) secondarySubtitleExecutor = newSecondarySubtitleExecutor()
+        primarySubtitleFuture = secondarySubtitleExecutor.submit {
+            try {
+                val bytes = fetchSubtitleBytes(subtitle) ?: return@submit
+                if (primarySubtitleGeneration.get() != generation) return@submit
+                val decoder = CustomDecoder(Format.Builder().setSampleMimeType(subtitle.mimeType).build())
+                decoder.parseToLegacySubtitle(bytes, 0, bytes.size)
+                val cues = synchronized(decoder.currentSubtitleCues) { decoder.currentSubtitleCues.toList() }
+                Log.i(TAG, "Primary subtitle parsed cues count: ${cues.size}")
+                if (primarySubtitleGeneration.get() != generation) return@submit
+                primaryCues = cues
+            } catch (t: Throwable) { if (t !is InterruptedException) logError(t) }
+        }
+    }
+
+    override fun setSecondarySubtitles(subtitle: SubtitleData?) {
+        val generation = secondarySubtitleGeneration.incrementAndGet()
+        secondarySubtitleFuture?.cancel(true)
+        secondarySubtitleFuture = null
+        currentSecondarySubtitle = subtitle
+        secondaryCues = emptyList()
+        lastSecondaryCueSignature = emptyList()
+        pushSecondaryCues()
+        if (subtitle == null || subtitle.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) return
+        if (secondarySubtitleExecutor.isShutdown) secondarySubtitleExecutor = newSecondarySubtitleExecutor()
+        secondarySubtitleFuture = secondarySubtitleExecutor.submit {
+            try {
+                val bytes = fetchSubtitleBytes(subtitle) ?: return@submit
+                if (secondarySubtitleGeneration.get() != generation) return@submit
+                val decoder = CustomDecoder(Format.Builder().setSampleMimeType(subtitle.mimeType).build())
+                decoder.parseToLegacySubtitle(bytes, 0, bytes.size)
+                val cues = synchronized(decoder.currentSubtitleCues) { decoder.currentSubtitleCues.toList() }
+                Log.i(TAG, "Secondary subtitle parsed cues count: ${cues.size}")
+                if (secondarySubtitleGeneration.get() != generation) return@submit
+                secondaryCues = cues
+                runOnMainThread { if (secondarySubtitleGeneration.get() == generation) pushSecondaryCues() }
+            } catch (t: Throwable) { if (t !is InterruptedException) logError(t) }
+        }
+    }
+
+    override fun getCurrentSecondarySubtitle(): SubtitleData? = currentSecondarySubtitle
+
+    override fun getSecondarySubtitleCues(): List<SubtitleCue> = secondaryCues
+
+    private fun pushSecondaryCues() {
+        val view = subtitleHelper.secondarySubtitleView ?: return
+        val position = exoPlayer?.currentPosition ?: return
+        val active = secondaryCues.filter { it.startTimeMs <= position + currentSecondarySubtitleOffset && position + currentSecondarySubtitleOffset < it.endTimeMs }
+        val activeSignature = active.map { "${it.startTimeMs}:${it.endTimeMs}:${it.text.joinToString(" ")}" }
+        if (activeSignature == lastSecondaryCueSignature) return
+        lastSecondaryCueSignature = activeSignature
+        val baseStyle = CustomDecoder.style ?: SaveCaptionStyle(
+            foregroundColor = Color.WHITE,
+            backgroundColor = Color.TRANSPARENT,
+            windowColor = Color.TRANSPARENT,
+            edgeType = 1,
+            edgeColor = Color.BLACK,
+            typeface = null,
+            typefaceFilePath = null,
+            elevation = 20,
+            fixedTextSize = null,
+            edgeSize = null,
+            removeCaptions = false,
+            removeBloat = true,
+            upperCase = false,
+            bold = false,
+            italic = false,
+            backgroundRadius = null,
+            alignment = null
+        )
+        val transparentTopStyle = baseStyle.copy(
+            backgroundColor = Color.TRANSPARENT,
+            windowColor = Color.TRANSPARENT,
+            backgroundRadius = null
+        )
+        view.setCues(active.map { cue ->
+            Cue.Builder()
+                .setText(cue.text.joinToString("\n"))
+                .setTextSize(25f, Cue.TEXT_SIZE_TYPE_ABSOLUTE)
+                .setLine(0f, Cue.LINE_TYPE_FRACTION)
+                .setLineAnchor(Cue.ANCHOR_TYPE_START)
+                .fixSubtitleAlignment()
+                .applyStyle(transparentTopStyle)
+                .build()
+        })
     }
 
     override fun getCurrentPreferredSubtitle(): SubtitleData? {
-        return subtitleHelper.getAllSubtitles().firstOrNull { sub ->
+        val active = subtitleHelper.getAllSubtitles().firstOrNull { sub ->
             playerSelectedSubtitleTracks.any { (id, isSelected) ->
                 isSelected && sub.getId() == id
             }
+        } ?: currentSubtitles
+        if (active != null && primaryCues.isEmpty() && active.origin != SubtitleOrigin.EMBEDDED_IN_VIDEO) {
+            loadPrimaryCues(active)
         }
+        return active
     }
 
     override fun getAspectRatio(): Rational? {
@@ -594,8 +781,20 @@ class CS3IPlayer : IPlayer {
         if (saveTime)
             updatedTime()
 
+        secondarySubtitleGeneration.incrementAndGet()
+        secondarySubtitleFuture?.cancel(true)
+        secondarySubtitleFuture = null
+        secondaryCues = emptyList()
+        lastSecondaryCueSignature = emptyList()
+        if (!saveTime) {
+            primarySubtitleGeneration.incrementAndGet()
+            primarySubtitleFuture?.cancel(true)
+            primarySubtitleFuture = null
+            primaryCues = emptyList()
+        }
         currentTextRenderer = null
         currentSubtitleDecoder = null
+        pushSecondaryCues()
 
         exoPlayer?.apply {
             playWhenReady = false
@@ -650,6 +849,7 @@ class CS3IPlayer : IPlayer {
     override fun release() {
         imageGenerator.release()
         releasePlayer()
+        secondarySubtitleExecutor.shutdownNow()
     }
 
     override fun setPlaybackSpeed(speed: Float) {
@@ -897,6 +1097,7 @@ class CS3IPlayer : IPlayer {
         writePosition: Long? = null,
         source: PlayerEventSource = PlayerEventSource.Player
     ) {
+        pushSecondaryCues()
         val position = writePosition ?: exoPlayer?.currentPosition
 
         getCurrentTimestamp(position)?.let { timestamp ->
@@ -1183,6 +1384,7 @@ class CS3IPlayer : IPlayer {
                         val combinedCues = styledBitmapCues + styledTextCues
 
                         subtitleHelper.subtitleView?.setCues(combinedCues)
+                        pushSecondaryCues()
                     }
 
                     factory.createRenderers(
