@@ -655,6 +655,74 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
     }
 
+    private var dualSubtitlesDialog: Dialog? = null
+
+    private fun showDualSubtitlesDialog() {
+        val ctx = context ?: return
+        player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
+
+        val primarySub = player.getCurrentPreferredSubtitle()
+        val secondarySub = player.getCurrentSecondarySubtitle()
+
+        val pOffset = player.getSubtitleOffset()
+        val sOffset = player.getSecondarySubtitleOffset()
+
+        val pCues = player.getSubtitleCues()
+        val sCues = player.getSecondarySubtitleCues()
+
+        val alignedCues = DualSubtitleAligner.align(pCues, pOffset, sCues, sOffset)
+
+        val binding = com.lagradost.cloudstream3.databinding.DialogDualSubtitlesBinding.inflate(
+            LayoutInflater.from(ctx), null, false
+        )
+        val dialog = Dialog(ctx, R.style.DialogFullscreenPlayer).apply {
+            setContentView(binding.root)
+        }
+        this.dualSubtitlesDialog = dialog
+        dialog.show()
+
+        val isPortrait =
+            ctx.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+        fixSystemBarsPadding(binding.root, fixIme = isPortrait)
+
+        binding.apply {
+            val pName = primarySub?.name?.ifBlank { primarySub.originalName }
+                ?: if (pCues.isNotEmpty()) "Active" else "None"
+            val sName = secondarySub?.name?.ifBlank { secondarySub.originalName }
+                ?: if (sCues.isNotEmpty()) "Active" else "None"
+
+            primarySubHeader.text = "Primary: $pName"
+            secondarySubHeader.text = "Secondary: $sName"
+
+            noDualSubtitlesNotice.isVisible = alignedCues.isEmpty()
+            dualSubtitlesRecyclerview.isVisible = alignedCues.isNotEmpty()
+
+            val currentPosition = player.getPosition() ?: 0L
+            val adapter = DualSubtitleAdapter(currentPosition) { cue ->
+                ctx.vibrateDevice(30L)
+                player.seekTo(cue.startTimeMs, PlayerEventSource.UI)
+                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+                dialog.dismissSafe(activity)
+            }
+            adapter.submitList(alignedCues)
+            dualSubtitlesRecyclerview.adapter = adapter
+
+            val activeIndex = adapter.getLatestActiveItem(currentPosition)
+            if (activeIndex in alignedCues.indices) {
+                dualSubtitlesRecyclerview.scrollToPosition(activeIndex)
+            }
+
+            dualSubCloseBtt.setOnClickListener {
+                dialog.dismissSafe(activity)
+            }
+
+            dialog.setOnDismissListener {
+                dualSubtitlesDialog = null
+                activity?.hideSystemUI()
+            }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     fun updateSpeedDialogBinding(binding: SpeedDialogBinding) {
         val speed = player.getPlaybackSpeed()
@@ -905,6 +973,10 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             ?: binding?.root?.findViewById<View>(R.id.secondary_subtitle_view)
         Log.i("FullScreenPlayer", "onHoldSecondarySubtitle: show=$show, secView=$secView")
         secView?.visibility = if (show || DataStoreHelper.alwaysShowSecondarySubtitles) View.VISIBLE else View.GONE
+    }
+
+    override fun onOpenDualSubtitleDialog() {
+        showDualSubtitlesDialog()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

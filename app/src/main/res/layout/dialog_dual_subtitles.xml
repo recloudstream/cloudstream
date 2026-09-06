@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp">
+
+    <!-- Header bar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/dual_sub_close_btt"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/primary_sub_header"
+                style="@style/WatchHeaderText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="start|center_vertical"
+                android:maxLines="1"
+                android:textColor="?attr/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="Primary: English" />
+
+            <TextView
+                android:id="@+id/dual_sub_divider_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:textColor="?attr/grayTextColor"
+                android:textSize="18sp"
+                android:text="⇄" />
+
+            <TextView
+                android:id="@+id/secondary_sub_header"
+                style="@style/WatchHeaderText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="start|center_vertical"
+                android:maxLines="1"
+                android:textColor="#00E5FF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="Secondary: Turkish" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/dual_sub_close_btt"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cancel"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_close_24"
+            app:tint="?attr/white" />
+    </RelativeLayout>
+
+    <!-- Header Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:alpha="0.2"
+        android:background="?attr/white" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/no_dual_subtitles_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="0.7"
+            android:text="@string/no_subtitles_loaded"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/dual_subtitles_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingVertical="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/dialog_dual_subtitles_item" />
+    </FrameLayout>
+</LinearLayout>

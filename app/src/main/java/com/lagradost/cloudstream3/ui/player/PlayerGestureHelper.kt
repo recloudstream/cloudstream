@@ -154,6 +154,16 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
         playerView.callbacks?.onHoldSecondarySubtitle(true)
     }
 
+    var hasTriggeredDualSub = false
+    val dualSubRunnable: Runnable = Runnable {
+        holdHandler.removeCallbacks(holdRunnable)
+        holdHandler.removeCallbacks(subRevealRunnable)
+        hasTriggeredDualSub = true
+        context.vibrateDevice(50L)
+        Log.i(TAG, "dualSubRunnable triggered -> opening dual subtitle comparison dialog")
+        playerView.callbacks?.onOpenDualSubtitleDialog()
+    }
+
     enum class TouchAction { Brightness, Volume, Time }
 
     /** Mirrors the host's lock state; suppresses gesture interactions when true. */
@@ -1082,6 +1092,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                 && !hasTriggeredSpeedUp && currentTouchAction == null) {
             holdHandler.removeCallbacks(holdRunnable) // Remove 2x speed.
             holdHandler.removeCallbacks(subRevealRunnable)
+            holdHandler.removeCallbacks(dualSubRunnable)
             isCurrentTouchValid = false // Prevent other touches
             return handleZoomPanGesture(
                 event = event,
@@ -1108,11 +1119,16 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                     playerView.callbacks?.onTouchDown()
                     hasTriggeredSpeedUp = false
                     hasTriggeredSubReveal = false
+                    hasTriggeredDualSub = false
                     holdHandler.removeCallbacks(holdRunnable)
                     holdHandler.removeCallbacks(subRevealRunnable)
-                    val isRight30Percent = event.x >= view.width * 0.7f
-                    Log.i(TAG, "ACTION_DOWN: isRight30Percent=$isRight30Percent (x=${event.x}, w=${view.width}), secSub=${playerView.player.getCurrentSecondarySubtitle()}")
-                    if (isRight30Percent && !isLocked && playerView.player.getCurrentSecondarySubtitle() != null) {
+                    holdHandler.removeCallbacks(dualSubRunnable)
+                    val isTopRightCorner = event.x >= view.width * 0.75f && event.y <= view.height * 0.25f
+                    val isRight30Percent = event.x >= view.width * 0.7f && !isTopRightCorner
+                    Log.i(TAG, "ACTION_DOWN: isTopRightCorner=$isTopRightCorner, isRight30Percent=$isRight30Percent (x=${event.x}, y=${event.y}, w=${view.width}, h=${view.height}), secSub=${playerView.player.getCurrentSecondarySubtitle()}")
+                    if (isTopRightCorner && !isLocked) {
+                        holdHandler.postDelayed(dualSubRunnable, 400)
+                    } else if (isRight30Percent && !isLocked && playerView.player.getCurrentSecondarySubtitle() != null) {
                         holdHandler.postDelayed(subRevealRunnable, 200)
                     } else if (speedupEnabled && playerView.player.getIsPlaying() && !isLocked) {
                         holdHandler.postDelayed(holdRunnable, 500)
@@ -1132,7 +1148,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (hasTriggeredSpeedUp || hasTriggeredSubReveal) return true
+                if (hasTriggeredSpeedUp || hasTriggeredSubReveal || hasTriggeredDualSub) return true
                 if (!isCurrentTouchValid) return true
 
                 if (currentTouchAction == null && startTouch != null) {
@@ -1141,6 +1157,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                         if (abs(diffFromStart.y * 100 / screenHeightWithOrientation) > MINIMUM_VERTICAL_SWIPE) {
                             holdHandler.removeCallbacks(holdRunnable)
                             holdHandler.removeCallbacks(subRevealRunnable)
+                            holdHandler.removeCallbacks(dualSubRunnable)
                             uiShowingBeforeGesture = playerView.callbacks?.isUIShowing() ?: false
                             playerView.callbacks?.onHidePlayerUI()
                             currentTouchAction = if ((startTouch.x) >= view.width / 2f)
@@ -1151,6 +1168,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                         if (abs(diffFromStart.x * 100 / screenHeightWithOrientation) > MINIMUM_HORIZONTAL_SWIPE) {
                             holdHandler.removeCallbacks(holdRunnable)
                             holdHandler.removeCallbacks(subRevealRunnable)
+                            holdHandler.removeCallbacks(dualSubRunnable)
                             currentTouchAction = TouchAction.Time
                         }
                     }
@@ -1191,6 +1209,19 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                 holdHandler.removeCallbacks(holdRunnable)
                 holdHandler.removeCallbacks(subRevealRunnable)
+                holdHandler.removeCallbacks(dualSubRunnable)
+                if (hasTriggeredDualSub) {
+                    hasTriggeredDualSub = false
+                    isCurrentTouchValid = false
+                    currentTouchStart = null
+                    currentLastTouchAction = null
+                    currentTouchAction = null
+                    currentTouchStartPlayerTime = null
+                    currentTouchLast = null
+                    currentTouchStartTime = null
+                    uiShowingBeforeGesture = false
+                    return true
+                }
                 if (hasTriggeredSubReveal) {
                     hasTriggeredSubReveal = false
                     val wasPlaying = subRevealWasPlaying
