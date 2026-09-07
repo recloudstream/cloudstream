@@ -46,7 +46,7 @@ fun Modifier.focusOutline(shape: Shape = RoundedShape()): Modifier {
 
     return this.onFocusChanged { newFocus ->
         hasFocus = newFocus.isFocused
-    }.whiteOutline(hasFocus)
+    }.whiteOutline(hasFocus = hasFocus, shape = shape)
 }
 
 @Composable

@@ -220,6 +220,11 @@ class SettingsUIScreen : SearchableSettings {
                             activity?.let { HomeChildItemAdapter.updatePosterSize(it, newValue) }
                             settings.ui.posterSize.set(newValue)
                         }),
+                ),
+            ),
+            Preference.PreferenceGroup(
+                title = stringResource(R.string.poster_ui_settings),
+                preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.ui.posterShowRating,
                         title = stringResource(R.string.show_rating),

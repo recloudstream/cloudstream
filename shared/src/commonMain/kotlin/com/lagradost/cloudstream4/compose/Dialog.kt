@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream4.compose
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component1
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
@@ -63,19 +71,59 @@ fun ActionDialog(
         },
         text = { Text(text = text) },
         confirmButton = {
-            Button(
-                onClick = confirm,
-                colors = Colors.whiteButton
-            ) { Text(text = confirmText) }
+            WhiteButton(text = confirmText, onClick = confirm)
         },
         dismissButton = {
-            Button(
-                onClick = dismiss, colors = Colors.blackButton
-            ) { Text(text = dismissText) }
+            BlackButton(text = dismissText, onClick = dismiss)
         }
     )
 }
 
+@Composable
+fun WhiteButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BaseButton(
+        text = text,
+        onClick = onClick,
+        buttonColors = Colors.whiteButton,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun BlackButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BaseButton(
+        text = text,
+        onClick = onClick,
+        buttonColors = Colors.blackButton,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun BaseButton(
+    text: String, onClick: () -> Unit, buttonColors: ButtonColors,
+    modifier: Modifier = Modifier,
+) {
+    var hasFocus by remember { mutableStateOf(false) }
+    Button(
+        onClick = onClick,
+        colors = buttonColors,
+        modifier = modifier.onFocusChanged { newFocus ->
+            hasFocus = newFocus.hasFocus
+        },
+        border = if (hasFocus) BorderStroke(1.dp, colors.onBackground) else null
+    ) {
+        Text(text = text)
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,6 +186,7 @@ fun <T> SingleSelectDialog(
 ) {
     var selected by remember { mutableStateOf(selectedKey) }
     val selectedPainter = painterResource(Res.drawable.check)
+    val (dismissFocus, confirmFocus) = remember { FocusRequester.createRefs() }
 
     AlertDialog(
         properties = properties,
@@ -154,7 +203,16 @@ fun <T> SingleSelectDialog(
                 entries.forEach { (key, value) ->
                     item(key = key) {
                         val isSelected = selected == key
-                        SingleSelectionItem(isSelected, key, value, iconProvider, selectedPainter) {
+                        SingleSelectionItem(
+                            isSelected = isSelected,
+                            key = key,
+                            text = value,
+                            iconProvider = iconProvider,
+                            selectedPainter = selectedPainter,
+                            modifier = Modifier.focusProperties {
+                                start = dismissFocus
+                                end = confirmFocus
+                            }) {
                             if (confirmText == null) {
                                 confirm(key)
                             } else {
@@ -167,19 +225,20 @@ fun <T> SingleSelectDialog(
         },
         confirmButton = {
             if (confirmText != null) {
-                Button(
-                    onClick = {
-                        confirm(selected)
-                    },
-                    colors = Colors.whiteButton
-                ) { Text(text = confirmText) }
+                WhiteButton(
+                    text = confirmText,
+                    onClick = { confirm(selected) },
+                    modifier = Modifier.focusRequester(confirmFocus)
+                )
             }
         },
         dismissButton = {
             if (dismissText != null) {
-                Button(
-                    onClick = dismiss, colors = Colors.blackButton
-                ) { Text(text = dismissText) }
+                BlackButton(
+                    text = dismissText,
+                    onClick = dismiss,
+                    modifier = Modifier.focusRequester(dismissFocus)
+                )
             }
         }
     )
@@ -277,13 +336,14 @@ fun <T> SingleSelectionItem(
     isSelected: Boolean,
     key: T,
     text: String,
+    modifier: Modifier = Modifier,
     iconProvider: (@Composable (key: T, value: String) -> Unit)? = null,
     selectedPainter: Painter,
     onClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .combinedClickable(
                 interactionSource = interactionSource,
@@ -305,7 +365,8 @@ fun <T> SingleSelectionItem(
             )
             iconProvider?.invoke(key, text)
             Text(
-                text,
+                text = text,
+                style = MaterialTheme.typography.bodyLarge,
                 color = colors.onBackground,
                 modifier = Modifier.padding(15.dp)
             )
@@ -313,7 +374,8 @@ fun <T> SingleSelectionItem(
             Spacer(modifier = Modifier.size(24.dp))
             iconProvider?.invoke(key, text)
             Text(
-                text,
+                text = text,
+                style = MaterialTheme.typography.bodyLarge,
                 color = colors.onSurfaceVariant,
                 modifier = Modifier.padding(15.dp)
             )
@@ -349,6 +411,7 @@ fun <T> MultiSelectDialog(
     }
 
     val selectedPainter = painterResource(Res.drawable.check)
+    val (dismissFocus, confirmFocus) = remember { FocusRequester.createRefs() }
 
     AlertDialog(
         properties = properties,
@@ -372,11 +435,15 @@ fun <T> MultiSelectDialog(
                     item(key = key) {
                         val isSelected = selected.contains(key)
                         SingleSelectionItem(
-                            isSelected,
-                            key,
-                            value,
-                            iconProvider,
-                            selectedPainter = selectedPainter
+                            isSelected = isSelected,
+                            key = key,
+                            text = value,
+                            iconProvider = iconProvider,
+                            selectedPainter = selectedPainter,
+                            modifier = Modifier.focusProperties {
+                                start = dismissFocus
+                                end = confirmFocus
+                            }
                         ) {
                             if (isSelected) {
                                 selected.remove(key)
@@ -390,19 +457,22 @@ fun <T> MultiSelectDialog(
         },
         confirmButton = {
             if (confirmText != null) {
-                Button(
+                WhiteButton(
                     onClick = {
                         confirm(selected.toSet())
                     },
-                    colors = Colors.whiteButton
-                ) { Text(text = confirmText) }
+                    text = confirmText,
+                    modifier = Modifier.focusRequester(confirmFocus)
+                )
             }
         },
         dismissButton = {
             if (dismissText != null) {
-                Button(
-                    onClick = dismiss, colors = Colors.blackButton
-                ) { Text(text = dismissText) }
+                BlackButton(
+                    onClick = dismiss,
+                    text = dismissText,
+                    modifier = Modifier.focusRequester(dismissFocus)
+                )
             }
         }
     )
