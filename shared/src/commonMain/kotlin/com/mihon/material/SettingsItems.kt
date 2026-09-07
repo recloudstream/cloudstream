@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,6 +44,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.lagradost.cloudstream4.compose.whiteOutline
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.arrow_downward
 import com.lagradost.cloudstream4.generated.resources.arrow_upward
@@ -210,9 +212,10 @@ fun BaseSliderItem(
     pillColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     icon: Painter? = null,
 ) {
+    var hasFocus by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
     Column(
-        modifier = Modifier
+        modifier = Modifier.whiteOutline(hasFocus)
             .fillMaxWidth()
             .then(modifier),
         verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -221,7 +224,7 @@ fun BaseSliderItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
         ) {
-            if(icon != null) {
+            if (icon != null) {
                 Box(
                     modifier = Modifier.padding(end = PrefsHorizontalPadding)
                 ) {
@@ -252,6 +255,9 @@ fun BaseSliderItem(
             )
         }
         Slider(
+            modifier = Modifier.onFocusChanged { newFocus ->
+                hasFocus = newFocus.hasFocus
+            },
             value = value,
             onValueChange = f@{
                 if (it == value) return@f

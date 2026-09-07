@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lagradost.cloudstream4.compose.focusOutline
 import com.mihon.presentation.settings.LocalPreferenceHighlighted
 import com.mihon.presentation.settings.LocalPreferenceMinHeight
 import kotlinx.coroutines.delay
@@ -48,6 +49,7 @@ internal fun BasePreferenceWidget(
     Row(
         modifier = modifier
             .highlightBackground(highlighted)
+            .focusOutline()
             .sizeIn(minHeight = minHeight)
             .clickable(enabled = onClick != null, onClick = { onClick?.invoke() })
             .fillMaxWidth(),

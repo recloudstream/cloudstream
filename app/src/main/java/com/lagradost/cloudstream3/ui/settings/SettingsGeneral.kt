@@ -188,7 +188,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
             context?.showDialog(
                 providers.map { "${it.name} (${it.mainUrl})" },
                 -1,
-                context.getString(R.string.add_site_pref) ?: return,
+                context.getString(R.string.add_site_pref),
                 true,
                 {}) { selection ->
                 val provider = providers.getOrNull(selection) ?: return@showDialog
@@ -198,7 +198,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 ),null,false)
 
                 val builder =
-                    AlertDialog.Builder(context ?: return@showDialog, R.style.AlertDialogCustom)
+                    AlertDialog.Builder(context, R.style.AlertDialogCustom)
                         .setView(binding.root)
 
                 val dialog = builder.create()
@@ -367,7 +367,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                         (first +
                                 ctx.getExternalFilesDirs("").mapNotNull { it.path } +
                                 currentDir)
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         first
                     }).filterNotNull().distinct()
                 }

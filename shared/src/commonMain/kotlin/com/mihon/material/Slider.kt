@@ -2,6 +2,7 @@ package com.mihon.material
 
 import androidx.annotation.IntRange
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
@@ -9,6 +10,8 @@ import androidx.compose.material3.SliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 @Composable
@@ -27,10 +30,16 @@ fun Slider(
             interactionSource = interactionSource,
             colors = colors,
             enabled = enabled,
+            thumbSize = DpSize(4.0.dp, 34.0.dp)
         )
     },
     track: @Composable (SliderState) -> Unit = { sliderState ->
-        SliderDefaults.Track(colors = colors, enabled = enabled, sliderState = sliderState)
+        SliderDefaults.Track(
+            modifier = Modifier.height(10.dp),
+            colors = colors,
+            enabled = enabled,
+            sliderState = sliderState
+        )
     },
 ) {
     Slider(
