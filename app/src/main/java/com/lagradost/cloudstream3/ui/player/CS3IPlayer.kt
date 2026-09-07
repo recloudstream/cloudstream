@@ -69,6 +69,7 @@ import androidx.media3.exoplayer.source.TrackGroupArray
 import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.text.TextRenderer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.exoplayer.trackselection.ExoTrackSelection
 import androidx.media3.exoplayer.trackselection.MappingTrackSelector
 import androidx.media3.exoplayer.trackselection.TrackSelector
 import androidx.media3.extractor.mp4.FragmentedMp4Extractor
@@ -148,6 +149,65 @@ const val toleranceBeforeUs = 300_000L
 const val toleranceAfterUs = 300_000L
 
 @OptIn(UnstableApi::class)
+class DualDefaultTrackSelector(context: Context) : DefaultTrackSelector(context) {
+    var secondaryTrackId: String? = null
+    var secondaryRendererIndex: Int = -1
+
+    override fun selectAllTracks(
+        mappedTrackInfo: MappingTrackSelector.MappedTrackInfo,
+        rendererFormatSupports: Array<Array<IntArray>>,
+        rendererMixedMimeTypeAdaptationSupport: IntArray,
+        params: Parameters
+    ): Array<ExoTrackSelection.Definition?> {
+        val definitions = super.selectAllTracks(
+            mappedTrackInfo,
+            rendererFormatSupports,
+            rendererMixedMimeTypeAdaptationSupport,
+            params
+        )
+        val sIdx = secondaryRendererIndex
+        val secId = secondaryTrackId
+        if (sIdx in definitions.indices && secId != null) {
+            val unmapped = mappedTrackInfo.unmappedTrackGroups
+            var targetGroup: TrackGroup? = null
+            var targetTrackIndex: Int = -1
+            for (r in 0 until mappedTrackInfo.rendererCount) {
+                val groups = mappedTrackInfo.getTrackGroups(r)
+                for (g in 0 until groups.length) {
+                    val group = groups.get(g)
+                    for (t in 0 until group.length) {
+                        if (group.getFormat(t).id?.replace(Regex("""^\d+:"""), "") == secId) {
+                            targetGroup = group
+                            targetTrackIndex = t
+                            break
+                        }
+                    }
+                    if (targetGroup != null) break
+                }
+                if (targetGroup != null) break
+            }
+            if (targetGroup == null) {
+                for (g in 0 until unmapped.length) {
+                    val group = unmapped.get(g)
+                    for (t in 0 until group.length) {
+                        if (group.getFormat(t).id?.replace(Regex("""^\d+:"""), "") == secId) {
+                            targetGroup = group
+                            targetTrackIndex = t
+                            break
+                        }
+                    }
+                    if (targetGroup != null) break
+                }
+            }
+            if (targetGroup != null && targetTrackIndex >= 0) {
+                definitions[sIdx] = ExoTrackSelection.Definition(targetGroup, targetTrackIndex)
+            }
+        }
+        return definitions
+    }
+}
+
+@OptIn(UnstableApi::class)
 class CS3IPlayer : IPlayer {
     private var playerListener: Player.Listener? = null
     private var isPlaying = false
@@ -202,6 +262,7 @@ class CS3IPlayer : IPlayer {
 
     private var primaryTextRendererIndex: Int = -1
     private var secondaryTextRendererIndex: Int = -1
+    private var dualTrackSelector: DualDefaultTrackSelector? = null
     private var latestEmbeddedSecondaryCues: List<Cue> = emptyList()
     private val embeddedPrimaryCues = mutableListOf<SubtitleCue>()
     private val embeddedSecondaryCues = mutableListOf<SubtitleCue>()
@@ -590,6 +651,11 @@ class CS3IPlayer : IPlayer {
             }
         }
 
+        dualTrackSelector?.let { sel ->
+            sel.secondaryTrackId = currentSecondarySubtitle?.getId()
+            sel.secondaryRendererIndex = secondaryTextRendererIndex
+        }
+
         trackSelector.setParameters(builder)
     }
 
@@ -748,15 +814,7 @@ class CS3IPlayer : IPlayer {
 
     private fun pushSecondaryCues() {
         val view = subtitleHelper.secondarySubtitleView ?: return
-        if (currentSecondarySubtitle?.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) {
-            view.setCues(latestEmbeddedSecondaryCues)
-            return
-        }
         val position = exoPlayer?.currentPosition ?: return
-        val active = secondaryCues.filter { it.startTimeMs <= position + currentSecondarySubtitleOffset && position + currentSecondarySubtitleOffset < it.endTimeMs }
-        val activeSignature = active.map { "${it.startTimeMs}:${it.endTimeMs}:${it.text.joinToString(" ")}" }
-        if (activeSignature == lastSecondaryCueSignature) return
-        lastSecondaryCueSignature = activeSignature
         val baseStyle = CustomDecoder.style ?: SaveCaptionStyle(
             foregroundColor = Color.WHITE,
             backgroundColor = Color.TRANSPARENT,
@@ -781,6 +839,34 @@ class CS3IPlayer : IPlayer {
             windowColor = Color.TRANSPARENT,
             backgroundRadius = null
         )
+        if (currentSecondarySubtitle?.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) {
+            val matchingCue = synchronized(embeddedSecondaryCues) {
+                embeddedSecondaryCues.lastOrNull {
+                    position in it.startTimeMs..(it.startTimeMs + it.durationMs)
+                } ?: embeddedSecondaryCues.lastOrNull {
+                    kotlin.math.abs(it.startTimeMs - position) < 3000L
+                }
+            }
+            if (matchingCue != null) {
+                view.setCues(matchingCue.text.map { line ->
+                    Cue.Builder()
+                        .setText(line)
+                        .setTextSize(25f, Cue.TEXT_SIZE_TYPE_ABSOLUTE)
+                        .setLine(0f, Cue.LINE_TYPE_FRACTION)
+                        .setLineAnchor(Cue.ANCHOR_TYPE_START)
+                        .fixSubtitleAlignment()
+                        .applyStyle(transparentTopStyle)
+                        .build()
+                })
+            } else if (latestEmbeddedSecondaryCues.isNotEmpty()) {
+                view.setCues(latestEmbeddedSecondaryCues)
+            }
+            return
+        }
+        val active = secondaryCues.filter { it.startTimeMs <= position + currentSecondarySubtitleOffset && position + currentSecondarySubtitleOffset < it.endTimeMs }
+        val activeSignature = active.map { "${it.startTimeMs}:${it.endTimeMs}:${it.text.joinToString(" ")}" }
+        if (activeSignature == lastSecondaryCueSignature) return
+        lastSecondaryCueSignature = activeSignature
         view.setCues(active.map { cue ->
             Cue.Builder()
                 .setText(cue.text.joinToString("\n"))
@@ -1122,8 +1208,8 @@ class CS3IPlayer : IPlayer {
             return getMediaItemBuilder(mimeType).setUri(url).build()
         }
 
-        private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
-            val trackSelector = DefaultTrackSelector(context)
+        private fun getTrackSelector(context: Context, maxVideoHeight: Int?): DualDefaultTrackSelector {
+            val trackSelector = DualDefaultTrackSelector(context)
             trackSelector.parameters = trackSelector.buildUponParameters()
                 // This will not force higher quality videos to fail
                 // but will make the m3u8 pick the correct preferred
@@ -1545,10 +1631,10 @@ class CS3IPlayer : IPlayer {
                     renderersList.toTypedArray()
                 }
                 .setTrackSelector(
-                    trackSelector ?: getTrackSelector(
+                    (trackSelector as? DualDefaultTrackSelector ?: getTrackSelector(
                         context,
                         maxVideoHeight
-                    )
+                    )).also { dualTrackSelector = it }
                 )
                 // Allows any seeking to be +- 0.3s to allow for faster seeking
                 .setSeekParameters(SeekParameters(toleranceBeforeUs, toleranceAfterUs))
