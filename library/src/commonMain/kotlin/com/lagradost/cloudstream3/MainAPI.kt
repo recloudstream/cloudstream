@@ -138,11 +138,11 @@ object APIHolder {
         initMap(true)
     }
 
+    @Prerelease
     fun isApiHorizontal(name: String?): Boolean {
         if (name == null) return false
         val api = getApiFromNameNull(name) ?: return false
-        return api.hasHorizontalSearch ||
-            (api.supportedTypes.isNotEmpty() && api.supportedTypes.all { it == TvType.Live })
+        return api.supportedTypes.isNotEmpty() && api.supportedTypes.all { it == TvType.Live }
     }
 
     fun removePluginMapping(plugin: MainAPI) {
@@ -485,16 +485,28 @@ fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): Hom
 fun newSearchResponseList(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
+    isHorizontalImages: Boolean = false,
 ): SearchResponseList {
     @Suppress("DEPRECATION_ERROR")
     return SearchResponseList(
         list,
-        hasNext = hasNext ?: list.isNotEmpty()
+        hasNext = hasNext ?: list.isNotEmpty(),
+        isHorizontalImages = isHorizontalImages
     )
 }
 
-fun List<SearchResponse>.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
-    return newSearchResponseList(this, hasNext)
+fun newSearchResponseList(
+    list: List<SearchResponse>,
+    hasNext: Boolean?,
+): SearchResponseList {
+    return newSearchResponseList(list, hasNext, false)
+}
+
+fun List<SearchResponse>.toNewSearchResponseList(
+    hasNext: Boolean? = null,
+    isHorizontalImages: Boolean = false,
+): SearchResponseList {
+    return newSearchResponseList(this, hasNext, isHorizontalImages)
 }
 
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
@@ -634,13 +646,7 @@ abstract class MainAPI {
     open val providerType = ProviderType.DirectProvider
 
 
-    /**
-     * These horizontal options are only affecting extension search and load recommendations.
-     * */
-    @Prerelease
-    open val hasHorizontalSearch: Boolean = false
-    @Prerelease
-    open val hasHorizontalRecommendations: Boolean = false
+
 
     //emptyList<MainPageData>() //
     open val mainPage = listOf(MainPageData("", "", false))
@@ -1306,8 +1312,16 @@ data class SearchResponseList
 @Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
 constructor(
     val items: List<SearchResponse>,
-    val hasNext: Boolean = false
-)
+    val hasNext: Boolean = false,
+    val isHorizontalImages: Boolean = false
+) {
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
+    constructor(
+        items: List<SearchResponse>,
+        hasNext: Boolean = false
+    ) : this(items, hasNext, false)
+}
 
 /** enum class holds search quality.
  *
@@ -1423,6 +1437,7 @@ interface SearchResponse {
     var type: TvType?
     var posterUrl: String?
     var posterHeaders: Map<String, String>?
+    @Prerelease
     var backgroundPosterUrl: String?
         get() = null
         set(value) {}
@@ -1523,6 +1538,7 @@ fun SearchResponse.addQuality(quality: String) {
  * @param headers Optional <String, String> map of request headers
  * @param backgroundPosterUrl Optional nullable string for horizontal/backdrop poster url
  * */
+@Prerelease
 fun SearchResponse.addPoster(url: String?, headers: Map<String, String>? = null, backgroundPosterUrl: String? = null) {
     this.posterUrl = url
     this.posterHeaders = headers
@@ -1534,6 +1550,7 @@ fun SearchResponse.addPoster(url: String?, headers: Map<String, String>? = null,
 /** Extension function that adds horizontal/background poster to [SearchResponse]
  * @param url nullable string for background poster url
  * */
+@Prerelease
 fun SearchResponse.addBackgroundPoster(url: String?) {
     this.backgroundPosterUrl = url
 }

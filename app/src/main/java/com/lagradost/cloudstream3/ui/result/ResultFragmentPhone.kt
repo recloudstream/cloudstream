@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
@@ -1455,7 +1456,12 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
 
         recommendationBinding?.apply {
             root.isGone = isInvalid
-            resultRecommendationsList.spanCount = root.context.getSpanCount(isHorizontal)
+            val orientation = root.context.resources.configuration.orientation
+            resultRecommendationsList.spanCount = if (isHorizontal) {
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
+            } else {
+                root.context.getSpanCount(false)
+            }
             val currentAdapter = resultRecommendationsList.adapter as? SearchAdapter
             val adapter = if (currentAdapter != null) {
                 currentAdapter.apply { this.isHorizontal = isHorizontal }
