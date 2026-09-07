@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.productsans_black
 import com.lagradost.cloudstream4.generated.resources.productsans_blackitalic
@@ -43,26 +44,27 @@ object AppFont {
     private val defaultTypography = androidx.compose.material3.Typography()
     val typography @Composable get() =
         googleSans.let { fontFamily ->
+            val lineHeight = 1.3.em
             Typography(
-                displayLarge = defaultTypography.displayLarge.copy(fontFamily = fontFamily),
-                displayMedium = defaultTypography.displayMedium.copy(fontFamily = fontFamily),
-                displaySmall = defaultTypography.displaySmall.copy(fontFamily = fontFamily),
+                displayLarge = defaultTypography.displayLarge.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                displayMedium = defaultTypography.displayMedium.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                displaySmall = defaultTypography.displaySmall.copy(fontFamily = fontFamily, lineHeight = lineHeight),
 
-                headlineLarge = defaultTypography.headlineLarge.copy(fontFamily = fontFamily),
-                headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = fontFamily),
-                headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = fontFamily),
+                headlineLarge = defaultTypography.headlineLarge.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = fontFamily, lineHeight = lineHeight),
 
-                titleLarge = defaultTypography.titleLarge.copy(fontFamily = fontFamily),
-                titleMedium = defaultTypography.titleMedium.copy(fontFamily = fontFamily),
-                titleSmall = defaultTypography.titleSmall.copy(fontFamily = fontFamily),
+                titleLarge = defaultTypography.titleLarge.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                titleMedium = defaultTypography.titleMedium.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                titleSmall = defaultTypography.titleSmall.copy(fontFamily = fontFamily, lineHeight = lineHeight),
 
-                bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = fontFamily),
-                bodyMedium = defaultTypography.bodyMedium.copy(fontFamily = fontFamily),
-                bodySmall = defaultTypography.bodySmall.copy(fontFamily = fontFamily),
+                bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                bodyMedium = defaultTypography.bodyMedium.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                bodySmall = defaultTypography.bodySmall.copy(fontFamily = fontFamily, lineHeight = lineHeight),
 
-                labelLarge = defaultTypography.labelLarge.copy(fontFamily = fontFamily),
-                labelMedium = defaultTypography.labelMedium.copy(fontFamily = fontFamily),
-                labelSmall = defaultTypography.labelSmall.copy(fontFamily = fontFamily)
+                labelLarge = defaultTypography.labelLarge.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                labelMedium = defaultTypography.labelMedium.copy(fontFamily = fontFamily, lineHeight = lineHeight),
+                labelSmall = defaultTypography.labelSmall.copy(fontFamily = fontFamily, lineHeight = lineHeight)
             )
         }
 }
