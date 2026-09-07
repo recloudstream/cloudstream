@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream4.rememberAppSettings
@@ -49,7 +50,7 @@ class SettingsProvidersScreen : SearchableSettings {
         val default = AllLanguagesName to stringResource(R.string.all_languages_preference)
         val languages = APIHolder.apis.withLock {
             APIHolder.apis.map { api -> api.lang }.distinct()
-        }
+        }.sortedBy { fromTagToLanguageName(it) ?: it }
 
         return persistentListOf(
             Preference.PreferenceItem.MultiSelectListPreference(
