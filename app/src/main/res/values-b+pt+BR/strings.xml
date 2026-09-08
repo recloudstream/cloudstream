@@ -662,7 +662,7 @@
     <string name="sort_button_date">Data %s</string>
     <string name="update_plugins">Atualizar plugins</string>
     <string name="starting_plugin_update_manually">Iniciando o processo de atualização do plugin!</string>
-    <string name="plugins_updated_manually">Atualização bem-sucedida para %d plugin(s)!</string>
+    <string name="plugins_updated_manually">Atualização bem-sucedida para %d plugin(s)</string>
     <string name="no_plugins_updated_manually">Nenhum plugin foi atualizado.</string>
     <string name="update_plugins_manually">Atualizar plugins manualmente</string>
     <string name="player_notification_channel_name">Notificações de reprodução</string>
@@ -752,4 +752,14 @@
     <string name="video_singular">Vídeo</string>
     <string name="skip_type_preview">Visualização</string>
     <string name="player_is_live">Ao vivo</string>
+    <string name="tv_layout_clock_settings">Mostrar relógio em tempo real</string>
+    <string name="tv_layout_clock_settings_des">Exiba um relógio em tempo real na parte superior da tela. Aplica-se à página inicial e ao player</string>
+    <string name="profile_settings">Configurações de perfil</string>
+    <string name="profile_hide_negative_sources">Ocultar fontes com prioridade negativa</string>
+    <string name="profile_hide_error_sources">Ocultar fontes com erros</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d link oculto</item>
+        <item quantity="many">%d link ocultos</item>
+        <item quantity="other">%d link ocultos</item>
+    </plurals>
 </resources>

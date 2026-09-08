@@ -109,7 +109,8 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        getPref(R.string.provider_lang_key)?.setOnPreferenceClickListener {
+        getPref(R.string.
+        provider_lang_key)?.setOnPreferenceClickListener {
             activity?.getApiProviderLangSettings()?.let { currentLangTags ->
                 val languagesTagName = APIHolder.apis.withLock {
                     listOf(Pair(AllLanguagesName, getString(R.string.all_languages_preference))) +

@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -17,6 +18,7 @@ import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -175,6 +177,96 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 putString(context.getString(R.string.download_path_key_visual), visual)
             }
         }
+
+        fun getCurrent(): MutableList<CustomSite> {
+            return getKey<Array<CustomSite>>(USER_PROVIDER_API)?.toMutableList()
+                ?: mutableListOf()
+        }
+        fun showAdd() {
+            val providers = allProviders.distinctBy { it::class }.sortedBy { it.name }
+            val context = activity
+            context?.showDialog(
+                providers.map { "${it.name} (${it.mainUrl})" },
+                -1,
+                context.getString(R.string.add_site_pref),
+                true,
+                {}) { selection ->
+                val provider = providers.getOrNull(selection) ?: return@showDialog
+
+                val binding : AddSiteInputBinding = AddSiteInputBinding.inflate(LayoutInflater.from(
+                    context
+                ),null,false)
+
+                val builder =
+                    AlertDialog.Builder(context, R.style.AlertDialogCustom)
+                        .setView(binding.root)
+
+                val dialog = builder.create()
+                dialog.show()
+
+                binding.text2.text = provider.name
+                binding.applyBtt.setOnClickListener {
+                    val name = binding.siteNameInput.text?.toString()
+                    val url = binding.siteUrlInput.text?.toString()
+                    val lang = binding.siteLangInput.text?.toString()
+                    val realLang = if (lang.isNullOrBlank()) provider.lang else lang
+                    val simpleName = provider::class.simpleName
+                    if (url.isNullOrBlank() || name.isNullOrBlank() || simpleName == null) {
+                        showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
+                        return@setOnClickListener
+                    }
+
+                    val current = getCurrent()
+                    val newSite = CustomSite(simpleName, name, url, realLang)
+                    current.add(newSite)
+                    setKey(USER_PROVIDER_API, current.toTypedArray())
+                    // reload apis
+                    MainActivity.afterPluginsLoadedEvent.invoke(false)
+
+                    dialog.dismissSafe(activity)
+                }
+                binding.cancelBtt.setOnClickListener {
+                    dialog.dismissSafe(activity)
+                }
+            }
+        }
+
+        fun showDelete() {
+            val current = getCurrent()
+            val context = activity
+            context?.showMultiDialog(
+                current.map { it.name },
+                listOf(),
+                context.getString(R.string.remove_site_pref),
+                {}) { indexes ->
+                current.removeAll(indexes.map { current[it] })
+                setKey(USER_PROVIDER_API, current.toTypedArray())
+            }
+        }
+
+        fun showAddOrDelete() {
+            val context = activity
+
+            val binding : AddRemoveSitesBinding = AddRemoveSitesBinding.inflate(
+                LayoutInflater.from(
+                    context
+                ),null,false)
+            val builder =
+                AlertDialog.Builder(context ?: return, R.style.AlertDialogCustom)
+                    .setView(binding.root)
+
+            val dialog = builder.create()
+            dialog.show()
+
+            binding.addSite.setOnClickListener {
+                showAdd()
+                dialog.dismissSafe(activity)
+            }
+            binding.removeSite.setOnClickListener {
+                showDelete()
+                dialog.dismissSafe(activity)
+            }
+        }
     }
 
     private val pathPicker = getChooseFolderLauncher { uri, path ->
@@ -186,10 +278,6 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.settings_general, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        fun getCurrent(): MutableList<CustomSite> {
-            return getKey<Array<CustomSite>>(USER_PROVIDER_API)?.toMutableList()
-                ?: mutableListOf()
-        }
 
         getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
             val current = getCurrentLocale(pref.context)
@@ -226,83 +314,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
             true
         }
 
-        fun showAdd() {
-            val providers = allProviders.distinctBy { it::class }.sortedBy { it.name }
-            activity?.showDialog(
-                providers.map { "${it.name} (${it.mainUrl})" },
-                -1,
-                context?.getString(R.string.add_site_pref) ?: return,
-                true,
-                {}) { selection ->
-                val provider = providers.getOrNull(selection) ?: return@showDialog
 
-                val binding : AddSiteInputBinding = AddSiteInputBinding.inflate(layoutInflater,null,false)
-
-                val builder =
-                    AlertDialog.Builder(context ?: return@showDialog, R.style.AlertDialogCustom)
-                        .setView(binding.root)
-
-                val dialog = builder.create()
-                dialog.show()
-
-                binding.text2.text = provider.name
-                binding.applyBtt.setOnClickListener {
-                    val name = binding.siteNameInput.text?.toString()
-                    val url = binding.siteUrlInput.text?.toString()
-                    val lang = binding.siteLangInput.text?.toString()
-                    val realLang = if (lang.isNullOrBlank()) provider.lang else lang
-                    val simpleName = provider::class.simpleName
-                    if (url.isNullOrBlank() || name.isNullOrBlank() || simpleName == null) {
-                        showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
-                        return@setOnClickListener
-                    }
-
-                    val current = getCurrent()
-                    val newSite = CustomSite(simpleName, name, url, realLang)
-                    current.add(newSite)
-                    setKey(USER_PROVIDER_API, current.toTypedArray())
-                    // reload apis
-                    MainActivity.afterPluginsLoadedEvent.invoke(false)
-
-                    dialog.dismissSafe(activity)
-                }
-                binding.cancelBtt.setOnClickListener {
-                    dialog.dismissSafe(activity)
-                }
-            }
-        }
-
-        fun showDelete() {
-            val current = getCurrent()
-
-            activity?.showMultiDialog(
-                current.map { it.name },
-                listOf(),
-                context?.getString(R.string.remove_site_pref) ?: return,
-                {}) { indexes ->
-                current.removeAll(indexes.map { current[it] })
-                setKey(USER_PROVIDER_API, current.toTypedArray())
-            }
-        }
-
-        fun showAddOrDelete() {
-            val binding : AddRemoveSitesBinding = AddRemoveSitesBinding.inflate(layoutInflater,null,false)
-            val builder =
-                AlertDialog.Builder(context ?: return, R.style.AlertDialogCustom)
-                    .setView(binding.root)
-
-            val dialog = builder.create()
-            dialog.show()
-
-            binding.addSite.setOnClickListener {
-                showAdd()
-                dialog.dismissSafe(activity)
-            }
-            binding.removeSite.setOnClickListener {
-                showDelete()
-                dialog.dismissSafe(activity)
-            }
-        }
 
         getPref(R.string.override_site_key)?.setOnPreferenceClickListener { _ ->
 
@@ -329,7 +341,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
             val prefValues = resources.getIntArray(R.array.dns_pref_values)
 
             val currentDns =
-                settingsManager.getInt(getString(R.string.dns_pref), 0)
+                settingsManager.getInt(getString(R.string.dns_key), 0)
 
             activity?.showBottomDialog(
                 prefNames.toList(),
@@ -337,7 +349,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 getString(R.string.dns_pref),
                 true,
                 {}) {
-                settingsManager.edit { putInt(getString(R.string.dns_pref), prefValues[it]) }
+                settingsManager.edit { putInt(getString(R.string.dns_key), prefValues[it]) }
                 (context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
@@ -355,7 +367,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                         (first +
                                 ctx.getExternalFilesDirs("").mapNotNull { it.path } +
                                 currentDir)
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         first
                     }).filterNotNull().distinct()
                 }

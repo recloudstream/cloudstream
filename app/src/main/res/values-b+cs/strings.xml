@@ -660,7 +660,7 @@
     <string name="starting_plugin_update_manually">Spouštím proces aktualizace doplňků!</string>
     <string name="no_plugins_updated_manually">Nebyly aktualizovány žádné doplňky.</string>
     <string name="sort_button_episode">Ep %s</string>
-    <string name="plugins_updated_manually">Úspěšně aktualizováno %d doplňků!</string>
+    <string name="plugins_updated_manually">Úspěšně aktualizováno %d doplňků</string>
     <string name="sort_episodes_number_desc">Epizoda (sestupně)</string>
     <string name="sort_episodes_rating_low_high">Hodnocení (nejnižší)</string>
     <string name="update_plugins_manually">Ručně aktualizovat doplňky</string>

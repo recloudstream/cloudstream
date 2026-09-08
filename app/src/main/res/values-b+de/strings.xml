@@ -639,7 +639,7 @@
     <string name="software_decoding_desc">Softwaredekodierung ermöglicht es dem Player, Videodateien abzuspielen, die von deinem Gerät nicht unterstützt werden, könnte jedoch bei hoher Auflösung zu ruckelnder oder instabiler Wiedergabe führen.</string>
     <string name="torrent_not_accepted">App neu starten und Stream Torrent Pop-Up akzeptieren, um fortzufahren.</string>
     <string name="update_plugins">Plugins aktualisieren</string>
-    <string name="plugins_updated_manually">%d Plugin(s) erfolgreich aktualisiert!</string>
+    <string name="plugins_updated_manually">%d Plugin(s) erfolgreich aktualisiert</string>
     <string name="update_plugins_manually">Plugins manuell aktualisieren</string>
     <string name="podcast_singular">Podcast</string>
     <string name="unsupported_error">Nicht unterstützter Fehler</string>
@@ -735,4 +735,13 @@
     <string name="video_singular">Video</string>
     <string name="skip_type_preview">Vorschau</string>
     <string name="player_is_live">Live</string>
+    <string name="tv_layout_clock_settings">Echtzeituhr anzeigen</string>
+    <string name="tv_layout_clock_settings_des">Echtzeituhr oben auf dem Bildschirm anzeigen. Gilt für Startseite und Player</string>
+    <string name="profile_settings">Profil-Einstellungen</string>
+    <string name="profile_hide_negative_sources">Quellen mit negativer Priorität verbergen</string>
+    <string name="profile_hide_error_sources">Quellen mit Fehlern ausblenden</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d ausgeblendeter Link</item>
+        <item quantity="other">%d ausgeblendete Links</item>
+    </plurals>
 </resources>

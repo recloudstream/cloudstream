@@ -660,7 +660,7 @@
     <string name="update_plugins">Cập nhật tiện ích mở rộng</string>
     <string name="no_plugins_updated_manually">Không có tiện ích mở rộng nào được cập nhật.</string>
     <string name="sort_episodes_date_oldest">Ngày phát sóng (Cũ nhất)</string>
-    <string name="plugins_updated_manually">Đã cập nhật thành công %d tiện ích mở rộng!</string>
+    <string name="plugins_updated_manually">Đã cập nhật thành công %d tiện ích mở rộng</string>
     <string name="sort_episodes_rating_high_low">Xếp hạng (Cao nhất)</string>
     <string name="update_plugins_manually">Cập nhật tiện ích mở rộng thủ công</string>
     <string name="sort_episodes_number_desc">Tập (Giảm dần)</string>
