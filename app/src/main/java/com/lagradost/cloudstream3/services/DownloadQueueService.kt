@@ -71,12 +71,6 @@ class DownloadQueueService : Service() {
         val downloadInstances: StateFlow<List<VideoDownloadManager.EpisodeDownloadInstance>> =
             _downloadInstances
 
-        fun removeDownloadInstance(id: Int) {
-            _downloadInstances.update { list ->
-                list.filterNot { it.downloadQueueWrapper.id == id }
-            }
-        }
-
         private val totalDownloadFlow =
             downloadInstances.combine(DownloadQueueManager.queue) { instances, queue ->
                 instances to queue
@@ -268,7 +262,6 @@ class DownloadQueueService : Service() {
         Log.d(TAG, "Download queue service stopped.")
         downloadEvent -= downloadEventListener
         isRunning = false
-        _downloadInstances.update { emptyList() }
         super.onDestroy()
     }
 
