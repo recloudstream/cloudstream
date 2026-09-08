@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpTo
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -244,6 +245,46 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
 
         getPref(R.string.subtitle_settings_chromecast_key)?.setOnPreferenceClickListener {
             ChromecastSubtitlesFragment.push(activity, false)
+            return@setOnPreferenceClickListener true
+        }
+
+        fun updateGeminiPrefSummary() {
+            val authKey = DataStoreHelper.geminiApiKey
+            val pref = getPref(R.string.gemini_api_key_settings_key)
+            if (authKey.isNullOrBlank()) {
+                pref?.summary = getString(R.string.gemini_api_key_not_set)
+            } else {
+                val masked = if (authKey.length > 8) "${authKey.take(4)}...${authKey.takeLast(4)}" else "••••••••"
+                pref?.summary = "${getString(R.string.gemini_api_key_configured)} ($masked)"
+            }
+        }
+        updateGeminiPrefSummary()
+
+        getPref(R.string.gemini_api_key_settings_key)?.setOnPreferenceClickListener {
+            val act = activity ?: return@setOnPreferenceClickListener false
+            val currentAuthKey = DataStoreHelper.geminiApiKey ?: ""
+            val input = android.widget.EditText(act).apply {
+                setSingleLine()
+                inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                setText(currentAuthKey)
+                setSelection(currentAuthKey.length)
+            }
+
+            androidx.appcompat.app.AlertDialog.Builder(act)
+                .setTitle(R.string.gemini_api_key_prompt)
+                .setMessage(R.string.gemini_api_key_dialog_message)
+                .setView(input)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    val entered = input.text.toString().trim()
+                    DataStoreHelper.geminiApiKey = entered.ifBlank { null }
+                    updateGeminiPrefSummary()
+                    com.lagradost.cloudstream3.CommonActivity.showToast(
+                        act,
+                        if (entered.isNotBlank()) R.string.gemini_api_key_saved else R.string.gemini_api_key_cleared
+                    )
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
             return@setOnPreferenceClickListener true
         }
 
