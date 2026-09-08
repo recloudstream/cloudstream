@@ -36,7 +36,7 @@ import com.mihon.presentation.settings.SearchableSettings
 import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.persistentListOf
 
-class SettingsUpdatesScreen : SearchableSettings {
+object SettingsUpdatesScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.category_updates)
 

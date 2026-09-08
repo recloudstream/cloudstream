@@ -9,7 +9,7 @@ import com.lagradost.cloudstream4.compose.createComposeView
 import com.mihon.presentation.settings.SearchableSettings
 
 /** Empty glue code to connect the old navigation graph to Compose */
-class SettingsUpdates2 : Fragment(), SearchableSettings by SettingsUpdatesScreen() {
+class SettingsUpdates2 : Fragment(), SearchableSettings by SettingsUpdatesScreen {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

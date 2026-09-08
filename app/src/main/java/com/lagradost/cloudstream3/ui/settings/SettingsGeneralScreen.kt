@@ -38,7 +38,7 @@ import com.mihon.presentation.settings.SearchableSettings
 import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.persistentListOf
 
-class SettingsGeneralScreen : SearchableSettings {
+object SettingsGeneralScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.category_general)
 
@@ -262,8 +262,7 @@ class SettingsGeneralScreen : SearchableSettings {
 @PreviewLightDark
 @Composable
 private fun SettingGeneralPreview() {
-    val screen = SettingsGeneralScreen()
     CloudStreamPreviewTheme {
-        screen.Content()
+        SettingsGeneralScreen.Content()
     }
 }

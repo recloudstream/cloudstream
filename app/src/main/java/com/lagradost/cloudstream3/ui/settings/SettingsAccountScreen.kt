@@ -41,19 +41,16 @@ import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import kotlinx.collections.immutable.persistentListOf
 
-class SettingsAccountScreen : SearchableSettings, BiometricAuthenticator.BiometricCallback {
-    companion object {
-        val syncApis = persistentListOf(
-            SyncRepo(malApi),
-            SyncRepo(kitsuApi),
-            SyncRepo(aniListApi),
-            SyncRepo(simklApi),
-            SubtitleRepo(openSubtitlesApi),
-            SubtitleRepo(subDlApi),
-            PlainAuthRepo(animeSkipApi),
-        )
-    }
-
+object SettingsAccountScreen : SearchableSettings, BiometricAuthenticator.BiometricCallback {
+    val syncApis = persistentListOf(
+        SyncRepo(malApi),
+        SyncRepo(kitsuApi),
+        SyncRepo(aniListApi),
+        SyncRepo(simklApi),
+        SubtitleRepo(openSubtitlesApi),
+        SubtitleRepo(subDlApi),
+        PlainAuthRepo(animeSkipApi),
+    )
     private fun updateAuthPreference(context: Context, enabled: Boolean) {
         val settings = AppSettings(context)
         settings.security.biometrics.set(enabled)

@@ -17,7 +17,7 @@ import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import kotlinx.collections.immutable.persistentListOf
 
-class SettingsProvidersScreen : SearchableSettings {
+object SettingsProvidersScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.category_providers)
 

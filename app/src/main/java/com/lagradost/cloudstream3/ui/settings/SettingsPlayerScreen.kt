@@ -34,7 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.reflect.jvm.jvmName
 
-class SettingsPlayerScreen : SearchableSettings {
+object SettingsPlayerScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.category_player)
 

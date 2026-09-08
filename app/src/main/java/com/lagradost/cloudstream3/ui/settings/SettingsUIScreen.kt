@@ -27,7 +27,7 @@ import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentMap
 
-class SettingsUIScreen : SearchableSettings {
+object SettingsUIScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.category_ui)
 
