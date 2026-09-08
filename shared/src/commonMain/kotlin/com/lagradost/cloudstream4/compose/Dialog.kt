@@ -87,8 +87,8 @@ fun ActionDialog(
 @Composable
 fun WhiteButton(
     text: String,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
     BaseButton(
         text = text,
@@ -101,8 +101,8 @@ fun WhiteButton(
 @Composable
 fun BlackButton(
     text: String,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
     BaseButton(
         text = text,

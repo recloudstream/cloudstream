@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.clear
 import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
@@ -104,8 +105,10 @@ object SettingsUIScreen : SearchableSettings {
                         },
                         onValueChanged = { newValue ->
                             settings.ui.primaryColor.set(newValue) // We need to set before we recreate
-                            activity?.recreate()
-                            return@ListPreference true
+                            safe {
+                                activity?.recreate()
+                            }
+                            return@ListPreference false
                         }),
                     Preference.PreferenceItem.ListPreference(
                         preference = settings.ui.theme,
@@ -127,8 +130,10 @@ object SettingsUIScreen : SearchableSettings {
                         },
                         onValueChanged = { newValue ->
                             settings.ui.theme.set(newValue) // We need to set before we recreate
-                            activity?.recreate()
-                            return@ListPreference true
+                            safe {
+                                activity?.recreate()
+                            }
+                            return@ListPreference false
                         }),
                     Preference.PreferenceItem.ListPreference(
                         preference = settings.ui.layout,
@@ -139,9 +144,11 @@ object SettingsUIScreen : SearchableSettings {
                         ).toMap().toPersistentMap(),
                         onValueChanged = { newValue ->
                             settings.ui.layout.set(newValue) // We need to set before we recreate
-                            activity?.updateTv()
-                            activity?.recreate()
-                            return@ListPreference true
+                            safe {
+                                activity?.updateTv()
+                                activity?.recreate()
+                            }
+                            return@ListPreference false
                         }),
                 )
             ),

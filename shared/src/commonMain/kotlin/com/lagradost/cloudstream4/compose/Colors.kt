@@ -6,7 +6,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import com.lagradost.cloudstream4.theme.CloudStreamTheme.colors
 
 object Colors {
-    val blackButton
+    internal val blackButton
         @Composable @ReadOnlyComposable get() = ButtonColors(
             containerColor = colors.surfaceVariant,
             contentColor = colors.onBackground,
@@ -14,7 +14,7 @@ object Colors {
             disabledContentColor = colors.onBackground.copy(alpha = 0.9f)
         )
 
-    val whiteButton
+    internal val whiteButton
         @Composable @ReadOnlyComposable get() = ButtonColors(
             containerColor = colors.onBackground,
             contentColor = colors.surfaceVariant,
