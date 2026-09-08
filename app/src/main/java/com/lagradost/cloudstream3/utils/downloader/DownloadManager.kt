@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.services.DownloadQueueService
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.sortUrls
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -1691,6 +1692,7 @@ object VideoDownloadManager {
                     // Force refresh the queue when completed.
                     // May lead to some redundant calls, but ensures that the queue is always up to date.
                     DownloadQueueManager.forceRefreshQueue()
+                    DownloadQueueService.removeDownloadInstance(downloadQueueWrapper.id)
                 }
             }
 
@@ -1725,6 +1727,7 @@ object VideoDownloadManager {
             // Force refresh the queue when failed.
             // May lead to some redundant calls, but ensures that the queue is always up to date.
             DownloadQueueManager.forceRefreshQueue()
+            DownloadQueueService.removeDownloadInstance(id)
         }
 
         var isCancelled = false
