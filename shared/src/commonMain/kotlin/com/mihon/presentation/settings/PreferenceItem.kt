@@ -107,6 +107,7 @@ internal fun PreferenceItem(
                     subtitle = item.internalSubtitleProvider(value, item.entries),
                     icon = item.icon,
                     entries = item.entries,
+                    iconProvider = item::InternalIconProvider,
                     onValueChange = { newValue ->
                         scope.launch {
                             if (item.internalOnValueChanged(newValue!!)) {

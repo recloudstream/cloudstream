@@ -1,12 +1,21 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Build
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.integerArrayResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -20,6 +29,11 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream4.compose.TV
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
+import com.lagradost.cloudstream4.theme.CloudStreamPrimaryColor
+import com.lagradost.cloudstream4.theme.CloudStreamTheme.colors
+import com.lagradost.cloudstream4.theme.modeToTheme
+import com.lagradost.cloudstream4.theme.perfToColor
+import com.lagradost.cloudstream4.theme.perfToMode
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import com.mihon.presentation.settings.collectAsState
@@ -51,6 +65,17 @@ object SettingsUIScreen : SearchableSettings {
     }
 
     @Composable
+    fun RoundColor(color: Color) {
+        Box(
+            modifier = Modifier
+                .padding(start = 15.dp)
+                .size(20.dp)
+                .border(width = 1.5.dp, shape = CircleShape, color = colors.onBackground)
+                .background(color, CircleShape)
+        )
+    }
+
+    @Composable
     override fun getPreferences(): List<Preference> {
         val settings = rememberAppSettings()
 
@@ -73,6 +98,10 @@ object SettingsUIScreen : SearchableSettings {
                                 map.remove("Monet2")
                             }
                         },
+                        iconProvider = { k, _ ->
+                            val color = perfToColor(k)
+                            RoundColor(color.color)
+                        },
                         onValueChanged = { newValue ->
                             settings.ui.primaryColor.set(newValue) // We need to set before we recreate
                             activity?.recreate()
@@ -91,6 +120,10 @@ object SettingsUIScreen : SearchableSettings {
                             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // Remove system on android 9 and less
                                 map.remove("System")
                             }
+                        },
+                        iconProvider = { k, _ ->
+                            val theme = modeToTheme(perfToMode(k), CloudStreamPrimaryColor.NORMAL)
+                            RoundColor(theme.background)
                         },
                         onValueChanged = { newValue ->
                             settings.ui.theme.set(newValue) // We need to set before we recreate
