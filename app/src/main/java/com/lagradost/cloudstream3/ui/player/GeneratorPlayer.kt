@@ -1240,19 +1240,30 @@ class GeneratorPlayer : FullScreenPlayer() {
                 fun updateSubtitleOptionList() {
                     subsOptionsArrayAdapter.clear()
 
+                    val groupSubtitles = subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value
+
+                    val duplicateNames = groupSubtitles.orEmpty()
+                        .groupingBy { it.originalName }.eachCount().filterValues { it > 1 }.keys
+                    val nameIndex = mutableMapOf<String, Int>()
+
                     val subtitleOptions =
-                        subtitlesGroupedList
-                            .getOrNull(subtitleGroupIndex - 1)?.value?.map { subtitle ->
-                                val label = subtitle.originalName.html()
-                                label.ifBlank {
-                                    when (subtitle.origin) {
-                                        SubtitleOrigin.URL -> txt(R.string.subtitles_from_online)
-                                        SubtitleOrigin.DOWNLOADED_FILE -> txt(R.string.downloaded)
-                                        SubtitleOrigin.EMBEDDED_IN_VIDEO -> txt(R.string.subtitles_from_embedded)
-                                    }.asString(ctx).toSpanned()
+                        groupSubtitles?.map { subtitle ->
+                            val label = if (subtitle.originalName in duplicateNames) {
+                                val suffix = subtitle.nameSuffix.ifBlank {
+                                    val next = (nameIndex[subtitle.originalName] ?: 0) + 1
+                                    nameIndex[subtitle.originalName] = next
+                                    next.toString()
                                 }
+                                "${subtitle.originalName} $suffix"
+                            } else subtitle.originalName
+                            label.html().ifBlank {
+                                when (subtitle.origin) {
+                                    SubtitleOrigin.URL -> txt(R.string.subtitles_from_online)
+                                    SubtitleOrigin.DOWNLOADED_FILE -> txt(R.string.downloaded)
+                                    SubtitleOrigin.EMBEDDED_IN_VIDEO -> txt(R.string.subtitles_from_embedded)
+                                }.asString(ctx).toSpanned()
                             }
-                            ?: emptyList()
+                        } ?: emptyList()
 
                     // Show nothing if there is nothing to select
                     val shouldHide = subtitleOptions.size < 2
