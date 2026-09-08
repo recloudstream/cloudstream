@@ -232,6 +232,13 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
 
     private var scaleGestureDetector: ScaleGestureDetector? = null
 
+    private var twoPointerStartX: Float? = null
+    private var twoPointerStartY: Float? = null
+    private var twoPointerDownTime: Long = 0L
+    private var twoPointerMaxDisplacement: Float = 0f
+    private var twoPointerFired: Boolean = false
+    private var twoPointerIsScaling: Boolean = false
+
     /** Midpoint of the two-finger pan, null when no pan is active. */
     var lastPan: Vector2? = null
 
@@ -747,50 +754,96 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
 
         when (event.actionMasked) {
             MotionEvent.ACTION_POINTER_DOWN -> {
+                if (event.pointerCount >= 2) {
+                    twoPointerStartX = (event.getX(0) + event.getX(1)) / 2f
+                    twoPointerStartY = (event.getY(0) + event.getY(1)) / 2f
+                    twoPointerDownTime = System.currentTimeMillis()
+                    twoPointerMaxDisplacement = 0f
+                    twoPointerFired = false
+                    twoPointerIsScaling = false
+                }
                 onFirstPointerDown()
             }
 
             MotionEvent.ACTION_MOVE -> {
                 if (event.pointerCount >= 2) {
-                    val newPan = Vector2(
-                        (event.getX(0) + event.getX(1)) / 2f,
-                        (event.getY(0) + event.getY(1)) / 2f
-                    )
-                    val oldPan = lastPan
-                    if (oldPan != null) {
-                        val matrix = currentZoomMatrix()
-                        matrix.postTranslate(newPan.x - oldPan.x, newPan.y - oldPan.y)
-                        applyZoomMatrix(matrix, false)
+                    val midX = (event.getX(0) + event.getX(1)) / 2f
+                    val midY = (event.getY(0) + event.getY(1)) / 2f
+                    val startX = twoPointerStartX ?: midX
+                    val startY = twoPointerStartY ?: midY
+                    val diffX = midX - startX
+                    val diffY = midY - startY
+                    val displacement = kotlin.math.hypot(diffX.toDouble(), diffY.toDouble()).toFloat()
+                    if (displacement > twoPointerMaxDisplacement) {
+                        twoPointerMaxDisplacement = displacement
                     }
-                    lastPan = newPan
+
+                    val density = ctx.resources.displayMetrics.density
+                    if (!twoPointerFired && !twoPointerIsScaling && abs(diffX) > 40f * density && abs(diffX) > abs(diffY) * 1.3f) {
+                        twoPointerFired = true
+                        playerView.callbacks?.onJumpSubtitle(diffX < 0)
+                    }
+
+                    if (scaleGestureDetector?.isInProgress == true) {
+                        twoPointerIsScaling = true
+                    }
+
+                    if (twoPointerIsScaling) {
+                        val newPan = Vector2(midX, midY)
+                        val oldPan = lastPan
+                        if (oldPan != null) {
+                            val matrix = currentZoomMatrix()
+                            matrix.postTranslate(newPan.x - oldPan.x, newPan.y - oldPan.y)
+                            applyZoomMatrix(matrix, false)
+                        }
+                        lastPan = newPan
+                    }
                 }
             }
 
             MotionEvent.ACTION_CANCEL,
             MotionEvent.ACTION_POINTER_UP,
             MotionEvent.ACTION_UP -> {
+                val upTime = System.currentTimeMillis()
+                val startX = twoPointerStartX
+                val density = ctx.resources.displayMetrics.density
+                if (!twoPointerFired && !twoPointerIsScaling && startX != null && upTime - twoPointerDownTime < 400L && twoPointerMaxDisplacement < 30f * density) {
+                    twoPointerFired = true
+                    val isRightSide = startX >= screenWidthWithOrientation / 2f
+                    playerView.callbacks?.onJumpSubtitle(isRightSide)
+                }
+
+                twoPointerStartX = null
+                twoPointerStartY = null
+                twoPointerDownTime = 0L
+                twoPointerMaxDisplacement = 0f
+                twoPointerFired = false
+                val wasScaling = twoPointerIsScaling
+                twoPointerIsScaling = false
                 lastPan = null
                 videoOutline?.isVisible = false
                 matrixAnimation?.cancel()
                 matrixAnimation = null
 
-                // Snap to desired matrix after zoom gesture ends
-                matrixAnimation = ValueAnimator.ofFloat(0f, 1f).apply {
-                    startDelay = 0
-                    duration = 200
-                    val startMatrix = currentZoomMatrix()
-                    val endMatrix = desiredMatrix ?: return@apply
-                    val (startX, startY, startScale) = matrixToTranslationAndScale(startMatrix)
-                    val (endX, endY, endScale) = matrixToTranslationAndScale(endMatrix)
-                    addUpdateListener { anim ->
-                        val v = anim.animatedValue as Float
-                        val vInv = 1f - v
-                        val m = Matrix()
-                        m.setScale(startScale * vInv + endScale * v, startScale * vInv + endScale * v)
-                        m.postTranslate(startX * vInv + endX * v, startY * vInv + endY * v)
-                        applyZoomMatrix(m, true)
+                if (wasScaling) {
+                    // Snap to desired matrix after zoom gesture ends
+                    matrixAnimation = ValueAnimator.ofFloat(0f, 1f).apply {
+                        startDelay = 0
+                        duration = 200
+                        val startMatrix = currentZoomMatrix()
+                        val endMatrix = desiredMatrix ?: return@apply
+                        val (startX, startY, startScale) = matrixToTranslationAndScale(startMatrix)
+                        val (endX, endY, endScale) = matrixToTranslationAndScale(endMatrix)
+                        addUpdateListener { anim ->
+                            val v = anim.animatedValue as Float
+                            val vInv = 1f - v
+                            val m = Matrix()
+                            m.setScale(startScale * vInv + endScale * v, startScale * vInv + endScale * v)
+                            m.postTranslate(startX * vInv + endX * v, startY * vInv + endY * v)
+                            applyZoomMatrix(m, true)
+                        }
+                        start()
                     }
-                    start()
                 }
 
                 onGestureEnd()

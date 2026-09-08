@@ -137,6 +137,7 @@ class PlayerView @JvmOverloads constructor(
         fun onOpenDualSubtitleDialog() {}
         /** Called during brightness swipe with the current extra-brightness alpha (0–1). */
         fun onBrightnessExtra(alpha: Float) {}
+        fun onJumpSubtitle(next: Boolean) {}
 
         /** Touch event callbacks */
 

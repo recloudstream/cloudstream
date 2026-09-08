@@ -368,8 +368,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
         // Subtitle offset is not possible on built-in media3 tracks
         val hasSecondarySub = player.getCurrentSecondarySubtitle() != null
-        playerBinding?.playerSubtitleOffsetBtt?.isGone =
-            (isBuiltinSubtitles || tracks.currentTextTracks.isEmpty()) && !hasSecondarySub
+        val noSubs = (isBuiltinSubtitles || tracks.currentTextTracks.isEmpty()) && !hasSecondarySub
+        playerBinding?.playerSubtitleOffsetBtt?.isGone = noSubs
+        val hasAnySubs = tracks.currentTextTracks.isNotEmpty() || hasSecondarySub
     }
 
     private fun restoreOrientationWithSensor(activity: Activity) {
@@ -656,9 +657,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     private var dualSubtitlesDialog: Dialog? = null
+    private var dualSubWasPlaying = false
 
     private fun showDualSubtitlesDialog() {
         val ctx = context ?: return
+        dualSubWasPlaying = player.getIsPlaying()
         player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
 
         val primarySub = player.getCurrentPreferredSubtitle()
@@ -730,6 +733,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             dialog.setOnDismissListener {
                 dualSubtitlesDialog = null
+                if (dualSubWasPlaying) {
+                    player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+                }
                 activity?.hideSystemUI()
             }
         }
@@ -989,6 +995,53 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
     override fun onOpenDualSubtitleDialog() {
         showDualSubtitlesDialog()
+    }
+
+    private val subJumpHideRunnable = Runnable {
+        playerBinding?.playerTimeText?.isVisible = false
+    }
+
+    private fun jumpToSubtitle(next: Boolean) {
+        val pos = player.getPosition() ?: return
+        val primary = player.getSubtitleCues()
+        val secondary = player.getSecondarySubtitleCues()
+        val cues = (if (primary.size >= secondary.size && primary.isNotEmpty()) primary else secondary)
+            .sortedBy { it.startTimeMs }
+
+        if (cues.isEmpty()) {
+            context?.let { ctx ->
+                com.lagradost.cloudstream3.CommonActivity.showToast(activity, "No subtitles loaded", android.widget.Toast.LENGTH_SHORT)
+            }
+            return
+        }
+
+        val target = if (next) {
+            cues.firstOrNull { it.startTimeMs > pos + 400L }
+        } else {
+            val currentCue = cues.lastOrNull { it.startTimeMs <= pos && pos <= it.endTimeMs + 500L }
+            if (currentCue != null && pos - currentCue.startTimeMs > 1000L) {
+                currentCue
+            } else {
+                cues.lastOrNull { it.startTimeMs < pos - 1000L } ?: cues.firstOrNull()
+            }
+        }
+
+        if (target != null) {
+            context?.vibrateDevice(35L)
+            player.seekTo(target.startTimeMs, PlayerEventSource.UI)
+            val snippet = target.text.firstOrNull()?.replace("\n", " ")?.trim()?.take(45) ?: ""
+            val hudText = "${if (next) "⏭" else "⏮"} $snippet"
+            playerBinding?.playerTimeText?.apply {
+                isVisible = true
+                text = hudText
+                removeCallbacks(subJumpHideRunnable)
+                postDelayed(subJumpHideRunnable, 1200L)
+            }
+        }
+    }
+
+    override fun onJumpSubtitle(next: Boolean) {
+        jumpToSubtitle(next)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
