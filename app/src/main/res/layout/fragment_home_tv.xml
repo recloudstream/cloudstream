@@ -41,7 +41,7 @@
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="260dp"
+                    android:layout_height="400dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
@@ -52,10 +52,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="@dimen/result_padding"
+                    android:layout_marginTop="@dimen/result_padding"
+                    android:layout_marginEnd="@dimen/result_padding"
                     android:orientation="vertical">
+
+                    <include layout="@layout/loading_list" />
 
                     <include layout="@layout/loading_list" />
 

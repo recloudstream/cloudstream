@@ -655,7 +655,7 @@ class HomeParentItemAdapterPreview(
         }
 
         private fun updatePreview(preview: Resource<Pair<Boolean, List<LoadResponse>>>) {
-            if (preview is Resource.Success || isLayout(TV or EMULATOR)) {
+            if (preview is Resource.Success) {
                 homeNonePadding.apply {
                     val params = layoutParams
                     params.height = 0
