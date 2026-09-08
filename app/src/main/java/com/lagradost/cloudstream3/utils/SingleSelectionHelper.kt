@@ -288,6 +288,38 @@ object SingleSelectionHelper {
         )
     }
 
+    fun Activity?.showDialogNoCheckmark(
+        items: List<String>,
+        name: String,
+        dismissCallback: () -> Unit = {},
+        callback: (Int) -> Unit,
+    ) {
+        if (this == null) return
+
+        val binding: BottomSelectionDialogBinding = BottomSelectionDialogBinding.inflate(
+            LayoutInflater.from(this)
+        )
+        val builder =
+            AlertDialog.Builder(this, R.style.AlertDialogCustom)
+                .setView(binding.root)
+
+        val dialog = builder.create()
+        dialog.show()
+
+        showDialog(
+            binding,
+            dialog,
+            items,
+            emptyList(),
+            name,
+            showApply = false,
+            false,
+            { if (it.isNotEmpty()) callback.invoke(it.first()) },
+            dismissCallback,
+            R.layout.sort_bottom_single_choice_no_checkmark
+        )
+    }
+
     /** Only for a low amount of items */
     fun Activity?.showBottomDialog(
         items: List<String>,

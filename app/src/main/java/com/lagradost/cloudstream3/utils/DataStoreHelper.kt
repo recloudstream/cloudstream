@@ -58,6 +58,8 @@ const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 const val KEY_RESULT_SORT = "result_sort"
 const val USER_PINNED_PROVIDERS = "user_pinned_providers" // Key for pinned user set
+const val GEMINI_API_KEY = "gemini_api_key"
+const val GEMINI_TARGET_LANGUAGE = "gemini_target_language"
 
 class UserPreferenceDelegate<T : Any>(
     private val key: String,
@@ -828,4 +830,12 @@ object DataStoreHelper {
     var pinnedProviders: Array<String>
         get() = getKey<Array<String>>(USER_PINNED_PROVIDERS) ?: emptyArray<String>()
         set(value) = setKey(USER_PINNED_PROVIDERS, value)
+
+    var geminiApiKey: String?
+        get() = getKey<String>(GEMINI_API_KEY)
+        set(value) = setKey(GEMINI_API_KEY, value)
+
+    var geminiTargetLanguage: String
+        get() = getKey<String>(GEMINI_TARGET_LANGUAGE) ?: "Azerbaijani"
+        set(value) = setKey(GEMINI_TARGET_LANGUAGE, value)
 }
