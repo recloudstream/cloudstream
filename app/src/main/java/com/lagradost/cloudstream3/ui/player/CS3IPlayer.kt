@@ -744,11 +744,34 @@ class CS3IPlayer : IPlayer {
         }
     }
 
+    override fun loadSubtitleCues(subtitle: SubtitleData): List<SubtitleCue> {
+        val bytes = fetchSubtitleBytes(subtitle) ?: return emptyList()
+        val decoder = CustomDecoder(Format.Builder().setSampleMimeType(subtitle.mimeType).build())
+        decoder.parseToLegacySubtitle(bytes, 0, bytes.size)
+        return synchronized(decoder.currentSubtitleCues) { decoder.currentSubtitleCues.toList() }
+    }
+
     private fun fetchSubtitleBytes(subtitle: SubtitleData): ByteArray? {
         return when (subtitle.origin) {
             SubtitleOrigin.URL -> fetchSubtitleFromUrl(subtitle)
-            SubtitleOrigin.DOWNLOADED_FILE -> CloudStreamApp.context?.contentResolver
-                ?.openInputStream(Uri.parse(subtitle.url))?.use { it.readBytes() }
+            SubtitleOrigin.DOWNLOADED_FILE -> {
+                val rawUrl = subtitle.url
+                try {
+                    val file = File(rawUrl)
+                    if (file.exists() && file.isFile) {
+                        return file.readBytes()
+                    }
+                    val uri = Uri.parse(rawUrl)
+                    if (uri.scheme == "file") {
+                        val f = File(uri.path ?: "")
+                        if (f.exists() && f.isFile) return f.readBytes()
+                    }
+                    CloudStreamApp.context?.contentResolver?.openInputStream(uri)?.use { it.readBytes() }
+                } catch (t: Throwable) {
+                    logError(t)
+                    null
+                }
+            }
             SubtitleOrigin.EMBEDDED_IN_VIDEO -> null
         }
     }
@@ -802,6 +825,20 @@ class CS3IPlayer : IPlayer {
                 runOnMainThread { if (secondarySubtitleGeneration.get() == generation) pushSecondaryCues() }
             } catch (t: Throwable) { if (t !is InterruptedException) logError(t) }
         }
+    }
+
+    override fun setDirectSecondaryCues(cues: List<SubtitleCue>, subtitle: SubtitleData?) {
+        val generation = secondarySubtitleGeneration.incrementAndGet()
+        secondarySubtitleFuture?.cancel(true)
+        secondarySubtitleFuture = null
+        currentSecondarySubtitle = subtitle
+        secondaryCues = cues
+        lastSecondaryCueSignature = emptyList()
+        latestEmbeddedSecondaryCues = emptyList()
+        synchronized(embeddedSecondaryCues) { embeddedSecondaryCues.clear() }
+        pushSecondaryCues()
+        applySubtitleSelection()
+        Log.i(TAG, "setDirectSecondaryCues applied directly with ${cues.size} cues")
     }
 
     override fun getCurrentSecondarySubtitle(): SubtitleData? = currentSecondarySubtitle
@@ -2134,7 +2171,9 @@ class CS3IPlayer : IPlayer {
     ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
         val activeSubtitles = ArrayList<SubtitleData>()
         val subSources = subHelper.getAllSubtitles().mapNotNull { sub ->
-            val subConfig = MediaItem.SubtitleConfiguration.Builder(sub.getFixedUrl().toUri())
+            val fixedUrl = sub.getFixedUrl()
+            val uri = if (fixedUrl.startsWith("/")) File(fixedUrl).toUri() else fixedUrl.toUri()
+            val subConfig = MediaItem.SubtitleConfiguration.Builder(uri)
                 .setMimeType(sub.mimeType)
                 .setLanguage("_${sub.name}")
                 .setId(sub.getId())

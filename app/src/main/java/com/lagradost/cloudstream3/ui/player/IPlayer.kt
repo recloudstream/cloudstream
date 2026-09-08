@@ -262,6 +262,8 @@ interface IPlayer {
 
     fun setSecondarySubtitles(subtitle: SubtitleData?) {}
     fun getCurrentSecondarySubtitle(): SubtitleData? = null
+    fun setDirectSecondaryCues(cues: List<SubtitleCue>, subtitle: SubtitleData?) {}
+    fun loadSubtitleCues(subtitle: SubtitleData): List<SubtitleCue> = emptyList()
 
     fun handleEvent(event: CSPlayerEvent, source: PlayerEventSource = PlayerEventSource.UI)
 
