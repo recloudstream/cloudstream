@@ -102,12 +102,12 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     private var hideControlsNames = false
     protected var subtitleDelay
         set(value) = try {
-            player.setSubtitleOffset(-value)
+            player.setSubtitleOffset(value)
         } catch (e: Exception) {
             logError(e)
         }
         get() = try {
-            -player.getSubtitleOffset()
+            player.getSubtitleOffset()
         } catch (e: Exception) {
             logError(e)
             0L
@@ -527,7 +527,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
                     // Scroll to the first active subtitle
                     val playerPosition = player.getPosition() ?: 0
-                    val totalPosition = playerPosition - currentOffset
+                    val totalPosition = playerPosition + currentOffset
                     subtitleAdapter?.updateTime(totalPosition)
 
                     subtitleAdapter?.getLatestActiveItem(totalPosition)
@@ -537,11 +537,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
                     val str = when {
                         time > 0L -> {
-                            txt(R.string.subtitle_offset_extra_hint_later_format, time)
+                            txt(R.string.subtitle_offset_extra_hint_before_format, time)
                         }
 
                         time < 0L -> {
-                            txt(R.string.subtitle_offset_extra_hint_before_format, -time)
+                            txt(R.string.subtitle_offset_extra_hint_later_format, -time)
                         }
 
                         else -> {
@@ -559,12 +559,12 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             subtitleOffsetRecyclerview.isVisible = subtitles.isNotEmpty()
             noSubtitlesLoadedNotice.isVisible = subtitles.isEmpty()
 
-            val initialSubtitlePosition = (player.getPosition() ?: 0) - currentOffset
+            val initialSubtitlePosition = (player.getPosition() ?: 0) + currentOffset
             subtitleAdapter =
                 SubtitleOffsetItemAdapter(initialSubtitlePosition) { subtitleCue ->
                     val playerPosition = player.getPosition() ?: 0
                     subtitleOffsetInput.text = Editable.Factory.getInstance()
-                        ?.newEditable((playerPosition - subtitleCue.startTimeMs).toString())
+                        ?.newEditable((subtitleCue.startTimeMs - playerPosition).toString())
                 }.apply {
                     submitList(subtitles)
                 }
