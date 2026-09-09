@@ -99,6 +99,12 @@
             app:defaultValue="true"
             app:key="@string/enable_skip_op_from_database" />
         <SwitchPreference
+            android:icon="@drawable/ic_baseline_skip_next_24"
+            android:summary="@string/auto_skip_popup_settings_des"
+            android:title="@string/auto_skip_popup_settings"
+            app:defaultValue="false"
+            app:key="@string/auto_skip_popup_key" />
+        <SwitchPreference
             android:icon="@drawable/screen_rotation"
             android:summary="@string/rotate_video_desc"
             android:title="@string/rotate_video"

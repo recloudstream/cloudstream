@@ -68,6 +68,7 @@ import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
@@ -136,6 +137,7 @@ import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.lang.ref.WeakReference
 import java.util.Calendar
+import kotlin.coroutines.cancellation.CancellationException
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
@@ -146,6 +148,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         const val NOTIFICATION_ID = 2326
         const val CHANNEL_ID = 7340
         const val STOP_ACTION = "stopcs3"
+        private const val SKIP_CHAPTER_AUTO_CLICK_COUNTDOWN_SECONDS = 5
 
         private val generators = ConcurrentHashMap<String, VideoGenerator<*>>()
         fun newInstance(
@@ -2052,6 +2055,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    override fun onDestroyView() {
+        clearSkipChapterAutoClick()
+        super.onDestroyView()
+    }
+
     /**
      * This is used instead of layout-television to follow the
      * settings and some TV devices are not classified as TV
@@ -2062,6 +2070,63 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     var skipAnimator: ValueAnimator? = null
     var skipIndex = 0
+    private var skipAutoClickJob: Job? = null
+
+    private fun isAutoSkipPopupEnabled(): Boolean {
+        val ctx = context ?: return false
+        return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
+            ctx.getString(R.string.auto_skip_popup_key),
+            false
+        )
+    }
+
+    private fun updateSkipChapterButtonText(
+        timestamp: VideoSkipStamp,
+        secondsRemaining: Int? = null
+    ) {
+        val text = if (isAutoSkipPopupEnabled() && secondsRemaining != null) {
+            txt(R.string.skip_chapter_countdown_format, timestamp.uiText, secondsRemaining)
+        } else {
+            timestamp.uiText
+        }
+
+        playerBinding?.skipChapterButton?.setText(text)
+    }
+
+    private fun clearSkipChapterAutoClick() {
+        skipAutoClickJob?.cancel()
+        skipAutoClickJob = null
+    }
+
+    private fun startSkipChapterAutoClick(timestamp: VideoSkipStamp, currentIndex: Int) {
+        clearSkipChapterAutoClick()
+        if (!isAutoSkipPopupEnabled()) {
+            updateSkipChapterButtonText(timestamp)
+            return
+        }
+
+        skipAutoClickJob = viewModel.viewModelScope.launchSafe  {
+            try {
+                for (secondsRemaining in SKIP_CHAPTER_AUTO_CLICK_COUNTDOWN_SECONDS downTo 1) {
+                    if (!isActive) return@launchSafe
+                    if (skipIndex != currentIndex) return@launchSafe
+
+                    updateSkipChapterButtonText(timestamp, secondsRemaining)
+                    delay(1000)
+                }
+
+                if (isActive && skipIndex == currentIndex) {
+                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+                }
+            } catch (_: CancellationException) {
+                // If we get canceled, do nothing.
+            } finally {
+                if (isActive) {
+                    clearSkipChapterAutoClick()
+                }
+            }
+        }
+    }
 
     private fun displayTimeStamp(show: Boolean) {
         if (timestampShowState == show) return
@@ -2096,7 +2161,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                     if (!show) {
                         playerBinding?.skipChapterButton?.isVisible = false
                         if (!isShowing) {
-                            // Automatically return focus to play pause
                             playerBinding?.playerPausePlay?.requestFocus()
                         }
                     }
@@ -2114,6 +2178,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun onTimestampSkipped(timestamp: VideoSkipStamp) {
+        clearSkipChapterAutoClick()
         displayTimeStamp(false)
     }
 
@@ -2126,7 +2191,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 if (skipIndex == currentIndex)
                     displayTimeStamp(false)
             }, 6000)
+            startSkipChapterAutoClick(timestamp, currentIndex)
         } else {
+            clearSkipChapterAutoClick()
             displayTimeStamp(false)
         }
     }
