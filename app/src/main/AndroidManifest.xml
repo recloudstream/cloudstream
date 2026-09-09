@@ -135,6 +135,38 @@
 
                 <data android:scheme="magnet" />
             </intent-filter>
+            <!-- External player: receive video/audio URLs from other apps (e.g. Stremio, browsers) -->
+            <intent-filter android:label="@string/play_with_app_name">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+            <intent-filter android:label="@string/play_with_app_name">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:mimeType="application/x-mpegURL" />
+                <data android:mimeType="application/vnd.apple.mpegurl" />
+            </intent-filter>
+            <intent-filter android:label="@string/play_with_app_name">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
             <!--<intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
