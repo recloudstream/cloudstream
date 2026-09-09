@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.services
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -121,6 +122,7 @@ class PackageInstallerService : Service() {
 
         val newNotification = baseNotification
             .setContentTitle(getString(text))
+            .setOngoing(state != ApkInstaller.InstallProgressStatus.Failed)
             .apply {
                 if (state == ApkInstaller.InstallProgressStatus.Failed) {
                     setSmallIcon(R.drawable.rderror)
@@ -143,10 +145,56 @@ class PackageInstallerService : Service() {
         notificationManager.notify(id, newNotification)
     }
 
+    private fun updateNotificationDelayed() {
+        val flags = when {
+            SDK_INT >= 23 -> PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            else -> PendingIntent.FLAG_UPDATE_CURRENT
+        }
+        val updateIntent = getDelayedInstallIntent(this)
+        val updatePendingIntent = PendingIntent.getService(this, 0, updateIntent, flags)
+
+        val newNotification = baseNotification
+            .setContentTitle(getString(R.string.delayed_update_notice))
+            .setProgress(0, 0, false)
+            .setOngoing(true)
+            .addAction(
+                R.drawable.ic_baseline_system_update_24,
+                getString(R.string.update),
+                updatePendingIntent
+            )
+            .build()
+
+        val notificationManager =
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.notify(UPDATE_NOTIFICATION_ID, newNotification)
+    }
+
+    private suspend fun startDelayedInstallation() {
+        if (ApkInstaller.startDelayedInstallation()) {
+            updateNotificationProgress(0f, ApkInstaller.InstallProgressStatus.Installing)
+            delay(10_000)
+        } else {
+            updateNotificationProgress(0f, ApkInstaller.InstallProgressStatus.Failed)
+        }
+        stopSelf()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_START_DELAYED_INSTALL) {
+            ioSafe {
+                startDelayedInstallation()
+            }
+            return START_NOT_STICKY
+        }
+
         val url = intent?.getStringExtra(EXTRA_URL) ?: return START_NOT_STICKY
         ioSafe {
             downloadUpdate(url)
+            if (ApkInstaller.hasDelayedInstaller()) {
+                updateNotificationDelayed()
+                return@ioSafe
+            }
             // Close the service after the update is done
             // If no sleep then the install prompt may not appear and the notification
             // will disappear instantly
@@ -172,6 +220,8 @@ class PackageInstallerService : Service() {
 
     companion object {
         private const val EXTRA_URL = "EXTRA_URL"
+        private const val ACTION_START_DELAYED_INSTALL =
+            "com.lagradost.cloudstream3.action.START_DELAYED_INSTALL"
 
         const val UPDATE_CHANNEL_ID = "cloudstream3.updates"
         const val UPDATE_CHANNEL_NAME = "App Updates"
@@ -184,6 +234,11 @@ class PackageInstallerService : Service() {
         ): Intent {
             return Intent(context, PackageInstallerService::class.java)
                 .putExtra(EXTRA_URL, url)
+        }
+
+        fun getDelayedInstallIntent(context: Context): Intent {
+            return Intent(context, PackageInstallerService::class.java)
+                .setAction(ACTION_START_DELAYED_INSTALL)
         }
     }
 }
