@@ -356,7 +356,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsFragment"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsFragment2"
         android:layout_height="match_parent"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
