@@ -374,6 +374,8 @@ object SettingsFragmentScreen : Screen {
             icon = painterResource(settingsTab.icon),
             subtitle = settingsTab.subtitle?.let { stringResource(it) }
                 ?: groups.joinToString { it.title }) {
+            // Clear it if we have already set it but navigated back instantly
+            SearchableSettings.highlightKey = null
             activity?.navigate(settingsTab.navigation)
         }
     }
