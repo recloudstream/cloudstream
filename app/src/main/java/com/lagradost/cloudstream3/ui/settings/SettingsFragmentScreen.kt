@@ -276,7 +276,7 @@ object SettingsFragmentScreen : Screen {
                     },
                     onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
                     placeholder = {
-                        Text(modifier = Modifier.clearAndSetSemantics {}, text = "Search")
+                        Text(modifier = Modifier.clearAndSetSemantics {}, text = stringResource(R.string.search_hint))
                     },
                     leadingIcon = {
                         Crossfade(
