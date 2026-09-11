@@ -85,7 +85,12 @@ object SettingsAccountScreen : SearchableSettings, BiometricAuthenticator.Biomet
         val activity = LocalActivity.current
         val context = LocalContext.current
         val hasSecurity = remember(context) {
-            deviceHasPasswordPinLock(context)
+            try {
+                deviceHasPasswordPinLock(context)
+            } catch (_ : Throwable) {
+                // e.g preview
+                false
+            }
         }
 
         return persistentListOf(

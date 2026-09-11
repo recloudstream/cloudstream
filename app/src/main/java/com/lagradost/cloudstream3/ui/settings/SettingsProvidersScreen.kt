@@ -17,6 +17,7 @@ import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import kotlinx.collections.immutable.persistentListOf
 
+@Deprecated("This setting was merged into other places")
 object SettingsProvidersScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.category_providers)
@@ -42,7 +43,6 @@ object SettingsProvidersScreen : SearchableSettings {
         TvType.Video -> R.string.video_singular
     }
 
-    // TODO Move this into general and layout?
     @Composable
     override fun getPreferences(): List<Preference> {
         val settings = rememberAppSettings()
@@ -68,9 +68,10 @@ object SettingsProvidersScreen : SearchableSettings {
             preference = settings.provider.preferredMedia,
             entries = TvType.entries.associate {
                     it.ordinal.toString() to stringResource(it.toStringRes())
-                }), Preference.PreferenceItem.MultiSelectListPreference(
+                }),
+            Preference.PreferenceItem.MultiSelectListPreference(
             title = stringResource(R.string.display_subbed_dubbed_settings),
-            icon = painterResource(R.drawable.ic_outline_voice_over_off_24),
+            icon = painterResource(R.drawable.audio_capture_24px),
             preference = settings.provider.displayDubSub,
             entries = mapOf(
                 DubStatus.None.name to stringResource(R.string.none),

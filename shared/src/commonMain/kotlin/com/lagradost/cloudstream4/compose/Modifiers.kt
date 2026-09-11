@@ -1,12 +1,9 @@
 package com.lagradost.cloudstream4.compose
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,16 +14,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.lagradost.cloudstream4.theme.CloudStreamTheme.colors
 
+/*
 @Composable
 fun Modifier.ripple(
     interactionSource: MutableInteractionSource,
     bounded: Boolean = true,
 ): Modifier = indication(
     interactionSource = interactionSource,
-    indication = ripple(bounded = bounded, color = colors.onBackground),
-)
+    indication = ripple(bounded = bounded, color = MaterialTheme.colorScheme.onBackground),
+)*/
 
 // no dimens.xml allowed in compose :/
 fun RoundedShape() = RoundedCornerShape(10.dp)
@@ -41,7 +38,12 @@ fun Modifier.circle(): Modifier =
     clip(CircleShape)
 
 @Composable
-fun Modifier.focusOutline(shape: Shape = RoundedShape()): Modifier {
+fun Modifier.focusOutline(
+    enabled : Boolean = true,
+    shape: Shape = RoundedShape()
+): Modifier {
+    if(!enabled) return this
+
     var hasFocus by remember { mutableStateOf(false) }
 
     return this.onFocusChanged { newFocus ->

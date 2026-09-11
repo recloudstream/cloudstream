@@ -2,15 +2,12 @@ package com.lagradost.cloudstream4.compose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
@@ -19,7 +16,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,7 +32,6 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
@@ -44,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.check
-import com.lagradost.cloudstream4.theme.CloudStreamTheme.colors
 import com.mihon.material.padding
 import org.jetbrains.compose.resources.painterResource
 
@@ -61,7 +55,7 @@ fun ActionDialog(
     confirm: () -> Unit
 ) {
     AlertDialog(
-        containerColor = colors.background,
+        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = dismiss,
         title = {
             if (icon == null) {
@@ -124,7 +118,7 @@ fun BaseButton(
         modifier = modifier.onFocusChanged { newFocus ->
             hasFocus = newFocus.hasFocus
         },
-        border = if (hasFocus) BorderStroke(1.dp, colors.onBackground) else null
+        border = if (hasFocus) BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground) else null
     ) {
         AnimatedVisibility(hasFocus) {
             Icon(
@@ -142,7 +136,7 @@ fun BaseButton(
 fun SingleSelectDialog(
     modifier: Modifier = Modifier,
     shape: Shape = AlertDialogDefaults.shape,
-    containerColor: Color = colors.background,
+    containerColor: Color = MaterialTheme.colorScheme.background,
     iconContentColor: Color = AlertDialogDefaults.iconContentColor,
     tonalElevation: Dp = AlertDialogDefaults.TonalElevation,
     icon: @Composable (() -> Unit)? = null,
@@ -180,7 +174,7 @@ fun SingleSelectDialog(
 fun <T> SingleSelectDialog(
     modifier: Modifier = Modifier,
     shape: Shape = AlertDialogDefaults.shape,
-    containerColor: Color = colors.background,
+    containerColor: Color = MaterialTheme.colorScheme.background,
     iconContentColor: Color = AlertDialogDefaults.iconContentColor,
     tonalElevation: Dp = AlertDialogDefaults.TonalElevation,
     icon: @Composable (() -> Unit)? = null,
@@ -353,19 +347,13 @@ fun <T> SingleSelectionItem(
     selectedPainter: Painter,
     onClick: () -> Unit,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .combinedClickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick,
-                onLongClick = {
-                }
-            )
             .rounded()
-            .ripple(interactionSource),
+            .clickable(
+                onClick = onClick,
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (isSelected) {
@@ -373,13 +361,13 @@ fun <T> SingleSelectionItem(
                 painter = selectedPainter,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = colors.onBackground
+                tint = MaterialTheme.colorScheme.onBackground
             )
             iconProvider?.invoke(key, text)
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,
-                color = colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(15.dp)
             )
         } else {
@@ -388,7 +376,7 @@ fun <T> SingleSelectionItem(
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,
-                color = colors.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(15.dp)
             )
         }
@@ -400,7 +388,7 @@ fun <T> SingleSelectionItem(
 fun <T> MultiSelectDialog(
     modifier: Modifier = Modifier,
     shape: Shape = AlertDialogDefaults.shape,
-    containerColor: Color = colors.background,
+    containerColor: Color = MaterialTheme.colorScheme.background,
     iconContentColor: Color = AlertDialogDefaults.iconContentColor,
     tonalElevation: Dp = AlertDialogDefaults.TonalElevation,
     icon: @Composable (() -> Unit)? = null,

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream4
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -17,7 +18,6 @@ import com.lagradost.cloudstream4.generated.resources.app_name
 import com.lagradost.cloudstream4.generated.resources.default_icon
 import com.lagradost.cloudstream4.generated.resources.preview
 import com.lagradost.cloudstream4.theme.CloudStreamTheme
-import com.lagradost.cloudstream4.theme.CloudStreamTheme.colors
 import com.lagradost.cloudstream4.theme.CloudStreamThemeMode
 import com.mihon.presentation.settings.widget.SwitchPreferenceWidget
 import org.jetbrains.compose.resources.painterResource
@@ -31,8 +31,8 @@ fun main() = application {
     ) {
         CloudStreamTheme(mode = CloudStreamThemeMode.Dark) {
             Scaffold(
-                containerColor = colors.background,
-                contentColor = colors.onBackground
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground
             ) {
                 Column {
                     Text("Hello, World!")

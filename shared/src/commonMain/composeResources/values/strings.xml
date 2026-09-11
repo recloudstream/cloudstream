@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">CloudStream</string>
     <string name="none">None</string>
+    <string name="no_results_found">No results found</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="action_bar_up_description">Navigate up</string>
