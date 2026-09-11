@@ -112,11 +112,12 @@ fun BaseButton(
     modifier: Modifier = Modifier,
 ) {
     var hasFocus by remember { mutableStateOf(false) }
+    val canHaveFocus = LocalFocusOutlineDefault.current
     Button(
         onClick = onClick,
         colors = buttonColors,
         modifier = modifier.onFocusChanged { newFocus ->
-            hasFocus = newFocus.hasFocus
+            hasFocus = canHaveFocus && newFocus.hasFocus
         },
         border = if (hasFocus) BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground) else null
     ) {

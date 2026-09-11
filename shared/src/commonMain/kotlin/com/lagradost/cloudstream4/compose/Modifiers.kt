@@ -5,10 +5,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
@@ -37,9 +39,15 @@ fun Modifier.rounded(): Modifier =
 fun Modifier.circle(): Modifier =
     clip(CircleShape)
 
+/**
+ * If we should have outlines on items when focused by default, this should be false for desktop
+ * as we do not use a dpad for that
+ * */
+val LocalFocusOutlineDefault: ProvidableCompositionLocal<Boolean> = staticCompositionLocalOf { true }
+
 @Composable
 fun Modifier.focusOutline(
-    enabled : Boolean = true,
+    enabled : Boolean = LocalFocusOutlineDefault.current,
     shape: Shape = RoundedShape()
 ): Modifier {
     if(!enabled) return this
