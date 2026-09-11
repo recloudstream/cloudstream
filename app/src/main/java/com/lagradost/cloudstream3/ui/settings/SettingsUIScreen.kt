@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lagradost.cloudstream3.CommonActivity.activity
+import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
@@ -31,7 +33,6 @@ import com.lagradost.cloudstream4.compose.TV
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.lagradost.cloudstream4.theme.CloudStreamPrimaryColor
-import com.lagradost.cloudstream4.theme.CloudStreamTheme.colors
 import com.lagradost.cloudstream4.theme.modeToTheme
 import com.lagradost.cloudstream4.theme.perfToColor
 import com.lagradost.cloudstream4.theme.perfToMode
@@ -71,7 +72,7 @@ object SettingsUIScreen : SearchableSettings {
             modifier = Modifier
                 .padding(start = 15.dp)
                 .size(20.dp)
-                .border(width = 1.5.dp, shape = CircleShape, color = colors.onBackground)
+                .border(width = 1.5.dp, shape = CircleShape, color = MaterialTheme.colorScheme.onBackground)
                 .background(color, CircleShape)
         )
     }
@@ -241,6 +242,15 @@ object SettingsUIScreen : SearchableSettings {
                         title = stringResource(R.string.pref_filter_search_quality),
                         icon = painterResource(R.drawable.filter_alt_24px),
                         entries = SearchQuality.entries.associateWith { stringResource(it.toStringRes()) }),
+                    Preference.PreferenceItem.MultiSelectListPreference(
+                        title = stringResource(R.string.display_subbed_dubbed_settings),
+                        icon = painterResource(R.drawable.audio_capture_24px),
+                        preference = settings.provider.displayDubSub,
+                        entries = mapOf(
+                            DubStatus.None.name to stringResource(R.string.none),
+                            DubStatus.Dubbed.name to stringResource(R.string.app_dubbed_text),
+                            DubStatus.Subbed.name to stringResource(R.string.app_subbed_text),
+                        )),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.ui.bottomTitle,
                         title = stringResource(R.string.bottom_title_settings),

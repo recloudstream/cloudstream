@@ -22,6 +22,7 @@ abstract class BaseComposeFragment : Fragment(), Screen {
     ): View = createComposeView(inflater, container, savedInstanceState)
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
         this.view?.let { view ->
             fixSystemBarsPadding(
                 view,
@@ -29,15 +30,14 @@ abstract class BaseComposeFragment : Fragment(), Screen {
                 padBottom = isLandscape()
             )
         }
-        super.onConfigurationChanged(newConfig)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         fixSystemBarsPadding(
             view,
             padLeft = isLayout(TV or EMULATOR),
             padBottom = isLandscape()
         )
-        super.onViewCreated(view, savedInstanceState)
     }
 }

@@ -46,9 +46,7 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream4.compose.BlackButton
 import com.lagradost.cloudstream4.compose.WhiteButton
 import com.lagradost.cloudstream4.compose.circle
-import com.lagradost.cloudstream4.compose.ripple
 import com.lagradost.cloudstream4.compose.rounded
-import com.lagradost.cloudstream4.theme.CloudStreamTheme.colors
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
@@ -91,7 +89,7 @@ fun LogcatDialog(dismiss: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     AlertDialog(
-        containerColor = colors.background,
+        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = dismiss,
         title = {
             Text(text = stringResource(R.string.log_cat))
@@ -214,8 +212,6 @@ fun LogcatDialog(dismiss: () -> Unit) {
 
 @Composable
 fun LogcatItem(item: LogcatItem, modifier: Modifier = Modifier) {
-    val interactionSource = remember { MutableInteractionSource() }
-
     val color = when (item.level) {
         LogcatLevel.Fatal -> Color.Magenta
         LogcatLevel.Error -> Color.Red
@@ -233,9 +229,9 @@ fun LogcatItem(item: LogcatItem, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .padding(2.dp)
                     .rounded()
-                    .background(colors.onBackground)
+                    .background(MaterialTheme.colorScheme.onBackground)
                     .padding(4.dp),
-                color = colors.surfaceVariant
+                color = MaterialTheme.colorScheme.surfaceVariant
             )
         }
         Text(
@@ -243,32 +239,29 @@ fun LogcatItem(item: LogcatItem, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .padding(2.dp)
                 .rounded()
-                .background(colors.surfaceVariant)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .padding(4.dp),
-            color = colors.onBackground
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             item.tag,
             modifier = Modifier
                 .padding(2.dp)
                 .rounded()
-                .background(colors.surfaceVariant)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .padding(4.dp),
-            color = colors.onBackground
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
     Row(
         modifier = modifier
             .height(IntrinsicSize.Min)
             .fillMaxWidth()
+            .rounded()
             .clickable(
-                interactionSource = interactionSource,
-                indication = null,
                 onClick = {
                     clipboardHelper(txt("Logcat"), item.toString())
                 })
-            .rounded()
-            .ripple(interactionSource)
             .padding(5.dp)
     ) {
         Box(
@@ -281,7 +274,7 @@ fun LogcatItem(item: LogcatItem, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             item.message,
-            color = colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 14.sp,
             lineHeight = 15.sp,
         )

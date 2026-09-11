@@ -1,6 +1,7 @@
 package com.mihon.presentation.settings
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,6 +23,8 @@ fun PreferenceScaffold(
     val (top, bottom) = remember { FocusRequester.createRefs() }
 
     Scaffold(
+        // TODO @WindowInsets remove this when we have converted everything to compose
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             AppBar(
                 modifier = Modifier.focusRequester(top).focusProperties {

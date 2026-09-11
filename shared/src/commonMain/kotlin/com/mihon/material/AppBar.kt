@@ -3,6 +3,7 @@ package com.mihon.material
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -99,6 +100,8 @@ fun AppBar(
         modifier = modifier,
     ) {
         TopAppBar(
+            // TODO @WindowInsets remove this when we have converted everything to compose
+            windowInsets = WindowInsets(0, 0, 0, 0),
             navigationIcon = {
                 if (isActionMode) {
                     IconButton(onClick = onCancelActionMode) {
