@@ -281,7 +281,7 @@ object SettingsFragmentScreen : Screen {
                     leadingIcon = {
                         Crossfade(
                             targetState = searchBarState.targetValue,
-                            label = "results",
+                            label = "leftsearch",
                         ) { value ->
                             when (value) {
                                 SearchBarValue.Expanded -> {
@@ -320,7 +320,7 @@ object SettingsFragmentScreen : Screen {
                     trailingIcon = {
                         Crossfade(
                             targetState = searchBarState.targetValue,
-                            label = "results",
+                            label = "rightsearch",
                         ) { value ->
                             when (value) {
                                 SearchBarValue.Expanded -> {

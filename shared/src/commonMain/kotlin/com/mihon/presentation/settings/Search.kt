@@ -6,8 +6,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -20,6 +24,8 @@ import com.lagradost.cloudstream4.generated.resources.no_results_found
 import com.mihon.presentation.secondaryItemAlpha
 import com.mihon.presentation.settings.widget.TextPreferenceWidget
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.stringResource
 
 private fun getLocalizedBreadcrumb(path: String, node: String?, isLtr: Boolean): String {
@@ -59,12 +65,17 @@ fun <T> SettingSearchResults(
 ) {
     val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
 
-    val result by produceState<List<SearchResultItem<T>>?>(initialValue = null, searchKey) {
+    // We want to retain the results as backpress should not re-calc it
+    var result by retain<MutableState<PersistentList<SearchResultItem<T>>?>> {
+        mutableStateOf(null)
+    }
+
+    LaunchedEffect(searchKey) {
         if (searchKey.isEmpty()) {
-            value = null
-            return@produceState
+            result = null
+            return@LaunchedEffect
         }
-        value = items.asSequence()
+        result = items.asSequence()
             .flatMap { settingsData ->
                 settingsData.contents.asSequence()
                     // Only search from enabled prefs and one with valid title
@@ -91,7 +102,7 @@ fun <T> SettingSearchResults(
                     .filter { (_, p) ->
                         val inTitle = p.title.contains(searchKey, true)
                         val inSummary = p.subtitle?.contains(searchKey, true) ?: false
-                        inTitle || inSummary
+                        inTitle || inSummary // TODO filter out %s ? This is a bug-ish in mihon
                     }
                     // Map result data
                     .map { (categoryTitle, p) ->
@@ -108,7 +119,7 @@ fun <T> SettingSearchResults(
                     }
             }
             .take(10) // Just take top 10 result for quicker result
-            .toList()
+            .toPersistentList()
     }
 
     Crossfade(
@@ -116,9 +127,7 @@ fun <T> SettingSearchResults(
         label = "results",
     ) {
         when {
-            it == null -> {
-                empty()
-            }
+            it == null -> empty()
 
             it.isEmpty() -> {
                 Text(
@@ -129,15 +138,6 @@ fun <T> SettingSearchResults(
             }
 
             else -> {
-                /*LazyColumn(
-                    state = listState,
-                    contentPadding = contentPadding,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    items(
-                        items = it,
-                        key = { i -> i.hashCode() },
-                    ) { item ->*/
                 Column(
                     modifier = Modifier
                         .nestedScroll(nestedScrollConnection)
@@ -150,28 +150,6 @@ fun <T> SettingSearchResults(
                                 onItemClick(item)
                             }
                         )
-
-                        /*Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onItemClick(item) }
-                                .padding(horizontal = 24.dp, vertical = 14.dp),
-                        ) {
-                            Text(
-                                text = item.title,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1,
-                                fontWeight = FontWeight.Normal,
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                            Text(
-                                text = item.breadcrumbs,
-                                modifier = Modifier.paddingFromBaseline(top = 16.dp),
-                                maxLines = 1,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }*/
                     }
                 }
             }
