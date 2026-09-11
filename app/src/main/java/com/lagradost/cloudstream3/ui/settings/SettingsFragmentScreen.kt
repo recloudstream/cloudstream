@@ -1,16 +1,22 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldState
@@ -30,6 +36,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -39,21 +47,27 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.profileImages
 import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.TV
+import com.lagradost.cloudstream4.compose.circle
 import com.lagradost.cloudstream4.compose.focusOutline
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
@@ -162,11 +176,62 @@ object SettingsFragmentScreen : Screen {
 
         Scaffold { _ ->
             Column(modifier = Modifier.verticalScroll(outerListState)) {
-                Text(
-                    text = stringResource(R.string.title_settings),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(MaterialTheme.padding.large)
+                Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
+
+                val default = DataStoreHelper.getDefaultAccount(
+                    LocalContext.current
                 )
+                val flow by DataStoreHelper.selectedAccountNumberFlow.collectAsState()
+                val account = remember(flow) {
+                    DataStoreHelper.getCurrentAccount() ?: default
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxSize().focusOutline().clickable {
+                        activity.navigate(
+                            R.id.accountSelectActivity,
+                            Bundle().apply { putBoolean("isFromMainActivity", true) }
+                        )
+                    }.padding(
+                        vertical = MaterialTheme.padding.large,
+                        horizontal = MaterialTheme.padding.medium
+                    )
+                ) {
+                    val image =
+                        account.customImage ?: profileImages.getOrNull(account.defaultImageIndex)
+                        ?: profileImages.first()
+
+                    Box(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .border(
+                                2.dp,
+                                MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
+                                CircleShape
+                            )
+                            .circle(),
+                    ) {
+                        AsyncImage(
+                            contentScale = ContentScale.Crop,
+                            model = image,
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = null,
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(MaterialTheme.padding.medium))
+                    Column {
+                        Text(
+                            text = account.name,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Text(
+                            text = stringResource(R.string.title_settings),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
                 SettingsSearch(searchBarState = searchBarState, textFieldState = textFieldState)
                 Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
 
