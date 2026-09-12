@@ -51,6 +51,7 @@
                 android:contentDescription="@string/preview_background_img_des"
                 android:focusable="true"
                 android:foreground="@drawable/outline_drawable_forced_round"
+                android:nextFocusRight="@id/edit_profile_photo_button"
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile_bg_blue" />
 
@@ -60,6 +61,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:background="@color/skipOpTransparent"
+                android:contentDescription="@string/edit_profile_image_title"
+                android:focusable="true"
+                android:foreground="@drawable/outline_drawable_forced_round"
+                android:nextFocusLeft="@id/account_image"
+                android:nextFocusDown="@id/account_name"
                 android:padding="5dp"
                 android:src="@drawable/ic_baseline_edit_24" />
         </androidx.cardview.widget.CardView>
