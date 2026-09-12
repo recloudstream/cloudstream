@@ -350,8 +350,8 @@
     <string name="home_random">Casuale</string>
     <string name="coming_soon">Prossimamente…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -769,4 +769,5 @@
     </plurals>
     <string name="tv_layout_clock_settings">Mostra orologio in tempo reale</string>
     <string name="tv_layout_clock_settings_des">Mostra un orologio in tempo reale nella parte superiore dello schermo. Si applica alla homepage e al lettore</string>
+    <string name="log_cat">Logcat 🐈</string>
 </resources>
