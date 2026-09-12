@@ -11,6 +11,7 @@ import android.media.audiofx.LoudnessEnhancer
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.provider.Settings
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -31,7 +32,9 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
+import com.lagradost.cloudstream3.CommonActivity.screenHeight
 import com.lagradost.cloudstream3.CommonActivity.screenHeightWithOrientation
+import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.CommonActivity.screenWidthWithOrientation
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -132,11 +135,35 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     /** Hold / speed-up */
     val holdHandler = Handler(Looper.getMainLooper())
     var hasTriggeredSpeedUp = false
-    val holdRunnable = Runnable {
+    val holdRunnable: Runnable = Runnable {
+        holdHandler.removeCallbacks(subRevealRunnable)
         playerView.player.setPlaybackSpeed(2.0f)
         showOrHideSpeedUp(true)
         playerView.callbacks?.onHoldSpeedUp(true)
         hasTriggeredSpeedUp = true
+    }
+
+    var hasTriggeredSubReveal = false
+    private var subRevealWasPlaying = false
+    val subRevealRunnable: Runnable = Runnable {
+        holdHandler.removeCallbacks(holdRunnable)
+        hasTriggeredSubReveal = true
+        subRevealWasPlaying = playerView.player.getIsPlaying()
+        if (subRevealWasPlaying) {
+            playerView.player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
+        }
+        Log.i(TAG, "subRevealRunnable triggered -> pausing and showing secondary subtitle")
+        playerView.callbacks?.onHoldSecondarySubtitle(true)
+    }
+
+    var hasTriggeredDualSub = false
+    val dualSubRunnable: Runnable = Runnable {
+        holdHandler.removeCallbacks(holdRunnable)
+        holdHandler.removeCallbacks(subRevealRunnable)
+        hasTriggeredDualSub = true
+        context.vibrateDevice(50L)
+        Log.i(TAG, "dualSubRunnable triggered -> opening dual subtitle comparison dialog")
+        playerView.callbacks?.onOpenDualSubtitleDialog()
     }
 
     enum class TouchAction { Brightness, Volume, Time }
@@ -147,6 +174,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     /** Touch tracking */
     var isCurrentTouchValid = false
         private set
+    private var isTouchFromTopEdge = false
+    private var isTouchFromNavEdge = false
     private var currentTouchStart: Vector2? = null
     private var currentTouchLast: Vector2? = null
     /** Current in-progress swipe action, null when no swipe is active. */
@@ -206,6 +235,13 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     var matrixAnimation: ValueAnimator? = null
 
     private var scaleGestureDetector: ScaleGestureDetector? = null
+
+    private var twoPointerStartX: Float? = null
+    private var twoPointerStartY: Float? = null
+    private var twoPointerDownTime: Long = 0L
+    private var twoPointerMaxDisplacement: Float = 0f
+    private var twoPointerFired: Boolean = false
+    private var twoPointerIsScaling: Boolean = false
 
     /** Midpoint of the two-finger pan, null when no pan is active. */
     var lastPan: Vector2? = null
@@ -722,50 +758,96 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
 
         when (event.actionMasked) {
             MotionEvent.ACTION_POINTER_DOWN -> {
+                if (event.pointerCount >= 2) {
+                    twoPointerStartX = (event.getX(0) + event.getX(1)) / 2f
+                    twoPointerStartY = (event.getY(0) + event.getY(1)) / 2f
+                    twoPointerDownTime = System.currentTimeMillis()
+                    twoPointerMaxDisplacement = 0f
+                    twoPointerFired = false
+                    twoPointerIsScaling = false
+                }
                 onFirstPointerDown()
             }
 
             MotionEvent.ACTION_MOVE -> {
                 if (event.pointerCount >= 2) {
-                    val newPan = Vector2(
-                        (event.getX(0) + event.getX(1)) / 2f,
-                        (event.getY(0) + event.getY(1)) / 2f
-                    )
-                    val oldPan = lastPan
-                    if (oldPan != null) {
-                        val matrix = currentZoomMatrix()
-                        matrix.postTranslate(newPan.x - oldPan.x, newPan.y - oldPan.y)
-                        applyZoomMatrix(matrix, false)
+                    val midX = (event.getX(0) + event.getX(1)) / 2f
+                    val midY = (event.getY(0) + event.getY(1)) / 2f
+                    val startX = twoPointerStartX ?: midX
+                    val startY = twoPointerStartY ?: midY
+                    val diffX = midX - startX
+                    val diffY = midY - startY
+                    val displacement = kotlin.math.hypot(diffX.toDouble(), diffY.toDouble()).toFloat()
+                    if (displacement > twoPointerMaxDisplacement) {
+                        twoPointerMaxDisplacement = displacement
                     }
-                    lastPan = newPan
+
+                    val density = ctx.resources.displayMetrics.density
+                    if (!twoPointerFired && !twoPointerIsScaling && abs(diffX) > 40f * density && abs(diffX) > abs(diffY) * 1.3f) {
+                        twoPointerFired = true
+                        playerView.callbacks?.onJumpSubtitle(diffX < 0)
+                    }
+
+                    if (scaleGestureDetector?.isInProgress == true) {
+                        twoPointerIsScaling = true
+                    }
+
+                    if (twoPointerIsScaling) {
+                        val newPan = Vector2(midX, midY)
+                        val oldPan = lastPan
+                        if (oldPan != null) {
+                            val matrix = currentZoomMatrix()
+                            matrix.postTranslate(newPan.x - oldPan.x, newPan.y - oldPan.y)
+                            applyZoomMatrix(matrix, false)
+                        }
+                        lastPan = newPan
+                    }
                 }
             }
 
             MotionEvent.ACTION_CANCEL,
             MotionEvent.ACTION_POINTER_UP,
             MotionEvent.ACTION_UP -> {
+                val upTime = System.currentTimeMillis()
+                val startX = twoPointerStartX
+                val density = ctx.resources.displayMetrics.density
+                if (!twoPointerFired && !twoPointerIsScaling && startX != null && upTime - twoPointerDownTime < 400L && twoPointerMaxDisplacement < 30f * density) {
+                    twoPointerFired = true
+                    val isRightSide = startX >= screenWidthWithOrientation / 2f
+                    playerView.callbacks?.onJumpSubtitle(isRightSide)
+                }
+
+                twoPointerStartX = null
+                twoPointerStartY = null
+                twoPointerDownTime = 0L
+                twoPointerMaxDisplacement = 0f
+                twoPointerFired = false
+                val wasScaling = twoPointerIsScaling
+                twoPointerIsScaling = false
                 lastPan = null
                 videoOutline?.isVisible = false
                 matrixAnimation?.cancel()
                 matrixAnimation = null
 
-                // Snap to desired matrix after zoom gesture ends
-                matrixAnimation = ValueAnimator.ofFloat(0f, 1f).apply {
-                    startDelay = 0
-                    duration = 200
-                    val startMatrix = currentZoomMatrix()
-                    val endMatrix = desiredMatrix ?: return@apply
-                    val (startX, startY, startScale) = matrixToTranslationAndScale(startMatrix)
-                    val (endX, endY, endScale) = matrixToTranslationAndScale(endMatrix)
-                    addUpdateListener { anim ->
-                        val v = anim.animatedValue as Float
-                        val vInv = 1f - v
-                        val m = Matrix()
-                        m.setScale(startScale * vInv + endScale * v, startScale * vInv + endScale * v)
-                        m.postTranslate(startX * vInv + endX * v, startY * vInv + endY * v)
-                        applyZoomMatrix(m, true)
+                if (wasScaling) {
+                    // Snap to desired matrix after zoom gesture ends
+                    matrixAnimation = ValueAnimator.ofFloat(0f, 1f).apply {
+                        startDelay = 0
+                        duration = 200
+                        val startMatrix = currentZoomMatrix()
+                        val endMatrix = desiredMatrix ?: return@apply
+                        val (startX, startY, startScale) = matrixToTranslationAndScale(startMatrix)
+                        val (endX, endY, endScale) = matrixToTranslationAndScale(endMatrix)
+                        addUpdateListener { anim ->
+                            val v = anim.animatedValue as Float
+                            val vInv = 1f - v
+                            val m = Matrix()
+                            m.setScale(startScale * vInv + endScale * v, startScale * vInv + endScale * v)
+                            m.postTranslate(startX * vInv + endX * v, startY * vInv + endY * v)
+                            applyZoomMatrix(m, true)
+                        }
+                        start()
                     }
-                    start()
                 }
 
                 onGestureEnd()
@@ -1047,15 +1129,63 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     }
 
     private fun isValidTouch(rawX: Float, rawY: Float): Boolean {
+        val holder = playerView.playerHolder ?: return true
+        val viewW = holder.width.takeIf { it > 0 } ?: screenWidth
+        val viewH = holder.height.takeIf { it > 0 } ?: screenHeight
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val holder = playerView.playerHolder ?: return true
-            val insets = holder.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            val validHeight = rawY > insets.top && rawY < screenHeightWithOrientation - insets.bottom
-            val validWidth = rawX > insets.left && rawX < screenWidthWithOrientation - insets.right
-            return validHeight && validWidth
+            val rootInsets = holder.rootWindowInsets
+            if (rootInsets != null) {
+                val visibleInsets = rootInsets.getInsets(WindowInsets.Type.systemBars())
+                val validHeight = rawY >= visibleInsets.top && rawY <= viewH - visibleInsets.bottom
+                val validWidth = rawX >= visibleInsets.left && rawX <= viewW - visibleInsets.right
+                return validHeight && validWidth
+            }
+            return true
         }
 
-        return rawY > context.getStatusBarHeight() && rawX < screenWidthWithOrientation
+        return rawY >= context.getStatusBarHeight() && rawX <= viewW
+    }
+
+    private fun checkEdgeTouch(view: View, x: Float, y: Float): Pair<Boolean, Boolean> {
+        val density = context.resources.displayMetrics.density
+        val minEdge = 32f * density
+
+        var topThreshold = minEdge
+        var navRight = 0f
+        var navLeft = 0f
+        var navBottom = 0f
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val insets = playerView.playerHolder?.rootWindowInsets?.getInsetsIgnoringVisibility(
+                WindowInsets.Type.systemBars() or WindowInsets.Type.mandatorySystemGestures()
+            )
+            if (insets != null) {
+                topThreshold = max(insets.top.toFloat(), minEdge)
+                navRight = insets.right.toFloat()
+                navLeft = insets.left.toFloat()
+                navBottom = insets.bottom.toFloat()
+            }
+        } else {
+            val sb = context.getStatusBarHeight().toFloat()
+            topThreshold = max(sb, minEdge)
+        }
+
+        val isTop = y <= topThreshold
+        val isNav = when {
+            navRight > 0f -> x >= view.width - max(navRight, minEdge)
+            navLeft > 0f -> x <= max(navLeft, minEdge)
+            navBottom > 0f -> y >= view.height - max(navBottom, minEdge)
+            else -> {
+                if (view.width > view.height) {
+                    x >= view.width - minEdge || x <= minEdge
+                } else {
+                    y >= view.height - minEdge
+                }
+            }
+        }
+
+        return Pair(isTop, isNav)
     }
 
     private fun handleGesture(view: View, event: MotionEvent): Boolean {
@@ -1066,6 +1196,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
         if ((event.pointerCount >= 2 || lastPan != null) && isFullScreen && !isLocked
                 && !hasTriggeredSpeedUp && currentTouchAction == null) {
             holdHandler.removeCallbacks(holdRunnable) // Remove 2x speed.
+            holdHandler.removeCallbacks(subRevealRunnable)
+            holdHandler.removeCallbacks(dualSubRunnable)
             isCurrentTouchValid = false // Prevent other touches
             return handleZoomPanGesture(
                 event = event,
@@ -1091,7 +1223,24 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                 if (isCurrentTouchValid) {
                     playerView.callbacks?.onTouchDown()
                     hasTriggeredSpeedUp = false
-                    if (speedupEnabled && playerView.player.getIsPlaying() && !isLocked) {
+                    hasTriggeredSubReveal = false
+                    hasTriggeredDualSub = false
+                    holdHandler.removeCallbacks(holdRunnable)
+                    holdHandler.removeCallbacks(subRevealRunnable)
+                    holdHandler.removeCallbacks(dualSubRunnable)
+
+                    val (isTop, isNav) = checkEdgeTouch(view, event.x, event.y)
+                    isTouchFromTopEdge = isTop
+                    isTouchFromNavEdge = isNav
+
+                    val isTopRightCorner = event.x >= view.width * 0.75f && event.y <= view.height * 0.25f && !isTop
+                    val isRight30Percent = event.x >= view.width * 0.7f && !isTopRightCorner && !isNav
+                    Log.i(TAG, "ACTION_DOWN: isTopRightCorner=$isTopRightCorner, isRight30Percent=$isRight30Percent, isTop=$isTop, isNav=$isNav (x=${event.x}, y=${event.y}, w=${view.width}, h=${view.height}), secSub=${playerView.player.getCurrentSecondarySubtitle()}")
+                    if (isTopRightCorner && !isLocked) {
+                        holdHandler.postDelayed(dualSubRunnable, 400)
+                    } else if (isRight30Percent && !isLocked && playerView.player.getCurrentSecondarySubtitle() != null) {
+                        holdHandler.postDelayed(subRevealRunnable, 200)
+                    } else if (speedupEnabled && playerView.player.getIsPlaying() && !isLocked && !isTop && !isNav) {
                         holdHandler.postDelayed(holdRunnable, 500)
                     }
                     isVolumeLocked = currentRequestedVolume < 1.0f
@@ -1109,14 +1258,23 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (hasTriggeredSpeedUp) return true
+                if (hasTriggeredSpeedUp || hasTriggeredSubReveal || hasTriggeredDualSub) return true
                 if (!isCurrentTouchValid) return true
+
+                if (isTouchFromTopEdge && startTouch != null && currentTouch.y - startTouch.y > 0) {
+                    return true
+                }
+                if (isTouchFromNavEdge) {
+                    return true
+                }
 
                 if (currentTouchAction == null && startTouch != null) {
                     val diffFromStart = startTouch - currentTouch
                     if (swipeVerticalEnabled) {
                         if (abs(diffFromStart.y * 100 / screenHeightWithOrientation) > MINIMUM_VERTICAL_SWIPE) {
                             holdHandler.removeCallbacks(holdRunnable)
+                            holdHandler.removeCallbacks(subRevealRunnable)
+                            holdHandler.removeCallbacks(dualSubRunnable)
                             uiShowingBeforeGesture = playerView.callbacks?.isUIShowing() ?: false
                             playerView.callbacks?.onHidePlayerUI()
                             currentTouchAction = if ((startTouch.x) >= view.width / 2f)
@@ -1126,6 +1284,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                     if (swipeHorizontalEnabled && !isLocked) {
                         if (abs(diffFromStart.x * 100 / screenHeightWithOrientation) > MINIMUM_HORIZONTAL_SWIPE) {
                             holdHandler.removeCallbacks(holdRunnable)
+                            holdHandler.removeCallbacks(subRevealRunnable)
+                            holdHandler.removeCallbacks(dualSubRunnable)
                             currentTouchAction = TouchAction.Time
                         }
                     }
@@ -1165,6 +1325,29 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
 
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                 holdHandler.removeCallbacks(holdRunnable)
+                holdHandler.removeCallbacks(subRevealRunnable)
+                holdHandler.removeCallbacks(dualSubRunnable)
+                if (hasTriggeredDualSub) {
+                    hasTriggeredDualSub = false
+                    isCurrentTouchValid = false
+                    currentTouchStart = null
+                    currentLastTouchAction = null
+                    currentTouchAction = null
+                    currentTouchStartPlayerTime = null
+                    currentTouchLast = null
+                    currentTouchStartTime = null
+                    uiShowingBeforeGesture = false
+                    return true
+                }
+                if (hasTriggeredSubReveal) {
+                    hasTriggeredSubReveal = false
+                    val wasPlaying = subRevealWasPlaying
+                    subRevealWasPlaying = false
+                    playerView.callbacks?.onHoldSecondarySubtitle(false)
+                    if (wasPlaying) {
+                        playerView.player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+                    }
+                }
                 if (hasTriggeredSpeedUp) {
                     playerView.player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
                     showOrHideSpeedUp(false)
@@ -1184,10 +1367,17 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                             }
                         }
                     }
-                    // Tap detection: only fire if the finger was held briefly (not a long-press).
+                    // Tap detection: only fire if the finger was held briefly (not a long-press) and didn't move as a swipe.
                     val holdTime = currentTouchStartTime?.let { System.currentTimeMillis() - it }
+                    val density = context.resources.displayMetrics.density
+                    val touchSlop = 16f * density
+                    val hasMoved = startTouch != null && (
+                        abs(currentTouch.x - startTouch.x) > touchSlop ||
+                        abs(currentTouch.y - startTouch.y) > touchSlop
+                    )
                     if (currentTouchAction == null && currentLastTouchAction == null
                         && !hasTriggeredSpeedUp
+                        && !hasMoved
                         && (holdTime == null || holdTime < DOUBLE_TAP_MAXIMUM_HOLD_TIME)) {
                         onTapDetected(
                             x = currentTouch.x,
@@ -1205,6 +1395,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                 // Reset touch
                 lastTouchEndTime = System.currentTimeMillis()
                 isCurrentTouchValid = false
+                isTouchFromTopEdge = false
+                isTouchFromNavEdge = false
                 currentTouchStart = null
                 currentLastTouchAction = currentTouchAction
                 currentTouchAction = null

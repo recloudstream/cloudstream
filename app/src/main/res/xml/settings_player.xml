@@ -53,6 +53,11 @@
             android:key="@string/subtitle_settings_chromecast_key"
             android:title="@string/chromecast_subtitles_settings"
             app:summary="@string/chromecast_subtitles_settings_des" />
+        <Preference
+            android:icon="@drawable/ic_baseline_auto_awesome_24"
+            android:key="@string/gemini_api_key_settings_key"
+            android:title="@string/gemini_api_key_title"
+            app:summary="@string/gemini_api_key_not_set" />
     </PreferenceCategory>
 
 

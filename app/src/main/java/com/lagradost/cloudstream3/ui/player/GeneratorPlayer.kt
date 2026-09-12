@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.app.PendingIntent
 import android.content.Context
@@ -11,8 +12,11 @@ import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Spanned
 import android.util.Log
+import java.io.File
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -907,6 +911,284 @@ class GeneratorPlayer : FullScreenPlayer() {
         )
     }
 
+    private var isAiTranslating: Boolean = false
+    private var currentAiTranslatingLang: String? = null
+    private var activeAiFooter: TextView? = null
+    private val aiHandler = Handler(Looper.getMainLooper())
+    private var aiAnimationRunnable: Runnable? = null
+    private val aiDotsFrames = listOf(".  ", ".. ", "...", " ..", "  .", "   ")
+    private var aiDotsIndex = 0
+
+    private fun startAiFooterAnimation(footer: TextView, lang: String) {
+        activeAiFooter = footer
+        footer.isEnabled = false
+        if (aiAnimationRunnable == null) {
+            aiDotsIndex = 0
+            val r = object : Runnable {
+                override fun run() {
+                    if (!isAiTranslating) return
+                    val frame = aiDotsFrames[aiDotsIndex % aiDotsFrames.size]
+                    aiDotsIndex++
+                    activeAiFooter?.text = "⏳ Translating to $lang $frame"
+                    aiHandler.postDelayed(this, 300L)
+                }
+            }
+            aiAnimationRunnable = r
+            aiHandler.post(r)
+        } else {
+            val frame = aiDotsFrames[aiDotsIndex % aiDotsFrames.size]
+            footer.text = "⏳ Translating to $lang $frame"
+        }
+    }
+
+    private fun stopAiFooterAnimation(ctx: Context?) {
+        aiAnimationRunnable?.let { aiHandler.removeCallbacks(it) }
+        aiAnimationRunnable = null
+        activeAiFooter?.apply {
+            text = ctx?.getString(R.string.translate_with_ai) ?: "Translate with AI"
+            isEnabled = true
+        }
+        activeAiFooter = null
+    }
+
+    private fun getAiSubDir(ctx: Context): File {
+        val dir = File(ctx.filesDir, "ai_subtitles")
+        if (!dir.exists()) dir.mkdirs()
+        return dir
+    }
+
+    private fun getMediaKey(): String {
+        val meta = getMetaData()
+        val raw = meta.name ?: currentSelectedLink?.first?.name ?: currentSelectedLink?.first?.url ?: "media"
+        val safe = raw.replace(Regex("[^a-zA-Z0-9_]"), "_").trim('_')
+        val season = meta.season?.let { "_S$it" } ?: ""
+        val ep = meta.episode?.let { "_E$it" } ?: ""
+        return "${safe}${season}${ep}".ifBlank { "media_default" }
+    }
+
+    private fun loadCachedAiSubtitles(ctx: Context) {
+        try {
+            val dir = getAiSubDir(ctx)
+            val mediaKey = getMediaKey()
+            val files = dir.listFiles { f: File ->
+                f.isFile && f.name.startsWith("ai_${mediaKey}_") && f.name.endsWith(".vtt")
+            } ?: return
+
+            val loaded = files.mapNotNull { f: File ->
+                val lang = f.name.removePrefix("ai_${mediaKey}_").removeSuffix(".vtt")
+                SubtitleData(
+                    originalName = "AI: $lang",
+                    nameSuffix = "",
+                    url = f.absolutePath,
+                    origin = SubtitleOrigin.DOWNLOADED_FILE,
+                    mimeType = "text/vtt",
+                    headers = emptyMap(),
+                    languageCode = lang
+                )
+            }
+            if (loaded.isNotEmpty()) {
+                val existing = viewModel.state.subtitles.map { sub: SubtitleData -> sub.url }.toSet()
+                val newOnes = loaded.filter { sub: SubtitleData -> sub.url !in existing }
+                if (newOnes.isNotEmpty()) {
+                    viewModel.addSubtitles(newOnes.toSet())
+                }
+            }
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
+    private fun handleAiSubtitleTranslationClick(
+        ctx: Context,
+        sourceDialog: Dialog,
+        footer: TextView,
+        onUpdateList: () -> Unit
+    ) {
+        if (isAiTranslating) {
+            showToast("AI is already translating subtitles (${currentAiTranslatingLang ?: "..."}). Please wait.")
+            return
+        }
+        val act = activity ?: return
+
+        val key = DataStoreHelper.geminiApiKey
+        if (key.isNullOrBlank()) {
+            promptGeminiApiKey(act) { enteredKey ->
+                pickLanguageAndTranslate(ctx, act, sourceDialog, footer, enteredKey, onUpdateList)
+            }
+        } else {
+            pickLanguageAndTranslate(ctx, act, sourceDialog, footer, key, onUpdateList)
+        }
+    }
+
+    private fun promptGeminiApiKey(act: Activity, onKeyEntered: (String) -> Unit) {
+        val input = android.widget.EditText(act).apply {
+            setSingleLine()
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+        androidx.appcompat.app.AlertDialog.Builder(act)
+            .setTitle(R.string.gemini_api_key_prompt)
+            .setView(input)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                val entered = input.text.toString().trim()
+                if (entered.isNotBlank()) {
+                    DataStoreHelper.geminiApiKey = entered
+                    onKeyEntered(entered)
+                } else {
+                    showToast(R.string.gemini_api_key_empty)
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun pickLanguageAndTranslate(
+        ctx: Context,
+        act: Activity,
+        sourceDialog: Dialog,
+        footer: TextView,
+        authKey: String,
+        onUpdateList: () -> Unit
+    ) {
+        val languages = listOf(
+            "🇦🇿  Azerbaijani" to "Azerbaijani",
+            "🇹🇷  Turkish" to "Turkish",
+            "🇬🇧  English" to "English",
+            "🇷🇺  Russian" to "Russian",
+            "🇩🇪  German" to "German",
+            "🇪🇸  Spanish" to "Spanish",
+            "🇫🇷  French" to "French",
+            "🇮🇹  Italian" to "Italian",
+            "🇸🇦  Arabic" to "Arabic",
+            "🇵🇹  Portuguese" to "Portuguese"
+        )
+        val displayItems = languages.map { it.first }
+
+        com.lagradost.cloudstream3.utils.SingleSelectionHelper.run {
+            act.showDialogNoCheckmark(
+                items = displayItems,
+                name = ctx.getString(R.string.gemini_target_language),
+                dismissCallback = {},
+                callback = { index: Int ->
+                    val chosen = languages.getOrNull(index)?.second ?: "Azerbaijani"
+                    DataStoreHelper.geminiTargetLanguage = chosen
+
+                    val dir = getAiSubDir(ctx)
+                    val mediaKey = getMediaKey()
+                    val cachedFile = File(dir, "ai_${mediaKey}_${chosen}.vtt")
+                    if (cachedFile.exists() && cachedFile.length() > 50) {
+                        showToast("Loading cached translation for $chosen…")
+                        val cachedSub = SubtitleData(
+                            originalName = "AI: $chosen",
+                            nameSuffix = "",
+                            url = cachedFile.absolutePath,
+                            origin = SubtitleOrigin.DOWNLOADED_FILE,
+                            mimeType = "text/vtt",
+                            headers = emptyMap(),
+                            languageCode = chosen
+                        )
+                        addAndSelectSubtitles(cachedSub)
+                        sourceDialog.dismissSafe(activity)
+                        return@showDialogNoCheckmark
+                    }
+
+                    val pendingSub = SubtitleData(
+                        originalName = "AI: $chosen (⏳ Translating...)",
+                        nameSuffix = "",
+                        url = "pending_ai_translation",
+                        origin = SubtitleOrigin.DOWNLOADED_FILE,
+                        mimeType = "text/vtt",
+                        headers = emptyMap(),
+                        languageCode = chosen
+                    )
+                    viewModel.addSubtitles(setOf(pendingSub))
+                    onUpdateList()
+
+                    executeAiTranslation(ctx, sourceDialog, footer, authKey, chosen, pendingSub, onUpdateList)
+                }
+            )
+        }
+    }
+
+    private fun executeAiTranslation(
+        ctx: Context,
+        sourceDialog: Dialog,
+        footer: TextView,
+        authKey: String,
+        targetLang: String,
+        pendingSub: SubtitleData,
+        onUpdateList: () -> Unit
+    ) {
+        showToast("${ctx.getString(R.string.translating_subtitles)} ($targetLang)")
+        isAiTranslating = true
+        currentAiTranslatingLang = targetLang
+        startAiFooterAnimation(footer, targetLang)
+
+        ioSafe {
+            var cues = player.getSubtitleCues().ifEmpty { player.getSecondarySubtitleCues() }
+            if (cues.isEmpty()) {
+                val activeSub = player.getCurrentPreferredSubtitle()
+                    ?: player.getCurrentSecondarySubtitle()
+                    ?: viewModel.state.subtitles.firstOrNull { it.url != "pending_ai_translation" }
+                if (activeSub != null) {
+                    cues = player.loadSubtitleCues(activeSub)
+                }
+            }
+
+            if (cues.isEmpty()) {
+                activity?.runOnUiThread {
+                    isAiTranslating = false
+                    currentAiTranslatingLang = null
+                    stopAiFooterAnimation(ctx)
+                    showToast("No subtitles found. Please select a subtitle first.")
+                    viewModel.removeSubtitles(setOf(pendingSub))
+                    onUpdateList()
+                }
+                return@ioSafe
+            }
+
+            val result = GeminiSubtitleTranslator.translateCues(cues, targetLang, authKey)
+            val translated = result.getOrNull()
+            if (result.isSuccess && translated != null) {
+                val dir = getAiSubDir(ctx)
+                val mediaKey = getMediaKey()
+                val targetFile = File(dir, "ai_${mediaKey}_${targetLang}.vtt")
+                GeminiSubtitleTranslator.cuesToVttFile(translated, targetFile)
+
+                val aiSubData = SubtitleData(
+                    originalName = "AI: $targetLang",
+                    nameSuffix = "",
+                    url = targetFile.absolutePath,
+                    origin = SubtitleOrigin.DOWNLOADED_FILE,
+                    mimeType = "text/vtt",
+                    headers = emptyMap(),
+                    languageCode = targetLang
+                )
+
+                activity?.runOnUiThread {
+                    isAiTranslating = false
+                    currentAiTranslatingLang = null
+                    stopAiFooterAnimation(ctx)
+
+                    viewModel.removeSubtitles(setOf(pendingSub))
+                    addAndSelectSubtitles(aiSubData)
+                    showToast(R.string.translation_completed)
+                    sourceDialog.dismissSafe(activity)
+                }
+            } else {
+                val errorMsg = result.exceptionOrNull()?.message ?: "Unknown error"
+                activity?.runOnUiThread {
+                    isAiTranslating = false
+                    currentAiTranslatingLang = null
+                    stopAiFooterAnimation(ctx)
+
+                    showToast(ctx.getString(R.string.translation_failed, errorMsg))
+                    viewModel.removeSubtitles(setOf(pendingSub))
+                    onUpdateList()
+                }
+            }
+        }
+    }
+
     // Open file picker
     private val subsPathPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -1016,6 +1298,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentSelectedSubtitles = player.getCurrentPreferredSubtitle()
             //println("CURRENT SELECTED :$currentSelectedSubtitles of $currentSubs")
             context?.let { ctx ->
+                loadCachedAiSubtitles(ctx)
                 val isPlaying = player.getIsPlaying()
                 player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
                 val currentSubtitles = sortSubs(viewModel.state.subtitles)
@@ -1042,6 +1325,17 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
                 subtitleList.addFooterView(loadFromFileFooter)
 
+                val translateWithAiFooter: TextView =
+                    layoutInflater.inflate(R.layout.sort_bottom_footer_add_choice, null) as TextView
+                if (isAiTranslating) {
+                    val lang = currentAiTranslatingLang ?: "..."
+                    startAiFooterAnimation(translateWithAiFooter, lang)
+                } else {
+                    translateWithAiFooter.text = ctx.getString(R.string.translate_with_ai)
+                    translateWithAiFooter.isEnabled = true
+                }
+                subtitleList.addFooterView(translateWithAiFooter)
+
                 var shouldDismiss = true
 
                 binding.subtitleSettingsBtt.setOnClickListener {
@@ -1055,6 +1349,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 fun dismiss() {
                     if (isPlaying) {
                         player.handleEvent(CSPlayerEvent.Play)
+                    }
+                    if (activeAiFooter === translateWithAiFooter) {
+                        activeAiFooter = null
                     }
                     activity?.hideSystemUI()
                 }
@@ -1201,7 +1498,20 @@ class GeneratorPlayer : FullScreenPlayer() {
                     }.toMap()
                 val subtitlesGroupedList = subtitlesGrouped.entries.toList()
 
-                val subtitles = subtitlesGrouped.map { it.key.html() }
+                fun getSubGroupLabel(key: String, list: List<SubtitleData>): Spanned {
+                    val currentSec = viewModel.state.secondarySubtitle
+                    val isSecondary = currentSec != null && list.any { it.getId() == currentSec.getId() }
+                    return if (isSecondary) {
+                        "<b><font color=\"#00E5FF\">✓ [2nd] </font></b>${key}".html()
+                    } else {
+                        key.html()
+                    }
+                }
+
+                fun getSubtitleLabels(): List<Spanned> =
+                    subtitlesGrouped.map { getSubGroupLabel(it.key, it.value) }
+
+                val subtitles = getSubtitleLabels()
 
                 val subtitleGroupIndexStart =
                     subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
@@ -1227,18 +1537,31 @@ class GeneratorPlayer : FullScreenPlayer() {
                 subtitleOptionList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
                 fun updateSubtitleOptionList() {
+                    subsArrayAdapter.clear()
+                    subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
+                    subsArrayAdapter.addAll(getSubtitleLabels())
+                    subtitleList.setItemChecked(subtitleGroupIndex, true)
+
                     subsOptionsArrayAdapter.clear()
 
+                    val currentSec = viewModel.state.secondarySubtitle
                     val subtitleOptions =
                         subtitlesGroupedList
                             .getOrNull(subtitleGroupIndex - 1)?.value?.map { subtitle ->
                                 val nameSuffix = subtitle.nameSuffix.html()
-                                nameSuffix.ifBlank {
+                                val baseLabel = nameSuffix.ifBlank {
                                     when (subtitle.origin) {
                                         SubtitleOrigin.URL -> txt(R.string.subtitles_from_online)
                                         SubtitleOrigin.DOWNLOADED_FILE -> txt(R.string.downloaded)
                                         SubtitleOrigin.EMBEDDED_IN_VIDEO -> txt(R.string.subtitles_from_embedded)
                                     }.asString(ctx).toSpanned()
+                                }
+                                if (currentSec?.getId() == subtitle.getId()) {
+                                    "<b><font color=\"#00E5FF\">✓ [2nd] </font></b>".html().let { prefix ->
+                                        android.text.TextUtils.concat(prefix, baseLabel) as Spanned
+                                    }
+                                } else {
+                                    baseLabel
                                 }
                             }
                             ?: emptyList()
@@ -1254,20 +1577,66 @@ class GeneratorPlayer : FullScreenPlayer() {
                     subtitleOptionList.setItemChecked(subtitleOptionIndex, true)
                 }
 
+                fun toggleSecondarySubtitle(subtitle: SubtitleData?) {
+                    ctx.vibrateDevice(55L)
+                    val current = viewModel.state.secondarySubtitle
+                    val next = if (subtitle != null && current?.getId() == subtitle.getId()) null else subtitle
+                    viewModel.setSecondarySubtitle(next)
+                    subtitleList.post { updateSubtitleOptionList() }
+                }
+
+                subtitleList.setOnItemLongClickListener { _, _, which, _ ->
+                    if (which == 0) {
+                        toggleSecondarySubtitle(null)
+                        true
+                    } else {
+                        val sub = subtitlesGroupedList.getOrNull(which - 1)?.value?.firstOrNull()
+                        if (sub?.url == "pending_ai_translation") {
+                            showToast("AI is translating subtitles... Please wait a moment.")
+                            true
+                        } else {
+                            sub?.let { toggleSecondarySubtitle(it) }
+                            true
+                        }
+                    }
+                }
+
+                subtitleOptionList.setOnItemLongClickListener { _, _, which, _ ->
+                    val sub = subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(which)
+                    if (sub?.url == "pending_ai_translation") {
+                        showToast("AI is translating subtitles... Please wait a moment.")
+                        true
+                    } else {
+                        sub?.let { toggleSecondarySubtitle(it) }
+                        true
+                    }
+                }
+
                 updateSubtitleOptionList()
 
-                subtitleList.setOnItemClickListener { _, _, which, _ ->
-                    if (which > subtitlesGrouped.size) {
-                        // Since android TV is funky the setOnItemClickListener will be triggered
-                        // instead of setOnClickListener when selecting. To override this we programmatically
-                        // click the view when selecting an item outside the list.
+                translateWithAiFooter.setOnClickListener {
+                    handleAiSubtitleTranslationClick(
+                        ctx,
+                        sourceDialog,
+                        translateWithAiFooter,
+                        ::updateSubtitleOptionList
+                    )
+                }
 
-                        // Cheeky way of getting the view at that position to click it
-                        // to avoid keeping track of the various footers.
-                        // getChildAt() gives null :(
+                subtitleList.setOnItemClickListener { _, _, which, _ ->
+                    if (which == subtitlesGrouped.size + 1) {
+                        loadFromFileFooter.performClick()
+                    } else if (which == subtitlesGrouped.size + 2) {
+                        translateWithAiFooter.performClick()
+                    } else if (which > subtitlesGrouped.size) {
                         val child = subtitleList.adapter.getView(which, null, subtitleList)
                         child?.performClick()
                     } else {
+                        val sub = subtitlesGroupedList.getOrNull(which - 1)?.value?.firstOrNull()
+                        if (sub?.url == "pending_ai_translation") {
+                            showToast("AI is translating subtitles... Please wait a moment.")
+                            return@setOnItemClickListener
+                        }
                         if (subtitleGroupIndex != which) {
                             subtitleGroupIndex = which
                             subtitleOptionIndex =
@@ -1289,6 +1658,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                         val child = subtitleOptionList.adapter.getView(which, null, subtitleList)
                         child?.performClick()
                     } else {
+                        val sub = subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(which)
+                        if (sub?.url == "pending_ai_translation") {
+                            showToast("AI is translating subtitles... Please wait a moment.")
+                            return@setOnItemClickListener
+                        }
                         subtitleOptionIndex = which
                         subtitleOptionList.setItemChecked(which, true)
                     }
@@ -1385,10 +1759,20 @@ class GeneratorPlayer : FullScreenPlayer() {
                         init = init or if (subtitleGroupIndex <= 0) {
                             noSubtitles()
                         } else {
-                            subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
+                            val selected = subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
                                 subtitleOptionIndex
-                            )?.let {
-                                setSubtitles(it, true)
+                            )
+                            if (selected?.url == "pending_ai_translation") {
+                                showToast("AI is translating subtitles... Please wait a moment.")
+                                return@setOnClickListener
+                            }
+                            selected?.let {
+                                val needsReload = setSubtitles(it, true)
+                                if (needsReload) {
+                                    player.saveData()
+                                    context?.let { ctx -> player.reloadPlayer(ctx) }
+                                }
+                                true
                             } ?: false
                         }
                     }
@@ -1714,6 +2098,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun onDestroy() {
+        stopAiFooterAnimation(null)
         ResultFragment.updateUI()
         currentVerifyLink?.cancel()
         super.onDestroy()
@@ -2324,6 +2709,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         observe(viewModel.currentSubtitles) { (subtitles, instance) ->
             if (instance != viewModel.state.instance) return@observe // Outdated observe
+            context?.let { loadCachedAiSubtitles(it) }
             player.setActiveSubtitles(subtitles)
 
             // If the file is downloaded then do not select auto select the subtitles
@@ -2333,6 +2719,10 @@ class GeneratorPlayer : FullScreenPlayer() {
             if (subtitles.lastOrNull()?.origin != SubtitleOrigin.DOWNLOADED_FILE) {
                 autoSelectSubtitles()
             }
+        }
+        observe(viewModel.currentSecondarySubtitle) { (subtitle, instance) ->
+            if (instance != viewModel.state.instance) return@observe
+            player.setSecondarySubtitles(subtitle)
         }
         observe(viewModel.loadingLinks) { (loading, instance) ->
             if (instance != viewModel.state.instance) return@observe // Outdated observe

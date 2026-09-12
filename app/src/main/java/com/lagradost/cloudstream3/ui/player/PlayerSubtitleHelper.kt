@@ -97,6 +97,7 @@ class PlayerSubtitleHelper {
     }
 
     var subtitleView: SubtitleView? = null
+    var secondarySubtitleView: SubtitleView? = null
 
     companion object {
         fun String.toSubtitleMimeType(): String {
@@ -135,10 +136,14 @@ class PlayerSubtitleHelper {
         Log.i(TAG, "SET STYLE = $style")
         subtitleView?.translationY = -style.elevation.toPx.toFloat()
         setSubtitleViewStyle(subtitleView, style, true)
+        setSubtitleViewStyle(secondarySubtitleView, style.copy(backgroundColor = android.graphics.Color.TRANSPARENT, windowColor = android.graphics.Color.TRANSPARENT), false)
     }
 
     fun initSubtitles(subView: SubtitleView?, subHolder: FrameLayout?, style: SaveCaptionStyle?) {
         subtitleView = subView
+        secondarySubtitleView = subHolder?.findViewById(com.lagradost.cloudstream3.R.id.secondary_subtitle_view)
+        secondarySubtitleView?.isClickable = false
+        secondarySubtitleView?.isLongClickable = false
         subView?.let { sView ->
             (sView.parent as ViewGroup?)?.removeView(sView)
             subHolder?.addView(sView)
@@ -147,4 +152,19 @@ class PlayerSubtitleHelper {
             setSubStyle(it)
         }
     }
+}
+
+fun android.content.Context.vibrateDevice(durationMillis: Long = 55L) {
+    try {
+        val vibrator = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            getSystemService(android.os.VibratorManager::class.java)?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION") getSystemService(android.content.Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            vibrator?.vibrate(android.os.VibrationEffect.createOneShot(durationMillis, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION") vibrator?.vibrate(durationMillis)
+        }
+    } catch (_: Throwable) {}
 }
