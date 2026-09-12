@@ -174,6 +174,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     /** Touch tracking */
     var isCurrentTouchValid = false
         private set
+    private var isTouchFromTopEdge = false
+    private var isTouchFromNavEdge = false
     private var currentTouchStart: Vector2? = null
     private var currentTouchLast: Vector2? = null
     /** Current in-progress swipe action, null when no swipe is active. */
@@ -1132,18 +1134,58 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
         val viewH = holder.height.takeIf { it > 0 } ?: screenHeight
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val visibleInsets = holder.rootWindowInsets?.getInsets(WindowInsets.Type.systemBars())
-            val vTop = visibleInsets?.top ?: 0
-            val vBottom = visibleInsets?.bottom ?: 0
-            val vLeft = visibleInsets?.left ?: 0
-            val vRight = visibleInsets?.right ?: 0
-
-            val validHeight = rawY >= vTop && rawY <= viewH - vBottom
-            val validWidth = rawX >= vLeft && rawX <= viewW - vRight
-            return validHeight && validWidth
+            val rootInsets = holder.rootWindowInsets
+            if (rootInsets != null) {
+                val visibleInsets = rootInsets.getInsets(WindowInsets.Type.systemBars())
+                val validHeight = rawY >= visibleInsets.top && rawY <= viewH - visibleInsets.bottom
+                val validWidth = rawX >= visibleInsets.left && rawX <= viewW - visibleInsets.right
+                return validHeight && validWidth
+            }
+            return true
         }
 
         return rawY >= context.getStatusBarHeight() && rawX <= viewW
+    }
+
+    private fun checkEdgeTouch(view: View, x: Float, y: Float): Pair<Boolean, Boolean> {
+        val density = context.resources.displayMetrics.density
+        val minEdge = 32f * density
+
+        var topThreshold = minEdge
+        var navRight = 0f
+        var navLeft = 0f
+        var navBottom = 0f
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val insets = playerView.playerHolder?.rootWindowInsets?.getInsetsIgnoringVisibility(
+                WindowInsets.Type.systemBars() or WindowInsets.Type.mandatorySystemGestures()
+            )
+            if (insets != null) {
+                topThreshold = max(insets.top.toFloat(), minEdge)
+                navRight = insets.right.toFloat()
+                navLeft = insets.left.toFloat()
+                navBottom = insets.bottom.toFloat()
+            }
+        } else {
+            val sb = context.getStatusBarHeight().toFloat()
+            topThreshold = max(sb, minEdge)
+        }
+
+        val isTop = y <= topThreshold
+        val isNav = when {
+            navRight > 0f -> x >= view.width - max(navRight, minEdge)
+            navLeft > 0f -> x <= max(navLeft, minEdge)
+            navBottom > 0f -> y >= view.height - max(navBottom, minEdge)
+            else -> {
+                if (view.width > view.height) {
+                    x >= view.width - minEdge || x <= minEdge
+                } else {
+                    y >= view.height - minEdge
+                }
+            }
+        }
+
+        return Pair(isTop, isNav)
     }
 
     private fun handleGesture(view: View, event: MotionEvent): Boolean {
@@ -1186,14 +1228,19 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                     holdHandler.removeCallbacks(holdRunnable)
                     holdHandler.removeCallbacks(subRevealRunnable)
                     holdHandler.removeCallbacks(dualSubRunnable)
-                    val isTopRightCorner = event.x >= view.width * 0.75f && event.y <= view.height * 0.25f
-                    val isRight30Percent = event.x >= view.width * 0.7f && !isTopRightCorner
-                    Log.i(TAG, "ACTION_DOWN: isTopRightCorner=$isTopRightCorner, isRight30Percent=$isRight30Percent (x=${event.x}, y=${event.y}, w=${view.width}, h=${view.height}), secSub=${playerView.player.getCurrentSecondarySubtitle()}")
+
+                    val (isTop, isNav) = checkEdgeTouch(view, event.x, event.y)
+                    isTouchFromTopEdge = isTop
+                    isTouchFromNavEdge = isNav
+
+                    val isTopRightCorner = event.x >= view.width * 0.75f && event.y <= view.height * 0.25f && !isTop
+                    val isRight30Percent = event.x >= view.width * 0.7f && !isTopRightCorner && !isNav
+                    Log.i(TAG, "ACTION_DOWN: isTopRightCorner=$isTopRightCorner, isRight30Percent=$isRight30Percent, isTop=$isTop, isNav=$isNav (x=${event.x}, y=${event.y}, w=${view.width}, h=${view.height}), secSub=${playerView.player.getCurrentSecondarySubtitle()}")
                     if (isTopRightCorner && !isLocked) {
                         holdHandler.postDelayed(dualSubRunnable, 400)
                     } else if (isRight30Percent && !isLocked && playerView.player.getCurrentSecondarySubtitle() != null) {
                         holdHandler.postDelayed(subRevealRunnable, 200)
-                    } else if (speedupEnabled && playerView.player.getIsPlaying() && !isLocked) {
+                    } else if (speedupEnabled && playerView.player.getIsPlaying() && !isLocked && !isTop && !isNav) {
                         holdHandler.postDelayed(holdRunnable, 500)
                     }
                     isVolumeLocked = currentRequestedVolume < 1.0f
@@ -1213,6 +1260,13 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             MotionEvent.ACTION_MOVE -> {
                 if (hasTriggeredSpeedUp || hasTriggeredSubReveal || hasTriggeredDualSub) return true
                 if (!isCurrentTouchValid) return true
+
+                if (isTouchFromTopEdge && startTouch != null && currentTouch.y - startTouch.y > 0) {
+                    return true
+                }
+                if (isTouchFromNavEdge) {
+                    return true
+                }
 
                 if (currentTouchAction == null && startTouch != null) {
                     val diffFromStart = startTouch - currentTouch
@@ -1313,10 +1367,17 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                             }
                         }
                     }
-                    // Tap detection: only fire if the finger was held briefly (not a long-press).
+                    // Tap detection: only fire if the finger was held briefly (not a long-press) and didn't move as a swipe.
                     val holdTime = currentTouchStartTime?.let { System.currentTimeMillis() - it }
+                    val density = context.resources.displayMetrics.density
+                    val touchSlop = 16f * density
+                    val hasMoved = startTouch != null && (
+                        abs(currentTouch.x - startTouch.x) > touchSlop ||
+                        abs(currentTouch.y - startTouch.y) > touchSlop
+                    )
                     if (currentTouchAction == null && currentLastTouchAction == null
                         && !hasTriggeredSpeedUp
+                        && !hasMoved
                         && (holdTime == null || holdTime < DOUBLE_TAP_MAXIMUM_HOLD_TIME)) {
                         onTapDetected(
                             x = currentTouch.x,
@@ -1334,6 +1395,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                 // Reset touch
                 lastTouchEndTime = System.currentTimeMillis()
                 isCurrentTouchValid = false
+                isTouchFromTopEdge = false
+                isTouchFromNavEdge = false
                 currentTouchStart = null
                 currentLastTouchAction = currentTouchAction
                 currentTouchAction = null
