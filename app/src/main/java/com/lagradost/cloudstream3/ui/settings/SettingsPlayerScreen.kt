@@ -147,6 +147,12 @@ object SettingsPlayerScreen : SearchableSettings {
                         icon = painterResource(R.drawable.skip_next_24px),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.player.startPaused,
+                        title = stringResource(R.string.start_paused_settings),
+                        subtitle = stringResource(R.string.start_paused_settings_des),
+                        icon = painterResource(R.drawable.pause_24px),
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.skipOpEnabled,
                         title = stringResource(R.string.video_skip_op),
                         subtitle = stringResource(R.string.enable_skip_op_from_database_des),
