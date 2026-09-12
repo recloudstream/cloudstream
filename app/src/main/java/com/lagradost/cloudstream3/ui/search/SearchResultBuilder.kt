@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.LiveSearchResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.isHorizontalCard
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -50,6 +51,7 @@ object SearchResultBuilder {
         itemView: View,
         nextFocusUp: Int? = null,
         nextFocusDown: Int? = null,
+        isHorizontal: Boolean = false,
         colorCallback: ((Palette) -> Unit)? = null
     ) {
         val cardView: ImageView = itemView.findViewById(R.id.imageView)
@@ -132,8 +134,9 @@ object SearchResultBuilder {
         cardText?.text = card.name
         cardText?.isVisible = showTitle
         cardView.isVisible = true
-        if (!card.posterUrl.isNullOrEmpty()) {
-            cardView.loadImage(card.posterUrl, card.posterHeaders) {
+        val poster = if (card.isHorizontalCard(isHorizontal)) card.backgroundPosterUrl ?: card.posterUrl else card.posterUrl
+        if (!poster.isNullOrEmpty()) {
+            cardView.loadImage(poster, card.posterHeaders) {
                 error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
             }
         } else cardView.loadImage(R.drawable.default_cover)

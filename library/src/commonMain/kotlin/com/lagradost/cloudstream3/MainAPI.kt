@@ -138,6 +138,13 @@ object APIHolder {
         initMap(true)
     }
 
+    @Prerelease
+    fun isApiHorizontal(name: String?): Boolean {
+        if (name == null) return false
+        val api = getApiFromNameNull(name) ?: return false
+        return api.supportedTypes.isNotEmpty() && api.supportedTypes.all { it == TvType.Live }
+    }
+
     fun removePluginMapping(plugin: MainAPI) {
         apis.withLock {
             apis = apis.filter { it != plugin }
@@ -478,16 +485,28 @@ fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): Hom
 fun newSearchResponseList(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
+    isHorizontalImages: Boolean = false,
 ): SearchResponseList {
     @Suppress("DEPRECATION_ERROR")
     return SearchResponseList(
         list,
-        hasNext = hasNext ?: list.isNotEmpty()
+        hasNext = hasNext ?: list.isNotEmpty(),
+        isHorizontalImages = isHorizontalImages
     )
 }
 
-fun List<SearchResponse>.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
-    return newSearchResponseList(this, hasNext)
+fun newSearchResponseList(
+    list: List<SearchResponse>,
+    hasNext: Boolean?,
+): SearchResponseList {
+    return newSearchResponseList(list, hasNext, false)
+}
+
+fun List<SearchResponse>.toNewSearchResponseList(
+    hasNext: Boolean? = null,
+    isHorizontalImages: Boolean = false,
+): SearchResponseList {
+    return newSearchResponseList(this, hasNext, isHorizontalImages)
 }
 
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
@@ -626,6 +645,9 @@ abstract class MainAPI {
     open val vpnStatus = VPNStatus.None
     open val providerType = ProviderType.DirectProvider
 
+
+
+
     //emptyList<MainPageData>() //
     open val mainPage = listOf(MainPageData("", "", false))
 
@@ -641,10 +663,7 @@ abstract class MainAPI {
     open suspend fun search(query: String, page: Int): SearchResponseList? {
         val searchResults = search(query) ?: return null
 
-        return newSearchResponseList(
-            searchResults,
-            false
-        )
+        return newSearchResponseList(searchResults, false)
     }
 
     // @WorkerThread
@@ -1293,8 +1312,16 @@ data class SearchResponseList
 @Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
 constructor(
     val items: List<SearchResponse>,
-    val hasNext: Boolean = false
-)
+    val hasNext: Boolean = false,
+    val isHorizontalImages: Boolean = false
+) {
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
+    constructor(
+        items: List<SearchResponse>,
+        hasNext: Boolean = false
+    ) : this(items, hasNext, false)
+}
 
 /** enum class holds search quality.
  *
@@ -1410,6 +1437,10 @@ interface SearchResponse {
     var type: TvType?
     var posterUrl: String?
     var posterHeaders: Map<String, String>?
+    @Prerelease
+    var backgroundPosterUrl: String?
+        get() = null
+        set(value) {}
     var id: Int?
     var quality: SearchQuality?
     var score: Score?
@@ -1505,10 +1536,36 @@ fun SearchResponse.addQuality(quality: String) {
 /** Extension function that adds poster to [SearchResponse]
  * @param url nullable string for poster url
  * @param headers Optional <String, String> map of request headers
+ * @param backgroundPosterUrl Optional nullable string for horizontal/backdrop poster url
  * */
-fun SearchResponse.addPoster(url: String?, headers: Map<String, String>? = null) {
+@Prerelease
+fun SearchResponse.addPoster(url: String?, headers: Map<String, String>? = null, backgroundPosterUrl: String? = null) {
     this.posterUrl = url
     this.posterHeaders = headers
+    if (backgroundPosterUrl != null) {
+        this.backgroundPosterUrl = backgroundPosterUrl
+    }
+}
+
+/** Extension function that adds horizontal/background poster to [SearchResponse]
+ * @param url nullable string for background poster url
+ * */
+@Prerelease
+fun SearchResponse.addBackgroundPoster(url: String?) {
+    this.backgroundPosterUrl = url
+}
+
+/** True if this item should be rendered as a horizontal (16:9-ish) card,
+ * either because the surrounding context already is ([contextHorizontal]),
+ * or because the item itself signals it (live stream, backdrop poster, or
+ * a provider that opted into horizontal search results). */
+@Prerelease
+fun SearchResponse.isHorizontalCard(contextHorizontal: Boolean = false): Boolean {
+    return contextHorizontal ||
+        type == TvType.Live ||
+        this is LiveSearchResponse ||
+        !backgroundPosterUrl.isNullOrEmpty() ||
+        APIHolder.isApiHorizontal(apiName)
 }
 
 /** Extension function that adds poster to [LoadResponse]
@@ -1571,6 +1628,7 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
+    override var backgroundPosterUrl: String? = null,
 ) : SearchResponse
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
@@ -1631,6 +1689,7 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
+    override var backgroundPosterUrl: String? = null,
 ) : SearchResponse {
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
@@ -1646,7 +1705,7 @@ constructor(
         id: Int? = null,
         quality: SearchQuality? = null,
         posterHeaders: Map<String, String>? = null
-    ) : this(name, url, apiName, type, posterUrl, id, quality, posterHeaders, null)
+    ) : this(name, url, apiName, type, posterUrl, id, quality, posterHeaders, null, null)
 }
 
 /** Data class of [SearchResponse] interface for Movies.
@@ -1666,6 +1725,7 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
+    override var backgroundPosterUrl: String? = null,
 ) : SearchResponse {
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
@@ -1682,7 +1742,7 @@ constructor(
         id: Int? = null,
         quality: SearchQuality? = null,
         posterHeaders: Map<String, String>? = null
-    ) : this(name, url, apiName, type, posterUrl, id, year, quality, posterHeaders, null)
+    ) : this(name, url, apiName, type, posterUrl, id, year, quality, posterHeaders, null, null)
 }
 
 /** Data class of [SearchResponse] interface for Live streams.
@@ -1702,6 +1762,7 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     var lang: String? = null,
     override var score: Score? = null,
+    override var backgroundPosterUrl: String? = null,
 ) : SearchResponse {
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
@@ -1718,7 +1779,7 @@ constructor(
         quality: SearchQuality? = null,
         posterHeaders: Map<String, String>? = null,
         lang: String? = null,
-    ) : this(name, url, apiName, type, posterUrl, id, quality, posterHeaders, lang, null)
+    ) : this(name, url, apiName, type, posterUrl, id, quality, posterHeaders, lang, null, null)
 }
 
 /** Data class of [SearchResponse] interface for Tv series.
@@ -1739,6 +1800,7 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
+    override var backgroundPosterUrl: String? = null,
 ) : SearchResponse {
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
@@ -1767,6 +1829,7 @@ constructor(
         id,
         quality,
         posterHeaders,
+        null,
         null
     )
 }
@@ -1826,6 +1889,10 @@ interface LoadResponse {
     var trailers: MutableList<TrailerData>
 
     var recommendations: List<SearchResponse>?
+    @Prerelease
+    var isHorizontalRecommendations: Boolean
+        get() = false
+        set(value) {}
     var actors: List<ActorData>?
     var comingSoon: Boolean
     var syncData: MutableMap<String, String>
@@ -2282,6 +2349,7 @@ constructor(
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
     override var recommendations: List<SearchResponse>? = null,
+    override var isHorizontalRecommendations: Boolean = false,
     override var actors: List<ActorData>? = null,
     override var comingSoon: Boolean = false,
     override var syncData: MutableMap<String, String> = mutableMapOf(),
@@ -2341,6 +2409,7 @@ constructor(
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
     override var recommendations: List<SearchResponse>? = null,
+    override var isHorizontalRecommendations: Boolean = false,
     override var actors: List<ActorData>? = null,
     override var comingSoon: Boolean = false,
     override var syncData: MutableMap<String, String> = mutableMapOf(),
@@ -2429,6 +2498,7 @@ constructor(
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
     override var recommendations: List<SearchResponse>? = null,
+    override var isHorizontalRecommendations: Boolean = false,
     override var actors: List<ActorData>? = null,
     override var comingSoon: Boolean = false,
     override var syncData: MutableMap<String, String> = mutableMapOf(),
@@ -2478,6 +2548,7 @@ constructor(
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
     override var recommendations: List<SearchResponse>? = null,
+    override var isHorizontalRecommendations: Boolean = false,
     override var actors: List<ActorData>? = null,
     override var comingSoon: Boolean = false,
     override var syncData: MutableMap<String, String> = mutableMapOf(),
@@ -2691,6 +2762,7 @@ constructor(
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
     override var recommendations: List<SearchResponse>? = null,
+    override var isHorizontalRecommendations: Boolean = false,
     override var actors: List<ActorData>? = null,
     override var comingSoon: Boolean = false,
     override var syncData: MutableMap<String, String> = mutableMapOf(),

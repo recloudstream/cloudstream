@@ -209,7 +209,7 @@ object UIHelper {
 
     fun Context.getSpanCount(isHorizontal:Boolean=false): Int {
 //        val compactView = false
-        val spanCountLandscape = if (isHorizontal) 3 else 6
+        val spanCountLandscape = if (isHorizontal) 5 else 6
         val spanCountPortrait = if (isHorizontal) 2 else 3
         val orientation = resources.configuration.orientation
 

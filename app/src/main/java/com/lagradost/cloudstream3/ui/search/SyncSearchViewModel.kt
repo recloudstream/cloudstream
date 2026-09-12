@@ -17,5 +17,6 @@ class SyncSearchViewModel {
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
         override var score: Score? = null,
+        override var backgroundPosterUrl: String? = null,
     ) : SearchResponse
 }
