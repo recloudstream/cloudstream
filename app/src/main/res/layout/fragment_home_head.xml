@@ -26,6 +26,8 @@
 
         </androidx.viewpager2.widget.ViewPager2>
 
+        <include layout="@layout/loading_hero_banner" />
+
         <LinearLayout
             android:id="@+id/home_padding"
             android:layout_width="match_parent"
