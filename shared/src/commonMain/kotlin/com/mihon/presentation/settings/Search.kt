@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import com.mihon.presentation.secondaryItemAlpha
 import com.mihon.presentation.settings.widget.TextPreferenceWidget
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.stringResource
 
@@ -59,7 +61,7 @@ data class SearchResultItem<T>(
 fun <T> SettingSearchResults(
     searchKey: String,
     onItemClick: (SearchResultItem<T>) -> Unit,
-    items: ImmutableList<SettingsData<T>>,
+    deferredItems: @Composable () -> ImmutableList<SettingsData<T>>,
     nestedScrollConnection: NestedScrollConnection,
     empty: @Composable () -> Unit
 ) {
@@ -68,6 +70,11 @@ fun <T> SettingSearchResults(
     // We want to retain the results as backpress should not re-calc it
     var result by retain<MutableState<PersistentList<SearchResultItem<T>>?>> {
         mutableStateOf(null)
+    }
+
+    var items by remember { mutableStateOf<ImmutableList<SettingsData<T>>>(persistentListOf()) }
+    if (items.isEmpty() && searchKey.isNotEmpty()) {
+        items = deferredItems()
     }
 
     LaunchedEffect(searchKey) {
