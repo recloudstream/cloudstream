@@ -36,6 +36,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -77,6 +79,7 @@ import com.mihon.presentation.settings.SearchableSettings
 import com.mihon.presentation.settings.SettingSearchResults
 import com.mihon.presentation.settings.SettingsData
 import com.mihon.presentation.settings.widget.TextPreferenceWidget
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
@@ -93,12 +96,25 @@ object SettingsFragmentScreen : Screen {
             navigation = R.id.action_navigation_global_to_navigation_settings_general,
             screen = SettingsGeneralScreen,
             icon = R.drawable.build_24px,
+            subtitle = persistentListOf(
+                R.string.extension_language,
+                R.string.title_downloads,
+                R.string.pref_category_bypass,
+                R.string.pref_category_links
+            )
         ),
         SettingsNavigation(
             title = R.string.category_player,
             navigation = R.id.action_navigation_global_to_navigation_settings_player,
             screen = SettingsPlayerScreen,
             icon = R.drawable.play_arrow_24px,
+            subtitle = persistentListOf(
+                R.string.pref_category_subtitles,
+                R.string.pref_category_player_features,
+                R.string.pref_category_gestures,
+                R.string.pref_category_player_layout,
+                R.string.pref_category_cache
+            )
         ),
         /*SettingsNavigation(
             title = R.string.category_providers,
@@ -111,34 +127,51 @@ object SettingsFragmentScreen : Screen {
             navigation = R.id.action_navigation_global_to_navigation_settings_ui,
             screen = SettingsUIScreen,
             icon = R.drawable.format_paint_24px,
+            subtitle = persistentListOf(
+                R.string.pref_category_looks,
+                R.string.pref_category_ui_features,
+                R.string.search_poster_img_des,
+                R.string.poster_ui_settings
+            )
         ),
         SettingsNavigation(
             title = R.string.category_updates,
             navigation = R.id.action_navigation_global_to_navigation_settings_updates,
             screen = SettingsUpdatesScreen,
             icon = R.drawable.mobile_arrow_down_24px,
+            subtitle = persistentListOf(
+                R.string.pref_category_app_updates,
+                R.string.pref_category_backup,
+                R.string.pref_category_extensions,
+                R.string.pref_category_actions
+            )
         ),
         SettingsNavigation(
             title = R.string.category_account,
             navigation = R.id.action_navigation_global_to_navigation_settings_account,
             screen = SettingsAccountScreen,
             icon = R.drawable.encrypted_24px,
+            subtitle = persistentListOf(
+                R.string.pref_category_accounts,
+                R.string.pref_category_security
+            )
         ),
         SettingsNavigation(
             title = R.string.pref_category_extensions,
             navigation = R.id.action_navigation_global_to_navigation_settings_extensions,
             screen = null,
             icon = R.drawable.extension_24px,
-            subtitle = R.string.add_repository
+            subtitle = persistentListOf(R.string.add_repository)
         ),
     )
 
+    @Immutable
     data class SettingsNavigation(
         val title: Int,
         val navigation: Int,
         val screen: SearchableSettings?,
         val icon: Int,
-        val subtitle: Int? = null,
+        val subtitle: PersistentList<Int>,
     )
 
 
@@ -148,15 +181,6 @@ object SettingsFragmentScreen : Screen {
     override fun Content() {
         val textFieldState = rememberTextFieldState()
         val searchBarState = rememberSearchBarState()
-
-        val screen = screens.mapNotNull { item ->
-            val contents = item.screen?.getPreferences() ?: return@mapNotNull null
-            SettingsData(
-                title = stringResource(item.title),
-                navigation = item.navigation,
-                contents = contents
-            )
-        }.toPersistentList()
 
         val outerListState = rememberScrollState()
 
@@ -187,15 +211,19 @@ object SettingsFragmentScreen : Screen {
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxSize().focusOutline().clickable {
-                        activity.navigate(
-                            R.id.accountSelectActivity,
-                            Bundle().apply { putBoolean("isFromMainActivity", true) }
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .focusOutline()
+                        .clickable {
+                            activity.navigate(
+                                R.id.accountSelectActivity,
+                                Bundle().apply { putBoolean("isFromMainActivity", true) }
+                            )
+                        }
+                        .padding(
+                            vertical = MaterialTheme.padding.large,
+                            horizontal = MaterialTheme.padding.medium
                         )
-                    }.padding(
-                        vertical = MaterialTheme.padding.large,
-                        horizontal = MaterialTheme.padding.medium
-                    )
                 ) {
                     val image =
                         account.customImage ?: profileImages.getOrNull(account.defaultImageIndex)
@@ -238,7 +266,7 @@ object SettingsFragmentScreen : Screen {
                 SettingSearchResults(
                     nestedScrollConnection = parentFirstScrollConnection,
                     searchKey = textFieldState.text.toString(),
-                    items = screen,
+                    deferredItems = ::generateSearchItems,
                     onItemClick = { item ->
                         SearchableSettings.highlightKey = item.highlightKey
                         activity?.navigate(item.navigation)
@@ -258,6 +286,18 @@ object SettingsFragmentScreen : Screen {
         }
     }
 
+    @Composable
+    @NonRestartableComposable
+    fun generateSearchItems() =
+        screens.mapNotNull { item ->
+            val contents = item.screen?.getPreferences() ?: return@mapNotNull null
+            SettingsData(
+                title = stringResource(item.title),
+                navigation = item.navigation,
+                contents = contents
+            )
+        }.toPersistentList()
+
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     @Composable
     fun SettingsSearch(searchBarState: SearchBarState, textFieldState: TextFieldState) {
@@ -276,7 +316,10 @@ object SettingsFragmentScreen : Screen {
                     },
                     onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
                     placeholder = {
-                        Text(modifier = Modifier.clearAndSetSemantics {}, text = stringResource(R.string.search_hint))
+                        Text(
+                            modifier = Modifier.clearAndSetSemantics {},
+                            text = stringResource(R.string.search_hint)
+                        )
                     },
                     leadingIcon = {
                         Crossfade(
@@ -366,18 +409,16 @@ object SettingsFragmentScreen : Screen {
 
     @Composable
     fun SettingsTab(settingsTab: SettingsNavigation) {
-        val pref = settingsTab.screen?.getPreferences() ?: emptyList()
-        val groups = pref.filterIsInstance<Preference.PreferenceGroup>()
-            .filter { it.enabled }
         TextPreferenceWidget(
             title = stringResource(settingsTab.title),
             icon = painterResource(settingsTab.icon),
-            subtitle = settingsTab.subtitle?.let { stringResource(it) }
-                ?: groups.joinToString { it.title }) {
+            // This can not be converted to joinToString due to stringResource being composable
+            subtitle = settingsTab.subtitle.map { stringResource(it) }.joinToString(),
             // Clear it if we have already set it but navigated back instantly
-            SearchableSettings.highlightKey = null
-            activity?.navigate(settingsTab.navigation)
-        }
+            onPreferenceClick = {
+                SearchableSettings.highlightKey = null
+                activity?.navigate(settingsTab.navigation)
+            })
     }
 
     @Composable
