@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -401,6 +402,7 @@ class HomeParentItemAdapterPreview(
                 homePreviewTags.isGone =
                     item.tags.isNullOrEmpty()
 
+                homePreviewInfoBtt.isClickable = true
                 homePreviewInfoBtt.setOnClickListener { view ->
                     viewModel.click(
                         LoadClickCallback(0, view, position, item)
@@ -584,7 +586,7 @@ class HomeParentItemAdapterPreview(
             (binding as? FragmentHomeHeadTvBinding)?.apply {
                 /*homePreviewChangeApi.setOnClickListener { view ->
                     view.context.selectHomepage(viewModel.repo?.name) { api ->
-                        viewModel.loadAndCancel(api, forceReload = true, fromUI = true)
+                        viewModel.loadAndCancel(api, forceReload = false, fromUI = true)
                     }
                 }
                 homePreviewReloadProvider.setOnClickListener {
@@ -651,8 +653,37 @@ class HomeParentItemAdapterPreview(
             }
         }
 
+        private fun resetPreviewDetails() {
+            (binding as? FragmentHomeHeadBinding)?.apply {
+                homePreviewTitleHolder.isVisible = false
+                homePreviewPlay.setOnClickListener(null)
+                homePreviewInfo.setOnClickListener(null)
+                homePreviewBookmark.setOnClickListener(null)
+            }
+            (binding as? FragmentHomeHeadTvBinding)?.apply {
+                homePreviewInfoBtt.isVisible = true
+                homePreviewInfoBtt.isClickable = false
+                homePreviewInfoBtt.setOnClickListener(null)
+                homePreviewText.text = ""
+                homePreviewDescription.text = ""
+                homePreviewDescription.isGone = true
+                homePreviewScore.text = ""
+                homePreviewScore.isGone = true
+                homePreviewYear.text = ""
+                homePreviewYear.isGone = true
+                homePreviewDuration.text = ""
+                homePreviewDuration.isGone = true
+                homePreviewCast.text = ""
+                homePreviewCast.isVisible = false
+                homePreviewTags.removeAllViews()
+                homePreviewTags.isGone = true
+                homeBackgroundPosterWatermarkBadgeHolder.setImageDrawable(null)
+                homeBackgroundPosterWatermarkBadgeHolder.isVisible = false
+            }
+        }
+
         private fun updatePreview(preview: Resource<Pair<Boolean, List<LoadResponse>>>) {
-            if (preview is Resource.Success) {
+            if (preview is Resource.Success || preview is Resource.Loading) {
                 homeNonePadding.apply {
                     val params = layoutParams
                     params.height = 0
@@ -685,12 +716,24 @@ class HomeParentItemAdapterPreview(
                     (binding as? FragmentHomeHeadTvBinding)?.apply {
                         homePreviewInfoBtt.isVisible = true
                     }
+                    (binding as? FragmentHomeHeadBinding)?.apply {
+                        homePreviewTitleHolder.isVisible = true
+                    }
                     // Explicitly bind the current item to ensure instant loading
                     val currentPos = previewViewpager.currentItem
                     val item = preview.value.second.getOrNull(currentPos)
                     if (item != null) {
                         onSelect(item, currentPos)
                     }
+                }
+
+                is Resource.Loading -> {
+                    previewAdapter.submitList(listOf())
+                    previewViewpager.setCurrentItem(0, false)
+                    previewViewpager.isInvisible = true
+                    previewViewpagerText.isVisible = true
+                    alternativeAccountPadding?.isVisible = false
+                    resetPreviewDetails()
                 }
 
                 else -> {
@@ -703,6 +746,7 @@ class HomeParentItemAdapterPreview(
                         homePreviewInfoBtt.isVisible = false
                     }
                     //previewHeader.isVisible = false
+                    resetPreviewDetails()
                 }
             }
         }
