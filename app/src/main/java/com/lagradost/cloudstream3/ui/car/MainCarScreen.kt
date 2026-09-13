@@ -21,6 +21,9 @@ import androidx.car.app.model.BannerSection
 import androidx.car.app.model.SectionHeader
 import androidx.car.app.model.Background
 import androidx.car.app.model.CarColor
+import androidx.car.app.model.BannerStyle
+import androidx.car.app.model.Shape
+import com.lagradost.cloudstream3.utils.CarHelper.safePush
 import coil3.request.ImageRequest
 import coil3.SingletonImageLoader
 import coil3.asDrawable
@@ -131,11 +134,19 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
             }
             .build()
 
-        return Banner.Builder()
+        val builder = Banner.Builder()
             .setTitle(CarStrings.get(R.string.car_error))
             .setSubtitle(error)
             .addBelowAction(retryAction)
-            .build()
+
+        if (carContext.carAppApiLevel >= 9) {
+            val style = BannerStyle.Builder()
+                .setShape(Shape.CORNER_MEDIUM)
+                .build()
+            builder.setStyle(style)
+        }
+
+        return builder.build()
     }
 
     @OptIn(ExperimentalCarApi::class)
@@ -143,15 +154,23 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
         val switchAction = Action.Builder()
             .setTitle(CarStrings.get(R.string.car_provider))
             .setOnClickListener {
-                screenManager.push(ProviderCarScreen(carContext))
+                screenManager.safePush(ProviderCarScreen(carContext))
             }
             .build()
 
-        return Banner.Builder()
+        val builder = Banner.Builder()
             .setTitle(CarStrings.get(R.string.car_no_content_from_provider))
             .setSubtitle(CarStrings.get(R.string.car_provider_not_found))
             .addBelowAction(switchAction)
-            .build()
+
+        if (carContext.carAppApiLevel >= 9) {
+            val style = BannerStyle.Builder()
+                .setShape(Shape.CORNER_MEDIUM)
+                .build()
+            builder.setStyle(style)
+        }
+
+        return builder.build()
     }
 
     @androidx.annotation.OptIn(ExperimentalCarApi::class)
@@ -200,6 +219,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                 val heroIcon = featuredHeroIcon ?: CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
                 val spotlightSection = SpotlightSection.Builder(heroIcon)
                     .setTitle(firstList.name)
+                    .setIncompleteLastColumnStrategy(SpotlightSection.INCOMPLETE_LAST_COLUMN_AS_IS)
                     .apply {
                         firstList.list.take(MAX_ITEMS_PER_SECTION).forEach { item ->
                             addItem(
@@ -214,11 +234,11 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                                             type == com.lagradost.cloudstream3.TvType.AsianDrama ||
                                             type == com.lagradost.cloudstream3.TvType.Documentary
                                         ) {
-                                            screenManager.push(TvSeriesDetailScreen(carContext, item))
+                                            screenManager.safePush(TvSeriesDetailScreen(carContext, item))
                                         } else if (type == com.lagradost.cloudstream3.TvType.Live) {
-                                            screenManager.push(PlayerCarScreen(carContext, item = item))
+                                            screenManager.safePush(PlayerCarScreen(carContext, item = item))
                                         } else {
-                                            screenManager.push(DetailsScreen(carContext, item))
+                                            screenManager.safePush(DetailsScreen(carContext, item))
                                         }
                                     }
                                     .build()
@@ -229,7 +249,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                                 CondensedItem.Builder()
                                     .setTitle("${CarStrings.get(R.string.car_see_all)} (${firstList.list.size})")
                                     .setOnClickListener {
-                                        screenManager.push(CategoryScreen(carContext, firstList))
+                                        screenManager.safePush(CategoryScreen(carContext, firstList))
                                     }
                                     .build()
                             )
@@ -261,11 +281,11 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                                                     type == com.lagradost.cloudstream3.TvType.AsianDrama ||
                                                     type == com.lagradost.cloudstream3.TvType.Documentary
                                                 ) {
-                                                    screenManager.push(TvSeriesDetailScreen(carContext, item))
+                                                    screenManager.safePush(TvSeriesDetailScreen(carContext, item))
                                                 } else if (type == com.lagradost.cloudstream3.TvType.Live) {
-                                                    screenManager.push(PlayerCarScreen(carContext, item = item))
+                                                    screenManager.safePush(PlayerCarScreen(carContext, item = item))
                                                 } else {
-                                                    screenManager.push(DetailsScreen(carContext, item))
+                                                    screenManager.safePush(DetailsScreen(carContext, item))
                                                 }
                                             }
                                             .setBrowsable(true)
@@ -277,7 +297,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                                         Row.Builder()
                                             .setTitle("${CarStrings.get(R.string.car_see_all)} (${homePageList.list.size})")
                                             .setOnClickListener {
-                                                screenManager.push(CategoryScreen(carContext, homePageList))
+                                                screenManager.safePush(CategoryScreen(carContext, homePageList))
                                             }
                                             .setBrowsable(true)
                                             .build()
@@ -311,11 +331,11 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                                                     type == com.lagradost.cloudstream3.TvType.AsianDrama ||
                                                     type == com.lagradost.cloudstream3.TvType.Documentary
                                                 ) {
-                                                    screenManager.push(TvSeriesDetailScreen(carContext, item))
+                                                    screenManager.safePush(TvSeriesDetailScreen(carContext, item))
                                                 } else if (type == com.lagradost.cloudstream3.TvType.Live) {
-                                                    screenManager.push(PlayerCarScreen(carContext, item = item))
+                                                    screenManager.safePush(PlayerCarScreen(carContext, item = item))
                                                 } else {
-                                                    screenManager.push(DetailsScreen(carContext, item))
+                                                    screenManager.safePush(DetailsScreen(carContext, item))
                                                 }
                                             }
                                             .setBrowsable(true)
@@ -327,7 +347,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                                         Row.Builder()
                                             .setTitle("${CarStrings.get(R.string.car_see_all)} (${homePageList.list.size})")
                                             .setOnClickListener {
-                                                screenManager.push(CategoryScreen(carContext, homePageList))
+                                                screenManager.safePush(CategoryScreen(carContext, homePageList))
                                             }
                                             .setBrowsable(true)
                                             .build()
@@ -404,7 +424,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                 Action.Builder()
                     .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_search)).build())
                     .setOnClickListener {
-                        screenManager.push(SearchCarScreen(carContext))
+                        screenManager.safePush(SearchCarScreen(carContext))
                     }
                     .build()
             )
@@ -420,6 +440,8 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
         if (carContext.carAppApiLevel >= 9) {
             builder.setSubtitle("Provider: $currentApiName")
             builder.setBackground(Background.Builder().setColor(CarColor.PRIMARY).build())
+            val appLogo = CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
+            builder.setStartHeaderImage(appLogo)
         }
 
         return builder.build()
@@ -451,8 +473,8 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
             Row.Builder()
                 .setTitle(CarStrings.get(R.string.car_provider))
                 .addText("${CarStrings.get(R.string.car_current)}: $currentApiName")
-                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_manage)).build())
-                .setOnClickListener { screenManager.push(ProviderCarScreen(carContext)) }
+                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_manage)).build(), Row.IMAGE_TYPE_SMALL)
+                .setOnClickListener { screenManager.safePush(ProviderCarScreen(carContext)) }
                 .setBrowsable(true)
                 .build()
         )
@@ -464,7 +486,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                     if (DataStoreHelper.carPlayerMode == 0) CarStrings.get(R.string.car_player_mode_advanced)
                     else CarStrings.get(R.string.car_player_mode_simple)
                 }")
-                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_preferences)).build())
+                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_preferences)).build(), Row.IMAGE_TYPE_SMALL)
                 .setOnClickListener {
                     DataStoreHelper.carPlayerMode = if (DataStoreHelper.carPlayerMode == 0) 1 else 0
                     invalidate()
@@ -476,8 +498,8 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
             Row.Builder()
                 .setTitle(CarStrings.get(R.string.car_about_me))
                 .addText("Host API Level: ${carContext.carAppApiLevel}")
-                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_info_details)).build())
-                .setOnClickListener { screenManager.push(AboutMeScreen(carContext)) }
+                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_info_details)).build(), Row.IMAGE_TYPE_SMALL)
+                .setOnClickListener { screenManager.safePush(AboutMeScreen(carContext)) }
                 .setBrowsable(true)
                 .build()
         )
@@ -494,8 +516,8 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
     private fun createMenuRow(title: String, iconRes: Int, screen: () -> Screen): Row {
         return Row.Builder()
             .setTitle(title)
-            .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, iconRes)).build())
-            .setOnClickListener { screenManager.push(screen()) }
+            .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, iconRes)).build(), Row.IMAGE_TYPE_SMALL)
+            .setOnClickListener { screenManager.safePush(screen()) }
             .setBrowsable(true)
             .build()
     }
@@ -515,7 +537,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                     Row.Builder()
                         .setTitle(homePageList.name)
                         .setOnClickListener {
-                            screenManager.push(CategoryScreen(carContext, homePageList))
+                            screenManager.safePush(CategoryScreen(carContext, homePageList))
                         }
                         .setBrowsable(true)
                         .build()

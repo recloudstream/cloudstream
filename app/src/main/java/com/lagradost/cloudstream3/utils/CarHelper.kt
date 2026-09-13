@@ -17,8 +17,30 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.FavoritesData
 import com.lagradost.cloudstream3.Episode
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.ui.result.getId
+import androidx.car.app.Screen
+import androidx.car.app.ScreenManager
+import android.util.Log
 
 object CarHelper {
+    
+    /**
+     * Safely pushes a [Screen] to the [ScreenManager], ensuring that the screen stack
+     * never reaches or exceeds the Android Auto host limit (hard limit 5, safe ceiling 4).
+     *
+     * If the stack is already at [maxAllowedStack] or higher, it pops the top screen
+     * before pushing the new one, preventing fatal IllegalStateExceptions from the host.
+     */
+    fun ScreenManager.safePush(screen: Screen, maxAllowedStack: Int = 4) {
+        try {
+            if (stackSize >= maxAllowedStack) {
+                Log.w("CarHelper", "Screen stack size ($stackSize) reached safe limit ($maxAllowedStack). Popping before push to prevent host overflow.")
+                pop()
+            }
+            push(screen)
+        } catch (e: Exception) {
+            Log.e("CarHelper", "Error during safePush", e)
+        }
+    }
     
     fun toggleFavorite(
         carContext: CarContext,

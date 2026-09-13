@@ -4,21 +4,20 @@ import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
 import androidx.car.app.model.CarIcon
+import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.utils.CarHelper.safePush
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import com.lagradost.cloudstream3.TvType
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.delay
-import coil3.SingletonImageLoader
-import coil3.request.ImageRequest
-import coil3.asDrawable
 
 class BookmarksScreen(carContext: CarContext) : Screen(carContext), androidx.lifecycle.DefaultLifecycleObserver {
     private var itemList: ItemList? = null
@@ -58,9 +57,9 @@ class BookmarksScreen(carContext: CarContext) : Screen(carContext), androidx.lif
                                          type == TvType.OVA || 
                                          type == TvType.AsianDrama || 
                                          type == TvType.Documentary) {
-                                         screenManager.push(TvSeriesDetailScreen(carContext, item))
+                                         screenManager.safePush(TvSeriesDetailScreen(carContext, item))
                                      } else {
-                                         screenManager.push(DetailsScreen(carContext, item))
+                                         screenManager.safePush(DetailsScreen(carContext, item))
                                      }
                                  }
                                  .build()
@@ -94,11 +93,20 @@ class BookmarksScreen(carContext: CarContext) : Screen(carContext), androidx.lif
         }
     }
 
+    @androidx.annotation.OptIn(androidx.car.app.annotations.ExperimentalCarApi::class)
     override fun onGetTemplate(): Template {
+        val headerBuilder = Header.Builder()
+            .setTitle(CarStrings.get(R.string.car_favorites))
+            .setStartHeaderAction(Action.BACK)
+
+        if (carContext.carAppApiLevel >= 9) {
+            val appLogo = CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
+            headerBuilder.setStartHeaderImage(appLogo)
+        }
+
         return ListTemplate.Builder()
             .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_loading)).build())
-            .setTitle(CarStrings.get(R.string.car_favorites))
-            .setHeaderAction(Action.BACK)
+            .setHeader(headerBuilder.build())
             .build()
     }
 }

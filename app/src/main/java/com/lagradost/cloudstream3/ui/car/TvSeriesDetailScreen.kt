@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.car
 
 import com.lagradost.cloudstream3.utils.CarHelper
+import com.lagradost.cloudstream3.utils.CarHelper.safePush
 
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -200,7 +201,7 @@ class TvSeriesDetailScreen(
                         .setTitle(CarStrings.get(R.string.car_episode_list))
                         .setBackgroundColor(CarColor.PRIMARY)
                         .setOnClickListener {
-                            screenManager.push(EpisodeListScreen(carContext, details))
+                            screenManager.safePush(EpisodeListScreen(carContext, details))
                         }
                         .build()
                 )

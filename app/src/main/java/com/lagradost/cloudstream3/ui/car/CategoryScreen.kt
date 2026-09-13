@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.car
 
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
+import com.lagradost.cloudstream3.utils.CarHelper.safePush
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarIcon
@@ -139,11 +140,11 @@ class CategoryScreen(
                              type == com.lagradost.cloudstream3.TvType.OVA ||
                              type == com.lagradost.cloudstream3.TvType.AsianDrama ||
                              type == com.lagradost.cloudstream3.TvType.Documentary) {
-                             screenManager.push(TvSeriesDetailScreen(carContext, item))
+                             screenManager.safePush(TvSeriesDetailScreen(carContext, item))
                          } else if (type == com.lagradost.cloudstream3.TvType.Live) {
-                             screenManager.push(PlayerCarScreen(carContext, item = item))
+                             screenManager.safePush(PlayerCarScreen(carContext, item = item))
                          } else {
-                             screenManager.push(DetailsScreen(carContext, item))
+                             screenManager.safePush(DetailsScreen(carContext, item))
                          }
                     }
 
@@ -176,17 +177,17 @@ class CategoryScreen(
                              type == com.lagradost.cloudstream3.TvType.OVA ||
                              type == com.lagradost.cloudstream3.TvType.AsianDrama ||
                              type == com.lagradost.cloudstream3.TvType.Documentary) {
-                             screenManager.push(TvSeriesDetailScreen(carContext, item))
+                             screenManager.safePush(TvSeriesDetailScreen(carContext, item))
                          } else if (type == com.lagradost.cloudstream3.TvType.Live) {
-                             screenManager.push(PlayerCarScreen(carContext, item = item))
+                             screenManager.safePush(PlayerCarScreen(carContext, item = item))
                          } else {
-                             screenManager.push(DetailsScreen(carContext, item))
+                             screenManager.safePush(DetailsScreen(carContext, item))
                          }
                     }
 
                     val gridItem = GridItem.Builder()
                         .setTitle(item.name.ifEmpty { "Untitled" })
-                        .setImage(icon, GridItem.IMAGE_TYPE_LARGE)
+                        .setImage(icon)
                         .setOnClickListener(onClick)
                         .build()
                     gridSectionBuilder.addItem(gridItem)
@@ -221,11 +222,11 @@ class CategoryScreen(
                      type == com.lagradost.cloudstream3.TvType.OVA ||
                      type == com.lagradost.cloudstream3.TvType.AsianDrama ||
                      type == com.lagradost.cloudstream3.TvType.Documentary) {
-                     screenManager.push(TvSeriesDetailScreen(carContext, item))
+                     screenManager.safePush(TvSeriesDetailScreen(carContext, item))
                  } else if (type == com.lagradost.cloudstream3.TvType.Live) {
-                     screenManager.push(PlayerCarScreen(carContext, item = item))
+                     screenManager.safePush(PlayerCarScreen(carContext, item = item))
                  } else {
-                     screenManager.push(DetailsScreen(carContext, item))
+                     screenManager.safePush(DetailsScreen(carContext, item))
                  }
             }
 
@@ -240,7 +241,7 @@ class CategoryScreen(
             } else {
                 val gridItem = GridItem.Builder()
                     .setTitle(item.name.ifEmpty { "Untitled" })
-                    .setImage(icon, GridItem.IMAGE_TYPE_LARGE)
+                    .setImage(icon)
                     .setOnClickListener(onClick)
                     .build()
                 listBuilder.addItem(gridItem)

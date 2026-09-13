@@ -2,9 +2,11 @@ package com.lagradost.cloudstream3.ui.car
 
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
+import com.lagradost.cloudstream3.utils.CarHelper.safePush
 import androidx.car.app.model.Action
 import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
+import androidx.car.app.model.Header
 import androidx.car.app.model.Pane
 import androidx.car.app.model.PaneTemplate
 import androidx.car.app.model.Row
@@ -93,17 +95,17 @@ class EpisodeDetailScreen(
             )
         }
 
-        // Play Button action
+        // Play Button: Electric Cyber Violet background with Crisp White Icon
         val playIcon = IconCompat.createWithResource(carContext, android.R.drawable.ic_media_play)
-            .setTint(android.graphics.Color.BLACK)
+            .setTint(android.graphics.Color.WHITE)
 
         val playAction = Action.Builder()
             .setIcon(CarIcon.Builder(playIcon).build())
-            .setBackgroundColor(CarColor.createCustom(android.graphics.Color.WHITE, android.graphics.Color.WHITE))
+            .setBackgroundColor(CarColor.createCustom(android.graphics.Color.parseColor("#5904DF"), android.graphics.Color.parseColor("#7C4DFF")))
             .setOnClickListener {
                 // Get saved position for resume
                 val startTime = getViewPos(episode.data.hashCode())?.position ?: 0L
-                screenManager.push(
+                screenManager.safePush(
                     PlayerCarScreen(
                         carContext = carContext,
                         loadResponse = seriesDetails,
@@ -129,7 +131,7 @@ class EpisodeDetailScreen(
             .setIcon(CarIcon.Builder(sourceIcon).build())
             .setTitle(sourceActionTitle)
             .setOnClickListener {
-                screenManager.push(
+                screenManager.safePush(
                     SourceSelectionScreen(
                         carContext = carContext,
                         apiName = seriesDetails.apiName,
@@ -147,9 +149,13 @@ class EpisodeDetailScreen(
         paneBuilder.addAction(playAction)
         paneBuilder.addAction(sourceAction)
 
+        val header = Header.Builder()
+            .setTitle(seriesDetails.name)
+            .setStartHeaderAction(Action.BACK)
+            .build()
+
         return PaneTemplate.Builder(paneBuilder.build())
-            .setTitle(seriesDetails.name) // Header Title is Series Name
-            .setHeaderAction(Action.BACK)
+            .setHeader(header)
             .build()
     }
 }

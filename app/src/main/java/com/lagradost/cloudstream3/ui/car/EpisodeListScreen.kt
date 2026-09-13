@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.car
 
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
+import com.lagradost.cloudstream3.utils.CarHelper.safePush
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarIcon
@@ -126,7 +127,7 @@ class EpisodeListScreen(
                     .setOnClickListener {
                          if (isExpressMode) {
                              val startTime = getViewPos(episode.data.hashCode())?.position ?: 0L
-                             screenManager.push(
+                             screenManager.safePush(
                                 PlayerCarScreen(
                                     carContext = carContext,
                                     loadResponse = details,
@@ -136,7 +137,7 @@ class EpisodeListScreen(
                                 )
                             )
                          } else {
-                             screenManager.push(
+                             screenManager.safePush(
                                 EpisodeDetailScreen(
                                     carContext = carContext,
                                     seriesDetails = details,
@@ -179,7 +180,7 @@ class EpisodeListScreen(
                          if (isExpressMode) {
                              // Get saved position for resume
                              val startTime = getViewPos(episode.data.hashCode())?.position ?: 0L
-                             screenManager.push(
+                             screenManager.safePush(
                                 PlayerCarScreen(
                                     carContext = carContext,
                                     loadResponse = details,
@@ -189,7 +190,7 @@ class EpisodeListScreen(
                                 )
                             )
                          } else {
-                             screenManager.push(
+                             screenManager.safePush(
                                 EpisodeDetailScreen(
                                     carContext = carContext,
                                     seriesDetails = details,

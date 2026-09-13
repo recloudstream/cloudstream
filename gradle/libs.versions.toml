@@ -8,7 +8,7 @@ annotation = "1.10.0"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha07"
 buildkonfigGradlePlugin = "0.21.2"
-carApp = "1.9.0-alpha01"
+carApp = "1.9.0-alpha02"
 classgraph = "4.8.184"
 coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
 colorpicker = "6b46b49"

@@ -1128,4 +1128,12 @@
         <item name="android:layout_height">@dimen/download_header_progress_size</item>
         <item name="android:background">@color/playIconBackground</item>
     </style>
+
+    <!-- Android Auto Custom Theme -->
+    <style name="CarAppTheme">
+        <item name="carColorPrimary">@color/carColorPrimary</item>
+        <item name="carColorPrimaryDark">@color/carColorPrimaryDark</item>
+        <item name="carColorSecondary">@color/carColorSecondary</item>
+        <item name="carColorSecondaryDark">@color/carColorSecondaryDark</item>
+    </style>
 </resources>

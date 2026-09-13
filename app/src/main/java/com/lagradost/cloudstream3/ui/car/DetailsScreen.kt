@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.car
 
 import com.lagradost.cloudstream3.utils.CarHelper
+import com.lagradost.cloudstream3.utils.CarHelper.safePush
 
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -105,7 +106,7 @@ class DetailsScreen(
                                 }
                                 withContext(Dispatchers.Main) {
                                     screenManager.pop()
-                                    screenManager.push(TvSeriesDetailScreen(carContext, correctItem))
+                                    screenManager.safePush(TvSeriesDetailScreen(carContext, correctItem))
                                 }
                                 return@launch
                             }
@@ -261,15 +262,15 @@ class DetailsScreen(
     }
 
     private fun buildActions(paneBuilder: Pane.Builder) {
-        // Play Button: White background with Black Icon
+        // Play Button: Electric Cyber Violet background with Crisp White Icon
         val playIcon = IconCompat.createWithResource(carContext, android.R.drawable.ic_media_play)
-            .setTint(android.graphics.Color.BLACK)
+            .setTint(android.graphics.Color.WHITE)
 
         val playAction = Action.Builder()
             .setIcon(CarIcon.Builder(playIcon).build())
-            .setBackgroundColor(CarColor.createCustom(android.graphics.Color.WHITE, android.graphics.Color.WHITE)) 
+            .setBackgroundColor(CarColor.createCustom(android.graphics.Color.parseColor("#5904DF"), android.graphics.Color.parseColor("#7C4DFF")))
             .setOnClickListener {
-                screenManager.push(PlayerCarScreen(
+                screenManager.safePush(PlayerCarScreen(
                     carContext = carContext,
                     item = item,
                     preSelectedSource = selectedSource
@@ -296,7 +297,7 @@ class DetailsScreen(
                     else -> details?.url
                 }
                 if (dataUrl != null && details != null) {
-                    screenManager.push(
+                    screenManager.safePush(
                         SourceSelectionScreen(
                             carContext = carContext,
                             apiName = details.apiName,

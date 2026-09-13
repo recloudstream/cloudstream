@@ -2,6 +2,12 @@
 <resources>
     <color name="colorPrimary">#3d50fa</color>
     <color name="colorPrimarySecond">@color/colorPrimary</color>
+
+    <!-- Android Auto Car Colors (Electric Cyber Violet & Cyan) -->
+    <color name="carColorPrimary">#7C4DFF</color>
+    <color name="carColorPrimaryDark">#5904DF</color>
+    <color name="carColorSecondary">#00E5FF</color>
+    <color name="carColorSecondaryDark">#00838F</color>
     <color name="colorSearch">#303135</color> <!--#3444D1 @color/itemBackground-->
     <color name="colorOngoing">#F53B66</color> <!--FF8181-->
     <color name="colorPrimaryDark">#3700B3</color>

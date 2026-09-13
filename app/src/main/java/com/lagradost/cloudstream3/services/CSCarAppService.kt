@@ -13,4 +13,9 @@ class CSCarAppService : CarAppService() {
     override fun onCreateSession(): Session {
         return CarSession()
     }
+
+    @androidx.annotation.OptIn(androidx.car.app.annotations.ExperimentalCarApi::class)
+    override fun getCarAppThemeSource(): Int {
+        return CarAppService.THEME_SOURCE_APP
+    }
 }

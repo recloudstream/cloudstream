@@ -32,6 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.delay
+import com.lagradost.cloudstream3.utils.CarHelper.safePush
 
 class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycleObserver {
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -113,20 +114,25 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                          // TODO: Verify CarProgressBar rendering on real devices.
                          //       Remove this block if it causes issues on any head unit.
                          if (supportsProgressBar) {
-                             try {
-                                 val viewPos = getViewPos(resume.episodeId)
-                                 if (viewPos != null && viewPos.duration > 0) {
-                                     val progress = (viewPos.position.toFloat() / viewPos.duration.toFloat())
-                                         .coerceIn(0f, 1f)
-                                     val progressBar = androidx.car.app.model.CarProgressBar.Builder(progress)
-                                         .build()
-                                     rowBuilder.setProgressBar(progressBar)
-                                 }
-                             } catch (e: Exception) {
-                                 // Graceful fallback: just don't show progress bar
-                                 Log.w(TAG, "CarProgressBar not supported or failed", e)
-                             }
-                         }
+                            try {
+                                val viewPos = getViewPos(resume.episodeId)
+                                if (viewPos != null && viewPos.duration > 0) {
+                                    val progress = (viewPos.position.toFloat() / viewPos.duration.toFloat())
+                                        .coerceIn(0f, 1f)
+                                    val style = androidx.car.app.model.CarProgressBarStyle.Builder()
+                                        .setColor(androidx.car.app.model.CarColor.PRIMARY)
+                                        .setStrokeCap(androidx.car.app.model.StrokeCap.ROUND)
+                                        .build()
+                                    val progressBar = androidx.car.app.model.CarProgressBar.Builder(progress)
+                                        .setStyle(style)
+                                        .build()
+                                    rowBuilder.setProgressBar(progressBar)
+                                }
+                            } catch (e: Exception) {
+                                // Graceful fallback: just don't show progress bar
+                                Log.w(TAG, "CarProgressBar not supported or failed", e)
+                            }
+                        }
 
                          builder.addItem(rowBuilder.build())
                      }
@@ -189,7 +195,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                     val seasonEpisodes = loadResult.episodes.filter { it.season == episodeToResume.season }
                     
                     withContext(Dispatchers.Main) {
-                        screenManager.push(
+                        screenManager.safePush(
                             PlayerCarScreen(
                                 carContext = carContext,
                                 loadResponse = loadResult,
@@ -202,7 +208,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                 } else {
                     // Fallback to episode list if episode not found
                     withContext(Dispatchers.Main) {
-                        screenManager.push(EpisodeListScreen(carContext, loadResult, isExpressMode = true))
+                        screenManager.safePush(EpisodeListScreen(carContext, loadResult, isExpressMode = true))
                     }
                 }
             } else {
@@ -228,7 +234,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                 }
                 
                 withContext(Dispatchers.Main) {
-                     screenManager.push(
+                     screenManager.safePush(
                          PlayerCarScreen(
                              carContext = carContext,
                              item = item,

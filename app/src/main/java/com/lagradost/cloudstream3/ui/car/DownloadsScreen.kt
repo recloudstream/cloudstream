@@ -3,12 +3,15 @@ package com.lagradost.cloudstream3.ui.car
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
+import androidx.car.app.model.CarIcon
 import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.SectionedItemList
 import androidx.car.app.model.Template
+import androidx.core.graphics.drawable.IconCompat
+import com.lagradost.cloudstream3.utils.CarHelper.safePush
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.R
@@ -171,7 +174,7 @@ class DownloadsScreen(
              val startTime = savedPos?.position ?: 0L
 
              withContext(Dispatchers.Main) {
-                 screenManager.push(
+                 screenManager.safePush(
                      PlayerCarScreen(
                          carContext = carContext,
                          fileUri = fileInfo.path.toString(),
@@ -208,7 +211,7 @@ class DownloadsScreen(
              if (header.type.isEpisodeBased()) {
                  // Series: Always go to episode list
                  withContext(Dispatchers.Main) {
-                     screenManager.push(DownloadsScreen(carContext, id, header.name))
+                     screenManager.safePush(DownloadsScreen(carContext, id, header.name))
                  }
              } else {
                  // Movie: Just pick the first/only one
@@ -220,16 +223,23 @@ class DownloadsScreen(
         }
     }
 
+    @androidx.annotation.OptIn(androidx.car.app.annotations.ExperimentalCarApi::class)
+    private fun createScreenHeader(title: String): Header {
+        val builder = Header.Builder()
+            .setTitle(title)
+            .setStartHeaderAction(Action.BACK)
+        if (carContext.carAppApiLevel >= 9) {
+            val appLogo = CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
+            builder.setStartHeaderImage(appLogo)
+        }
+        return builder.build()
+    }
+
     override fun onGetTemplate(): Template {
         // Episodes sub-screen or legacy fallback: use simple ListTemplate
         if (parentId != null) {
             return ListTemplate.Builder()
-                .setHeader(
-                    Header.Builder()
-                        .setTitle(headerName ?: CarStrings.get(R.string.car_downloads))
-                        .setStartHeaderAction(Action.BACK)
-                        .build()
-                )
+                .setHeader(createScreenHeader(headerName ?: CarStrings.get(R.string.car_downloads)))
                 .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_loading)).build())
                 .build()
         }
@@ -242,12 +252,7 @@ class DownloadsScreen(
 
         // Fallback to legacy flat ListTemplate
         return ListTemplate.Builder()
-            .setHeader(
-                Header.Builder()
-                    .setTitle(CarStrings.get(R.string.car_downloads))
-                    .setStartHeaderAction(Action.BACK)
-                    .build()
-            )
+            .setHeader(createScreenHeader(CarStrings.get(R.string.car_downloads)))
             .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_loading)).build())
             .build()
     }
@@ -260,23 +265,13 @@ class DownloadsScreen(
         // If both lists are empty, show a simple message
         if (movieHeaders.isEmpty() && seriesHeaders.isEmpty()) {
             return ListTemplate.Builder()
-                .setHeader(
-                    Header.Builder()
-                        .setTitle(CarStrings.get(R.string.car_downloads))
-                        .setStartHeaderAction(Action.BACK)
-                        .build()
-                )
+                .setHeader(createScreenHeader(CarStrings.get(R.string.car_downloads)))
                 .setSingleList(ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_no_downloads_found)).build())
                 .build()
         }
 
         val builder = androidx.car.app.model.SectionedItemTemplate.Builder()
-            .setHeader(
-                Header.Builder()
-                    .setTitle(CarStrings.get(R.string.car_downloads))
-                    .setStartHeaderAction(Action.BACK)
-                    .build()
-            )
+            .setHeader(createScreenHeader(CarStrings.get(R.string.car_downloads)))
 
         // Movies section
         if (movieHeaders.isNotEmpty()) {
