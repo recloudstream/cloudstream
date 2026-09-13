@@ -63,6 +63,27 @@ const val SUBTITLE_AUTO_SELECT_KEY = "subs_auto_select"
 const val SUBTITLE_DOWNLOAD_KEY = "subs_auto_download"
 
 @Serializable
+enum class SubtitleFont(
+    @FontRes val resource: Int,
+    val label: String
+) {
+    @JsonProperty("Trebuchet") @SerialName("Trebuchet") Trebuchet(R.font.trebuchet_ms, "Trebuchet MS"),
+    @JsonProperty("Netflix") @SerialName("Netflix") Netflix(R.font.netflix_sans, "Netflix Sans"),
+    @JsonProperty("Google") @SerialName("Google") Google(R.font.google_sans, "Google Sans"),
+    @JsonProperty("Open") @SerialName("Open") Open(R.font.open_sans, "Open Sans"),
+    @JsonProperty("Futura") @SerialName("Futura") Futura(R.font.futura, "Futura"),
+    @JsonProperty("Consola") @SerialName("Consola") Consola(R.font.consola, "Consola"),
+    @JsonProperty("Gotham") @SerialName("Gotham") Gotham(R.font.gotham, "Gotham"),
+    @JsonProperty("Lucida") @SerialName("Lucida") Lucida(R.font.lucida_grande, "Lucida Grande"),
+    @JsonProperty("STIX") @SerialName("STIX") STIX(R.font.stix_general, "STIX General"),
+    @JsonProperty("TimesNewRoman") @SerialName("TimesNewRoman") TimesNewRoman(R.font.times_new_roman, "Times New Roman"),
+    @JsonProperty("Verdana") @SerialName("Verdana") Verdana(R.font.verdana, "Verdana"),
+    @JsonProperty("Ubuntu") @SerialName("Ubuntu") Ubuntu(R.font.ubuntu_regular, "Ubuntu"),
+    @JsonProperty("Comic") @SerialName("Comic") Comic(R.font.comic_sans, "Comic Sans"),
+    @JsonProperty("Poppins") @SerialName("Poppins") Poppins(R.font.poppins_regular, "Poppins"),
+}
+
+@Serializable
 data class SaveCaptionStyle(
     @JsonProperty("foregroundColor") @SerialName("foregroundColor") var foregroundColor: Int,
     @JsonProperty("backgroundColor") @SerialName("backgroundColor") var backgroundColor: Int,
@@ -70,7 +91,7 @@ data class SaveCaptionStyle(
     @OptIn(UnstableApi::class)
     @JsonProperty("edgeType") @SerialName("edgeType") var edgeType: @CaptionStyleCompat.EdgeType Int,
     @JsonProperty("edgeColor") @SerialName("edgeColor") var edgeColor: Int,
-    @FontRes @JsonProperty("typeface") @SerialName("typeface") var typeface: Int?,
+    @JsonProperty("font") @SerialName("font") var font: SubtitleFont? = null,
     @JsonProperty("typefaceFilePath") @SerialName("typefaceFilePath") var typefaceFilePath: String?,
     @JsonProperty("elevation") @SerialName("elevation") var elevation: Int, // in dp
     @JsonProperty("fixedTextSize") @SerialName("fixedTextSize") var fixedTextSize: Float?, // in sp
@@ -130,7 +151,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
         }
 
         fun Cue.Builder.applyStyle(style: SaveCaptionStyle): Cue.Builder {
-            val edgeSize = style.edgeSize
+            val edgeSize = style.edgeSize ?: 0.0f
 
             /*
             This is old code for only applying on non null
@@ -151,7 +172,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
             // 2. apply edge
             text?.let { text ->
                 val customSpan = SpannableString.valueOf(text)
-                if (edgeSize != null) {
+                if (edgeSize > 0.0f) {
                     customSpan.setSpan(
                         OutlineSpan(edgeSize), 0, customSpan.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -186,9 +207,9 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
             // 4. apply radius
             text?.let { text ->
                 val customSpan = SpannableString.valueOf(text)
-                val radius = style.backgroundRadius
+                val radius = style.backgroundRadius ?: 0.0f
 
-                if (radius != null && style.backgroundColor != Color.TRANSPARENT) {
+                if (radius > 0.0f && style.backgroundColor != Color.TRANSPARENT) {
                     val styleSpan = RoundedBackgroundColorSpan(
                         style.backgroundColor,
                         this.textAlignment ?: Layout.Alignment.ALIGN_CENTER,
@@ -217,22 +238,22 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
         private fun Context.fromSaveToStyle(data: SaveCaptionStyle): CaptionStyleCompat {
             return CaptionStyleCompat(
                 data.foregroundColor,
-                // we actually override with a custom span when backgroundRadius != null
-                if (data.backgroundRadius == null) data.backgroundColor else Color.TRANSPARENT,
+                data.backgroundColor,
                 data.windowColor,
                 data.edgeType,
                 data.edgeColor,
                 data.typefaceFilePath?.let {
                     try {
                         // RuntimeException: Font asset not found
+                        // Fuck android, they have no good way to load a font from a uri without a copy
                         Typeface.createFromFile(File(it))
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         null
                     }
-                } ?: data.typeface?.let {
+                } ?: data.font?.let { font ->
                     ResourcesCompat.getFont(
                         this,
-                        it
+                        font.resource
                     )
                 }
                 ?: Typeface.SANS_SERIF
@@ -264,17 +285,18 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
         }
 
         fun getCurrentSavedStyle(): SaveCaptionStyle {
-            return cachedSubtitleStyle ?: (getKey<SaveCaptionStyle>(SUBTITLE_KEY) ?: SaveCaptionStyle(
-                foregroundColor = getDefColor(0),
-                backgroundColor = getDefColor(2),
-                windowColor = getDefColor(3),
-                edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE,
-                edgeColor = getDefColor(1),
-                typeface = null,
-                typefaceFilePath = null,
-                elevation = DEF_SUBS_ELEVATION,
-                fixedTextSize = null,
-            )).also { cachedSubtitleStyle = it }
+            return cachedSubtitleStyle ?: (getKey<SaveCaptionStyle>(SUBTITLE_KEY)
+                ?: SaveCaptionStyle(
+                    foregroundColor = getDefColor(0),
+                    backgroundColor = getDefColor(2),
+                    windowColor = getDefColor(3),
+                    edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE,
+                    edgeColor = getDefColor(1),
+                    font = null,
+                    typefaceFilePath = null,
+                    elevation = DEF_SUBS_ELEVATION,
+                    fixedTextSize = null,
+                )).also { cachedSubtitleStyle = it }
         }
 
         private fun Context.getSavedFonts(): List<File> {
@@ -671,7 +693,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     savedFontTypes.indexOfFirst { it.absolutePath == state.typefaceFilePath }
                         .let { index ->
                             if (index == -1)
-                                fontTypes.indexOfFirst { it.first == state.typeface }
+                                fontTypes.indexOfFirst { it.first == state.font?.resource }
                             else index + fontTypes.size
                         }
 
@@ -684,18 +706,18 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     dismissCallback
                 ) { index ->
                     if (index < fontTypes.size) {
-                        state.typeface = fontTypes[index].first
+                        state.font = SubtitleFont.entries.firstOrNull { it.resource == fontTypes[index].first }
                         state.typefaceFilePath = null
                     } else {
                         state.typefaceFilePath = savedFontTypes[index - fontTypes.size].absolutePath
-                        state.typeface = null
+                        state.font = null
                     }
                     textView.context.updateState()
                 }
             }
 
             subsFont.setOnLongClickListener { textView ->
-                state.typeface = null
+                state.font = null
                 state.typefaceFilePath = null
                 textView.context.updateState()
                 showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)

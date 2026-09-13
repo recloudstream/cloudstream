@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream4.compose
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /*
@@ -39,18 +41,30 @@ fun Modifier.rounded(): Modifier =
 fun Modifier.circle(): Modifier =
     clip(CircleShape)
 
+@Composable
+fun Modifier.circleBorder(size: Dp): Modifier =
+    this.size(size)
+        .border(
+            2.dp,
+            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
+            CircleShape
+        )
+        .circle()
+
+
 /**
  * If we should have outlines on items when focused by default, this should be false for desktop
  * as we do not use a dpad for that
  * */
-val LocalFocusOutlineDefault: ProvidableCompositionLocal<Boolean> = staticCompositionLocalOf { true }
+val LocalFocusOutlineDefault: ProvidableCompositionLocal<Boolean> =
+    staticCompositionLocalOf { true }
 
 @Composable
 fun Modifier.focusOutline(
-    enabled : Boolean = LocalFocusOutlineDefault.current,
+    enabled: Boolean = LocalFocusOutlineDefault.current,
     shape: Shape = RoundedShape()
 ): Modifier {
-    if(!enabled) return this
+    if (!enabled) return this
 
     var hasFocus by remember { mutableStateOf(false) }
 

@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
@@ -39,5 +41,46 @@ abstract class BaseComposeFragment : Fragment(), Screen {
             padLeft = isLayout(TV or EMULATOR),
             padBottom = isLandscape()
         )
+    }
+}
+
+abstract class BaseDialogComposeFragment : DialogFragment(), Screen {
+    var systemBarsAddPadding = isLayout(TV or EMULATOR)
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = createComposeView(inflater, container, savedInstanceState)
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        dialog?.window?.decorView?.let { view ->
+            fixSystemBarsPadding(
+                view,
+                padLeft = systemBarsAddPadding,
+                padBottom = systemBarsAddPadding || isLandscape()
+            )
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setWindowAnimations(R.style.DialogFullscreenPlayer)
+    }
+
+    override fun getTheme(): Int {
+        return R.style.DialogFullscreenPlayer
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.decorView?.let { view ->
+            fixSystemBarsPadding(
+                view,
+                padLeft = systemBarsAddPadding,
+                padBottom = systemBarsAddPadding || isLandscape()
+            )
+        }
     }
 }

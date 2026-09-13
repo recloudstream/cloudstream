@@ -11,10 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.lagradost.cloudstream4.compose.ColorCircle
+import com.lagradost.cloudstream4.compose.ColorDialog
+import com.mihon.material.BaseSliderItem
 import com.mihon.presentation.settings.widget.EditTextPreferenceWidget
 import com.mihon.presentation.settings.widget.InfoWidget
 import com.mihon.presentation.settings.widget.ListPreferenceWidget
@@ -25,7 +31,6 @@ import com.mihon.presentation.settings.widget.SwitchPreferenceWidget
 import com.mihon.presentation.settings.widget.TextPreferenceWidget
 import com.mihon.presentation.settings.widget.TitleFontSize
 import kotlinx.coroutines.launch
-import com.mihon.material.BaseSliderItem
 
 val LocalPreferenceHighlighted = compositionLocalOf(structuralEqualityPolicy()) { false }
 val LocalPreferenceMinHeight = compositionLocalOf(structuralEqualityPolicy()) { 56.dp }
@@ -78,6 +83,51 @@ internal fun PreferenceItem(
                     },
                 )
             }
+
+            is Preference.PreferenceItem.BasicSwitchPreference -> {
+                SwitchPreferenceWidget(
+                    title = item.title,
+                    subtitle = item.subtitle,
+                    icon = item.icon,
+                    checked = item.value,
+                    onCheckedChanged = { newValue ->
+                        scope.launch {
+                            item.onValueChanged(newValue)
+                        }
+                    },
+                )
+            }
+
+            is Preference.PreferenceItem.BasicColorPreference -> {
+                var isDialogShown by remember { mutableStateOf(false) }
+
+                TextPreferenceWidget(
+                    title = item.title,
+                    subtitle = item.subtitle,
+                    icon = item.icon,
+                    onPreferenceClick = {
+                        isDialogShown = true
+                    },
+                    widget = {
+                        ColorCircle(item.value, size = 30.dp)
+                    }
+                )
+
+                if (isDialogShown) {
+                    ColorDialog(
+                        title = item.title,
+                        color = item.value,
+                        dismiss = { isDialogShown = false },
+                        confirm = { color ->
+                            isDialogShown = false
+                            scope.launch {
+                                item.onValueChanged(color)
+                            }
+                        }
+                    )
+                }
+            }
+
             is Preference.PreferenceItem.SliderPreference -> {
                 BaseSliderItem(
                     value = item.value,
@@ -85,7 +135,8 @@ internal fun PreferenceItem(
                     steps = item.steps,
                     title = item.title,
                     subtitle = item.subtitle,
-                    valueString = item.valueString.takeUnless { it.isNullOrEmpty() } ?: item.value.toString(),
+                    valueString = item.valueString.takeUnless { it.isNullOrEmpty() }
+                        ?: item.value.toString(),
                     onChange = {
                         scope.launch {
                             item.onValueChanged(it)
@@ -99,6 +150,7 @@ internal fun PreferenceItem(
                     icon = item.icon
                 )
             }
+
             is Preference.PreferenceItem.ListPreference<*> -> {
                 val value by item.preference.collectAsState()
                 ListPreferenceWidget(
@@ -117,6 +169,7 @@ internal fun PreferenceItem(
                     },
                 )
             }
+
             is Preference.PreferenceItem.BasicListPreference -> {
                 ListPreferenceWidget(
                     value = item.value,
@@ -124,9 +177,16 @@ internal fun PreferenceItem(
                     subtitle = item.subtitleProvider(item.value, item.entries),
                     icon = item.icon,
                     entries = item.entries,
-                    onValueChange = { scope.launch { item.onValueChanged(it) } },
+                    onValueChange = { newValue ->
+                        scope.launch {
+                            item.internalOnValueChanged(
+                                newValue
+                            )
+                        }
+                    },
                 )
             }
+
             is Preference.PreferenceItem.MultiSelectListPreference<*> -> {
                 val values by item.preference.collectAsState()
                 MultiSelectListPreferenceWidget(
@@ -144,6 +204,7 @@ internal fun PreferenceItem(
                     },
                 )
             }
+
             is Preference.PreferenceItem.TextPreference -> {
                 TextPreferenceWidget(
                     title = item.title,
@@ -153,6 +214,7 @@ internal fun PreferenceItem(
                     onPreferenceClick = item.onClick,
                 )
             }
+
             is Preference.PreferenceItem.EditTextPreference -> {
                 val values by item.preference.collectAsState()
                 EditTextPreferenceWidget(
@@ -180,6 +242,7 @@ internal fun PreferenceItem(
             is Preference.PreferenceItem.InfoPreference -> {
                 InfoWidget(text = item.title)
             }
+
             is Preference.PreferenceItem.CustomPreference -> {
                 item.content()
             }
