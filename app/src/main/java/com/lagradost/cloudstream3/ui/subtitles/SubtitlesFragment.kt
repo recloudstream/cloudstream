@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.annotation.FontRes
 import androidx.annotation.OptIn
 import androidx.annotation.Px
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.media3.common.text.Cue
@@ -271,26 +272,28 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
             }
         }
 
-        private var cachedSubtitleStyle: SaveCaptionStyle? = null
-
         fun Context.saveStyle(style: SaveCaptionStyle) {
-            cachedSubtitleStyle = style
+            if(subtitleStyleState.value !== style) {
+                subtitleStyleState.value = style
+            }
             this.setKey(SUBTITLE_KEY, style)
         }
 
+        val defaultSubtitleStyle = SaveCaptionStyle(
+            foregroundColor = getDefColor(0),
+            backgroundColor = getDefColor(2),
+            windowColor = getDefColor(3),
+            edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE,
+            edgeColor = getDefColor(1),
+            font = null,
+            typefaceFilePath = null,
+            elevation = DEF_SUBS_ELEVATION,
+            fixedTextSize = null,
+        )
+        val subtitleStyleState = mutableStateOf((getKey<SaveCaptionStyle>(SUBTITLE_KEY) ?: defaultSubtitleStyle))
+
         fun getCurrentSavedStyle(): SaveCaptionStyle {
-            return cachedSubtitleStyle ?: (getKey<SaveCaptionStyle>(SUBTITLE_KEY)
-                ?: SaveCaptionStyle(
-                    foregroundColor = getDefColor(0),
-                    backgroundColor = getDefColor(2),
-                    windowColor = getDefColor(3),
-                    edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE,
-                    edgeColor = getDefColor(1),
-                    font = null,
-                    typefaceFilePath = null,
-                    elevation = DEF_SUBS_ELEVATION,
-                    fixedTextSize = null,
-                )).also { cachedSubtitleStyle = it }
+            return subtitleStyleState.value
         }
 
         private fun Context.getSavedFonts(): List<File> {

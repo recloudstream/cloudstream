@@ -2,10 +2,15 @@ package com.lagradost.cloudstream3.ui.subtitles
 
 import android.text.SpannableString
 import androidx.annotation.OptIn
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
@@ -31,29 +36,100 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.CustomDecoder
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyleEvent
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.defaultSubtitleStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getCurrentSavedStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.saveStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.subtitleStyleState
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJsonLiteral
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
+import com.lagradost.cloudstream4.compose.ActionDialog
 import com.mihon.common.preference.AndroidPreferenceStore
 import com.mihon.common.preference.DataPreferenceStore
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
-import kotlin.collections.toSet
 
 object SubtitlesScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.subtitles_settings)
 
+    // For ux purposes we also want to show a diff of what will be reset
+    private val diff = arrayOf<Pair<Int, (SaveCaptionStyle) -> Any?>>(
+        R.string.subs_font to { style -> style.font },
+        R.string.subs_text_color to { state -> state.foregroundColor },
+        R.string.subs_font_size to { state -> state.fixedTextSize },
+        R.string.uppercase_all_subtitles to { state -> state.upperCase },
+        R.string.all_subtitles_bold to { state -> state.bold },
+        R.string.all_subtitles_italic to { state -> state.italic },
+        R.string.subs_edge_type to { state -> state.edgeType },
+        R.string.subs_outline_color to { state -> state.edgeColor },
+        R.string.subs_edge_size to { state -> state.edgeSize },
+        R.string.subs_window_color to { state -> state.windowColor },
+        R.string.subs_background_color to { state -> state.backgroundColor },
+        R.string.background_radius to { state -> state.backgroundRadius },
+        R.string.subs_subtitle_alignment to { state -> state.alignment },
+        R.string.subs_subtitle_elevation to { state -> state.elevation },
+        R.string.subtitles_remove_captions to { state -> state.removeCaptions },
+        R.string.subtitles_remove_bloat to { state -> state.removeBloat },
+    )
+
+    @Composable
+    override fun RowScope.AppBarAction() {
+        var dialogShown by remember { mutableStateOf(false) }
+        val initialState = remember { getCurrentSavedStyle() }
+        var currentState by subtitleStyleState
+
+        if (dialogShown) {
+            ActionDialog(
+                title = stringResource(R.string.subs_default_reset_toast),
+                text = diff.filter { (_, f) -> f(defaultSubtitleStyle) != f(currentState) }
+                    .map { (name, _) -> stringResource(name) }.joinToString(separator = "\n"),
+                confirmText = stringResource(R.string.reset_btn),
+                dismissText = stringResource(R.string.dismiss),
+                confirm = {
+                    currentState = defaultSubtitleStyle
+                    dialogShown = false
+                },
+                dismiss = {
+                    dialogShown = false
+                })
+        }
+
+        // Undo, current -> initial last saved value
+        AnimatedVisibility(currentState != initialState) {
+            IconButton(onClick = {
+                currentState = initialState
+            }) {
+                Icon(
+                    painter = painterResource(R.drawable.undo_24px),
+                    contentDescription = stringResource(R.string.reset_btn),
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+
+        // Reset, current -> default
+        AnimatedVisibility(defaultSubtitleStyle != currentState) {
+            IconButton(onClick = {
+                dialogShown = true
+            }) {
+                Icon(
+                    painter = painterResource(R.drawable.reset_colors_24px),
+                    contentDescription = stringResource(R.string.subs_default_reset_toast),
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+    }
+
     @OptIn(UnstableApi::class)
     @Composable
     override fun getPreferences(): List<Preference> {
         val initialState = remember { getCurrentSavedStyle() }
-        var state by remember { mutableStateOf(initialState) }
+        var state by subtitleStyleState
         val context = LocalContext.current
 
         SideEffect(state) {
@@ -63,7 +139,7 @@ object SubtitlesScreen : SearchableSettings {
 
         DisposableEffect(Unit) {
             onDispose {
-                if(initialState != state) {
+                if (initialState != state) {
                     applyStyleEvent.invoke(state)
                 }
             }
