@@ -1,0 +1,16 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transparent"/>
+            <corners android:radius="@dimen/rounded_button_radius"/>
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <solid android:color="?attr/colorPrimary"/>
+                <corners android:radius="@dimen/rounded_button_radius"/>
+            </shape>
+        </clip>
+    </item>
+</layer-list>
