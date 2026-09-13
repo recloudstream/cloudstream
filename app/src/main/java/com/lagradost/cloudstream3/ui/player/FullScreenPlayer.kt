@@ -656,9 +656,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     private var dualSubtitlesDialog: Dialog? = null
+    private var dualSubWasPlaying = false
 
     private fun showDualSubtitlesDialog() {
         val ctx = context ?: return
+        dualSubWasPlaying = player.getIsPlaying()
         player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
 
         val primarySub = player.getCurrentPreferredSubtitle()
@@ -730,6 +732,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             dialog.setOnDismissListener {
                 dualSubtitlesDialog = null
+                if (dualSubWasPlaying) {
+                    player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+                }
                 activity?.hideSystemUI()
             }
         }

@@ -32,7 +32,9 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
+import com.lagradost.cloudstream3.CommonActivity.screenHeight
 import com.lagradost.cloudstream3.CommonActivity.screenHeightWithOrientation
+import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.CommonActivity.screenWidthWithOrientation
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -1072,15 +1074,22 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     }
 
     private fun isValidTouch(rawX: Float, rawY: Float): Boolean {
+        val holder = playerView.playerHolder ?: return true
+        val viewW = holder.width.takeIf { it > 0 } ?: screenWidth
+        val viewH = holder.height.takeIf { it > 0 } ?: screenHeight
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val holder = playerView.playerHolder ?: return true
-            val insets = holder.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            val validHeight = rawY > insets.top && rawY < screenHeightWithOrientation - insets.bottom
-            val validWidth = rawX > insets.left && rawX < screenWidthWithOrientation - insets.right
-            return validHeight && validWidth
+            val rootInsets = holder.rootWindowInsets
+            if (rootInsets != null) {
+                val visibleInsets = rootInsets.getInsets(WindowInsets.Type.systemBars())
+                val validHeight = rawY >= visibleInsets.top && rawY <= viewH - visibleInsets.bottom
+                val validWidth = rawX >= visibleInsets.left && rawX <= viewW - visibleInsets.right
+                return validHeight && validWidth
+            }
+            return true
         }
 
-        return rawY > context.getStatusBarHeight() && rawX < screenWidthWithOrientation
+        return rawY >= context.getStatusBarHeight() && rawX <= viewW
     }
 
     private fun handleGesture(view: View, event: MotionEvent): Boolean {
