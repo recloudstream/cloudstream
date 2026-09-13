@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.text.Layout
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.util.DisplayMetrics
 import android.util.TypedValue
@@ -169,22 +170,18 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
             // instead we use the inherit size of the subtitle view
             setTextSize(Cue.DIMEN_UNSET, Cue.TYPE_UNSET)
 
-            // 2. apply edge
             text?.let { text ->
-                val customSpan = SpannableString.valueOf(text)
+                val textSpanBuilder = SpannableStringBuilder(text)
+
+                // 2. apply edge
                 if (edgeSize > 0.0f) {
-                    customSpan.setSpan(
-                        OutlineSpan(edgeSize), 0, customSpan.length,
+                    textSpanBuilder.setSpan(
+                        OutlineSpan(edgeSize), 0, textSpanBuilder.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                 }
-                setText(customSpan)
-            }
 
-            // 3. apply bold + italic
-            text?.let { text ->
-                val customSpan = SpannableString.valueOf(text)
-
+                // 3. apply bold + italic
                 val typeface = when (style.bold to style.italic) {
                     (true to true) -> Typeface.BOLD_ITALIC
                     (true to false) -> Typeface.BOLD
@@ -196,19 +193,14 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                 }
                 if (typeface != Typeface.NORMAL) {
                     val styleSpan = StyleSpan(typeface)
-                    customSpan.setSpan(
-                        styleSpan, 0, customSpan.length,
+                    textSpanBuilder.setSpan(
+                        styleSpan, 0, textSpanBuilder.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                 }
-                setText(customSpan)
-            }
 
-            // 4. apply radius
-            text?.let { text ->
-                val customSpan = SpannableString.valueOf(text)
+                // 4. apply radius
                 val radius = style.backgroundRadius ?: 0.0f
-
                 if (radius > 0.0f && style.backgroundColor != Color.TRANSPARENT) {
                     val styleSpan = RoundedBackgroundColorSpan(
                         style.backgroundColor,
@@ -216,19 +208,21 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                         2.0F + radius * 0.5f,
                         radius
                     )
-                    customSpan.setSpan(
-                        styleSpan, 0, customSpan.length,
+                    textSpanBuilder.setSpan(
+                        styleSpan, 0, textSpanBuilder.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                 }
-                setText(customSpan)
-            }
 
-            // 5. remove captions
-            text?.let { text ->
+                // 5. remove captions but ensure that styling is kept
+                // Just doing .replace removes all styling!
                 if (style.removeCaptions) {
-                    setText(text.replace(captionRegex, ""))
+                    for (match in captionRegex.findAll(text).toList().asReversed()) {
+                        textSpanBuilder.delete(match.range.first, match.range.last + 1)
+                    }
                 }
+
+                this.setText(textSpanBuilder)
             }
 
             // 6. set alignment
