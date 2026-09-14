@@ -233,7 +233,7 @@ object SettingsPlayerScreen : SearchableSettings {
                         title = stringResource(R.string.double_tap_to_seek_amount_settings),
                         icon = painterResource(R.drawable.go_forward_30),
                         valueRange = 5..60,
-                        steps = 10,
+                        //steps = 10,
                         onValueChanged = settings.player.doubleTapTime::set
                     ),
                 )
@@ -248,7 +248,7 @@ object SettingsPlayerScreen : SearchableSettings {
                         subtitle = stringResource(R.string.android_tv_interface_on_seek_settings_summary),
                         icon = painterResource(R.drawable.go_forward_30),
                         valueRange = 5..60,
-                        steps = 10,
+                        //steps = 10,
                         onValueChanged = settings.player.tvSeekOnTime::set
                     ),
                     Preference.PreferenceItem.SliderPreference(
@@ -257,7 +257,7 @@ object SettingsPlayerScreen : SearchableSettings {
                         subtitle = stringResource(R.string.android_tv_interface_off_seek_settings_summary),
                         icon = painterResource(R.drawable.go_forward_30),
                         valueRange = 5..60,
-                        steps = 10,
+                        //steps = 10,
                         onValueChanged = settings.player.tvSeekOffTime::set
                     ),
                 )

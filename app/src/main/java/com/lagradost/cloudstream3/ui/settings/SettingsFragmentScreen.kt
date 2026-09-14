@@ -70,6 +70,7 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.TV
 import com.lagradost.cloudstream4.compose.circle
+import com.lagradost.cloudstream4.compose.circleBorder
 import com.lagradost.cloudstream4.compose.focusOutline
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
@@ -229,23 +230,12 @@ object SettingsFragmentScreen : Screen {
                         account.customImage ?: profileImages.getOrNull(account.defaultImageIndex)
                         ?: profileImages.first()
 
-                    Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .border(
-                                2.dp,
-                                MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
-                                CircleShape
-                            )
-                            .circle(),
-                    ) {
-                        AsyncImage(
-                            contentScale = ContentScale.Crop,
-                            model = image,
-                            modifier = Modifier.fillMaxSize(),
-                            contentDescription = null,
-                        )
-                    }
+                    AsyncImage(
+                        contentScale = ContentScale.Crop,
+                        model = image,
+                        modifier = Modifier.circleBorder(50.dp),
+                        contentDescription = null,
+                    )
                     Spacer(modifier = Modifier.width(MaterialTheme.padding.medium))
                     Column {
                         Text(

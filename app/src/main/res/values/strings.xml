@@ -115,6 +115,7 @@
     <string name="subs_outline_color">Outline Color</string>
     <string name="subs_background_color">Background Color</string>
     <string name="subs_window_color">Window Color</string>
+    <string name="subs_edge">Edge</string>
     <string name="subs_edge_type">Edge Type</string>
     <string name="subs_subtitle_elevation">Subtitle Elevation</string>
     <string name="subs_font">Font</string>
@@ -488,7 +489,7 @@
     <string name="error_invalid_url">Invalid URL</string>
     <string name="error">Error</string>
     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
-    <string name="subtitles_remove_bloat">Remove bloat from subtitles</string>
+    <string name="subtitles_remove_bloat">Remove ads from subtitles</string>
     <string name="subtitles_filter_lang">Filter by preferred media language</string>
     <string name="extras">Extras</string>
     <string name="trailer">Trailer</string>
@@ -745,6 +746,7 @@
     <string name="all_subtitles_bold">Make all subtitles bold</string>
     <string name="all_subtitles_italic">Make all subtitles italic</string>
     <string name="background_radius">Background Radius</string>
+    <string name="background">Background</string>
     <string name="download_parallel_settings_des">How many different items that can be downloaded in parallel</string>
     <string name="parallel_downloads">Parallel downloads</string>
     <string name="concurrent_connections">Concurrent connections</string>

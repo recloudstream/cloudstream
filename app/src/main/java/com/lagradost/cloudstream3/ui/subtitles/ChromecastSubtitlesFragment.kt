@@ -11,6 +11,8 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.OptIn
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.mutableStateOf
 import androidx.media3.common.text.Cue
 import androidx.media3.common.util.UnstableApi
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -44,15 +46,16 @@ import kotlinx.serialization.Serializable
 const val CHROME_SUBTITLE_KEY = "chome_subtitle_settings"
 
 @Serializable
+@Immutable
 data class SaveChromeCaptionStyle(
-    @JsonProperty("fontFamily") @SerialName("fontFamily") var fontFamily: String? = null,
-    @JsonProperty("fontGenericFamily") @SerialName("fontGenericFamily") var fontGenericFamily: Int? = null,
-    @JsonProperty("backgroundColor") @SerialName("backgroundColor") var backgroundColor: Int = 0x00FFFFFF, // transparent
-    @JsonProperty("edgeColor") @SerialName("edgeColor") var edgeColor: Int = Color.BLACK, // BLACK
-    @JsonProperty("edgeType") @SerialName("edgeType") var edgeType: Int = EDGE_TYPE_OUTLINE,
-    @JsonProperty("foregroundColor") @SerialName("foregroundColor") var foregroundColor: Int = Color.WHITE,
-    @JsonProperty("fontScale") @SerialName("fontScale") var fontScale: Float = 1.05f,
-    @JsonProperty("windowColor") @SerialName("windowColor") var windowColor: Int = Color.TRANSPARENT,
+    @JsonProperty("fontFamily") @SerialName("fontFamily") val fontFamily: String? = null,
+    @JsonProperty("fontGenericFamily") @SerialName("fontGenericFamily") val fontGenericFamily: Int? = null,
+    @JsonProperty("backgroundColor") @SerialName("backgroundColor") val backgroundColor: Int = 0x00FFFFFF, // transparent
+    @JsonProperty("edgeColor") @SerialName("edgeColor") val edgeColor: Int = Color.BLACK, // BLACK
+    @JsonProperty("edgeType") @SerialName("edgeType") val edgeType: Int = EDGE_TYPE_OUTLINE,
+    @JsonProperty("foregroundColor") @SerialName("foregroundColor") val foregroundColor: Int = Color.WHITE,
+    @JsonProperty("fontScale") @SerialName("fontScale") val fontScale: Float = 1.05f,
+    @JsonProperty("windowColor") @SerialName("windowColor") val windowColor: Int = Color.TRANSPARENT,
 )
 
 class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBinding>(
@@ -92,6 +95,9 @@ class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBindi
         }
 
         fun Context.saveStyle(style: SaveChromeCaptionStyle) {
+            if (chromeCastSubtitleState.value !== style) {
+                chromeCastSubtitleState.value = style
+            }
             this.setKey(CHROME_SUBTITLE_KEY, style)
         }
 
@@ -101,10 +107,13 @@ class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBindi
         }
 
         fun getCurrentSavedStyle(): SaveChromeCaptionStyle {
-            return getKey<SaveChromeCaptionStyle>(CHROME_SUBTITLE_KEY) ?: defaultState
+            return chromeCastSubtitleState.value
         }
 
-        private val defaultState = SaveChromeCaptionStyle()
+        val defaultChromeCastSubtitleState = SaveChromeCaptionStyle()
+        val chromeCastSubtitleState = mutableStateOf(
+            getKey<SaveChromeCaptionStyle>(CHROME_SUBTITLE_KEY) ?: defaultChromeCastSubtitleState
+        )
     }
 
     private fun onColorSelected(stuff: Pair<Int, Int>) {
@@ -134,10 +143,10 @@ class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBindi
     private fun setColor(id: Int, color: Int?) {
         val realColor = color ?: getDefColor(id)
         when (id) {
-            0 -> state.foregroundColor = realColor
-            1 -> state.edgeColor = realColor
-            2 -> state.backgroundColor = realColor
-            3 -> state.windowColor = realColor
+            0 -> state = state.copy(foregroundColor = realColor)
+            1 -> state = state.copy(edgeColor = realColor)
+            2 -> state = state.copy(backgroundColor = realColor)
+            3 -> state = state.copy(windowColor = realColor)
 
             else -> Unit
         }
@@ -240,13 +249,13 @@ class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBindi
                 false,
                 dismissCallback
             ) { index ->
-                state.edgeType = edgeTypes.map { it.first }[index]
+                state = state.copy(edgeType = edgeTypes.map { it.first }[index])
                 updateState()
             }
         }
 
         binding.subsEdgeType.setOnLongClickListener {
-            state.edgeType = defaultState.edgeType
+            state = state.copy(edgeType = defaultChromeCastSubtitleState.edgeType)
             updateState()
             showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
@@ -281,13 +290,13 @@ class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBindi
                 false,
                 dismissCallback
             ) { index ->
-                state.fontScale = fontSizes.map { it.first }[index]
+                state = state.copy(fontScale = fontSizes.map { it.first }[index])
                 //textView.context.updateState() // font size not changed
             }
         }
 
         binding.subsFontSize.setOnLongClickListener { _ ->
-            state.fontScale = defaultState.fontScale
+            state = state.copy(fontScale = defaultChromeCastSubtitleState.fontScale)
             //textView.context.updateState() // font size not changed
             showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
@@ -314,12 +323,12 @@ class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBindi
                 false,
                 dismissCallback
             ) { index ->
-                state.fontFamily = fontTypes.map { it.first }[index]
+                state = state.copy(fontFamily = fontTypes.map { it.first }[index])
                 updateState()
             }
         }
         binding.subsFont.setOnLongClickListener { _ ->
-            state.fontFamily = defaultState.fontFamily
+            state = state.copy(fontFamily = defaultChromeCastSubtitleState.fontFamily)
             updateState()
             showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
