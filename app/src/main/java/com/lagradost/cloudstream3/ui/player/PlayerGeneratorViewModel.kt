@@ -333,6 +333,12 @@ class PlayerGeneratorViewModel : ViewModel() {
             }
     }
 
+    fun removeSubtitles(file: Set<SubtitleData>) {
+        modifyState {
+            copy(subtitles = (subtitles - file).toPersistentSet())
+        }
+    }
+
     private var currentJob: Job? = null
     private var currentStampJob: Job? = null
 

@@ -257,6 +257,8 @@ interface IPlayer {
     fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean // returns true if the player requires a reload, null for nothing
     fun getCurrentPreferredSubtitle(): SubtitleData?
 
+    fun loadSubtitleCues(subtitle: SubtitleData): List<SubtitleCue> = emptyList()
+
     fun handleEvent(event: CSPlayerEvent, source: PlayerEventSource = PlayerEventSource.UI)
 
     fun onStop()

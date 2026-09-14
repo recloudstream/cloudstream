@@ -12,6 +12,8 @@ import android.os.Looper
 import android.util.Log
 import android.util.Rational
 import android.widget.FrameLayout
+import com.lagradost.cloudstream3.CloudStreamApp
+import okhttp3.Request
 import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
 import androidx.annotation.OptIn
@@ -558,6 +560,69 @@ class CS3IPlayer : IPlayer {
 
     override fun getSubtitleCues(): List<SubtitleCue> {
         return currentSubtitleDecoder?.getSubtitleCues() ?: emptyList()
+    }
+
+    override fun loadSubtitleCues(subtitle: SubtitleData): List<SubtitleCue> {
+        val bytes = fetchSubtitleBytes(subtitle) ?: return emptyList()
+        val decoder = CustomDecoder(Format.Builder().setSampleMimeType(subtitle.mimeType).build())
+        decoder.parseToLegacySubtitle(bytes, 0, bytes.size)
+        return synchronized(decoder.currentSubtitleCues) { decoder.currentSubtitleCues.toList() }
+    }
+
+    private fun fetchSubtitleFromUrl(subtitle: SubtitleData): ByteArray? {
+        val fixedUrl = subtitle.getFixedUrl()
+        val reqHeaders = subtitle.headers.toMutableMap()
+        if (reqHeaders.keys.none { it.equals("User-Agent", ignoreCase = true) }) {
+            reqHeaders["User-Agent"] = USER_AGENT
+        }
+        if (reqHeaders.keys.none { it.equals("Referer", ignoreCase = true) }) {
+            try {
+                val uri = Uri.parse(fixedUrl)
+                if (uri.scheme != null && uri.host != null) {
+                    reqHeaders["Referer"] = "${uri.scheme}://${uri.host}/"
+                }
+            } catch (_: Throwable) {}
+        }
+        return app.baseClient.newCall(
+            Request.Builder().url(fixedUrl).apply {
+                reqHeaders.forEach { (key, value) -> addHeader(key, value) }
+            }.build()
+        ).execute().use { resp ->
+            val body = resp.body.bytes()
+            if (body.size > 200) {
+                val preview = String(body.take(200).toByteArray())
+                if (preview.contains("<html", ignoreCase = true) || preview.contains("Just a moment", ignoreCase = true)) {
+                    Log.e(TAG, "Subtitle response blocked by Cloudflare: $fixedUrl")
+                    null
+                } else body
+            } else body
+        }
+    }
+
+    private fun fetchSubtitleBytes(subtitle: SubtitleData): ByteArray? {
+        return when (subtitle.origin) {
+            SubtitleOrigin.URL -> fetchSubtitleFromUrl(subtitle)
+            SubtitleOrigin.DOWNLOADED_FILE -> {
+                val rawUrl = subtitle.url
+                try {
+                    val file = File(rawUrl)
+                    if (file.exists() && file.isFile) {
+                        return file.readBytes()
+                    }
+                    val uri = Uri.parse(rawUrl)
+                    if (uri.scheme == "file") {
+                        val f = File(uri.path ?: "")
+                        if (f.exists() && f.isFile) return f.readBytes()
+                    }
+                    val stream = CloudStreamApp.context?.contentResolver?.openInputStream(uri)
+                    stream?.use { it.readBytes() }
+                } catch (t: Throwable) {
+                    logError(t)
+                    null
+                }
+            }
+            SubtitleOrigin.EMBEDDED_IN_VIDEO -> null
+        }
     }
 
     override fun getCurrentPreferredSubtitle(): SubtitleData? {
@@ -1726,7 +1791,9 @@ class CS3IPlayer : IPlayer {
     ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
         val activeSubtitles = ArrayList<SubtitleData>()
         val subSources = subHelper.getAllSubtitles().mapNotNull { sub ->
-            val subConfig = MediaItem.SubtitleConfiguration.Builder(sub.getFixedUrl().toUri())
+            val fixedUrl = sub.getFixedUrl()
+            val uri = if (fixedUrl.startsWith("/")) File(fixedUrl).toUri() else fixedUrl.toUri()
+            val subConfig = MediaItem.SubtitleConfiguration.Builder(uri)
                 .setMimeType(sub.mimeType)
                 .setLanguage("_${sub.name}")
                 .setId(sub.getId())
