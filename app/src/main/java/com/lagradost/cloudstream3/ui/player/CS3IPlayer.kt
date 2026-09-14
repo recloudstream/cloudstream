@@ -46,7 +46,9 @@ import androidx.media3.exoplayer.DecoderCounters
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.DefaultLivePlaybackSpeedControl
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
 import androidx.media3.exoplayer.Renderer.STATE_STARTED
@@ -161,6 +163,9 @@ class CS3IPlayer : IPlayer {
 
     private var ignoreSSL: Boolean = true
     private var playBackSpeed: Float = 1.0f
+
+    /** Shared compressor — created once, injected into the audio sink, params updated live. */
+    val compressor = DynamicRangeCompressor()
 
     private var lastMuteVolume: Float = 1.0f
 
@@ -1111,7 +1116,7 @@ class CS3IPlayer : IPlayer {
                     }
 
                     val factory = if (isSoftwareDecodingEnabled) {
-                        FixedNextRenderersFactory(context).apply {
+                        FixedNextRenderersFactory(context, compressor).apply {
                             setEnableDecoderFallback(true)
                             setExtensionRendererMode(
                                 if (isSoftwareDecodingPreferred)
@@ -1122,7 +1127,18 @@ class CS3IPlayer : IPlayer {
                         }
                     } else {
                         // no nextlib = EXTENSION_RENDERER_MODE_OFF
-                        DefaultRenderersFactory(context)
+                        object : DefaultRenderersFactory(context) {
+                            @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+                            override fun buildAudioSink(
+                                ctx: Context,
+                                enableFloatOutput: Boolean,
+                                enableAudioTrackPlaybackParams: Boolean
+                            ) = DefaultAudioSink.Builder(ctx)
+                                .setEnableFloatOutput(enableFloatOutput)
+                                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                                .setAudioProcessors(arrayOf<AudioProcessor>(compressor))
+                                .build()
+                        }
                     }
 
                     val style = CustomDecoder.style
