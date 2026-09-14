@@ -28,7 +28,6 @@ import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
-import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -51,10 +50,6 @@ object SettingsPlayerScreen : SearchableSettings {
                         ?: player::class.simpleName ?: player::class.jvmName)
                 }
         }
-
-        val playerSeekTime by settings.player.doubleTapTime.collectAsState()
-        val tvSeekOnTime by settings.player.tvSeekOnTime.collectAsState()
-        val tvSeekOffTime by settings.player.tvSeekOffTime.collectAsState()
 
         var cacheSize by remember { mutableLongStateOf(0L) }
         var cacheCleared by remember { mutableIntStateOf(0) }
@@ -229,12 +224,11 @@ object SettingsPlayerScreen : SearchableSettings {
                     ),
 
                     Preference.PreferenceItem.SliderPreference(
-                        value = playerSeekTime,
+                        preference = settings.player.doubleTapTime,
                         title = stringResource(R.string.double_tap_to_seek_amount_settings),
                         icon = painterResource(R.drawable.go_forward_30),
                         valueRange = 5..60,
                         //steps = 10,
-                        onValueChanged = settings.player.doubleTapTime::set
                     ),
                 )
             ),
@@ -243,22 +237,20 @@ object SettingsPlayerScreen : SearchableSettings {
                 enabled = isLayout(TV or EMULATOR),
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SliderPreference(
-                        value = tvSeekOnTime,
+                        preference = settings.player.tvSeekOnTime,
                         title = stringResource(R.string.android_tv_interface_on_seek_settings),
                         subtitle = stringResource(R.string.android_tv_interface_on_seek_settings_summary),
                         icon = painterResource(R.drawable.go_forward_30),
                         valueRange = 5..60,
                         //steps = 10,
-                        onValueChanged = settings.player.tvSeekOnTime::set
                     ),
                     Preference.PreferenceItem.SliderPreference(
-                        value = tvSeekOffTime,
+                        preference = settings.player.tvSeekOffTime,
                         title = stringResource(R.string.android_tv_interface_off_seek_settings),
                         subtitle = stringResource(R.string.android_tv_interface_off_seek_settings_summary),
                         icon = painterResource(R.drawable.go_forward_30),
                         valueRange = 5..60,
                         //steps = 10,
-                        onValueChanged = settings.player.tvSeekOffTime::set
                     ),
                 )
             ),

@@ -81,9 +81,6 @@ object SettingsGeneralScreen : SearchableSettings {
             }
 
         val bananas by settings.general.bananas.collectAsState()
-        val parallelDownloads by settings.general.parallelDownloads.collectAsState()
-        val concurrentConnections by settings.general.concurrentConnections.collectAsState()
-        val locale by settings.general.locale.collectAsState()
         val downloadPathVisual by settings.general.downloadPathVisual.collectAsState()
         //val downloadPath by settings.general.downloadPath.collectAsState()
 
@@ -117,14 +114,15 @@ object SettingsGeneralScreen : SearchableSettings {
 
         return persistentListOf(
             Preference.PreferenceGroup(title = stringResource(R.string.extension_language), preferenceItems = persistentListOf(
-                Preference.PreferenceItem.BasicListPreference(
-                    value = locale,
+                Preference.PreferenceItem.ListPreference(
+                    preference = settings.general.locale,
                     entries = appLanguages.associate { (name, code) -> (code to (name to code).nameNextToFlagEmoji()) },
                     title = stringResource(R.string.app_language),
                     icon = painterResource(R.drawable.language_korean_latin_24px),
                     onValueChanged = { value ->
                         settings.general.locale.set(value)
                         activity?.recreate()
+                        return@ListPreference false
                     },
                     subtitleProvider = { v, e -> e[v] ?: getCurrentLocale(LocalContext.current) }
                 ),
@@ -163,19 +161,17 @@ object SettingsGeneralScreen : SearchableSettings {
                     ),
                     Preference.PreferenceItem.SliderPreference(
                         icon = painterResource(R.drawable.arrow_or_edge_24px),
-                        value = parallelDownloads,
+                        preference = settings.general.parallelDownloads,
                         valueRange = 1..10,
                         title = stringResource(R.string.parallel_downloads),
                         subtitle = stringResource(R.string.download_parallel_settings_des),
-                        onValueChanged = settings.general.parallelDownloads::set,
                     ),
                     Preference.PreferenceItem.SliderPreference(
                         icon = painterResource(R.drawable.arrow_and_edge_24px),
-                        value = concurrentConnections,
+                        preference = settings.general.concurrentConnections,
                         valueRange = 1..10,
                         title = stringResource(R.string.concurrent_connections),
                         subtitle = stringResource(R.string.concurrent_connections_settings_des),
-                        onValueChanged = settings.general.concurrentConnections::set,
                     ),
                     Preference.PreferenceItem.TextPreference(
                         title = stringResource(R.string.battery_dialog_title),
@@ -271,7 +267,6 @@ object SettingsGeneralScreen : SearchableSettings {
                     ),
                 )
             ),
-
             Preference.PreferenceItem.TextPreference(
                 title = stringResource(R.string.benene),
                 subtitle = if (bananas == 0) {

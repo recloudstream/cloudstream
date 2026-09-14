@@ -7,8 +7,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +21,7 @@ import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment.Compa
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment.Companion.defaultChromeCastSubtitleState
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment.Companion.saveStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesScreen.SetUpUndoBar
+import com.mihon.common.preference.StatePreferenceStore
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import kotlinx.collections.immutable.persistentListOf
@@ -47,19 +46,7 @@ object ChromecastSubtitlesScreen : SearchableSettings {
     @Composable
     override fun RowScope.AppBarAction() {
         val initialState = remember { chromeCastSubtitleState.value }
-        SetUpUndoBar(
-            diff = diff,
-            initialState = initialState,
-            currentState = chromeCastSubtitleState,
-            default = defaultChromeCastSubtitleState
-        )
-    }
-
-    @Composable
-    override fun getPreferences(): List<Preference> {
-        val initialState = remember { chromeCastSubtitleState.value }
-        var state by remember { chromeCastSubtitleState }
-
+        var state by chromeCastSubtitleState
         val context = LocalContext.current
 
         SideEffect(state) {
@@ -74,25 +61,28 @@ object ChromecastSubtitlesScreen : SearchableSettings {
                 }
             }
         }
-        return getPreferences(state) { updater ->
-            state = updater(state)
-        }
+        SetUpUndoBar(
+            diff = diff,
+            initialState = initialState,
+            currentState = chromeCastSubtitleState,
+            default = defaultChromeCastSubtitleState
+        )
     }
 
-    /** Unfortunately this causes a lot of re-compositions, but what can you do? */
     @Composable
-    fun getPreferences(
-        state : SaveChromeCaptionStyle,
-        update : (SaveChromeCaptionStyle.() -> SaveChromeCaptionStyle) -> Unit
-    ): List<Preference> {
+    override fun getPreferences(): List<Preference> {
+        val store = StatePreferenceStore(chromeCastSubtitleState)
+
         return persistentListOf(
             Preference.PreferenceGroup(
                 title = stringResource(R.string.subs_font),
                 preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.BasicListPreference(
+                    Preference.PreferenceItem.ListPreference(
+                        preference = store.field(SaveChromeCaptionStyle::fontFamily) { newValue ->
+                            copy(fontFamily = newValue)
+                        },
                         icon = painterResource(R.drawable.font_download_24px),
                         title = stringResource(R.string.subs_font),
-                        value = state.fontFamily,
                         entries = persistentMapOf(
                             null to stringResource(R.string.normal),
                             "Droid Sans" to "Droid Sans",
@@ -102,76 +92,68 @@ object ChromecastSubtitlesScreen : SearchableSettings {
                             "Short Stack" to "Short Stack",
                             "Quintessential" to "Quintessential",
                             "Alegreya Sans SC" to "Alegreya Sans SC",
-                        ),
-                        onValueChanged = { newValue ->
-                            update { copy(fontFamily = newValue) }
-                        }),
-                    Preference.PreferenceItem.BasicColorPreference(
+                        )
+                    ),
+                    Preference.PreferenceItem.ColorPreference(
+                        preference = store.field(SaveChromeCaptionStyle::foregroundColor) { newValue ->
+                            copy(foregroundColor = newValue)
+                        },
                         title = stringResource(R.string.subs_text_color),
-                        value = Color(state.foregroundColor),
                         icon = painterResource(R.drawable.format_color_text_24px),
-                        onValueChanged = { newValue ->
-                            update { copy(foregroundColor = newValue.toArgb()) }
-                        }
                     ),
                     Preference.PreferenceItem.SliderPreference(
-                        value = state.fontScale.times(100.0f).roundToInt(),
+                        preference = store.field(
+                            get = { fontScale.times(100.0f).roundToInt() },
+                            set = { newValue -> copy(fontScale = newValue.toFloat() * 0.01f) }),
                         icon = painterResource(R.drawable.text_fields_24px),
                         title = stringResource(R.string.subs_font_size),
                         valueRange = 75..150,
-                        steps = 75/5 - 1,
-                        onValueChanged = { newValue ->
-                            update { copy(fontScale = newValue.toFloat() * 0.01f) }
-                        })
+                        steps = 75 / 5 - 1,
+                    )
                 )
-            ),
-            Preference.PreferenceGroup(
-                title = stringResource(R.string.subs_edge),
-                preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.BasicListPreference(
+            ), Preference.PreferenceGroup(
+                title = stringResource(R.string.subs_edge), preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.ListPreference(
+                        preference = store.field(SaveChromeCaptionStyle::edgeType) { newValue ->
+                            copy(edgeType = newValue)
+                        },
                         icon = painterResource(R.drawable.shadow_24px),
                         title = stringResource(R.string.subs_edge_type),
-                        value = state.edgeType,
                         entries = persistentMapOf(
                             EDGE_TYPE_NONE to stringResource(R.string.subtitles_none),
                             EDGE_TYPE_OUTLINE to stringResource(R.string.subtitles_outline),
                             EDGE_TYPE_DEPRESSED to stringResource(R.string.subtitles_depressed),
                             EDGE_TYPE_DROP_SHADOW to stringResource(R.string.subtitles_shadow),
                             EDGE_TYPE_RAISED to stringResource(R.string.subtitles_raised),
-                        ),
-                        onValueChanged = { newValue ->
-                            update { copy(edgeType = newValue) }
-                        }),
-                    Preference.PreferenceItem.BasicColorPreference(
-                        enabled = state.edgeType != EDGE_TYPE_NONE,
+                        )
+                    ),
+                    Preference.PreferenceItem.ColorPreference(
+                        preference = store.field(SaveChromeCaptionStyle::edgeColor) { newValue ->
+                            copy(edgeColor = newValue)
+                        },
+                        //enabled = state.edgeType != EDGE_TYPE_NONE,
                         title = stringResource(R.string.subs_outline_color),
-                        value = Color(state.edgeColor),
                         icon = painterResource(R.drawable.border_color_24px),
-                        onValueChanged = { newValue ->
-                            update { copy(edgeColor = newValue.toArgb()) }
-                        }
                     ),
-                )),
-            Preference.PreferenceGroup(
-                title = stringResource(R.string.background),
-                preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.BasicColorPreference(
+                )
+            ), Preference.PreferenceGroup(
+                title = stringResource(R.string.background), preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.ColorPreference(
+                        preference = store.field(SaveChromeCaptionStyle::windowColor) { newValue ->
+                            copy(windowColor = newValue)
+                        },
                         title = stringResource(R.string.subs_window_color),
-                        value = Color(state.windowColor),
                         icon = painterResource(R.drawable.imagesearch_roller_24px),
-                        onValueChanged = { newValue ->
-                            update { copy(windowColor = newValue.toArgb()) }
-                        }
                     ),
-                    Preference.PreferenceItem.BasicColorPreference(
+                    Preference.PreferenceItem.ColorPreference(
+                        preference = store.field(SaveChromeCaptionStyle::backgroundColor) { newValue ->
+                            copy(backgroundColor = newValue)
+                        },
                         title = stringResource(R.string.subs_background_color),
-                        value = Color(state.backgroundColor),
                         icon = painterResource(R.drawable.format_color_fill_24px),
-                        onValueChanged = { newValue ->
-                            update { copy(backgroundColor = newValue.toArgb()) }
-                        }
                     ),
-                ))
+                )
+            )
         )
     }
 }

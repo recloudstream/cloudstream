@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.none
@@ -48,43 +47,31 @@ sealed class Preference {
         ) : PreferenceItem<Boolean, Boolean>()
 
         /**
-         * A [PreferenceItem] that provides a two-state toggleable option.
-         */
-        data class BasicSwitchPreference(
-            val value: Boolean,
-            override val title: String,
-            override val subtitle: String? = null,
-            override val enabled: Boolean = true,
-            override val onValueChanged: suspend (value: Boolean) -> Unit = {},
-            override val icon: Painter? = null
-        ) : PreferenceItem<Boolean, Unit>()
-
-        /**
          * A [PreferenceItem] that provides a color
          */
-        data class BasicColorPreference(
-            val value: Color,
+        data class ColorPreference(
+            val preference: PreferenceData<Int>,
             override val title: String,
             override val subtitle: String? = null,
             override val enabled: Boolean = true,
-            override val onValueChanged: suspend (value: Color) -> Unit = {},
+            override val onValueChanged: suspend (value: Int) -> Boolean = { true },
             override val icon: Painter? = null
-        ) : PreferenceItem<Color, Unit>()
+        ) : PreferenceItem<Int, Boolean>()
 
         /**
          * A [PreferenceItem] that provides a slider to select an integer number.
          */
         data class SliderPreference(
-            val value: Int,
+            val preference: PreferenceData<Int>,
             override val title: String,
             override val subtitle: String? = null,
             val valueString: String? = null,
             val valueRange: IntProgression = 0..1,
             @IntRange(from = 0) val steps: Int = with(valueRange) { (last - first) - 1 },
             override val enabled: Boolean = true,
-            override val onValueChanged: suspend (value: Int) -> Unit = {},
+            override val onValueChanged: suspend (value: Int) -> Boolean = { true },
             override val icon: Painter? = null
-        ) : PreferenceItem<Int, Unit>()
+        ) : PreferenceItem<Int, Boolean>()
 
         /**
          * A [PreferenceItem] that displays a list of entries as a dialog.
@@ -111,24 +98,6 @@ sealed class Preference {
             @Composable
             internal fun InternalIconProvider(key: Any?, value: String) =
                 iconProvider?.invoke(key as T, value)
-        }
-
-        /**
-         * [ListPreference] but with no connection to a [PreferenceData]
-         */
-        data class BasicListPreference<T>(
-            val value: T,
-            val entries: Map<T, String>,
-            override val title: String,
-            override val subtitle: String? = "%s",
-            val subtitleProvider: @Composable (value: T, entries: Map<T, String>) -> String? =
-                { v, e -> subtitle?.format(e[v]) },
-            override val icon: Painter? = null,
-            override val enabled: Boolean = true,
-            override val onValueChanged: suspend (value: T) -> Unit = {},
-        ) : PreferenceItem<T, Unit>() {
-            @Suppress("UNCHECKED_CAST")
-            internal suspend fun internalOnValueChanged(value: Any?) = onValueChanged(value as T)
         }
 
         /**
@@ -175,21 +144,6 @@ sealed class Preference {
         ) : PreferenceItem<String, Boolean>() {
             override val icon: Painter? = null
         }
-
-        /**
-         * A [PreferenceItem] for individual tracker.
-         */
-        /*data class TrackerPreference(
-            val tracker: Tracker,
-            val login: () -> Unit,
-            val logout: () -> Unit,
-        ) : PreferenceItem<String, Unit>() {
-            override val title: String = ""
-            override val enabled: Boolean = true
-            override val subtitle: String? = null
-            override val icon: ImageVector? = null
-            override val onValueChanged: suspend (value: String) -> Unit = {}
-        }*/
 
         data class InfoPreference(
             override val title: String,
