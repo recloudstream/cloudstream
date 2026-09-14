@@ -47,9 +47,10 @@ sealed class Preference {
             override val icon: Painter? = null
         ) : PreferenceItem<Boolean, Boolean>()
 
-        /**
+        /*/**
          * A [PreferenceItem] that provides a two-state toggleable option.
          */
+        @Deprecated("This will cause a lot of recompositions")
         data class BasicSwitchPreference(
             val value: Boolean,
             override val title: String,
@@ -57,11 +58,13 @@ sealed class Preference {
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: Boolean) -> Unit = {},
             override val icon: Painter? = null
-        ) : PreferenceItem<Boolean, Unit>()
+        ) : PreferenceItem<Boolean, Unit>()*/
 
+        /*
         /**
          * A [PreferenceItem] that provides a color
          */
+        @Deprecated("This will cause a lot of recompositions")
         data class BasicColorPreference(
             val value: Color,
             override val title: String,
@@ -69,11 +72,40 @@ sealed class Preference {
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: Color) -> Unit = {},
             override val icon: Painter? = null
-        ) : PreferenceItem<Color, Unit>()
+        ) : PreferenceItem<Color, Unit>()*/
+
+        /**
+         * A [PreferenceItem] that provides a color
+         */
+        data class ColorPreference(
+            val preference: PreferenceData<Int>,
+            override val title: String,
+            override val subtitle: String? = null,
+            override val enabled: Boolean = true,
+            override val onValueChanged: suspend (value: Int) -> Boolean = { true },
+            override val icon: Painter? = null
+        ) : PreferenceItem<Int, Boolean>()
 
         /**
          * A [PreferenceItem] that provides a slider to select an integer number.
          */
+        data class NewSliderPreference(
+            val preference: PreferenceData<Int>,
+            override val title: String,
+            override val subtitle: String? = null,
+            val valueString: String? = null,
+            val valueRange: IntProgression = 0..1,
+            @IntRange(from = 0) val steps: Int = with(valueRange) { (last - first) - 1 },
+            override val enabled: Boolean = true,
+            override val onValueChanged: suspend (value: Int) -> Boolean = { true },
+            override val icon: Painter? = null
+        ) : PreferenceItem<Int, Boolean>()
+
+        /*
+        /**
+         * A [PreferenceItem] that provides a slider to select an integer number.
+         */
+        @Deprecated("This will cause a lot of recompositions")
         data class SliderPreference(
             val value: Int,
             override val title: String,
@@ -84,7 +116,7 @@ sealed class Preference {
             override val enabled: Boolean = true,
             override val onValueChanged: suspend (value: Int) -> Unit = {},
             override val icon: Painter? = null
-        ) : PreferenceItem<Int, Unit>()
+        ) : PreferenceItem<Int, Unit>()*/
 
         /**
          * A [PreferenceItem] that displays a list of entries as a dialog.
@@ -113,9 +145,11 @@ sealed class Preference {
                 iconProvider?.invoke(key as T, value)
         }
 
+        /*
         /**
          * [ListPreference] but with no connection to a [PreferenceData]
          */
+        @Deprecated("This will cause a lot of recompositions")
         data class BasicListPreference<T>(
             val value: T,
             val entries: Map<T, String>,
@@ -129,7 +163,7 @@ sealed class Preference {
         ) : PreferenceItem<T, Unit>() {
             @Suppress("UNCHECKED_CAST")
             internal suspend fun internalOnValueChanged(value: Any?) = onValueChanged(value as T)
-        }
+        }*/
 
         /**
          * A [PreferenceItem] that displays a list of entries as a dialog.

@@ -403,7 +403,9 @@ object SettingsFragmentScreen : Screen {
             title = stringResource(settingsTab.title),
             icon = painterResource(settingsTab.icon),
             // This can not be converted to joinToString due to stringResource being composable
-            subtitle = settingsTab.subtitle.map { stringResource(it) }.joinToString(),
+            subtitle =
+                @Suppress("SimplifiableCallChain")
+                settingsTab.subtitle.map { stringResource(it) }.joinToString(),
             // Clear it if we have already set it but navigated back instantly
             onPreferenceClick = {
                 SearchableSettings.highlightKey = null

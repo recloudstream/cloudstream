@@ -81,9 +81,6 @@ object SettingsUIScreen : SearchableSettings {
     override fun getPreferences(): List<Preference> {
         val settings = rememberAppSettings()
 
-        val overscanDp by settings.ui.overscanDp.collectAsState()
-        val posterSize by settings.ui.posterSize.collectAsState()
-
         return persistentListOf(
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_looks),
@@ -157,8 +154,8 @@ object SettingsUIScreen : SearchableSettings {
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_ui_features),
                 preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.SliderPreference(
-                        value = overscanDp,
+                    Preference.PreferenceItem.NewSliderPreference(
+                        preference = settings.ui.overscanDp,
                         title = stringResource(R.string.overscan_settings),
                         subtitle = stringResource(R.string.overscan_settings_des),
                         valueRange = 0..100,
@@ -170,6 +167,7 @@ object SettingsUIScreen : SearchableSettings {
                             (activity as? MainActivity)?.binding?.homeRoot?.setPadding(
                                 padding, padding, padding, padding
                             )
+                            return@NewSliderPreference false
                         }),
 
                     Preference.PreferenceItem.SwitchPreference(
@@ -257,8 +255,8 @@ object SettingsUIScreen : SearchableSettings {
                         subtitle = stringResource(R.string.bottom_title_settings_des),
                         icon = painterResource(R.drawable.title_24px)
                     ),
-                    Preference.PreferenceItem.SliderPreference(
-                        value = posterSize,
+                    Preference.PreferenceItem.NewSliderPreference(
+                        preference = settings.ui.posterSize,
                         title = stringResource(R.string.poster_size_settings),
                         subtitle = stringResource(R.string.poster_size_settings_des),
                         valueRange = 0..15,
@@ -269,6 +267,7 @@ object SettingsUIScreen : SearchableSettings {
                             SearchAdapter.sharedPool.clear()
                             activity?.let { HomeChildItemAdapter.updatePosterSize(it, newValue) }
                             settings.ui.posterSize.set(newValue)
+                            return@NewSliderPreference false
                         }),
                 ),
             ),

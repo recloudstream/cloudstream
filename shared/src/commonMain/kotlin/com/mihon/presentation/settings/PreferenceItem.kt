@@ -1,5 +1,6 @@
 package com.mihon.presentation.settings
 
+import com.mihon.presentation.settings.widget.ColorPreferenceWidget
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -11,15 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import com.lagradost.cloudstream4.compose.ColorCircle
-import com.lagradost.cloudstream4.compose.ColorDialog
 import com.mihon.material.BaseSliderItem
 import com.mihon.presentation.settings.widget.EditTextPreferenceWidget
 import com.mihon.presentation.settings.widget.InfoWidget
@@ -57,6 +55,7 @@ fun StatusWrapper(
 }
 
 @Composable
+@Suppress("DEPRECATION")
 internal fun PreferenceItem(
     item: Preference.PreferenceItem<*, *>,
     highlightKey: String?,
@@ -84,7 +83,7 @@ internal fun PreferenceItem(
                 )
             }
 
-            is Preference.PreferenceItem.BasicSwitchPreference -> {
+            /*is Preference.PreferenceItem.BasicSwitchPreference -> {
                 SwitchPreferenceWidget(
                     title = item.title,
                     subtitle = item.subtitle,
@@ -96,39 +95,41 @@ internal fun PreferenceItem(
                         }
                     },
                 )
-            }
+            }*/
 
-            is Preference.PreferenceItem.BasicColorPreference -> {
-                var isDialogShown by remember { mutableStateOf(false) }
-
-                TextPreferenceWidget(
+            /*is Preference.PreferenceItem.BasicColorPreference -> {
+                ColorPreferenceWidget(
                     title = item.title,
                     subtitle = item.subtitle,
                     icon = item.icon,
-                    onPreferenceClick = {
-                        isDialogShown = true
+                    color = item.value,
+                    onValueChange = { newValue ->
+                        scope.launch {
+                            item.onValueChanged(newValue)
+                        }
                     },
-                    widget = {
-                        ColorCircle(item.value, size = 30.dp)
-                    }
                 )
+            }*/
 
-                if (isDialogShown) {
-                    ColorDialog(
-                        title = item.title,
-                        color = item.value,
-                        dismiss = { isDialogShown = false },
-                        confirm = { color ->
-                            isDialogShown = false
-                            scope.launch {
-                                item.onValueChanged(color)
+            is Preference.PreferenceItem.ColorPreference -> {
+                val color = item.preference.collectAsState()
+                val derivedColor = Color(color.value)
+                ColorPreferenceWidget(
+                    title = item.title,
+                    subtitle = item.subtitle,
+                    icon = item.icon,
+                    color = derivedColor,
+                    onValueChange = { newValue ->
+                        scope.launch {
+                            if(item.onValueChanged(newValue.toArgb())) {
+                                item.preference.set(newValue.toArgb())
                             }
                         }
-                    )
-                }
+                    },
+                )
             }
 
-            is Preference.PreferenceItem.SliderPreference -> {
+            /*is Preference.PreferenceItem.SliderPreference -> {
                 BaseSliderItem(
                     value = item.value,
                     valueRange = item.valueRange,
@@ -149,7 +150,7 @@ internal fun PreferenceItem(
                     ),
                     icon = item.icon
                 )
-            }
+            }*/
 
             is Preference.PreferenceItem.ListPreference<*> -> {
                 val value by item.preference.collectAsState()
@@ -170,7 +171,7 @@ internal fun PreferenceItem(
                 )
             }
 
-            is Preference.PreferenceItem.BasicListPreference -> {
+            /*is Preference.PreferenceItem.BasicListPreference -> {
                 ListPreferenceWidget(
                     value = item.value,
                     title = item.title,
@@ -185,7 +186,7 @@ internal fun PreferenceItem(
                         }
                     },
                 )
-            }
+            }*/
 
             is Preference.PreferenceItem.MultiSelectListPreference<*> -> {
                 val values by item.preference.collectAsState()
@@ -245,6 +246,32 @@ internal fun PreferenceItem(
 
             is Preference.PreferenceItem.CustomPreference -> {
                 item.content()
+            }
+
+            is Preference.PreferenceItem.NewSliderPreference -> {
+                val state by item.preference.collectAsState()
+                BaseSliderItem(
+                    value = state,
+                    valueRange = item.valueRange,
+                    steps = item.steps,
+                    title = item.title,
+                    subtitle = item.subtitle,
+                    valueString = item.valueString.takeUnless { it.isNullOrEmpty() }
+                        ?: state.toString(),
+                    onChange = { newValue ->
+                        scope.launch {
+                            if(item.onValueChanged(newValue)) {
+                                item.preference.set(newValue)
+                            }
+                        }
+                    },
+                    titleStyle = MaterialTheme.typography.titleLarge.copy(fontSize = TitleFontSize),
+                    modifier = Modifier.padding(
+                        horizontal = PrefsHorizontalPadding,
+                        vertical = PrefsVerticalPadding,
+                    ),
+                    icon = item.icon
+                )
             }
         }
     }
