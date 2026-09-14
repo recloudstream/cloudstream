@@ -62,18 +62,7 @@ object SubtitleHelper {
         halfMatch: Boolean? = false
     ): LanguageMetadata? {
         if (languageName.isNullOrBlank() || languageName.length < 2) return null
-        // Workaround to avoid junk like "English (original audio)" or "Spanish 123"
-        // or "اَلْعَرَبِيَّةُ (Original Audio) 1" or "English (hindi sub)"…
-        // Will still keep "-" to be compatible with language tags such as pr-bt
-        val garbage = Regex(
-            "\\([^)]*(?:dub|sub|original|audio|code)[^)]*\\)|" + // junk words in parenthesis
-                    "[\\u064B-\\u065B]|" + // arabic diacritics
-                    "\\d|" +  // numbers
-                    "[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ()-]" // non-letter (from any language)
-        )
-
-
-        val lowLangName = languageName.lowercase().replace(garbage, "").trim()
+        val lowLangName = languageName.lowercase().replace(garbageRegex, "").trim()
 
         val index = indexMapLanguageName[lowLangName]
             ?: indexMapNativeName[lowLangName]
@@ -233,10 +222,22 @@ object SubtitleHelper {
     */
     fun isWellFormedTagIETF(langTagIETF: String?): Boolean {
         if (langTagIETF.isNullOrBlank() || langTagIETF.length < 2) return false
+        return langTagIETF.matches(langTagRegex)
+    }
 
-        // Written by Addison Phillips, <Addison at amazon.com>
-        // https://www.langtag.net/philips-regexp.html
-        val langTagRegex = """
+    // Workaround to avoid junk like "English (original audio)" or "Spanish 123"
+    // or "اَلْعَرَبِيَّةُ (Original Audio) 1" or "English (hindi sub)"…
+    // Will still keep "-" to be compatible with language tags such as pr-bt
+    private val garbageRegex = Regex(
+        "\\([^)]*(?:dub|sub|original|audio|code)[^)]*\\)|" + // junk words in parenthesis
+                "[\\u064B-\\u065B]|" + // arabic diacritics
+                "\\d|" +  // numbers
+                "[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ()-]" // non-letter (from any language)
+    )
+
+    // Written by Addison Phillips, <Addison at amazon.com>
+    // https://www.langtag.net/philips-regexp.html
+    private val langTagRegex = """
             +(^[xX](\x2d\p{Alnum}{1,8})*$)
             +|(((^\p{Alpha}{2,8}(?=\x2d|$)){1}
             +((\x2d\p{Alpha}{3})(?=\x2d|$)){0,3}
@@ -246,20 +247,16 @@ object SubtitleHelper {
             +((\x2d([a-wyzA-WYZ](?=\x2d))(\x2d(\p{Alnum}{2,8})+)*))*
             +(\x2d[xX](\x2d\p{Alnum}{1,8})*)?)$
             """.trimMargin("+").toRegex()
-        return langTagIETF.matches(langTagRegex)
-    }
-
+    // language tags (en-US, es-419, pt-BR, zh-hant-TW) that includes country
+    private val countryRegex = Regex("[-_](\\p{Alnum}{2,3})$", RegexOption.IGNORE_CASE)
+    // 2 times a symbol between regional indicator "[A]" and "[Z]"
+    private val unicodeFlagRegex = Regex("[\uD83C\uDDE6-\uD83C\uDDFF]{2}")
     /**
      * Try to get a flag emoji form a language code
      * or two letters country code (ISO 3166-1-alfa-2)
     */
     fun getFlagFromIso(inp: String?): String? {
         if (inp.isNullOrBlank() || inp.length < 2) return null
-
-        // 2 times a symbol between regional indicator "[A]" and "[Z]"
-        val unicodeFlagRegex = Regex("[\uD83C\uDDE6-\uD83C\uDDFF]{2}")
-        // language tags (en-US, es-419, pt-BR, zh-hant-TW) that includes country
-        val countryRegex = Regex("[-_](\\p{Alnum}{2,3})$", RegexOption.IGNORE_CASE)
 
         val country = countryRegex.find(inp)?.groupValues?.get(1)
 

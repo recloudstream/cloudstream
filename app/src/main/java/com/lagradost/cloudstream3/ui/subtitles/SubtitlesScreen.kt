@@ -162,6 +162,12 @@ object SubtitlesScreen : SearchableSettings {
         )
     }
 
+    private val sortedLanguages by lazy {
+        languages.map { it.IETF_tag to it.nameNextToFlagEmoji() }.sortedBy {
+            it.second.substringAfter("\u00a0").lowercase()
+        }.toMap()
+    }
+
     @OptIn(UnstableApi::class)
     @Composable
     override fun getPreferences(): List<Preference> {
@@ -405,9 +411,7 @@ object SubtitlesScreen : SearchableSettings {
                         preference = autoSelectSubtitles,
                         entries = mapOf(
                             "None" to stringResource(R.string.none)
-                        ) + languages.map { it.IETF_tag to it.nameNextToFlagEmoji() }.sortedBy {
-                            it.second.substringAfter("\u00a0").lowercase()
-                        }.toMap(),
+                        ) + sortedLanguages,
                     ),
                     Preference.PreferenceItem.MultiSelectListPreference(
                         icon = painterResource(R.drawable.language_download2),
@@ -415,9 +419,7 @@ object SubtitlesScreen : SearchableSettings {
                         preference = downloadSubsLanguage,
                         entries = mapOf(
                             "None" to stringResource(R.string.none)
-                        ) + languages.map { it.IETF_tag to it.nameNextToFlagEmoji() }.sortedBy {
-                            it.second.substringAfter("\u00a0").lowercase()
-                        }.toMap(),
+                        ) + sortedLanguages,
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = subtitlesFilterSubLang,
