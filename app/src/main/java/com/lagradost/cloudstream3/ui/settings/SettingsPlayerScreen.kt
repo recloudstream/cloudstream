@@ -28,7 +28,6 @@ import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
-import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -224,7 +223,7 @@ object SettingsPlayerScreen : SearchableSettings {
                         icon = painterResource(R.drawable.touch_double_24px),
                     ),
 
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = settings.player.doubleTapTime,
                         title = stringResource(R.string.double_tap_to_seek_amount_settings),
                         icon = painterResource(R.drawable.go_forward_30),
@@ -237,7 +236,7 @@ object SettingsPlayerScreen : SearchableSettings {
                 title = stringResource(R.string.pref_category_android_tv),
                 enabled = isLayout(TV or EMULATOR),
                 preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = settings.player.tvSeekOnTime,
                         title = stringResource(R.string.android_tv_interface_on_seek_settings),
                         subtitle = stringResource(R.string.android_tv_interface_on_seek_settings_summary),
@@ -245,7 +244,7 @@ object SettingsPlayerScreen : SearchableSettings {
                         valueRange = 5..60,
                         //steps = 10,
                     ),
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = settings.player.tvSeekOffTime,
                         title = stringResource(R.string.android_tv_interface_off_seek_settings),
                         subtitle = stringResource(R.string.android_tv_interface_off_seek_settings_summary),

@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.subtitles
 
-import android.annotation.SuppressLint
 import com.mihon.common.preference.StatePreferenceStore
 import android.text.SpannableString
 import androidx.annotation.OptIn
@@ -228,7 +227,7 @@ object SubtitlesScreen : SearchableSettings {
                         title = stringResource(R.string.subs_text_color),
                         icon = painterResource(R.drawable.format_color_text_24px),
                     ),
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = store.field(
                             get = { fixedTextSize?.toInt() ?: 25 },
                             set = { newValue -> copy(fixedTextSize = newValue.toFloat()) }
@@ -281,7 +280,7 @@ object SubtitlesScreen : SearchableSettings {
                         title = stringResource(R.string.subs_outline_color),
                         icon = painterResource(R.drawable.border_color_24px),
                     ),
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = store.field(
                             get = { edgeSize?.toInt() ?: 0 },
                             set = { newValue -> copy(edgeSize = newValue.toFloat()) }
@@ -311,7 +310,7 @@ object SubtitlesScreen : SearchableSettings {
                         title = stringResource(R.string.subs_background_color),
                         icon = painterResource(R.drawable.format_color_fill_24px),
                     ),
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = store.field(
                             get = { backgroundRadius?.toInt() ?: 0 },
                             set = { newValue -> copy(backgroundRadius = newValue.toFloat()) }
@@ -346,7 +345,7 @@ object SubtitlesScreen : SearchableSettings {
                             CustomDecoder.SSA_ALIGNMENT_TOP_RIGHT to stringResource(R.string.top_right),
                         )
                     ),
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = store.field(SaveCaptionStyle::elevation) { newValue ->
                             copy(elevation = newValue)
                         },

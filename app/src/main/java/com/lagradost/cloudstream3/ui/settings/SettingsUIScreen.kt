@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.integerArrayResource
@@ -38,7 +37,6 @@ import com.lagradost.cloudstream4.theme.perfToColor
 import com.lagradost.cloudstream4.theme.perfToMode
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
-import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentMap
@@ -154,7 +152,7 @@ object SettingsUIScreen : SearchableSettings {
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_ui_features),
                 preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = settings.ui.overscanDp,
                         title = stringResource(R.string.overscan_settings),
                         subtitle = stringResource(R.string.overscan_settings_des),
@@ -167,7 +165,7 @@ object SettingsUIScreen : SearchableSettings {
                             (activity as? MainActivity)?.binding?.homeRoot?.setPadding(
                                 padding, padding, padding, padding
                             )
-                            return@NewSliderPreference false
+                            return@SliderPreference false
                         }),
 
                     Preference.PreferenceItem.SwitchPreference(
@@ -255,7 +253,7 @@ object SettingsUIScreen : SearchableSettings {
                         subtitle = stringResource(R.string.bottom_title_settings_des),
                         icon = painterResource(R.drawable.title_24px)
                     ),
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = settings.ui.posterSize,
                         title = stringResource(R.string.poster_size_settings),
                         subtitle = stringResource(R.string.poster_size_settings_des),
@@ -267,7 +265,7 @@ object SettingsUIScreen : SearchableSettings {
                             SearchAdapter.sharedPool.clear()
                             activity?.let { HomeChildItemAdapter.updatePosterSize(it, newValue) }
                             settings.ui.posterSize.set(newValue)
-                            return@NewSliderPreference false
+                            return@SliderPreference false
                         }),
                 ),
             ),

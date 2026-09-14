@@ -159,14 +159,14 @@ object SettingsGeneralScreen : SearchableSettings {
                             selectFileSelector.launch(Uri.EMPTY)
                         },
                     ),
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         icon = painterResource(R.drawable.arrow_or_edge_24px),
                         preference = settings.general.parallelDownloads,
                         valueRange = 1..10,
                         title = stringResource(R.string.parallel_downloads),
                         subtitle = stringResource(R.string.download_parallel_settings_des),
                     ),
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         icon = painterResource(R.drawable.arrow_and_edge_24px),
                         preference = settings.general.concurrentConnections,
                         valueRange = 1..10,

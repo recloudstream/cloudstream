@@ -101,7 +101,7 @@ object ChromecastSubtitlesScreen : SearchableSettings {
                         title = stringResource(R.string.subs_text_color),
                         icon = painterResource(R.drawable.format_color_text_24px),
                     ),
-                    Preference.PreferenceItem.NewSliderPreference(
+                    Preference.PreferenceItem.SliderPreference(
                         preference = store.field(
                             get = { fontScale.times(100.0f).roundToInt() },
                             set = { newValue -> copy(fontScale = newValue.toFloat() * 0.01f) }),

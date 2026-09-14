@@ -55,7 +55,6 @@ fun StatusWrapper(
 }
 
 @Composable
-@Suppress("DEPRECATION")
 internal fun PreferenceItem(
     item: Preference.PreferenceItem<*, *>,
     highlightKey: String?,
@@ -83,34 +82,6 @@ internal fun PreferenceItem(
                 )
             }
 
-            /*is Preference.PreferenceItem.BasicSwitchPreference -> {
-                SwitchPreferenceWidget(
-                    title = item.title,
-                    subtitle = item.subtitle,
-                    icon = item.icon,
-                    checked = item.value,
-                    onCheckedChanged = { newValue ->
-                        scope.launch {
-                            item.onValueChanged(newValue)
-                        }
-                    },
-                )
-            }*/
-
-            /*is Preference.PreferenceItem.BasicColorPreference -> {
-                ColorPreferenceWidget(
-                    title = item.title,
-                    subtitle = item.subtitle,
-                    icon = item.icon,
-                    color = item.value,
-                    onValueChange = { newValue ->
-                        scope.launch {
-                            item.onValueChanged(newValue)
-                        }
-                    },
-                )
-            }*/
-
             is Preference.PreferenceItem.ColorPreference -> {
                 val color = item.preference.collectAsState()
                 val derivedColor = Color(color.value)
@@ -128,29 +99,6 @@ internal fun PreferenceItem(
                     },
                 )
             }
-
-            /*is Preference.PreferenceItem.SliderPreference -> {
-                BaseSliderItem(
-                    value = item.value,
-                    valueRange = item.valueRange,
-                    steps = item.steps,
-                    title = item.title,
-                    subtitle = item.subtitle,
-                    valueString = item.valueString.takeUnless { it.isNullOrEmpty() }
-                        ?: item.value.toString(),
-                    onChange = {
-                        scope.launch {
-                            item.onValueChanged(it)
-                        }
-                    },
-                    titleStyle = MaterialTheme.typography.titleLarge.copy(fontSize = TitleFontSize),
-                    modifier = Modifier.padding(
-                        horizontal = PrefsHorizontalPadding,
-                        vertical = PrefsVerticalPadding,
-                    ),
-                    icon = item.icon
-                )
-            }*/
 
             is Preference.PreferenceItem.ListPreference<*> -> {
                 val value by item.preference.collectAsState()
@@ -170,23 +118,6 @@ internal fun PreferenceItem(
                     },
                 )
             }
-
-            /*is Preference.PreferenceItem.BasicListPreference -> {
-                ListPreferenceWidget(
-                    value = item.value,
-                    title = item.title,
-                    subtitle = item.subtitleProvider(item.value, item.entries),
-                    icon = item.icon,
-                    entries = item.entries,
-                    onValueChange = { newValue ->
-                        scope.launch {
-                            item.internalOnValueChanged(
-                                newValue
-                            )
-                        }
-                    },
-                )
-            }*/
 
             is Preference.PreferenceItem.MultiSelectListPreference<*> -> {
                 val values by item.preference.collectAsState()
@@ -230,16 +161,6 @@ internal fun PreferenceItem(
                     },
                 )
             }
-            /*is Preference.PreferenceItem.TrackerPreference -> {
-                val isLoggedIn by item.tracker.let { tracker ->
-                    tracker.isLoggedInFlow.collectAsState(tracker.isLoggedIn)
-                }
-                TrackingPreferenceWidget(
-                    tracker = item.tracker,
-                    isLoggedIn = isLoggedIn,
-                    onClick = { if (isLoggedIn) item.logout() else item.login() },
-                )
-            }*/
             is Preference.PreferenceItem.InfoPreference -> {
                 InfoWidget(text = item.title)
             }
@@ -248,7 +169,7 @@ internal fun PreferenceItem(
                 item.content()
             }
 
-            is Preference.PreferenceItem.NewSliderPreference -> {
+            is Preference.PreferenceItem.SliderPreference -> {
                 val state by item.preference.collectAsState()
                 BaseSliderItem(
                     value = state,
