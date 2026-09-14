@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +38,6 @@ import com.lagradost.cloudstream3.ui.player.CustomDecoder
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyleEvent
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.defaultSubtitleStyle
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getCurrentSavedStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.saveStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.subtitleStyleState
@@ -77,20 +77,23 @@ object SubtitlesScreen : SearchableSettings {
     )
 
     @Composable
-    override fun RowScope.AppBarAction() {
+    fun <T> SetUpUndoBar(
+        diff: Array<Pair<Int, (T) -> Any?>>,
+        initialState: T,
+        currentState: MutableState<T>,
+        default: T
+    ) {
+        var currentState by currentState
         var dialogShown by remember { mutableStateOf(false) }
-        val initialState = remember { getCurrentSavedStyle() }
-        var currentState by subtitleStyleState
-
         if (dialogShown) {
             ActionDialog(
                 title = stringResource(R.string.subs_default_reset_toast),
-                text = diff.filter { (_, f) -> f(defaultSubtitleStyle) != f(currentState) }
+                text = diff.filter { (_, f) -> f(default) != f(currentState) }
                     .map { (name, _) -> stringResource(name) }.joinToString(separator = "\n"),
                 confirmText = stringResource(R.string.reset_btn),
                 dismissText = stringResource(R.string.dismiss),
                 confirm = {
-                    currentState = defaultSubtitleStyle
+                    currentState = default
                     dialogShown = false
                 },
                 dismiss = {
@@ -112,7 +115,7 @@ object SubtitlesScreen : SearchableSettings {
         }
 
         // Reset, current -> default
-        AnimatedVisibility(defaultSubtitleStyle != currentState) {
+        AnimatedVisibility(currentState != default) {
             IconButton(onClick = {
                 dialogShown = true
             }) {
@@ -125,10 +128,21 @@ object SubtitlesScreen : SearchableSettings {
         }
     }
 
+    @Composable
+    override fun RowScope.AppBarAction() {
+        val initialState = remember { subtitleStyleState.value }
+        SetUpUndoBar(
+            diff = diff,
+            initialState = initialState,
+            currentState = subtitleStyleState,
+            default = defaultSubtitleStyle
+        )
+    }
+
     @OptIn(UnstableApi::class)
     @Composable
     override fun getPreferences(): List<Preference> {
-        val initialState = remember { getCurrentSavedStyle() }
+        val initialState = remember { subtitleStyleState.value }
         var state by subtitleStyleState
         val context = LocalContext.current
 
@@ -145,11 +159,24 @@ object SubtitlesScreen : SearchableSettings {
             }
         }
 
+        return getPreferences(state) { updater ->
+            state = updater(state)
+        }
+    }
+
+    /** Unfortunately this causes a lot of re-compositions, but what can you do? */
+    @OptIn(UnstableApi::class)
+    @Composable
+    fun getPreferences(
+        state: SaveCaptionStyle,
+        update: (SaveCaptionStyle.() -> SaveCaptionStyle) -> Unit
+    ): List<Preference> {
         val text = stringResource(R.string.subtitles_example_text)
         val fixedText = SpannableString.valueOf(if (state.upperCase) text.uppercase() else text)
 
         val dataStore = DataPreferenceStore(LocalContext.current)
         val androidStore = AndroidPreferenceStore(LocalContext.current)
+
         val autoSelectSubtitles = dataStore.getString(SUBTITLE_AUTO_SELECT_KEY, "en")
         val downloadSubsLanguage =
             dataStore.getObjectFromString(SUBTITLE_DOWNLOAD_KEY, setOf("en"), serializer = { obj ->
@@ -202,14 +229,14 @@ object SubtitlesScreen : SearchableSettings {
                         value = state.font,
                         entries = mapOf(null to stringResource(R.string.normal)) + SubtitleFont.entries.associateWith { it.label },
                         onValueChanged = { newValue ->
-                            state = state.copy(font = newValue)
+                            update { copy(font = newValue) }
                         }),
                     Preference.PreferenceItem.BasicColorPreference(
                         title = stringResource(R.string.subs_text_color),
                         value = Color(state.foregroundColor),
                         icon = painterResource(R.drawable.format_color_text_24px),
                         onValueChanged = { newValue ->
-                            state = state.copy(foregroundColor = newValue.toArgb())
+                            update { copy(foregroundColor = newValue.toArgb()) }
                         }
                     ),
                     Preference.PreferenceItem.SliderPreference(
@@ -218,7 +245,7 @@ object SubtitlesScreen : SearchableSettings {
                         title = stringResource(R.string.subs_font_size),
                         valueRange = 5..60,
                         onValueChanged = { newValue ->
-                            state = state.copy(fixedTextSize = newValue.toFloat())
+                            update { copy(fixedTextSize = newValue.toFloat()) }
                         }),
 
                     Preference.PreferenceItem.BasicSwitchPreference(
@@ -226,7 +253,7 @@ object SubtitlesScreen : SearchableSettings {
                         icon = painterResource(R.drawable.uppercase_24px),
                         title = stringResource(R.string.uppercase_all_subtitles),
                         onValueChanged = { newValue ->
-                            state = state.copy(upperCase = newValue)
+                            update { copy(upperCase = newValue) }
                         },
                     ),
                     Preference.PreferenceItem.BasicSwitchPreference(
@@ -234,7 +261,7 @@ object SubtitlesScreen : SearchableSettings {
                         icon = painterResource(R.drawable.format_bold_24px),
                         title = stringResource(R.string.all_subtitles_bold),
                         onValueChanged = { newValue ->
-                            state = state.copy(bold = newValue)
+                            update { copy(bold = newValue) }
                         },
                     ),
                     Preference.PreferenceItem.BasicSwitchPreference(
@@ -242,7 +269,7 @@ object SubtitlesScreen : SearchableSettings {
                         icon = painterResource(R.drawable.format_italic_24px),
                         title = stringResource(R.string.all_subtitles_italic),
                         onValueChanged = { newValue ->
-                            state = state.copy(italic = newValue)
+                            update { copy(italic = newValue) }
                         },
                     ),
                 )
@@ -262,7 +289,7 @@ object SubtitlesScreen : SearchableSettings {
                             CaptionStyleCompat.EDGE_TYPE_RAISED to stringResource(R.string.subtitles_raised),
                         ),
                         onValueChanged = { newValue ->
-                            state = state.copy(edgeType = newValue)
+                            update { copy(edgeType = newValue) }
                         }),
                     Preference.PreferenceItem.BasicColorPreference(
                         enabled = state.edgeType != CaptionStyleCompat.EDGE_TYPE_NONE,
@@ -270,7 +297,7 @@ object SubtitlesScreen : SearchableSettings {
                         value = Color(state.edgeColor),
                         icon = painterResource(R.drawable.border_color_24px),
                         onValueChanged = { newValue ->
-                            state = state.copy(edgeColor = newValue.toArgb())
+                            update { copy(edgeColor = newValue.toArgb()) }
                         }
                     ),
                     Preference.PreferenceItem.SliderPreference(
@@ -280,7 +307,7 @@ object SubtitlesScreen : SearchableSettings {
                         title = stringResource(R.string.subs_edge_size),
                         valueRange = 0..60,
                         onValueChanged = { newValue ->
-                            state = state.copy(edgeSize = newValue.toFloat())
+                            update { copy(edgeSize = newValue.toFloat()) }
                         }),
                 )
             ),
@@ -292,7 +319,7 @@ object SubtitlesScreen : SearchableSettings {
                         value = Color(state.windowColor),
                         icon = painterResource(R.drawable.imagesearch_roller_24px),
                         onValueChanged = { newValue ->
-                            state = state.copy(windowColor = newValue.toArgb())
+                            update { copy(windowColor = newValue.toArgb()) }
                         }
                     ),
                     Preference.PreferenceItem.BasicColorPreference(
@@ -300,7 +327,7 @@ object SubtitlesScreen : SearchableSettings {
                         value = Color(state.backgroundColor),
                         icon = painterResource(R.drawable.format_color_fill_24px),
                         onValueChanged = { newValue ->
-                            state = state.copy(backgroundColor = newValue.toArgb())
+                            update { copy(backgroundColor = newValue.toArgb()) }
                         }
                     ),
                     Preference.PreferenceItem.SliderPreference(
@@ -310,7 +337,7 @@ object SubtitlesScreen : SearchableSettings {
                         valueRange = 0..50,
                         steps = 9,
                         onValueChanged = { newValue ->
-                            state = state.copy(backgroundRadius = newValue.toFloat())
+                            update { copy(backgroundRadius = newValue.toFloat()) }
                         }),
                 )
             ),
@@ -334,7 +361,7 @@ object SubtitlesScreen : SearchableSettings {
                             CustomDecoder.SSA_ALIGNMENT_TOP_RIGHT to stringResource(R.string.top_right),
                         ),
                         onValueChanged = { newValue ->
-                            state = state.copy(alignment = newValue)
+                            update { copy(alignment = newValue) }
                         }),
                     Preference.PreferenceItem.SliderPreference(
                         value = state.elevation,
@@ -343,11 +370,10 @@ object SubtitlesScreen : SearchableSettings {
                         valueRange = 0..400,
                         steps = 39,
                         onValueChanged = { newValue ->
-                            state = state.copy(elevation = newValue)
+                            update { copy(elevation = newValue) }
                         }),
                 )
             ),
-
             Preference.PreferenceGroup(
                 title = stringResource(R.string.extension_language),
                 preferenceItems = persistentListOf(
@@ -378,7 +404,6 @@ object SubtitlesScreen : SearchableSettings {
                     ),
                 )
             ),
-
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_ui_features),
                 preferenceItems = persistentListOf(
@@ -388,7 +413,7 @@ object SubtitlesScreen : SearchableSettings {
                         title = stringResource(R.string.subtitles_remove_captions),
                         subtitle = "[Knocking on door] Hello → Hello",
                         onValueChanged = { newValue ->
-                            state = state.copy(removeCaptions = newValue)
+                            update { copy(removeCaptions = newValue) }
                         },
                     ),
                     Preference.PreferenceItem.BasicSwitchPreference(
@@ -396,7 +421,7 @@ object SubtitlesScreen : SearchableSettings {
                         icon = painterResource(R.drawable.text_ad_off_24px),
                         title = stringResource(R.string.subtitles_remove_bloat),
                         onValueChanged = { newValue ->
-                            state = state.copy(removeBloat = newValue)
+                            update { copy(removeBloat = newValue) }
                         },
                     ),
                 )

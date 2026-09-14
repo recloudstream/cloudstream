@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.annotation.FontRes
 import androidx.annotation.OptIn
 import androidx.annotation.Px
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
@@ -69,47 +70,76 @@ enum class SubtitleFont(
     @FontRes val resource: Int,
     val label: String
 ) {
-    @JsonProperty("Trebuchet") @SerialName("Trebuchet") Trebuchet(R.font.trebuchet_ms, "Trebuchet MS"),
-    @JsonProperty("Netflix") @SerialName("Netflix") Netflix(R.font.netflix_sans, "Netflix Sans"),
-    @JsonProperty("Google") @SerialName("Google") Google(R.font.google_sans, "Google Sans"),
-    @JsonProperty("Open") @SerialName("Open") Open(R.font.open_sans, "Open Sans"),
-    @JsonProperty("Futura") @SerialName("Futura") Futura(R.font.futura, "Futura"),
-    @JsonProperty("Consola") @SerialName("Consola") Consola(R.font.consola, "Consola"),
-    @JsonProperty("Gotham") @SerialName("Gotham") Gotham(R.font.gotham, "Gotham"),
-    @JsonProperty("Lucida") @SerialName("Lucida") Lucida(R.font.lucida_grande, "Lucida Grande"),
-    @JsonProperty("STIX") @SerialName("STIX") STIX(R.font.stix_general, "STIX General"),
-    @JsonProperty("TimesNewRoman") @SerialName("TimesNewRoman") TimesNewRoman(R.font.times_new_roman, "Times New Roman"),
-    @JsonProperty("Verdana") @SerialName("Verdana") Verdana(R.font.verdana, "Verdana"),
-    @JsonProperty("Ubuntu") @SerialName("Ubuntu") Ubuntu(R.font.ubuntu_regular, "Ubuntu"),
-    @JsonProperty("Comic") @SerialName("Comic") Comic(R.font.comic_sans, "Comic Sans"),
-    @JsonProperty("Poppins") @SerialName("Poppins") Poppins(R.font.poppins_regular, "Poppins"),
+    @JsonProperty("Trebuchet")
+    @SerialName("Trebuchet")
+    Trebuchet(R.font.trebuchet_ms, "Trebuchet MS"),
+    @JsonProperty("Netflix")
+    @SerialName("Netflix")
+    Netflix(R.font.netflix_sans, "Netflix Sans"),
+    @JsonProperty("Google")
+    @SerialName("Google")
+    Google(R.font.google_sans, "Google Sans"),
+    @JsonProperty("Open")
+    @SerialName("Open")
+    Open(R.font.open_sans, "Open Sans"),
+    @JsonProperty("Futura")
+    @SerialName("Futura")
+    Futura(R.font.futura, "Futura"),
+    @JsonProperty("Consola")
+    @SerialName("Consola")
+    Consola(R.font.consola, "Consola"),
+    @JsonProperty("Gotham")
+    @SerialName("Gotham")
+    Gotham(R.font.gotham, "Gotham"),
+    @JsonProperty("Lucida")
+    @SerialName("Lucida")
+    Lucida(R.font.lucida_grande, "Lucida Grande"),
+    @JsonProperty("STIX")
+    @SerialName("STIX")
+    STIX(R.font.stix_general, "STIX General"),
+    @JsonProperty("TimesNewRoman")
+    @SerialName("TimesNewRoman")
+    TimesNewRoman(R.font.times_new_roman, "Times New Roman"),
+    @JsonProperty("Verdana")
+    @SerialName("Verdana")
+    Verdana(R.font.verdana, "Verdana"),
+    @JsonProperty("Ubuntu")
+    @SerialName("Ubuntu")
+    Ubuntu(R.font.ubuntu_regular, "Ubuntu"),
+    @JsonProperty("Comic")
+    @SerialName("Comic")
+    Comic(R.font.comic_sans, "Comic Sans"),
+    @JsonProperty("Poppins")
+    @SerialName("Poppins")
+    Poppins(R.font.poppins_regular, "Poppins"),
 }
 
 @Serializable
+@Immutable
 data class SaveCaptionStyle(
-    @JsonProperty("foregroundColor") @SerialName("foregroundColor") var foregroundColor: Int,
-    @JsonProperty("backgroundColor") @SerialName("backgroundColor") var backgroundColor: Int,
-    @JsonProperty("windowColor") @SerialName("windowColor") var windowColor: Int,
+    @JsonProperty("foregroundColor") @SerialName("foregroundColor") val foregroundColor: Int,
+    @JsonProperty("backgroundColor") @SerialName("backgroundColor") val backgroundColor: Int,
+    @JsonProperty("windowColor") @SerialName("windowColor") val windowColor: Int,
     @OptIn(UnstableApi::class)
-    @JsonProperty("edgeType") @SerialName("edgeType") var edgeType: @CaptionStyleCompat.EdgeType Int,
-    @JsonProperty("edgeColor") @SerialName("edgeColor") var edgeColor: Int,
-    @JsonProperty("font") @SerialName("font") var font: SubtitleFont? = null,
-    @JsonProperty("typefaceFilePath") @SerialName("typefaceFilePath") var typefaceFilePath: String?,
-    @JsonProperty("elevation") @SerialName("elevation") var elevation: Int, // in dp
-    @JsonProperty("fixedTextSize") @SerialName("fixedTextSize") var fixedTextSize: Float?, // in sp
-    @Px @JsonProperty("edgeSize") @SerialName("edgeSize") var edgeSize: Float? = null,
-    @JsonProperty("removeCaptions") @SerialName("removeCaptions") var removeCaptions: Boolean = false,
-    @JsonProperty("removeBloat") @SerialName("removeBloat") var removeBloat: Boolean = true,
+    @JsonProperty("edgeType") @SerialName("edgeType") val edgeType: @CaptionStyleCompat.EdgeType Int,
+    @JsonProperty("edgeColor") @SerialName("edgeColor") val edgeColor: Int,
+    @JsonProperty("font") @SerialName("font") val font: SubtitleFont? = null,
+    @JsonProperty("typefaceFilePath") @SerialName("typefaceFilePath") val typefaceFilePath: String?,
+    @JsonProperty("elevation") @SerialName("elevation") val elevation: Int, // in dp
+    @JsonProperty("fixedTextSize") @SerialName("fixedTextSize") val fixedTextSize: Float?, // in sp
+    @Px @JsonProperty("edgeSize") @SerialName("edgeSize") val edgeSize: Float? = null,
+    @JsonProperty("removeCaptions") @SerialName("removeCaptions") val removeCaptions: Boolean = false,
+    @JsonProperty("removeBloat") @SerialName("removeBloat") val removeBloat: Boolean = true,
     /** Apply caps lock to the text */
-    @JsonProperty("upperCase") @SerialName("upperCase") var upperCase: Boolean = false,
+    @JsonProperty("upperCase") @SerialName("upperCase") val upperCase: Boolean = false,
     /** Apply bold to the text */
-    @JsonProperty("bold") @SerialName("bold") var bold: Boolean = false,
+    @JsonProperty("bold") @SerialName("bold") val bold: Boolean = false,
     /** Apply italic to the text */
-    @JsonProperty("italic") @SerialName("italic") var italic: Boolean = false,
+    @JsonProperty("italic") @SerialName("italic") val italic: Boolean = false,
     /** in px, background radius, aka how round the background (backgroundColor) on each row is */
-    @JsonProperty("backgroundRadius") @SerialName("backgroundRadius") var backgroundRadius: Float? = null,
+    @JsonProperty("backgroundRadius") @SerialName("backgroundRadius") val backgroundRadius: Float? = null,
     /** The SSA_ALIGNMENT */
-    @JsonProperty("alignment") @SerialName("alignment") var alignment: Int? = null,
+    @JsonProperty("alignment") @SerialName("alignment") val alignment: Int? = null,
 )
 
 const val DEF_SUBS_ELEVATION = 20
@@ -273,7 +303,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
         }
 
         fun Context.saveStyle(style: SaveCaptionStyle) {
-            if(subtitleStyleState.value !== style) {
+            if (subtitleStyleState.value !== style) {
                 subtitleStyleState.value = style
             }
             this.setKey(SUBTITLE_KEY, style)
@@ -290,7 +320,8 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
             elevation = DEF_SUBS_ELEVATION,
             fixedTextSize = null,
         )
-        val subtitleStyleState = mutableStateOf((getKey<SaveCaptionStyle>(SUBTITLE_KEY) ?: defaultSubtitleStyle))
+        val subtitleStyleState =
+            mutableStateOf((getKey<SaveCaptionStyle>(SUBTITLE_KEY) ?: defaultSubtitleStyle))
 
         fun getCurrentSavedStyle(): SaveCaptionStyle {
             return subtitleStyleState.value
@@ -337,10 +368,10 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
     private fun Context.setColor(id: Int, color: Int?) {
         val realColor = color ?: getDefColor(id)
         when (id) {
-            0 -> state.foregroundColor = realColor
-            1 -> state.edgeColor = realColor
-            2 -> state.backgroundColor = realColor
-            3 -> state.windowColor = realColor
+            0 -> state = state.copy(foregroundColor = realColor)
+            1 -> state = state.copy(edgeColor = realColor)
+            2 -> state = state.copy(backgroundColor = realColor)
+            3 -> state = state.copy(windowColor = realColor)
 
             else -> Unit
         }
@@ -466,7 +497,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     false,
                     dismissCallback
                 ) { index ->
-                    state.elevation = elevationTypes.map { it.first }[index]
+                    state = state.copy(elevation = elevationTypes.map { it.first }[index])
                     textView.context.updateState()
                     if (hide)
                         activity?.hideSystemUI()
@@ -474,7 +505,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
             }
 
             subsSubtitleElevation.setOnLongClickListener {
-                state.elevation = DEF_SUBS_ELEVATION
+                state = state.copy(elevation = DEF_SUBS_ELEVATION)
                 it.context.updateState()
                 showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
@@ -497,13 +528,14 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     false,
                     dismissCallback
                 ) { index ->
-                    state.backgroundRadius = radiusTypes.map { it.first }[index]?.toFloat()
+                    state =
+                        state.copy(backgroundRadius = radiusTypes.map { it.first }[index]?.toFloat())
                     textView.context.updateState()
                 }
             }
 
             subsBackgroundRadius.setOnLongClickListener {
-                state.backgroundRadius = null
+                state = state.copy(backgroundRadius = null)
                 it.context.updateState()
                 showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
@@ -531,7 +563,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     false,
                     dismissCallback
                 ) { index ->
-                    state.alignment = alignmentTypes.map { it.first }[index]
+                    state = state.copy(alignment = alignmentTypes.map { it.first }[index])
                     textView.context.updateState()
                 }
             }
@@ -559,13 +591,13 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     false,
                     dismissCallback
                 ) { index ->
-                    state.edgeType = edgeTypes.map { it.first }[index]
+                    state = state.copy(edgeType = edgeTypes.map { it.first }[index])
                     textView.context.updateState()
                 }
             }
 
             subsEdgeType.setOnLongClickListener {
-                state.edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE
+                state = state.copy(edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE)
                 it.context.updateState()
                 showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
@@ -585,7 +617,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     false,
                     dismissCallback
                 ) { index ->
-                    state.fixedTextSize = fontSizes.map { it.first }[index]
+                    state = state.copy(fixedTextSize = fontSizes.map { it.first }[index])
                     textView.context.updateState()
                 }
             }
@@ -604,47 +636,47 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     false,
                     dismissCallback
                 ) { index ->
-                    state.edgeSize = fontSizes.map { it.first }[index]
+                    state = state.copy(edgeSize = fontSizes.map { it.first }[index])
                     textView.context.updateState()
                 }
             }
 
             subtitlesRemoveBloat.isChecked = state.removeBloat
             subtitlesRemoveBloat.setOnCheckedChangeListener { _, b ->
-                state.removeBloat = b
+                state = state.copy(removeBloat = b)
             }
             subtitlesUppercase.isChecked = state.upperCase
             subtitlesUppercase.setOnCheckedChangeListener { _, b ->
-                state.upperCase = b
+                state = state.copy(upperCase = b)
                 context?.updateState()
             }
 
             subtitlesRemoveCaptions.isChecked = state.removeCaptions
             subtitlesRemoveCaptions.setOnCheckedChangeListener { _, b ->
-                state.removeCaptions = b
+                state = state.copy(removeCaptions = b)
             }
 
             subtitlesBold.isChecked = state.bold
             subtitlesBold.setOnCheckedChangeListener { _, b ->
-                state.bold = b
+                state = state.copy(bold = b)
                 context?.updateState()
             }
 
             subtitlesItalic.isChecked = state.italic
             subtitlesItalic.setOnCheckedChangeListener { _, b ->
-                state.italic = b
+                state = state.copy(italic = b)
                 context?.updateState()
             }
 
             subsFontSize.setOnLongClickListener { _ ->
-                state.fixedTextSize = null
+                state = state.copy(fixedTextSize = null)
                 context?.updateState()
                 showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
             }
 
             subsEdgeSize.setOnLongClickListener { _ ->
-                state.edgeSize = null
+                state = state.copy(edgeSize = null)
                 context?.updateState()
                 showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
@@ -702,20 +734,23 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                     false,
                     dismissCallback
                 ) { index ->
-                    if (index < fontTypes.size) {
-                        state.font = SubtitleFont.entries.firstOrNull { it.resource == fontTypes[index].first }
-                        state.typefaceFilePath = null
+                    state = if (index < fontTypes.size) {
+                        state.copy(
+                            font = SubtitleFont.entries.firstOrNull { it.resource == fontTypes[index].first },
+                            typefaceFilePath = null
+                        )
                     } else {
-                        state.typefaceFilePath = savedFontTypes[index - fontTypes.size].absolutePath
-                        state.font = null
+                        state.copy(
+                            typefaceFilePath = savedFontTypes[index - fontTypes.size].absolutePath,
+                            font = null
+                        )
                     }
                     textView.context.updateState()
                 }
             }
 
             subsFont.setOnLongClickListener { textView ->
-                state.font = null
-                state.typefaceFilePath = null
+                state = state.copy(font = null, typefaceFilePath = null)
                 textView.context.updateState()
                 showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
