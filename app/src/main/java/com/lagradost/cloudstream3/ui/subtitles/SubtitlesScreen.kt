@@ -1,7 +1,8 @@
 package com.lagradost.cloudstream3.ui.subtitles
 
-import com.mihon.common.preference.StatePreferenceStore
 import android.text.SpannableString
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
@@ -32,7 +33,9 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.CaptionStyleCompat
 import androidx.media3.ui.SubtitleView
 import coil3.compose.AsyncImage
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.CustomDecoder
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyleEvent
@@ -46,10 +49,12 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
 import com.lagradost.cloudstream4.compose.ActionDialog
 import com.mihon.common.preference.AndroidPreferenceStore
 import com.mihon.common.preference.DataPreferenceStore
+import com.mihon.common.preference.StatePreferenceStore
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
+import java.io.File
 
 object SubtitlesScreen : SearchableSettings {
     @Composable
@@ -91,7 +96,7 @@ object SubtitlesScreen : SearchableSettings {
                 text =
                     @Suppress("SimplifiableCallChain")
                     diff.filter { (_, f) -> f(default) != f(currentState) }
-                    .map { (name, _) -> stringResource(name) }.joinToString(separator = "\n"),
+                        .map { (name, _) -> stringResource(name) }.joinToString(separator = "\n"),
                 confirmText = stringResource(R.string.reset_btn),
                 dismissText = stringResource(R.string.dismiss),
                 confirm = {
@@ -173,6 +178,28 @@ object SubtitlesScreen : SearchableSettings {
                 parseJson<List<String>>(json).toSet()
             })
 
+        val subtitleFileSelector =
+            rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                // It lies, it can be null if file manager quits.
+                if (uri == null) return@rememberLauncherForActivityResult
+                val context = CloudStreamApp.context ?: return@rememberLauncherForActivityResult
+
+                try {
+                    val localFile = File(context.filesDir, "customfont.ttf")
+                    localFile.delete()
+                    localFile.createNewFile()
+                    context.contentResolver?.openInputStream(uri)?.use { stream ->
+                        stream.copyTo(localFile.outputStream())
+                    }
+                    store.state.value = store.state.value.copy(
+                        font = SubtitleFont.Custom,
+                        typefaceFilePath = localFile.absolutePath
+                    )
+                } catch (t: Throwable) {
+                    logError(t)
+                }
+            }
+
         return persistentListOf(
             Preference.PreferenceItem.CustomPreference(
                 title = stringResource(R.string.skip_type_preview), content = {
@@ -215,10 +242,22 @@ object SubtitlesScreen : SearchableSettings {
                 title = stringResource(R.string.subs_font),
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.ListPreference(
-                        preference = store.field(SaveCaptionStyle::font) { newValue -> copy(font = newValue) },
+                        preference = store.field(SaveCaptionStyle::font) { newValue -> copy(font = newValue, typefaceFilePath = null) },
                         icon = painterResource(R.drawable.font_download_24px),
                         title = stringResource(R.string.subs_font),
                         entries = mapOf(null to stringResource(R.string.normal)) + SubtitleFont.entries.associateWith { it.label },
+                        onValueChanged = { value ->
+                            if (value?.resource == 0) {
+                                subtitleFileSelector.launch(
+                                    arrayOf(
+                                        "font/*",
+                                    )
+                                )
+                                false
+                            } else {
+                                true
+                            }
+                        }
                     ),
                     Preference.PreferenceItem.ColorPreference(
                         preference = store.field(SaveCaptionStyle::foregroundColor) { newValue ->

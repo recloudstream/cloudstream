@@ -111,7 +111,7 @@ internal fun PreferenceItem(
                     iconProvider = item::InternalIconProvider,
                     onValueChange = { newValue ->
                         scope.launch {
-                            if (item.internalOnValueChanged(newValue!!)) {
+                            if (item.internalOnValueChanged(newValue)) {
                                 item.internalSet(newValue)
                             }
                         }

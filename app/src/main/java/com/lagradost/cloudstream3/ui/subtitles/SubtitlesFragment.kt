@@ -112,6 +112,9 @@ enum class SubtitleFont(
     @JsonProperty("Poppins")
     @SerialName("Poppins")
     Poppins(R.font.poppins_regular, "Poppins"),
+    @JsonProperty("Custom")
+    @SerialName("Custom")
+    Custom(0, "Custom"),
 }
 
 @Serializable
@@ -276,10 +279,18 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                         null
                     }
                 } ?: data.font?.let { font ->
-                    ResourcesCompat.getFont(
-                        this,
-                        font.resource
-                    )
+                    if(font.resource != 0) {
+                        try {
+                            ResourcesCompat.getFont(
+                                this,
+                                font.resource
+                            )
+                        } catch (_ : Throwable) {
+                            Typeface.SANS_SERIF
+                        }
+                    } else {
+                        Typeface.SANS_SERIF
+                    }
                 }
                 ?: Typeface.SANS_SERIF
             )

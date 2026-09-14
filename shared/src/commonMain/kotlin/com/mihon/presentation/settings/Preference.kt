@@ -89,8 +89,8 @@ sealed class Preference {
             override val onValueChanged: suspend (value: T) -> Boolean = { true },
             val iconProvider: (@Composable (key: T, value: String) -> Unit)? = null,
         ) : PreferenceItem<T, Boolean>() {
-            internal fun internalSet(value: Any) = preference.set(value as T)
-            internal suspend fun internalOnValueChanged(value: Any) = onValueChanged(value as T)
+            internal fun internalSet(value: Any?) = preference.set(value as T)
+            internal suspend fun internalOnValueChanged(value: Any?) = onValueChanged(value as T)
 
             @Composable
             internal fun internalSubtitleProvider(value: Any?, entries: Map<out Any?, String>) =
