@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lagradost.cloudstream3.AutoDownloadMode
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.tv.TvComposeProbeActivity
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -100,6 +102,14 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                 )
             }
             return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.compose_tv_debug_key)?.let { pref ->
+            pref.isVisible = BuildConfig.DEBUG
+            pref.setOnPreferenceClickListener {
+                startActivity(Intent(requireContext(), TvComposeProbeActivity::class.java))
+                true
+            }
         }
 
         getPref(R.string.redo_setup_key)?.setOnPreferenceClickListener {
