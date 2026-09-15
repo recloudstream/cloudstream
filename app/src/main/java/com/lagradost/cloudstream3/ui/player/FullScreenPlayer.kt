@@ -39,6 +39,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
@@ -62,6 +63,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.vibrateDevice
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
@@ -1369,5 +1371,48 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 }
                 .start()
         }
+    }
+
+    private val subJumpHideRunnable = Runnable {
+        playerBinding?.playerTimeText?.isVisible = false
+    }
+
+    private fun jumpToSubtitle(next: Boolean) {
+        val pos = player.getPosition() ?: return
+        val rawCues = player.getSubtitleCues()
+        val cues = rawCues.sortedBy { it.startTimeMs }
+
+        if (cues.isEmpty()) {
+            showToast("No subtitles loaded")
+            return
+        }
+
+        val target = if (next) {
+            cues.firstOrNull { it.startTimeMs > pos + 400L }
+        } else {
+            val currentCue = cues.lastOrNull { it.startTimeMs <= pos && pos <= it.endTimeMs + 500L }
+            if (currentCue != null && pos - currentCue.startTimeMs > 1000L) {
+                currentCue
+            } else {
+                cues.lastOrNull { it.startTimeMs < pos - 1000L } ?: cues.firstOrNull()
+            }
+        }
+
+        if (target != null) {
+            context?.vibrateDevice(35L)
+            player.seekTo(target.startTimeMs, PlayerEventSource.UI)
+            val snippet = target.text.firstOrNull()?.replace("\n", " ")?.trim()?.take(45) ?: ""
+            val hudText = "${if (next) "⏭" else "⏮"} $snippet"
+            playerBinding?.playerTimeText?.apply {
+                isVisible = true
+                text = hudText
+                removeCallbacks(subJumpHideRunnable)
+                postDelayed(subJumpHideRunnable, 1200L)
+            }
+        }
+    }
+
+    override fun onJumpSubtitle(next: Boolean) {
+        jumpToSubtitle(next)
     }
 }
