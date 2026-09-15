@@ -10,7 +10,7 @@ object TvMockCatalog {
     val hero: TvMediaItem = TvMediaItem(
         id = "hero-nebula",
         title = "Nebula Drift",
-        subtitle = "Original · Sci-Fi",
+        subtitle = "Original · Sci-Fi · Demo",
         posterUrl = "$P/nebula-poster/400/600",
         backdropUrl = "$P/nebula-backdrop/1280/720",
         year = 2026,
@@ -20,6 +20,7 @@ object TvMockCatalog {
         synopsis = "A salvage crew chasing a dying star discovers a signal that rewrites " +
             "everything they know about home. Explicit Compose TV demo hero.",
         isMock = true,
+        availabilityKind = TvAvailabilityKind.PlaybackUnavailable,
     )
 
     val continueWatching: TvContentRail = TvContentRail(
@@ -103,5 +104,6 @@ object TvMockCatalog {
         runtime = runtime,
         progressFraction = progress,
         isMock = true,
+        availabilityKind = TvAvailabilityKind.PlaybackUnavailable,
     )
 }

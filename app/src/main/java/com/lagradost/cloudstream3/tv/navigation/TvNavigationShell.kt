@@ -42,7 +42,7 @@ import com.lagradost.cloudstream3.tv.watchlist.rememberTvWatchlistFocusState
 
 /**
  * Structural Compose TV shell: left nav + destination content.
- * Phase 9: Continue Watching Resume — A direct movie play / B Details (+ series resolve) / C unavailable.
+ * Phase 10: CW polish + remove + Hero Watch Now — single pipeline to TvPlaybackBridge.
  * Watchlist → same TvDetailsScreen. Mock never becomes real TvPlaybackRequest.
  */
 @Composable

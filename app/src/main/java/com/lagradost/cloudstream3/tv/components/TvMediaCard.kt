@@ -32,6 +32,7 @@ import coil3.network.httpHeaders
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityKind
 import com.lagradost.cloudstream3.tv.model.TvMediaItem
 
 private val PosterPlaceholder = Color(0xFF2A2A2E)
@@ -44,6 +45,7 @@ fun TvMediaCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     onFocused: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val placeholder = ColorPainter(PosterPlaceholder)
@@ -59,11 +61,15 @@ fun TvMediaCard(
         )
         .build()
 
+    val availability = item.availabilityKind
+    val stale = availability != null && availability != TvAvailabilityKind.Available
+
     Column(
         modifier = modifier.width(148.dp),
     ) {
         Card(
             onClick = onClick,
+            onLongClick = onLongClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(2f / 3f)
@@ -95,21 +101,43 @@ fun TvMediaCard(
                             ),
                         ),
                 )
-                item.progressFraction?.let { progress ->
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .fillMaxWidth()
-                            .height(4.dp)
-                            .background(Color.White.copy(alpha = 0.25f)),
-                    ) {
+                // Progress only for valid resume — never fake progress on stale cards.
+                if (!stale) {
+                    item.progressFraction?.let { progress ->
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth(progress.coerceIn(0f, 1f))
+                                .align(Alignment.BottomStart)
+                                .fillMaxWidth()
                                 .height(4.dp)
-                                .background(MaterialTheme.colorScheme.primary),
-                        )
+                                .background(Color.White.copy(alpha = 0.25f)),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(progress.coerceIn(0f, 1f))
+                                    .height(4.dp)
+                                    .background(MaterialTheme.colorScheme.primary),
+                            )
+                        }
                     }
+                }
+                if (stale) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.45f)),
+                    )
+                    Text(
+                        text = (availability ?: TvAvailabilityKind.Unavailable).label,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .background(
+                                Color.Black.copy(alpha = 0.65f),
+                                RoundedCornerShape(6.dp),
+                            )
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                    )
                 }
             }
         }
@@ -129,7 +157,11 @@ fun TvMediaCard(
             Text(
                 text = subtitleText,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (stale) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(top = 2.dp),

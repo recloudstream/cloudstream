@@ -51,6 +51,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.tv.components.TvFocusScale
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityClassifier
 import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvDetailsAction
 import com.lagradost.cloudstream3.tv.model.TvDetailsContent
@@ -96,13 +97,17 @@ fun TvDetailsScreen(
             onBack = onBack,
             modifier = modifier,
         )
-        is TvDetailsUiState.Error -> TvDetailsErrorPane(
-            message = state.message,
-            titleHint = state.titleHint ?: ref.title.takeIf { it.isNotBlank() },
-            onRetry = { viewModel.onAction(TvDetailsAction.Retry) },
-            onBack = onBack,
-            modifier = modifier,
-        )
+        is TvDetailsUiState.Error -> {
+            val status = TvAvailabilityClassifier.fromDetailsFailure(state.message)
+            TvDetailsErrorPane(
+                availabilityTitle = status.title,
+                message = state.message,
+                titleHint = state.titleHint ?: ref.title.takeIf { it.isNotBlank() },
+                onRetry = { viewModel.onAction(TvDetailsAction.Retry) },
+                onBack = onBack,
+                modifier = modifier,
+            )
+        }
     }
 }
 
@@ -361,6 +366,7 @@ private fun TvDetailsLoadingPane(
 
 @Composable
 private fun TvDetailsErrorPane(
+    availabilityTitle: String,
     message: String,
     titleHint: String?,
     onRetry: () -> Unit,
@@ -378,12 +384,19 @@ private fun TvDetailsErrorPane(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
-            text = titleHint ?: "Couldn't load details",
+            text = availabilityTitle,
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onBackground,
         )
+        if (!titleHint.isNullOrBlank()) {
+            Text(
+                text = titleHint,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
         Text(
-            text = message,
+            text = message + "\n\nRetry or Back. No silent swap to other titles.",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

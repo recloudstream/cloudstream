@@ -1,50 +1,40 @@
-# Compose for TV — Phase 9 Continue Watching true Resume
+# Compose for TV — Phase 10 CW polish, stale handling, Hero Watch Now
 
-Architecture:
+Architecture (unchanged single pipeline):
 
 ```
-Continue Watching (read-only Phase 8 fields)
-  → classify A / B / C
-  A Movie: TvPlaybackRequest(variantLabel=Movie) → TvPlaybackBridge → GeneratorPlayer
-  B Series/Anime + exact S/E or episodeId:
-      TvDetailsRepository.load → match TvEpisode → fromEpisode → same bridge
-      else → shared TvDetailsScreen (restore season/episode if possible)
-  C: clear unavailable — never play
-Progress UI is display-only (PosDur). Player remains position owner.
+Home / Search / Watchlist / CW / Hero
+  → TvContentRef / TvPlaybackRequest
+  → TvPlaybackBridge
+  → GeneratorPlayer / RepoLinkGenerator / CS3IPlayer (existing)
 ```
 
-## Architectural Q — direct resume without second persistence?
+## Architectural Q — single pipeline? New persistence?
 
-**Movies (A): Yes.** Exact path:
+**Yes, preserve one pipeline.** No new player path.
 
-`TvContinueWatchingItem { url, apiName, title, typeLabel=Movie }`
-→ `TvPlaybackRequest(url, apiName, title, variantLabel="Movie")`
-→ `TvPlaybackBridge.launch` → `APIRepository.load` → `MovieLoadResponse` → `RepoLinkGenerator` → `GeneratorPlayer`
-(existing player seeks via PosDur / episode id — Compose does not seek)
+**Persistence: NO new keys / DataStore / DB / sync.**  
+CW remove only calls existing `DataStoreHelper.removeLastWatched(parentId)`.
 
-**Series/Anime: Not from CW fields alone.** Precise missing data: **`Episode.data`** (playable payload) plus full episode metadata required by `TvPlaybackRequest.fromEpisode` / bridge. CW only has `season?`, `episode?`, `episodeId?`, `parentId?` + header identity.
+## CW mutation API audit
 
-Exact path when S/E or episodeId present (still no new persistence):
+| API | Class | Notes |
+|-----|-------|-------|
+| `DataStoreHelper.removeLastWatched(parentId)` | **A reusable** | Per-item CW remove (mobile Home uses same) |
+| `DataStoreHelper.deleteAllResumeStateIds()` | A (bulk) | Clear-all; not used for per-item TV UI |
+| `setLastWatched` | write | Player/history write — not a hide API |
+| `deleteBookmarkedData` / favorites / watch state | **B side-effecty** | Library mutations + refresh; not CW remove |
+| Soft-hide / dismiss flag | **C none** | Would invent persistence — not implemented |
 
-`TvContentRef` → **same** `TvDetailsRepository.load` as Details → match episode by `episodeId` else season+number → `TvPlaybackRequest.fromEpisode` → existing bridge.
+**Remove UI:** yes (A + TV confirm dialog). **Hide:** no.
 
-Do **not** fix the gap via DataStore writes, PosDur writers, or a second resume store.
+## Phase 10 surfaces
 
-## Phase 8 resume fields (audit)
-
-| Field | Source |
-|-------|--------|
-| title, url, apiName, posterUrl, typeLabel | `DOWNLOAD_HEADER_CACHE` (+ backup read-only) |
-| episode, season, parentId, episodeId, updateTime | `ResumeWatching` / `getLastWatched` |
-| progressFraction | `getViewPos(episodeId)` when duration > 0 |
-
-## Classification
-
-| Class | Criteria |
-|-------|----------|
-| **A Direct** | Non-blank url+apiName+title and `typeLabel == "Movie"` |
-| **B After Details** | Series/Anime/Cartoon/AsianDrama/OVA (or other non-blocked types) with identity; restore/resolve when S/E or episodeId present |
-| **C Unsafe** | Mock; Live; Torrent; missing identity |
+1. **CW rail** — valid resume: poster/title/ep/progress/Resume; stale: availability badge, no fake play
+2. **Remove** — long-press CW → confirm (Back cancels, focus Cancel) → `removeLastWatched` → refresh CW → neighbor focus
+3. **Stale labels** — Available / Unavailable / Provider Missing / Load Failed / Playback Unavailable across Home/Search/Watchlist/Details/CW
+4. **Hero Watch Now** — Movie → `TvPlaybackRequest` → bridge; Series/Anime → Phase 9 deterministic resolve only if exact episode hint, else Details; mock never plays
+5. **Home state** — real / loading / empty / error / demo explicit; CW refresh never silent-fail→demo
 
 ## Validate
 
@@ -53,4 +43,4 @@ Do **not** fix the gap via DataStore writes, PosDur writers, or a second resume 
 ./gradlew :app:assembleStableDebug
 ```
 
-Prefer `app/.../tv/**` only. No new persistence / DataStore keys / player / library changes.
+Prefer `app/.../tv/**` only. STOP after Phase 10.

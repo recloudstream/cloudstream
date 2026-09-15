@@ -29,6 +29,10 @@ data class TvMediaItem(
      * Null for Home/Search/Watchlist cards — never invent resume metadata.
      */
     val resumeHint: TvResumeHint? = null,
+    /**
+     * Phase 10: optional availability badge (CW stale / demo). Null = treat as Available.
+     */
+    val availabilityKind: TvAvailabilityKind? = null,
 )
 
 data class TvContentRail(
@@ -58,11 +62,14 @@ sealed interface TvHomeUiState {
     data class Empty(
         val providerName: String?,
         val message: String = "No catalog items from the current provider.",
+        /** Explicit empty — never silent-fail into demo. */
+        val availability: TvAvailabilityKind = TvAvailabilityKind.Unavailable,
     ) : TvHomeUiState
 
     data class Error(
         val message: String,
         val canUseMockFallback: Boolean = true,
+        val availability: TvAvailabilityKind = TvAvailabilityKind.LoadFailed,
     ) : TvHomeUiState
 }
 
@@ -71,6 +78,11 @@ sealed interface TvHomeAction {
     data object UseMockFallback : TvHomeAction
     /** Re-read Continue Watching only (enter/resume) — no homepage network. */
     data object RefreshContinueWatching : TvHomeAction
+    /**
+     * Phase 10 — remove one CW row via existing DataStoreHelper.removeLastWatched.
+     * No new keys; parentId from resume hint only.
+     */
+    data class RemoveContinueWatching(val parentId: Int) : TvHomeAction
 }
 
 enum class TvDestination(val label: String) {

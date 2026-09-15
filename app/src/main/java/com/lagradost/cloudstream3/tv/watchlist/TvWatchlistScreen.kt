@@ -40,6 +40,8 @@ import com.lagradost.cloudstream3.tv.model.TvWatchlistAction
 import com.lagradost.cloudstream3.tv.model.TvWatchlistCatalog
 import com.lagradost.cloudstream3.tv.model.TvWatchlistItem
 import com.lagradost.cloudstream3.tv.model.TvWatchlistSection
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityClassifier
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityKind
 import com.lagradost.cloudstream3.tv.model.TvWatchlistUiState
 
 /**
@@ -99,7 +101,7 @@ fun TvWatchlistScreen(
             modifier = modifier,
         )
         is TvWatchlistUiState.Empty -> TvWatchlistStatusPane(
-            title = "Library is empty",
+            title = TvAvailabilityKind.Unavailable.label,
             body = buildString {
                 append(state.message)
                 state.accountName?.let { append("\nProfile: $it") }
@@ -109,13 +111,16 @@ fun TvWatchlistScreen(
             onPrimary = { viewModel.onAction(TvWatchlistAction.Retry) },
             modifier = modifier,
         )
-        is TvWatchlistUiState.Error -> TvWatchlistStatusPane(
-            title = "Couldn't load Library",
-            body = state.message,
-            primaryLabel = "Retry",
-            onPrimary = { viewModel.onAction(TvWatchlistAction.Retry) },
-            modifier = modifier,
-        )
+        is TvWatchlistUiState.Error -> {
+            val status = TvAvailabilityClassifier.fromWatchlistFailure(state.message)
+            TvWatchlistStatusPane(
+                title = status.title,
+                body = state.message + "\n\nRetry. No silent swap to demo Library.",
+                primaryLabel = "Retry",
+                onPrimary = { viewModel.onAction(TvWatchlistAction.Retry) },
+                modifier = modifier,
+            )
+        }
     }
 }
 

@@ -29,6 +29,7 @@ data class TvContinueWatchingItem(
 
     fun toMediaItem(): TvMediaItem {
         val classification = TvContinueWatchingClassifier.classify(this)
+        val availability = TvAvailabilityClassifier.fromCwClassification(classification)
         val epSubtitle = buildList {
             when {
                 season != null && episode != null -> add("S$season E$episode")
@@ -36,12 +37,17 @@ data class TvContinueWatchingItem(
                 else -> typeLabel?.let { add(it) }
             }
             when (classification.clazz) {
+                // Valid resume: poster/title/ep/progress + Resume label (progress on card bar).
                 TvCwClass.DirectPlayable -> add("Resume")
                 TvCwClass.PlayableAfterDetails -> {
                     if (season != null || episode != null || episodeId != null) add("Continue")
                     else add("Details")
                 }
-                TvCwClass.NotSafelyPlayable -> add("Unavailable")
+                // Stale / unsafe: explicit availability label — never fake play.
+                TvCwClass.NotSafelyPlayable -> add(availability.kind.label)
+            }
+            progressFraction?.takeIf { classification.clazz != TvCwClass.NotSafelyPlayable }?.let {
+                add("${(it * 100).toInt()}%")
             }
         }.joinToString(" · ")
         return TvMediaItem(
@@ -50,12 +56,16 @@ data class TvContinueWatchingItem(
             subtitle = epSubtitle,
             posterUrl = posterUrl,
             backdropUrl = posterUrl,
-            progressFraction = progressFraction,
+            // Hide fake progress on unavailable cards.
+            progressFraction = progressFraction.takeIf {
+                classification.clazz != TvCwClass.NotSafelyPlayable
+            },
             apiName = apiName,
             url = url,
             typeLabel = typeLabel,
             isMock = false,
             resumeHint = TvContinueWatchingClassifier.resumeHintOf(this),
+            availabilityKind = availability.kind,
         )
     }
 }

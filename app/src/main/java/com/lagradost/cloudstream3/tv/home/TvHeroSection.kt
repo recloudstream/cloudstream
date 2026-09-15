@@ -44,6 +44,8 @@ fun TvHeroSection(
     watchFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
     detailsEnabled: Boolean = true,
+    /** Explicit label — real playable / Details / Demo. Never silent. */
+    watchLabel: String = "Watch Now",
     onWatchNow: () -> Unit = {},
     onDetails: () -> Unit = {},
 ) {
@@ -151,7 +153,7 @@ fun TvHeroSection(
                         ),
                     ),
                 ) {
-                    Text("Watch Now")
+                    Text(watchLabel)
                 }
                 Button(
                     onClick = onDetails,

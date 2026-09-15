@@ -30,12 +30,17 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import androidx.tv.material3.WideButton
 import androidx.tv.material3.WideButtonDefaults
+import com.lagradost.cloudstream3.tv.components.TvConfirmDialog
 import com.lagradost.cloudstream3.tv.components.TvFocusScale
 import com.lagradost.cloudstream3.tv.components.TvOnResume
 import com.lagradost.cloudstream3.tv.data.TvContinueWatchingResume
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityClassifier
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityKind
 import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvContinueWatchingClassifier
 import com.lagradost.cloudstream3.tv.model.TvCwClass
+import com.lagradost.cloudstream3.tv.model.TvHeroWatchNow
+import com.lagradost.cloudstream3.tv.model.TvHeroWatchResult
 import com.lagradost.cloudstream3.tv.model.TvHomeAction
 import com.lagradost.cloudstream3.tv.model.TvHomeCatalog
 import com.lagradost.cloudstream3.tv.model.TvHomeUiState
@@ -63,6 +68,13 @@ class TvHomeFocusState(
         lastFocusedRailId = railId
     }
 
+    /** After CW remove — keep focus on neighbor index (coerced by [pruneTo]). */
+    fun preferNeighborAfterRemove(railId: String, removedIndex: Int) {
+        val next = (removedIndex).coerceAtLeast(0)
+        railFocusIndices[railId] = next
+        lastFocusedRailId = railId
+    }
+
     /** Drop remembered indices for rails that disappeared or shrank past the index. */
     fun pruneTo(catalog: TvHomeCatalog) {
         val alive = catalog.rails.associate { it.id to it.items.size }
@@ -85,6 +97,12 @@ class TvHomeFocusState(
 @Composable
 fun rememberTvHomeFocusState(): TvHomeFocusState = remember { TvHomeFocusState() }
 
+private data class CwRemoveCandidate(
+    val item: TvMediaItem,
+    val parentId: Int,
+    val index: Int,
+)
+
 @Composable
 fun TvHomeScreen(
     focusState: TvHomeFocusState,
@@ -95,11 +113,11 @@ fun TvHomeScreen(
 ) {
     val uiState by viewModel.state.collectAsState()
     var notice by remember { mutableStateOf<String?>(null) }
-    var resolvingCwId by remember { mutableStateOf<String?>(null) }
+    var resolvingId by remember { mutableStateOf<String?>(null) }
+    var removeCandidate by remember { mutableStateOf<CwRemoveCandidate?>(null) }
     val scope = rememberCoroutineScope()
     val resumeResolver = remember { TvContinueWatchingResume() }
 
-    // Refresh Continue Watching on enter / Activity resume (read-only; no homepage re-fetch).
     LaunchedEffect(Unit) { viewModel.onAction(TvHomeAction.RefreshContinueWatching) }
     TvOnResume {
         viewModel.onAction(TvHomeAction.RefreshContinueWatching)
@@ -112,23 +130,63 @@ fun TvHomeScreen(
             onOpenDetails(ref)
         } else {
             notice = if (item.isMock) {
-                "Demo item — details unavailable (never loads fake IDs)."
+                "${TvAvailabilityKind.PlaybackUnavailable.label}: Demo item — details unavailable (never loads fake IDs)."
             } else {
-                "Missing provider URL — cannot open details."
+                "${TvAvailabilityKind.Unavailable.label}: Missing provider URL — cannot open details."
+            }
+        }
+    }
+
+    fun handleSeriesResolve(ref: TvContentRef, hint: com.lagradost.cloudstream3.tv.model.TvResumeHint, trackId: String) {
+        if (resolvingId != null) return
+        resolvingId = trackId
+        notice = "Resuming…"
+        scope.launch {
+            val result = try {
+                withContext(Dispatchers.IO) {
+                    resumeResolver.resolveSeriesResume(ref, hint)
+                }
+            } catch (t: Throwable) {
+                TvContinueWatchingResume.ResolveResult.OpenDetails(
+                    ref,
+                    t.message ?: "Failed to resume — open Details.",
+                )
+            } finally {
+                resolvingId = null
+            }
+            when (result) {
+                is TvContinueWatchingResume.ResolveResult.Playback -> {
+                    if (result.request.isMock) {
+                        notice = "${TvAvailabilityKind.PlaybackUnavailable.label}: Demo item — never becomes a real TvPlaybackRequest."
+                    } else {
+                        notice = null
+                        onPlaybackRequest(result.request)
+                    }
+                }
+                is TvContinueWatchingResume.ResolveResult.OpenDetails -> {
+                    notice = result.message?.let {
+                        "${TvAvailabilityKind.PlaybackUnavailable.label}: $it"
+                    }
+                    onOpenDetails(result.ref.copy(resumeHint = hint))
+                }
+                is TvContinueWatchingResume.ResolveResult.Unavailable -> {
+                    notice = "${TvAvailabilityKind.Unavailable.label}: ${result.message}"
+                }
             }
         }
     }
 
     fun onContinueWatchingClick(item: TvMediaItem) {
         val classification = TvContinueWatchingClassifier.classifyMediaItem(item)
+        val availability = TvAvailabilityClassifier.fromCwClassification(classification)
         when (classification.clazz) {
             TvCwClass.NotSafelyPlayable -> {
-                notice = classification.reason
+                notice = "${availability.kind.label}: ${classification.reason}"
             }
             TvCwClass.DirectPlayable -> {
                 val request = TvContinueWatchingClassifier.moviePlaybackRequest(item)
                 if (request == null || request.isMock) {
-                    notice = "Demo item — never becomes a real TvPlaybackRequest."
+                    notice = "${TvAvailabilityKind.PlaybackUnavailable.label}: Demo item — never becomes a real TvPlaybackRequest."
                 } else {
                     notice = null
                     onPlaybackRequest(request)
@@ -137,51 +195,49 @@ fun TvHomeScreen(
             TvCwClass.PlayableAfterDetails -> {
                 val ref = TvContentRef.fromMediaItem(item)
                 if (ref == null) {
-                    notice = "Missing provider URL — cannot open details."
+                    notice = "${TvAvailabilityKind.Unavailable.label}: Missing provider URL — cannot open details."
                     return
                 }
                 val hint = item.resumeHint
                 val seriesTypes = setOf("TvSeries", "Anime", "Cartoon", "AsianDrama", "OVA")
                 val isSeriesFamily = item.typeLabel in seriesTypes
                 if (isSeriesFamily && hint != null && hint.hasExactEpisode) {
-                    if (resolvingCwId != null) return
-                    resolvingCwId = item.id
-                    notice = "Resuming…"
-                    scope.launch {
-                        val result = try {
-                            withContext(Dispatchers.IO) {
-                                resumeResolver.resolveSeriesResume(ref, hint)
-                            }
-                        } catch (t: Throwable) {
-                            TvContinueWatchingResume.ResolveResult.OpenDetails(
-                                ref,
-                                t.message ?: "Failed to resume — open Details.",
-                            )
-                        } finally {
-                            resolvingCwId = null
-                        }
-                        when (result) {
-                            is TvContinueWatchingResume.ResolveResult.Playback -> {
-                                if (result.request.isMock) {
-                                    notice = "Demo item — never becomes a real TvPlaybackRequest."
-                                } else {
-                                    notice = null
-                                    onPlaybackRequest(result.request)
-                                }
-                            }
-                            is TvContinueWatchingResume.ResolveResult.OpenDetails -> {
-                                notice = result.message
-                                onOpenDetails(result.ref.copy(resumeHint = hint))
-                            }
-                            is TvContinueWatchingResume.ResolveResult.Unavailable -> {
-                                notice = result.message
-                            }
-                        }
-                    }
+                    handleSeriesResolve(ref, hint, item.id)
                 } else {
                     notice = null
                     onOpenDetails(ref)
                 }
+            }
+        }
+    }
+
+    fun onHeroWatchNow(hero: TvMediaItem) {
+        when (val result = TvHeroWatchNow.resolve(hero)) {
+            is TvHeroWatchResult.Play -> {
+                if (result.request.isMock) {
+                    notice = "${TvAvailabilityKind.PlaybackUnavailable.label}: Demo — never plays."
+                } else {
+                    notice = null
+                    onPlaybackRequest(result.request)
+                }
+            }
+            is TvHeroWatchResult.ResolveSeries -> {
+                handleSeriesResolve(result.ref, result.hint, "hero:${hero.id}")
+            }
+            is TvHeroWatchResult.OpenDetails -> {
+                notice = result.message
+                onOpenDetails(result.ref)
+            }
+            is TvHeroWatchResult.Demo -> {
+                notice = "${TvAvailabilityKind.PlaybackUnavailable.label}: ${result.message}"
+            }
+            is TvHeroWatchResult.Unavailable -> {
+                val kind = if (result.playbackRelated) {
+                    TvAvailabilityKind.PlaybackUnavailable
+                } else {
+                    TvAvailabilityKind.Unavailable
+                }
+                notice = "${kind.label}: ${result.message}"
             }
         }
     }
@@ -194,47 +250,81 @@ fun TvHomeScreen(
         }
     }
 
-    when (val state = uiState) {
-        is TvHomeUiState.Loading -> TvHomeLoadingPane(modifier)
-        is TvHomeUiState.Content -> TvHomeContentPane(
-            catalog = state.catalog,
-            focusState = focusState,
-            notice = notice,
-            onOpenItem = ::onRailItemClick,
-            onWatchNowStub = { /* Phase 4: clean stub — no player */ },
-            modifier = modifier,
-        )
-        is TvHomeUiState.Empty -> TvHomeStatusPane(
-            title = "Nothing here",
-            body = buildString {
-                append(state.message)
-                state.providerName?.let { append("\nProvider: $it") }
-                append("\n\nRetry after plugins load, or open the explicit demo catalog.")
-            },
-            primaryLabel = "Retry",
-            onPrimary = { viewModel.onAction(TvHomeAction.Retry) },
-            secondaryLabel = "Load demo catalog",
-            onSecondary = { viewModel.onAction(TvHomeAction.UseMockFallback) },
-            modifier = modifier,
-        )
-        is TvHomeUiState.Error -> TvHomeStatusPane(
-            title = "Couldn't load Home",
-            body = state.message +
-                if (state.canUseMockFallback) {
-                    "\n\nRetry when a homepage provider is ready, or load the demo catalog (explicit fallback)."
-                } else {
-                    ""
+    fun requestRemoveCw(item: TvMediaItem, index: Int) {
+        if (item.isMock) {
+            notice = "${TvAvailabilityKind.PlaybackUnavailable.label}: Demo CW cannot be removed from real history."
+            return
+        }
+        val parentId = item.resumeHint?.parentId
+        if (parentId == null) {
+            notice = "${TvAvailabilityKind.Unavailable.label}: Missing parentId — cannot remove (no fake remove)."
+            return
+        }
+        removeCandidate = CwRemoveCandidate(item, parentId, index)
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        when (val state = uiState) {
+            is TvHomeUiState.Loading -> TvHomeLoadingPane(Modifier.fillMaxSize())
+            is TvHomeUiState.Content -> TvHomeContentPane(
+                catalog = state.catalog,
+                focusState = focusState,
+                notice = notice,
+                onOpenItem = ::onRailItemClick,
+                onWatchNow = { onHeroWatchNow(state.catalog.hero) },
+                onCwLongClick = { item, index -> requestRemoveCw(item, index) },
+                modifier = Modifier.fillMaxSize(),
+            )
+            is TvHomeUiState.Empty -> TvHomeStatusPane(
+                title = state.availability.label,
+                body = buildString {
+                    append(state.message)
+                    state.providerName?.let { append("\nProvider: $it") }
+                    append("\n\nReal empty catalog — not demo. Retry after plugins load, or open the explicit demo catalog.")
                 },
-            primaryLabel = "Retry",
-            onPrimary = { viewModel.onAction(TvHomeAction.Retry) },
-            secondaryLabel = if (state.canUseMockFallback) "Load demo catalog" else null,
-            onSecondary = if (state.canUseMockFallback) {
-                { viewModel.onAction(TvHomeAction.UseMockFallback) }
-            } else {
-                null
-            },
-            modifier = modifier,
-        )
+                primaryLabel = "Retry",
+                onPrimary = { viewModel.onAction(TvHomeAction.Retry) },
+                secondaryLabel = "Load demo catalog",
+                onSecondary = { viewModel.onAction(TvHomeAction.UseMockFallback) },
+                modifier = Modifier.fillMaxSize(),
+            )
+            is TvHomeUiState.Error -> TvHomeStatusPane(
+                title = state.availability.label,
+                body = state.message +
+                    if (state.canUseMockFallback) {
+                        "\n\nRetry when a homepage provider is ready, or load the demo catalog (explicit fallback — never silent)."
+                    } else {
+                        ""
+                    },
+                primaryLabel = "Retry",
+                onPrimary = { viewModel.onAction(TvHomeAction.Retry) },
+                secondaryLabel = if (state.canUseMockFallback) "Load demo catalog" else null,
+                onSecondary = if (state.canUseMockFallback) {
+                    { viewModel.onAction(TvHomeAction.UseMockFallback) }
+                } else {
+                    null
+                },
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+
+        removeCandidate?.let { candidate ->
+            TvConfirmDialog(
+                title = "Remove from Continue Watching?",
+                message = "Remove \"${candidate.item.title}\" from continue watching history? This uses the existing resume remove API.",
+                confirmLabel = "Remove",
+                onDismiss = { removeCandidate = null },
+                onConfirm = {
+                    val idx = candidate.index
+                    removeCandidate = null
+                    focusState.preferNeighborAfterRemove(TvRailIds.CONTINUE, idx)
+                    viewModel.onAction(TvHomeAction.RemoveContinueWatching(candidate.parentId))
+                    notice = null
+                    // Restore focus to CW neighbor after list updates.
+                    focusState.lastFocusedRailId = TvRailIds.CONTINUE
+                },
+            )
+        }
     }
 }
 
@@ -244,7 +334,8 @@ private fun TvHomeContentPane(
     focusState: TvHomeFocusState,
     notice: String?,
     onOpenItem: (railId: String, item: TvMediaItem) -> Unit,
-    onWatchNowStub: () -> Unit,
+    onWatchNow: () -> Unit,
+    onCwLongClick: (TvMediaItem, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val watchFocusRequester = remember { FocusRequester() }
@@ -253,9 +344,14 @@ private fun TvHomeContentPane(
 
     LaunchedEffect(catalog) {
         focusState.pruneTo(catalog)
+        // After remove refresh, restore CW focus if that was the last rail.
+        if (focusState.lastFocusedRailId == TvRailIds.CONTINUE &&
+            visibleRails.any { it.id == TvRailIds.CONTINUE }
+        ) {
+            pendingRestoreRailId = TvRailIds.CONTINUE
+        }
     }
 
-    // Composition-enter: first visit → hero; return → rail restore.
     LaunchedEffect(Unit) {
         if (!focusState.initialHeroFocusDone) {
             runCatching { watchFocusRequester.requestFocus() }
@@ -265,7 +361,6 @@ private fun TvHomeContentPane(
         }
     }
 
-    // After GeneratorPlayer pops (Activity ON_RESUME): restore CW / last rail focus; neighbor if gone (pruneTo).
     TvOnResume {
         val railId = focusState.lastFocusedRailId
         if (railId != null) {
@@ -278,6 +373,24 @@ private fun TvHomeContentPane(
         contentPadding = PaddingValues(bottom = 48.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp),
     ) {
+        item(key = "home-state-banner") {
+            val stateLabel = when {
+                catalog.usingMockFallback -> "Home · Demo catalog (explicit)"
+                else -> "Home · Real catalog"
+            }
+            Text(
+                text = buildList {
+                    add(stateLabel)
+                    catalog.providerName?.let { add("Provider: $it") }
+                    if (!catalog.usingMockFallback && catalog.rails.none { it.id == TvRailIds.CONTINUE }) {
+                        add("CW empty")
+                    }
+                }.joinToString(" · "),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
+        }
         if (catalog.usingMockFallback || catalog.rails.any { it.isMock } || catalog.hero.isMock) {
             item(key = "mock-banner") {
                 val parts = buildList {
@@ -307,11 +420,20 @@ private fun TvHomeContentPane(
             }
         }
         item(key = "hero") {
+            val heroRef = TvContentRef.fromMediaItem(catalog.hero)
+            val watchLabel = when (val r = TvHeroWatchNow.resolve(catalog.hero)) {
+                is TvHeroWatchResult.Play -> "Watch Now"
+                is TvHeroWatchResult.ResolveSeries -> "Watch Now"
+                is TvHeroWatchResult.OpenDetails -> "Details"
+                is TvHeroWatchResult.Demo -> "Demo"
+                is TvHeroWatchResult.Unavailable -> "Unavailable"
+            }
             TvHeroSection(
                 hero = catalog.hero,
                 watchFocusRequester = watchFocusRequester,
-                detailsEnabled = TvContentRef.fromMediaItem(catalog.hero) != null,
-                onWatchNow = onWatchNowStub,
+                detailsEnabled = heroRef != null,
+                watchLabel = watchLabel,
+                onWatchNow = onWatchNow,
                 onDetails = { onOpenItem("hero", catalog.hero) },
             )
         }
@@ -322,6 +444,15 @@ private fun TvHomeContentPane(
                 lastFocusedIndex = focusState.indexFor(rail.id),
                 onFocusedIndexChanged = { index -> focusState.update(rail.id, index) },
                 onItemClick = { item -> onOpenItem(rail.id, item) },
+                onItemLongClick = if (rail.id == TvRailIds.CONTINUE && !rail.isMock) {
+                    { item ->
+                        val idx = rail.items.indexOfFirst { it.id == item.id }
+                            .takeIf { it >= 0 } ?: focusState.indexFor(rail.id)
+                        onCwLongClick(item, idx)
+                    }
+                } else {
+                    null
+                },
                 restoreFocus = shouldRestore,
                 onRestoreConsumed = {
                     if (pendingRestoreRailId == rail.id) {
@@ -339,11 +470,18 @@ private fun TvHomeLoadingPane(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = "Loading catalog…",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Loading…",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = "Home · ${TvAvailabilityKind.Available.label} pending",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

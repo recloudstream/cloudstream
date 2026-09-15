@@ -10,10 +10,14 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 /**
- * Pure read-only Continue Watching adapter.
+ * Continue Watching adapter (Phase 8/10).
+ *
+ * Reads are pure; Phase 10 remove uses existing [removeLastWatched] only
+ * (no new DataStore keys / hide flags).
  *
  * Why not [com.lagradost.cloudstream3.ui.home.HomeViewModel.getResumeWatching]:
  * that companion can **write** `DOWNLOAD_HEADER_CACHE` when restoring from
@@ -48,6 +52,18 @@ class TvContinueWatchingRepository {
             items = items.map { it.toMediaItem() },
             isMock = false,
         )
+    }
+
+
+    /**
+     * Phase 10 — remove one CW entry via existing [removeLastWatched].
+     * Does not touch PosDur, bookmarks, favorites, or header cache.
+     * @return true when parentId was non-null and remove was invoked.
+     */
+    fun removeContinueWatching(parentId: Int?): Boolean {
+        if (parentId == null) return false
+        removeLastWatched(parentId)
+        return true
     }
 
     private fun mapResume(

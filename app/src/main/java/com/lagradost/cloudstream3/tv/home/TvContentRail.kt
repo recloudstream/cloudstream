@@ -35,6 +35,7 @@ fun TvContentRail(
     onFocusedIndexChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onItemClick: (TvMediaItem) -> Unit = {},
+    onItemLongClick: ((TvMediaItem) -> Unit)? = null,
     restoreFocus: Boolean = false,
     onRestoreConsumed: () -> Unit = {},
 ) {
@@ -74,10 +75,10 @@ fun TvContentRail(
                 .focusGroup(),
         ) {
             itemsIndexed(rail.items, key = { _, item -> item.id }) { index, item ->
-                // Keep focusable even for mock (Continue Watching rail); click shows explicit unavailable.
                 TvMediaCard(
                     item = item,
                     onClick = { onItemClick(item) },
+                    onLongClick = onItemLongClick?.let { handler -> { handler(item) } },
                     onFocused = { onFocusedIndexChanged(index) },
                     modifier = Modifier.focusRequester(focusRequesters[index]),
                 )

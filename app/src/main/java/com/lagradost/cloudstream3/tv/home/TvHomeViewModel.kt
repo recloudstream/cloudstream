@@ -3,7 +3,10 @@ package com.lagradost.cloudstream3.tv.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.tv.data.TvContinueWatchingRepository
 import com.lagradost.cloudstream3.tv.data.TvHomeRepository
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityClassifier
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityKind
 import com.lagradost.cloudstream3.tv.model.TvHomeAction
 import com.lagradost.cloudstream3.tv.model.TvHomeUiState
 import com.lagradost.cloudstream4.compose.ActionHandler
@@ -16,11 +19,12 @@ import kotlinx.coroutines.withContext
 
 /**
  * Lifecycle-aware Home state holder (MVI / [StateContainer]).
- * Loads once from [TvHomeRepository]; Continue Watching refreshed on resume (read-only).
- * No duplicate DataStore reads on recomposition — only enter / resume / Retry.
+ * Loads once from [TvHomeRepository]; Continue Watching refreshed on resume.
+ * Phase 10: remove CW via existing removeLastWatched; never silent-fail → demo.
  */
 class TvHomeViewModel(
     private val repository: TvHomeRepository = TvHomeRepository(),
+    private val continueWatchingRepository: TvContinueWatchingRepository = TvContinueWatchingRepository(),
 ) : ViewModel(),
     StateContainer<TvHomeUiState> by DefaultStateContainer(TvHomeUiState.Loading),
     ActionHandler<TvHomeAction> {
@@ -43,6 +47,7 @@ class TvHomeViewModel(
                 }
             }
             TvHomeAction.RefreshContinueWatching -> refreshContinueWatching()
+            is TvHomeAction.RemoveContinueWatching -> removeContinueWatching(action.parentId)
         }
     }
 
@@ -65,10 +70,19 @@ class TvHomeViewModel(
                         TvHomeUiState.Content(result.catalog)
 
                     is TvHomeRepository.LoadResult.Empty ->
-                        TvHomeUiState.Empty(result.providerName)
+                        TvHomeUiState.Empty(
+                            providerName = result.providerName,
+                            availability = TvAvailabilityKind.Unavailable,
+                        )
 
-                    is TvHomeRepository.LoadResult.Failure ->
-                        TvHomeUiState.Error(result.message, canUseMockFallback = true)
+                    is TvHomeRepository.LoadResult.Failure -> {
+                        val status = TvAvailabilityClassifier.fromHomeFailure(result.message)
+                        TvHomeUiState.Error(
+                            message = result.message,
+                            canUseMockFallback = true,
+                            availability = status.kind,
+                        )
+                    }
                 }
             }
         }
@@ -87,11 +101,46 @@ class TvHomeViewModel(
                 }
             } catch (t: Throwable) {
                 logError(t)
+                // CW refresh failure must not swap catalog into demo.
                 return@launch
             }
-            // Only apply if still Content with same provider catalog (avoid clobbering Retry).
             val latest = state.value
             if (latest is TvHomeUiState.Content && !latest.catalog.usingMockFallback) {
+                updateState { TvHomeUiState.Content(refreshed) }
+            }
+        }
+    }
+
+    /**
+     * Phase 10 — existing [DataStoreHelper.removeLastWatched] via repository.
+     * Then re-read CW rail only (no homepage network, no demo swap).
+     */
+    private fun removeContinueWatching(parentId: Int) {
+        val current = state.value
+        if (current !is TvHomeUiState.Content) return
+        if (current.catalog.usingMockFallback) return
+        cwRefreshJob?.cancel()
+        cwRefreshJob = viewModelScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    continueWatchingRepository.removeContinueWatching(parentId)
+                }
+            } catch (t: Throwable) {
+                logError(t)
+                return@launch
+            }
+            val latest = state.value
+            if (latest !is TvHomeUiState.Content || latest.catalog.usingMockFallback) return@launch
+            val refreshed = try {
+                withContext(Dispatchers.IO) {
+                    repository.withRefreshedContinueWatching(latest.catalog)
+                }
+            } catch (t: Throwable) {
+                logError(t)
+                return@launch
+            }
+            val after = state.value
+            if (after is TvHomeUiState.Content && !after.catalog.usingMockFallback) {
                 updateState { TvHomeUiState.Content(refreshed) }
             }
         }

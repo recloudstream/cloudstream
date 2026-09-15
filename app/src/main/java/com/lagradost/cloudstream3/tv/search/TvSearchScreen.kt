@@ -48,6 +48,8 @@ import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvSearchAction
 import com.lagradost.cloudstream3.tv.model.TvSearchCatalog
 import com.lagradost.cloudstream3.tv.model.TvSearchResult
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityClassifier
+import com.lagradost.cloudstream3.tv.model.TvAvailabilityKind
 import com.lagradost.cloudstream3.tv.model.TvSearchUiState
 
 /**
@@ -141,13 +143,16 @@ fun TvSearchScreen(
                 )
             }
             is TvSearchUiState.Empty -> TvSearchStatusPane(
-                title = "No results",
+                title = TvAvailabilityKind.Unavailable.label,
                 body = buildString {
                     append(state.message)
                     if (state.providerCount > 0) {
                         append("\nSearched ${state.providerCount} provider(s).")
                     }
-                    append("\n\nTry another query, or retry.")
+                    if (state.failedProviderCount > 0) {
+                        append("\n${state.failedProviderCount} provider(s) failed (partial).")
+                    }
+                    append("\n\nTry another query, or retry. No silent swap to other content.")
                 },
                 primaryLabel = "Retry",
                 onPrimary = { viewModel.onAction(TvSearchAction.Retry) },
@@ -158,18 +163,21 @@ fun TvSearchScreen(
                     runCatching { fieldFocus.requestFocus() }
                 },
             )
-            is TvSearchUiState.Error -> TvSearchStatusPane(
-                title = "Search failed",
-                body = state.message,
-                primaryLabel = "Retry",
-                onPrimary = { viewModel.onAction(TvSearchAction.Retry) },
-                secondaryLabel = "Clear",
-                onSecondary = {
-                    viewModel.onAction(TvSearchAction.Clear)
-                    focusState.restoreToField = true
-                    runCatching { fieldFocus.requestFocus() }
-                },
-            )
+            is TvSearchUiState.Error -> {
+                val status = TvAvailabilityClassifier.fromSearchFailure(state.message)
+                TvSearchStatusPane(
+                    title = status.title,
+                    body = state.message + "\n\nRetry or Clear. No silent swap to other results.",
+                    primaryLabel = "Retry",
+                    onPrimary = { viewModel.onAction(TvSearchAction.Retry) },
+                    secondaryLabel = "Clear",
+                    onSecondary = {
+                        viewModel.onAction(TvSearchAction.Clear)
+                        focusState.restoreToField = true
+                        runCatching { fieldFocus.requestFocus() }
+                    },
+                )
+            }
         }
     }
 }
