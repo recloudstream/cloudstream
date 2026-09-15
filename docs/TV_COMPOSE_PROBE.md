@@ -1,4 +1,4 @@
-# Compose for TV — Phase 11 Settings over existing preferences
+# Compose for TV — Phase 12 Subtitle preferences in TvSettingsScreen
 
 Architecture (unchanged playback pipeline):
 
@@ -13,26 +13,27 @@ Settings:
 
 ```
 TvSettingsScreen / TvSettingsAdapter
-  → AppSettings (PreferenceData)
-  → AndroidPreferenceStore
-  → PreferenceManager.getDefaultSharedPreferences  (SAME as phone)
+  → AppSettings (PreferenceData)                  [Phase 11]
+  → AndroidPreferenceStore / PreferenceManager    [filter_sub_lang_key, subtitles_encoding_key]
+  → CloudStreamApp.setKey / getKey                [subs_auto_select]
+  SAME values the phone SubtitlesFragment / GeneratorPlayer already use.
 ```
 
-## Architectural Q — same preference system?
+## Architectural Q — same subtitle preference values/behavior?
 
-**Yes.** TV Settings uses `AppSettings` / `PreferenceData.set|get` only.  
-**No** second prefs store, **no** new DataStore keys, **no** parallel SharedPreferences file.
+**Yes.** TV Subtitles rows write the existing keys through the existing APIs.  
+**No** TV-specific subtitle config path, **no** second prefs system, **no** new DataStore keys.
 
-## Audit (safe-for-TV vs excluded)
+## Exposed vs skipped
 
-| Class | Examples | TV Phase 11 |
-|-------|----------|-------------|
-| Safe-for-TV | autoplay, skip OP, episode sync, TV seek, show clock, DNS, downloads counts | Exposed |
-| Restart-required | app locale | Exposed + confirm → `activity.recreate()` |
-| Account | local profile name, skip account select | Read-only name / existing bool only |
-| Mobile-only | gestures, PiP, rotate, brightness, battery opt, biometric | Excluded |
-| Plugin / OAuth / backup file pickers / debug logcat | providers, MAL login, backup path | Excluded |
-| Phase 2 DEBUG | focus probe | Kept behind `BuildConfig.DEBUG` action |
+| Pref | Key | TV Phase 12 |
+|------|-----|-------------|
+| Auto-select language | `subs_auto_select` (setKey JSON IETF / `""` none) | Exposed |
+| Encoding | `subtitles_encoding_key` (PreferenceManager string) | Exposed |
+| Filter by preferred media language | `filter_sub_lang_key` (PreferenceManager bool) | Exposed |
+| Download languages | `subs_auto_download` (List/set IETF, multi-select) | Skipped — no TV multi-select |
+| Caption style blob | `subtitle_settings` (SaveCaptionStyle JSON) | Skipped — fragmented style mapping |
+| Chromecast style | `chome_subtitle_settings` | Skipped — Chromecast / not in-app player |
 
 ## Validate
 
@@ -41,4 +42,4 @@ TvSettingsScreen / TvSettingsAdapter
 ./gradlew :app:assembleStableDebug
 ```
 
-Prefer `app/.../tv/**` only. STOP after Phase 11.
+Prefer `app/.../tv/**` only. STOP after Phase 12.

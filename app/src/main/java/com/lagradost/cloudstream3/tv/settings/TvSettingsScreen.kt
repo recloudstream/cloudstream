@@ -40,8 +40,8 @@ import com.lagradost.cloudstream3.tv.model.TvSettingsCatalog
 import com.lagradost.cloudstream3.tv.model.TvSettingsUiState
 
 /**
- * Phase 11 — small useful TV Settings over EXISTING [com.lagradost.cloudstream4.AppSettings].
- * Same PreferenceManager store as phone; no parallel prefs / new DataStore keys.
+ * Phase 12 — TV Settings over EXISTING CloudStream prefs (AppSettings + subtitle setKey / PreferenceManager).
+ * Same stores as phone; no parallel prefs / new DataStore keys / TV-only subtitle path.
  */
 @Composable
 fun TvSettingsScreen(
@@ -271,6 +271,10 @@ private fun SettingRow(
                     if (item.requiresRestart) {
                         if (isNotEmpty()) append(" · ")
                         append("Restart required")
+                    }
+                    item.effectHint?.let { hint ->
+                        if (isNotEmpty()) append(" · ")
+                        append(hint)
                     }
                 }
                 if (sub.isNotBlank()) {

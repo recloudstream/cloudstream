@@ -14,24 +14,41 @@ import com.lagradost.cloudstream3.tv.model.TvSettingOption
 import com.lagradost.cloudstream3.tv.model.TvSettingsCatalog
 import com.lagradost.cloudstream3.tv.model.TvSettingsCategory
 import com.lagradost.cloudstream3.tv.model.TvSettingsSection
+import com.lagradost.cloudstream3.ui.player.CustomDecoder
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
 import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
+import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
 import com.lagradost.cloudstream4.AppSettings
+import com.mihon.common.preference.AndroidPreferenceStore
 import com.mihon.common.preference.PreferenceData
 
 /**
- * Adapts EXISTING [AppSettings] / PreferenceManager prefs into TV presentation rows.
- * Architectural Q: YES — same underlying CloudStream preference system (no parallel store).
+ * Adapts EXISTING [AppSettings] / PreferenceManager / setKey prefs into TV presentation rows.
+ * Architectural Q: YES — same underlying CloudStream preference values/behavior
+ * (no TV-specific subtitle config path, no parallel store, no new DataStore keys).
  */
 class TvSettingsAdapter(
     private val context: Context,
     private val settings: AppSettings,
 ) {
+    private val androidStore = AndroidPreferenceStore(context)
+    private val filterSubLangPref = androidStore.getBoolean(
+        context.getString(R.string.filter_sub_lang_key),
+        false,
+    )
+    private val encodingPref = androidStore.getString(
+        context.getString(R.string.subtitles_encoding_key),
+        "",
+    )
+
     fun buildCatalog(): TvSettingsCatalog {
         val sections = listOfNotNull(
             section(TvSettingsCategory.Playback, playbackItems()),
+            section(TvSettingsCategory.Subtitles, subtitleItems()),
             section(TvSettingsCategory.Appearance, appearanceItems()),
             section(TvSettingsCategory.Language, languageItems()),
             section(TvSettingsCategory.Downloads, downloadItems()),
@@ -89,6 +106,18 @@ class TvSettingsAdapter(
             }
             ID_CONCURRENT_CONNECTIONS -> {
                 settings.general.concurrentConnections.set(optionKey.toInt())
+                ApplyResult.Applied
+            }
+            ID_SUB_AUTO_SELECT -> {
+                // Highest-level existing write: CloudStreamApp.setKey (JSON literal), same as
+                // SubtitlesFragment / GeneratorPlayer — NOT DataPreferenceStore.getString (raw).
+                CloudStreamApp.setKey(SUBTITLE_AUTO_SELECT_KEY, optionKey)
+                ApplyResult.Applied
+            }
+            ID_SUB_ENCODING -> {
+                encodingPref.set(optionKey)
+                // Same companion downstream as the player source/subs HUD after a write.
+                CustomDecoder.updateForcedEncoding(context)
                 ApplyResult.Applied
             }
             else -> ApplyResult.Unknown
@@ -191,6 +220,43 @@ class TvSettingsAdapter(
             pref = settings.player.showMediaInfo,
         ),
     )
+
+    /**
+     * Phase 12 — only prefs with established key + API + behavior + TV value.
+     * SaveCaptionStyle blob / Chromecast / download multi-select kept out (see companion notes).
+     */
+    private fun subtitleItems(): List<TvSettingItem> {
+        val nextPlayback = EFFECT_NEXT_PLAYBACK
+        return listOf(
+            enumItem(
+                id = ID_SUB_AUTO_SELECT,
+                category = TvSettingsCategory.Subtitles,
+                title = context.getString(R.string.subs_auto_select_language),
+                summary = context.getString(R.string.player_subtitles_settings_des),
+                options = autoSelectLanguageOptions(),
+                selectedKey = autoSelectSelectedKey(),
+                effectHint = nextPlayback,
+            ),
+            enumItem(
+                id = ID_SUB_ENCODING,
+                category = TvSettingsCategory.Subtitles,
+                title = context.getString(R.string.subtitles_encoding),
+                options = zipStringString(
+                    R.array.subtitles_encoding_values,
+                    R.array.subtitles_encoding_list,
+                ),
+                selectedKey = encodingPref.get(),
+                effectHint = nextPlayback,
+            ),
+            boolItem(
+                id = ID_SUB_FILTER_LANG,
+                category = TvSettingsCategory.Subtitles,
+                title = context.getString(R.string.subtitles_filter_lang),
+                pref = filterSubLangPref,
+                effectHint = nextPlayback,
+            ),
+        )
+    }
 
     private fun appearanceItems(): List<TvSettingItem> = listOf(
         boolItem(
@@ -363,6 +429,7 @@ class TvSettingsAdapter(
         ID_SKIP_ACCOUNT -> settings.security.skipAccountSelection
         ID_AUTO_UPDATE -> settings.updates.showAppUpdates
         ID_JSDELIVR -> settings.general.jsdelivrProxy
+        ID_SUB_FILTER_LANG -> filterSubLangPref
         else -> null
     }
 
@@ -372,6 +439,7 @@ class TvSettingsAdapter(
         title: String,
         summary: String? = null,
         pref: PreferenceData<Boolean>,
+        effectHint: String? = null,
     ): TvSettingItem {
         val value = pref.get()
         return TvSettingItem(
@@ -382,6 +450,7 @@ class TvSettingsAdapter(
             valueLabel = if (value) "On" else "Off",
             control = TvSettingControlKind.Boolean,
             booleanValue = value,
+            effectHint = effectHint,
         )
     }
 
@@ -394,8 +463,10 @@ class TvSettingsAdapter(
         selectedKey: String,
         requiresRestart: Boolean = false,
         restartMessage: String? = null,
+        effectHint: String? = null,
     ): TvSettingItem {
-        val label = options.firstOrNull { it.key == selectedKey }?.label ?: selectedKey
+        val optionsWithUnknown = optionsWithUnknownCurrent(options, selectedKey)
+        val label = optionsWithUnknown.firstOrNull { it.key == selectedKey }?.label ?: "Unknown"
         return TvSettingItem(
             id = id,
             category = category,
@@ -403,11 +474,27 @@ class TvSettingsAdapter(
             summary = summary,
             valueLabel = label,
             control = TvSettingControlKind.Enum,
-            options = options,
+            options = optionsWithUnknown,
             selectedOptionKey = selectedKey,
             requiresRestart = requiresRestart,
             restartMessage = restartMessage,
+            effectHint = effectHint,
         )
+    }
+
+    /**
+     * Unknown persisted values stay visible as Current — never coerced / written on open.
+     */
+    private fun optionsWithUnknownCurrent(
+        options: List<TvSettingOption>,
+        selectedKey: String,
+    ): List<TvSettingOption> {
+        if (options.any { it.key == selectedKey }) return options
+        val current = TvSettingOption(
+            key = selectedKey,
+            label = if (selectedKey.isBlank()) "Unknown" else "Current",
+        )
+        return listOf(current) + options
     }
 
     private fun zipIntString(valuesRes: Int, namesRes: Int): List<TvSettingOption> {
@@ -417,6 +504,49 @@ class TvSettingsAdapter(
         return (0 until n).map { i ->
             TvSettingOption(key = values[i].toString(), label = names[i])
         }
+    }
+
+    private fun zipStringString(valuesRes: Int, namesRes: Int): List<TvSettingOption> {
+        val values = context.resources.getStringArray(valuesRes)
+        val names = context.resources.getStringArray(namesRes)
+        val n = minOf(values.size, names.size)
+        return (0 until n).map { i ->
+            TvSettingOption(key = values[i], label = names[i])
+        }
+    }
+
+    /**
+     * Same choice source as SubtitlesFragment auto-select dialog:
+     * [languages] IETF tags + None. Not a hard-coded tiny list.
+     *
+     * None is stored as empty string — the value GeneratorPlayer writes when the user
+     * turns subtitles off, and the value `!langCode.isNullOrEmpty()` treats as no auto-select.
+     */
+    private fun autoSelectLanguageOptions(): List<TvSettingOption> {
+        val none = TvSettingOption(
+            key = AUTO_SELECT_NONE_KEY,
+            label = context.getString(R.string.none),
+        )
+        val langs = languages
+            .map { lang ->
+                TvSettingOption(
+                    key = lang.IETF_tag,
+                    label = lang.nameNextToFlagEmoji(),
+                )
+            }
+            .sortedBy { it.label.substringAfter("\u00a0").lowercase() }
+        return listOf(none) + langs
+    }
+
+    private fun autoSelectSelectedKey(): String {
+        val persisted = getAutoSelectLanguageTagIETF()
+        return if (isNoneAutoSelect(persisted)) AUTO_SELECT_NONE_KEY else persisted
+    }
+
+    private fun isNoneAutoSelect(value: String): Boolean {
+        if (value.isEmpty()) return true
+        if (value.equals("None", ignoreCase = true)) return true
+        return value.equals(context.getString(R.string.none), ignoreCase = true)
     }
 
     private fun seekSecondOptions(): List<TvSettingOption> {
@@ -443,6 +573,15 @@ class TvSettingsAdapter(
         const val ID_SHOW_NAME = "playback.show_name"
         const val ID_SHOW_RESOLUTION = "playback.show_resolution"
         const val ID_SHOW_MEDIA_INFO = "playback.show_media_info"
+
+        const val ID_SUB_AUTO_SELECT = "subtitles.auto_select"
+        const val ID_SUB_ENCODING = "subtitles.encoding"
+        const val ID_SUB_FILTER_LANG = "subtitles.filter_lang"
+
+        /** GeneratorPlayer none-value: empty IETF tag. */
+        const val AUTO_SELECT_NONE_KEY = ""
+
+        const val EFFECT_NEXT_PLAYBACK = "Applies on next playback"
 
         const val ID_TRAILERS = "appearance.trailers"
         const val ID_KITSU = "appearance.kitsu"

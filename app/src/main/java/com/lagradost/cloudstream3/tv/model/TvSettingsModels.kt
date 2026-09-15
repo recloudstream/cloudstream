@@ -1,13 +1,15 @@
 package com.lagradost.cloudstream3.tv.model
 
 /**
- * Immutable TV presentation models for Settings (Phase 11).
+ * Immutable TV presentation models for Settings (Phase 11–12).
  * Not a duplicate of [com.lagradost.cloudstream4.AppSettings] — only what the 10ft UI needs.
- * Writes always go through existing PreferenceData / AppSettings APIs.
+ * Writes always go through existing PreferenceData / AppSettings / setKey APIs.
+ * Phase 12: Subtitles category reuses the SAME CloudStream subtitle keys (no TV-only path).
  */
 
 enum class TvSettingsCategory(val label: String) {
     Playback("Playback"),
+    Subtitles("Subtitles"),
     Appearance("Appearance"),
     Language("Language"),
     Downloads("Downloads"),
@@ -42,6 +44,8 @@ data class TvSettingItem(
     /** Clear confirm before write — locale / recreate. */
     val requiresRestart: Boolean = false,
     val restartMessage: String? = null,
+    /** Display-only runtime timing when the write is not immediate (e.g. next playback). */
+    val effectHint: String? = null,
 )
 
 data class TvSettingsSection(

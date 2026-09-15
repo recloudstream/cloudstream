@@ -85,7 +85,7 @@ fun TvEnumDialog(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    itemsIndexed(options, key = { _, o -> o.key }) { index, option ->
+                    itemsIndexed(options, key = { index, o -> o.key.ifEmpty { "empty-$index" } }) { index, option ->
                         val selected = option.key == selectedKey
                         Surface(
                             onClick = { onSelect(option) },
