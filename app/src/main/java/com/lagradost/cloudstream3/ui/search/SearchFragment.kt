@@ -149,6 +149,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
     override fun onResume() {
         super.onResume()
+        searchViewModel.clearSuggestions()
         afterPluginsLoadedEvent += ::reloadRepos
     }
 
@@ -167,6 +168,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
      **/
     fun search(query: String?) {
         if (query == null) return
+        searchViewModel.clearSuggestions()
         // don't resume state from prev search
         (binding?.searchMasterRecycler?.adapter as? BaseAdapter<*, *>)?.clearState()
         context?.let { ctx ->
@@ -202,18 +204,24 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
     private fun reloadRepos(success: Boolean = false) = main {
         searchViewModel.reloadRepos()
         context?.filterProviderByPreferredMedia()?.let { validAPIs ->
+            val isAdvanced = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
+                ?.getBoolean("advanced_search", true) ?: true
+            val nextFocusDownId = if (isAdvanced) R.id.search_master_recycler else R.id.search_autofit_results
             bindChips(
                 binding?.tvtypesChipsScroll?.tvtypesChips,
                 selectedSearchTypes,
-                validAPIs.flatMap { api -> api.supportedTypes }.distinct()
-            ) { list ->
-                if (selectedSearchTypes.toSet() != list.toSet()) {
-                    DataStoreHelper.searchPreferenceTags = list
-                    selectedSearchTypes.clear()
-                    selectedSearchTypes.addAll(list)
-                    search(binding?.mainSearch?.query?.toString())
-                }
-            }
+                validAPIs.flatMap { api -> api.supportedTypes }.distinct(),
+                { list ->
+                    if (selectedSearchTypes.toSet() != list.toSet()) {
+                        DataStoreHelper.searchPreferenceTags = list
+                        selectedSearchTypes.clear()
+                        selectedSearchTypes.addAll(list)
+                        search(binding?.mainSearch?.query?.toString())
+                    }
+                },
+                nextFocusDown = nextFocusDownId,
+                nextFocusUp = null
+            )
         }
     }
 

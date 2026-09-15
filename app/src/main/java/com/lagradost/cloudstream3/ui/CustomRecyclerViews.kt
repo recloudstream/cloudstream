@@ -19,7 +19,7 @@ class GrdLayoutManager(val context: Context, spanCount: Int) :
     ): View? {
         return try {
             val fromPos = getPosition(focused)
-            val nextPos = getNextViewPos(fromPos, focusDirection)
+            val nextPos = getNextViewPos(fromPos, focusDirection) ?: return null
             findViewByPosition(nextPos)
         } catch (e: Exception) {
             null
@@ -50,18 +50,18 @@ class GrdLayoutManager(val context: Context, spanCount: Int) :
     override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
         return try {
             val fromPos = getPosition(focused)
-            val nextPos = getNextViewPos(fromPos, direction)
+            val nextPos = getNextViewPos(fromPos, direction) ?: return null
             findViewByPosition(nextPos)
         } catch (e: Exception) {
             null
         }
     }
 
-    private fun getNextViewPos(fromPos: Int, direction: Int): Int {
+    private fun getNextViewPos(fromPos: Int, direction: Int): Int? {
         val offset = calcOffsetToNextView(direction)
 
         if (hitBorder(fromPos, offset)) {
-            return fromPos
+            return null
         }
 
         return fromPos + offset
