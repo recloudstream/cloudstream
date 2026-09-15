@@ -79,6 +79,11 @@
             android:key="@string/show_logcat_key"
             android:title="@string/show_log_cat" />
         <Preference
+            android:icon="@drawable/ic_baseline_tv_24"
+            android:key="@string/compose_tv_debug_key"
+            android:title="@string/compose_tv_debug"
+            android:summary="@string/compose_tv_debug_summary" />
+        <Preference
             android:icon="@drawable/ic_baseline_construction_24"
             android:title="@string/redo_setup_process"
             app:key="@string/redo_setup_key" />
