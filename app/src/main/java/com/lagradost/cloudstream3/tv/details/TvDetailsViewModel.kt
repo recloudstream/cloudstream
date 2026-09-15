@@ -6,8 +6,11 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.tv.data.TvDetailsRepository
 import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvDetailsAction
+import com.lagradost.cloudstream3.tv.model.TvDetailsContent
 import com.lagradost.cloudstream3.tv.model.TvDetailsUiState
+import com.lagradost.cloudstream3.tv.data.TvContinueWatchingResume
 import com.lagradost.cloudstream3.tv.model.TvEpisodeDefaults
+import com.lagradost.cloudstream3.tv.model.TvResumeHint
 import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
 import com.lagradost.cloudstream4.compose.ActionHandler
 import com.lagradost.cloudstream4.compose.DefaultStateContainer
@@ -23,10 +26,14 @@ import kotlinx.coroutines.withContext
  * no FocusRequester / Activity in state.
  *
  * Playback: builds immutable [TvPlaybackRequest] and forwards via [onPlaybackRequest]
- * (Activity → TvPlaybackBridge). No resume / DataStore writes for default episode.
+ * (Activity → TvPlaybackBridge). No DataStore / PosDur writes.
+ *
+ * Phase 9: optional [TvContentRef.resumeHint] restores season/episode selection after load
+ * (read-only match). Does not auto-play from Details — Home CW orchestrates fromEpisode.
  */
 class TvDetailsViewModel(
     private val repository: TvDetailsRepository = TvDetailsRepository(),
+    private val resumeResolver: TvContinueWatchingResume = TvContinueWatchingResume(repository),
 ) : ViewModel(),
     StateContainer<TvDetailsUiState> by DefaultStateContainer(TvDetailsUiState.Loading()),
     ActionHandler<TvDetailsAction> {
@@ -129,12 +136,7 @@ class TvDetailsViewModel(
             updateState {
                 when (result) {
                     is TvDetailsRepository.LoadResult.Success ->
-                        TvDetailsUiState.Content(
-                            details = result.details,
-                            selectedDubStatusId = result.details.defaultDubStatusId,
-                            selectedSeasonIndex = result.details.defaultSeasonIndex,
-                            selectedEpisodeId = result.details.defaultEpisodeId,
-                        )
+                        contentWithResumeRestore(result.details, ref.resumeHint)
 
                     is TvDetailsRepository.LoadResult.Failure ->
                         TvDetailsUiState.Error(
@@ -144,5 +146,39 @@ class TvDetailsViewModel(
                 }
             }
         }
+    }
+
+    /**
+     * Apply CW resume hint when possible: episodeId first, else season+episode.
+     * Falls back to Phase 6 defaults — never invents episodes or writes DataStore.
+     */
+    private fun contentWithResumeRestore(
+        details: TvDetailsContent,
+        hint: TvResumeHint?,
+    ): TvDetailsUiState.Content {
+        if (hint == null || !details.hasEpisodeSelector || !hint.hasExactEpisode) {
+            return TvDetailsUiState.Content(
+                details = details,
+                selectedDubStatusId = details.defaultDubStatusId,
+                selectedSeasonIndex = details.defaultSeasonIndex,
+                selectedEpisodeId = details.defaultEpisodeId,
+            )
+        }
+        val matched = resumeResolver.matchEpisode(details, hint)
+        if (matched == null) {
+            return TvDetailsUiState.Content(
+                details = details,
+                selectedDubStatusId = details.defaultDubStatusId,
+                selectedSeasonIndex = details.defaultSeasonIndex,
+                selectedEpisodeId = details.defaultEpisodeId,
+            )
+        }
+        val seasonIndex = matched.seasonIndex ?: 0
+        return TvDetailsUiState.Content(
+            details = details,
+            selectedDubStatusId = matched.dubStatusId,
+            selectedSeasonIndex = seasonIndex,
+            selectedEpisodeId = matched.id,
+        )
     }
 }

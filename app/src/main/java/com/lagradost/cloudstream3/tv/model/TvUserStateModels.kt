@@ -28,11 +28,20 @@ data class TvContinueWatchingItem(
     )
 
     fun toMediaItem(): TvMediaItem {
+        val classification = TvContinueWatchingClassifier.classify(this)
         val epSubtitle = buildList {
             when {
                 season != null && episode != null -> add("S$season E$episode")
                 episode != null -> add("E$episode")
                 else -> typeLabel?.let { add(it) }
+            }
+            when (classification.clazz) {
+                TvCwClass.DirectPlayable -> add("Resume")
+                TvCwClass.PlayableAfterDetails -> {
+                    if (season != null || episode != null || episodeId != null) add("Continue")
+                    else add("Details")
+                }
+                TvCwClass.NotSafelyPlayable -> add("Unavailable")
             }
         }.joinToString(" · ")
         return TvMediaItem(
@@ -46,6 +55,7 @@ data class TvContinueWatchingItem(
             url = url,
             typeLabel = typeLabel,
             isMock = false,
+            resumeHint = TvContinueWatchingClassifier.resumeHintOf(this),
         )
     }
 }

@@ -15,7 +15,7 @@ import com.lagradost.cloudstream3.tv.playback.TvPlaybackBridge
 import kotlinx.coroutines.launch
 
 /**
- * Compose-for-TV host activity (Phase 7: Search + Watch Now / Play Episode → existing GeneratorPlayer).
+ * Compose-for-TV host activity (Phase 9: CW Resume + Search/Details → existing GeneratorPlayer).
  *
  * Layout: [R.layout.activity_tv_compose_probe] —
  * Compose shell + [R.id.tv_player_container] Fragment boundary for GeneratorPlayer.
@@ -57,9 +57,9 @@ class TvComposeProbeActivity : AppCompatActivity() {
         CommonActivity.onKeyDown(this, keyCode, event) ?: super.onKeyDown(keyCode, event)
 
     /**
-     * Activity-level callback from Details Watch Now / Play Episode.
-     * Request stays immutable; no Activity / LoadResponse in Compose UiState.
-     * After GeneratorPlayer pops, Compose Details remains with selection preserved in ViewModel.
+     * Activity-level callback from Home CW Resume / Details Watch Now / Play Episode.
+     * Request stays immutable; mock rejected by bridge. No Compose seek / PosDur writes here.
+     * After GeneratorPlayer pops, Home re-reads CW (read-only) and restores focus.
      */
     private fun onPlaybackRequest(request: TvPlaybackRequest) {
         lifecycleScope.launch {

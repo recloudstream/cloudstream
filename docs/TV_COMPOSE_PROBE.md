@@ -1,55 +1,50 @@
-# Compose for TV — Phase 8 Read-only Continue Watching + Watchlist/Library
+# Compose for TV — Phase 9 Continue Watching true Resume
 
 Architecture:
 
 ```
-Home Continue Watching
-  → TvContinueWatchingRepository (read-only DataStore + header cache)
-  → TvContinueWatchingItem → TvMediaItem / TvContentRef
-  → TvDetailsScreen (Details first, not direct play)
-
-Watchlist destination
-  → TvWatchlistRepository (Local list sources only)
-  → sections (Watching / Completed / On-Hold / Dropped / Plan to Watch / Favorites)
-  → TvWatchlistItem → same TvDetailsScreen
+Continue Watching (read-only Phase 8 fields)
+  → classify A / B / C
+  A Movie: TvPlaybackRequest(variantLabel=Movie) → TvPlaybackBridge → GeneratorPlayer
+  B Series/Anime + exact S/E or episodeId:
+      TvDetailsRepository.load → match TvEpisode → fromEpisode → same bridge
+      else → shared TvDetailsScreen (restore season/episode if possible)
+  C: clear unavailable — never play
+Progress UI is display-only (PosDur). Player remains position owner.
 ```
 
-## Architectural Q — pure read-only adapters?
+## Architectural Q — direct resume without second persistence?
 
-**Yes** for both CW and Watchlist, with a custom CW path.
+**Movies (A): Yes.** Exact path:
 
-### Continue Watching — exact read-only APIs
+`TvContinueWatchingItem { url, apiName, title, typeLabel=Movie }`
+→ `TvPlaybackRequest(url, apiName, title, variantLabel="Movie")`
+→ `TvPlaybackBridge.launch` → `APIRepository.load` → `MovieLoadResponse` → `RepoLinkGenerator` → `GeneratorPlayer`
+(existing player seeks via PosDur / episode id — Compose does not seek)
 
-| API | Role |
-|-----|------|
-| `DataStoreHelper.getAllResumeStateIds()` | list parent ids |
-| `DataStoreHelper.getLastWatched(id)` | resume meta |
-| `getKey(DOWNLOAD_HEADER_CACHE, parentId)` | name/url/apiName/poster/type |
-| `getKey(DOWNLOAD_HEADER_CACHE_BACKUP, parentId)` | **read only** fallback if primary missing |
-| `DataStoreHelper.getViewPos(episodeId)` | real progress only |
+**Series/Anime: Not from CW fields alone.** Precise missing data: **`Episode.data`** (playable payload) plus full episode metadata required by `TvPlaybackRequest.fromEpisode` / bridge. CW only has `season?`, `episode?`, `episodeId?`, `parentId?` + header identity.
 
-**Blocked write path (not used):** `HomeViewModel.getResumeWatching()` can `setKey(DOWNLOAD_HEADER_CACHE, …)` when restoring from backup. Phase 8 does **not** call it and does **not** modify persistence to “fix” that.
+Exact path when S/E or episodeId present (still no new persistence):
 
-Empty CW → omit rail on real Home (never mix demo CW into live catalog). Full mock fallback still shows explicit demo CW.
+`TvContentRef` → **same** `TvDetailsRepository.load` as Details → match episode by `episodeId` else season+number → `TvPlaybackRequest.fromEpisode` → existing bridge.
 
-### Watchlist / Library — exact read-only APIs
+Do **not** fix the gap via DataStore writes, PosDur writers, or a second resume store.
 
-Same sources as `LocalList.library()`:
+## Phase 8 resume fields (audit)
 
-| API | Role |
-|-----|------|
-| `getAllWatchStateIds()` + `getResultWatchState(id)` | WatchType buckets |
-| `getBookmarkedData(id)` | bookmark card fields |
-| `getAllFavorites()` | Favorites section |
-| `getCurrentAccount()` / `currentAccount` | profile label only |
+| Field | Source |
+|-------|--------|
+| title, url, apiName, posterUrl, typeLabel | `DOWNLOAD_HEADER_CACHE` (+ backup read-only) |
+| episode, season, parentId, episodeId, updateTime | `ResumeWatching` / `getLastWatched` |
+| progressFraction | `getViewPos(episodeId)` when duration > 0 |
 
-Does **not** use SyncRepo / MAL / AniList / Simkl / Kitsu (auth + network), does **not** write `LAST_SYNC_API_KEY` or `librarySortingMode`. No remove/edit. No auth UI — remote sync simply omitted.
+## Classification
 
-## UX
-
-- CW + Watchlist cards open shared Details; stale url/apiName → Details error OK.
-- Load on enter / Activity resume; no polling; no DataStore reads on recomposition.
-- Lazy rows/columns; focus memory hoisted like Search/Home.
+| Class | Criteria |
+|-------|----------|
+| **A Direct** | Non-blank url+apiName+title and `typeLabel == "Movie"` |
+| **B After Details** | Series/Anime/Cartoon/AsianDrama/OVA (or other non-blocked types) with identity; restore/resolve when S/E or episodeId present |
+| **C Unsafe** | Mock; Live; Torrent; missing identity |
 
 ## Validate
 
@@ -58,4 +53,4 @@ Does **not** use SyncRepo / MAL / AniList / Simkl / Kitsu (auth + network), does
 ./gradlew :app:assembleStableDebug
 ```
 
-Prefer `app/.../tv/**` only. No new persistence / DataStore keys / DB / sync.
+Prefer `app/.../tv/**` only. No new persistence / DataStore keys / player / library changes.

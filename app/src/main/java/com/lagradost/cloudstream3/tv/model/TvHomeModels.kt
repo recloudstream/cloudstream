@@ -24,6 +24,11 @@ data class TvMediaItem(
     val typeLabel: String? = null,
     val posterHeaders: Map<String, String>? = null,
     val isMock: Boolean = false,
+    /**
+     * Phase 9: present only on Continue Watching cards mapped from [TvContinueWatchingItem].
+     * Null for Home/Search/Watchlist cards — never invent resume metadata.
+     */
+    val resumeHint: TvResumeHint? = null,
 )
 
 data class TvContentRail(

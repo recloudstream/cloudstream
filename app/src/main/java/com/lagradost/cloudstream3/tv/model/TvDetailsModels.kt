@@ -9,6 +9,11 @@ data class TvContentRef(
     val url: String,
     val apiName: String,
     val title: String = "",
+    /**
+     * Phase 9 optional CW restore — season/episode/episodeId from read-only resume.
+     * Details applies when present; never invents missing episode data.
+     */
+    val resumeHint: TvResumeHint? = null,
 ) {
     init {
         require(url.isNotBlank()) { "TvContentRef.url must be non-blank" }
@@ -28,6 +33,7 @@ data class TvContentRef(
                 url = url,
                 apiName = apiName,
                 title = item.title,
+                resumeHint = item.resumeHint,
             )
         }
     }

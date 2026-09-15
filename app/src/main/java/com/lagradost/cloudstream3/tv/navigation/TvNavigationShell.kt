@@ -34,6 +34,7 @@ import com.lagradost.cloudstream3.tv.home.rememberTvHomeFocusState
 import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvDestination
 import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
+import com.lagradost.cloudstream3.tv.model.TvResumeHint
 import com.lagradost.cloudstream3.tv.search.TvSearchScreen
 import com.lagradost.cloudstream3.tv.search.rememberTvSearchFocusState
 import com.lagradost.cloudstream3.tv.watchlist.TvWatchlistScreen
@@ -41,8 +42,8 @@ import com.lagradost.cloudstream3.tv.watchlist.rememberTvWatchlistFocusState
 
 /**
  * Structural Compose TV shell: left nav + destination content.
- * Phase 8: Watchlist / Local Library (read-only) → same TvDetailsScreen as Home/Search.
- * Continue Watching on Home opens Details first (not direct play).
+ * Phase 9: Continue Watching Resume — A direct movie play / B Details (+ series resolve) / C unavailable.
+ * Watchlist → same TvDetailsScreen. Mock never becomes real TvPlaybackRequest.
  */
 @Composable
 fun TvNavigationShell(
@@ -60,12 +61,35 @@ fun TvNavigationShell(
     var detailsUrl by rememberSaveable { mutableStateOf<String?>(null) }
     var detailsApiName by rememberSaveable { mutableStateOf<String?>(null) }
     var detailsTitle by rememberSaveable { mutableStateOf<String?>(null) }
+    // Phase 9 CW restore hints encoded as strings for rememberSaveable.
+    var detailsResumeSeason by rememberSaveable { mutableStateOf<String?>(null) }
+    var detailsResumeEpisode by rememberSaveable { mutableStateOf<String?>(null) }
+    var detailsResumeEpisodeId by rememberSaveable { mutableStateOf<String?>(null) }
+    var detailsResumeParentId by rememberSaveable { mutableStateOf<String?>(null) }
+    var detailsResumeTypeLabel by rememberSaveable { mutableStateOf<String?>(null) }
+    var detailsHasResumeHint by rememberSaveable { mutableStateOf(false) }
 
     val detailsRef = run {
         val url = detailsUrl
         val api = detailsApiName
         if (!url.isNullOrBlank() && !api.isNullOrBlank()) {
-            TvContentRef(url = url, apiName = api, title = detailsTitle.orEmpty())
+            val hint = if (detailsHasResumeHint) {
+                TvResumeHint(
+                    season = detailsResumeSeason?.toIntOrNull(),
+                    episode = detailsResumeEpisode?.toIntOrNull(),
+                    episodeId = detailsResumeEpisodeId?.toIntOrNull(),
+                    parentId = detailsResumeParentId?.toIntOrNull(),
+                    typeLabel = detailsResumeTypeLabel,
+                )
+            } else {
+                null
+            }
+            TvContentRef(
+                url = url,
+                apiName = api,
+                title = detailsTitle.orEmpty(),
+                resumeHint = hint,
+            )
         } else {
             null
         }
@@ -75,12 +99,30 @@ fun TvNavigationShell(
         detailsUrl = ref.url
         detailsApiName = ref.apiName
         detailsTitle = ref.title
+        val hint = ref.resumeHint
+        detailsHasResumeHint = hint != null
+        detailsResumeSeason = hint?.season?.toString()
+        detailsResumeEpisode = hint?.episode?.toString()
+        detailsResumeEpisodeId = hint?.episodeId?.toString()
+        detailsResumeParentId = hint?.parentId?.toString()
+        detailsResumeTypeLabel = hint?.typeLabel
     }
 
     fun closeDetails() {
         detailsUrl = null
         detailsApiName = null
         detailsTitle = null
+        detailsHasResumeHint = false
+        detailsResumeSeason = null
+        detailsResumeEpisode = null
+        detailsResumeEpisodeId = null
+        detailsResumeParentId = null
+        detailsResumeTypeLabel = null
+    }
+
+    fun guardedPlayback(request: TvPlaybackRequest) {
+        if (request.isMock) return // Mock never becomes real playback.
+        onPlaybackRequest(request)
     }
 
     NavigationDrawer(
@@ -140,13 +182,14 @@ fun TvNavigationShell(
                     TvDetailsScreen(
                         ref = detailsRef,
                         onBack = { closeDetails() },
-                        onPlaybackRequest = onPlaybackRequest,
+                        onPlaybackRequest = ::guardedPlayback,
                     )
                 }
                 selected == TvDestination.Home -> {
                     TvHomeScreen(
                         focusState = homeFocusState,
                         onOpenDetails = { openDetails(it) },
+                        onPlaybackRequest = ::guardedPlayback,
                     )
                 }
                 selected == TvDestination.Search -> {
