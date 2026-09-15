@@ -1,55 +1,67 @@
-# Compose for TV — Phase 4 Details (load bridge, no player)
+# Compose for TV — Phase 5 Watch Now → existing playback
 
-Home → compact content identity → `APIRepository.load` → `TvDetailsRepository` → immutable `TvDetailsUiState` → `TvDetailsScreen` → `onWatchNow` stub.
+Movies: Details Watch Now → immutable `TvPlaybackRequest` → Activity callback → `TvPlaybackBridge` → existing `GeneratorPlayer` / `RepoLinkGenerator` / `CS3IPlayer` / Media3.
 
-## Architecture
+**No** custom player UI, extractors, providers, or Media3 config changes.
+
+## Exact existing playback path (traced, not invented)
 
 ```
-SearchResponse / TvMediaItem → TvContentRef (url + apiName)
-  → TvDetailsRepository (APIHolder + SyncRedirector + APIRepository.load)
-  → TvDetailsMapper → TvDetailsContent
-  → TvDetailsViewModel (StateContainer) → TvDetailsUiState
-  → TvDetailsScreen
+ResultFragmentTv.resultPlayMovieButton
+  → ResultViewModel2.handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep))
+  → getPlayerAction(ctx) → typically ACTION_PLAY_EPISODE_IN_PLAYER
+  → generator = RepoLinkGenerator(listOf(movieEpisode), page = currentResponse)
+  → activity.navigate(R.id.global_to_navigation_player,
+        GeneratorPlayer.newInstance(generator, index, syncData))
+  → GeneratorPlayer reads uuid from companion generators map
+  → PlayerGeneratorViewModel.attachGenerator + loadLinks()
+  → RepoLinkGenerator.generateLinks → APIRepository.loadLinks → extractors
+  → CS3IPlayer / Media3
 ```
 
-`TvComposeProbeActivity` → `TvTheme` → `TvNavigationShell` (Details overlay via saveable url/apiName strings) → Home / Details
+Movie `ResultEpisode` is built from `MovieLoadResponse` via `buildResultEpisode` (id = `LoadResponse.getId()`, data = `dataUrl`).
+
+Compose TV Phase 5 reuses the same generator + `GeneratorPlayer.newInstance` entry; Fragment is hosted in `R.id.tv_player_container` (AppCompatActivity) instead of MainActivity NavHost. `exitPlayer` → `popCurrentPage` → `onBackPressed` pops the back stack.
+
+## Phase 5 wiring
+
+```
+TvDetailsScreen Watch Now
+  → TvPlaybackRequest(url, apiName, title, variantLabel)  // no LoadResponse/Activity in UiState
+  → TvComposeProbeActivity.onPlaybackRequest
+  → TvPlaybackBridge.launch
+       · reject mock / comingSoon / non-Movie (clear reason)
+       · API resolve + SyncRedirector + APIRepository.load (same as details)
+       · MovieLoadResponse → buildResultEpisode → RepoLinkGenerator
+       · GeneratorPlayer.newInstance → FragmentTransaction(tv_player_container)
+```
+
+## Unsupported (Phase 5)
+
+| Variant   | Behavior                                      |
+|-----------|-----------------------------------------------|
+| Movie     | Watch Now enabled → existing path             |
+| TvSeries  | Watch Now disabled — episode picker Phase 6   |
+| Anime     | Watch Now disabled — episode/dub Phase 6      |
+| LiveStream| Watch Now disabled — deferred Phase 6         |
+| Torrent   | Watch Now disabled — deferred Phase 6         |
+| Mock/demo | Never launches real playback                  |
 
 ## Packages
 
 ```
 tv/
-  details/TvDetailsScreen.kt, TvDetailsViewModel.kt
-  data/TvDetailsRepository.kt, TvDetailsMapper.kt  (+ Phase 3 Home bridge)
-  model/TvDetailsModels.kt (TvContentRef, TvDetailsContent, UiState)
-  home/… (cards + hero Details → openDetails)
-  navigation/TvNavigationShell.kt
+  playback/TvPlaybackBridge.kt
+  model/TvPlaybackModels.kt
+  TvComposeProbeActivity.kt   # AppCompat + activity_tv_compose_probe.xml
+  details/…  home/…  navigation/…
 ```
-
-## Load flow (documented, not invented)
-
-Mirrors `ResultViewModel2.load` without DataStore / trailer / player side effects:
-
-1. Identity: `url` + `apiName` (same as ResultFragment bundles from SearchResponse)
-2. Resolve API: `getApiFromNameNull` ?: `getApiFromUrlNull`
-3. `SyncRedirector.redirect(url, api)`
-4. `APIRepository(api).load(validUrl)` → `Resource<LoadResponse>`
-5. Map Movie / TvSeries / Anime / LiveStream / Torrent / Other
-
-Mock / demo Home items never call load (no fake IDs).
-
-## States
-
-`Loading` → `Content` | `Error` with D-pad **Retry** and **Back**. Back restores Home focus via `TvHomeFocusState`.
-
-Watch Now = stub only — no GeneratorPlayer / CS3IPlayer / Media3.
 
 ## How to open
 
 ```bash
 adb shell am start -n com.lagradost.cloudstream3.debug/com.lagradost.cloudstream3.tv.TvComposeProbeActivity
 ```
-
-Or **Settings → Updates → Actions → Compose TV (debug)** (`BuildConfig.DEBUG` only).
 
 ## Validate
 
@@ -58,4 +70,4 @@ Or **Settings → Updates → Actions → Compose TV (debug)** (`BuildConfig.DEB
 ./gradlew :app:assembleStableDebug
 ```
 
-Ensure `app/src/main/java/com/lagradost/cloudstream3/tv/` has **no** `androidx.compose.material3` imports.
+Ensure `tv/` has **no** `androidx.compose.material3` imports. Do **not** modify CS3IPlayer / GeneratorPlayer / extractors / library.

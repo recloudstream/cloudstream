@@ -1,13 +1,24 @@
 package com.lagradost.cloudstream3.tv
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import android.view.KeyEvent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ComposeView
+import androidx.lifecycle.lifecycleScope
+import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.CommonActivity.loadThemes
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
 import com.lagradost.cloudstream3.tv.navigation.TvNavigationShell
+import com.lagradost.cloudstream3.tv.playback.TvPlaybackBridge
+import kotlinx.coroutines.launch
 
 /**
- * Compose-for-TV host activity (Phase 4: Home catalog + Details via APIRepository.load; no player).
+ * Compose-for-TV host activity (Phase 5: Watch Now → existing GeneratorPlayer).
+ *
+ * Layout: [R.layout.activity_tv_compose_probe] —
+ * Compose shell + [R.id.tv_player_container] Fragment boundary for GeneratorPlayer.
  *
  * Not registered as MAIN / LEANBACK_LAUNCHER — default phone + legacy TV startup unchanged.
  *
@@ -18,14 +29,41 @@ import com.lagradost.cloudstream3.tv.navigation.TvNavigationShell
  *
  * Also available from Settings → Updates → Actions → "Compose TV (debug)" when BuildConfig.DEBUG.
  */
-class TvComposeProbeActivity : ComponentActivity() {
+class TvComposeProbeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        loadThemes(this)
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setContent {
+        CommonActivity.init(this)
+        setContentView(R.layout.activity_tv_compose_probe)
+        findViewById<ComposeView>(R.id.tv_compose_host).setContent {
             TvTheme {
-                TvNavigationShell()
+                TvNavigationShell(
+                    onPlaybackRequest = ::onPlaybackRequest,
+                )
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        CommonActivity.setActivityInstance(this)
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean =
+        CommonActivity.dispatchKeyEvent(this, event) ?: super.dispatchKeyEvent(event)
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean =
+        CommonActivity.onKeyDown(this, keyCode, event) ?: super.onKeyDown(keyCode, event)
+
+    /**
+     * Activity-level callback from Details Watch Now.
+     * Request stays immutable; no Activity / LoadResponse in Compose UiState.
+     */
+    private fun onPlaybackRequest(request: TvPlaybackRequest) {
+        lifecycleScope.launch {
+            val result = TvPlaybackBridge.launch(this@TvComposeProbeActivity, request)
+            TvPlaybackBridge.report(this@TvComposeProbeActivity, result)
         }
     }
 }

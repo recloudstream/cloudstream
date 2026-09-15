@@ -33,15 +33,16 @@ import com.lagradost.cloudstream3.tv.home.TvHomeScreen
 import com.lagradost.cloudstream3.tv.home.rememberTvHomeFocusState
 import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvDestination
+import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
 
 /**
  * Structural Compose TV shell: left nav + destination content.
- * Phase 4: Details overlays Home via compact [TvContentRef] strings (not LoadResponse in nav state).
- * Back from Details clears the ref so [TvHomeFocusState] restores focus.
+ * Phase 5: Watch Now → Activity callback [onPlaybackRequest] (no player inside Compose).
  */
 @Composable
 fun TvNavigationShell(
     modifier: Modifier = Modifier,
+    onPlaybackRequest: (TvPlaybackRequest) -> Unit = {},
 ) {
     var destination by rememberSaveable { mutableStateOf(TvDestination.Home.name) }
     val selected = runCatching { TvDestination.valueOf(destination) }.getOrDefault(TvDestination.Home)
@@ -132,8 +133,9 @@ fun TvNavigationShell(
                     TvDetailsScreen(
                         ref = detailsRef,
                         onBack = { closeDetails() },
-                        // Phase 4: clean stub only — no GeneratorPlayer / CS3IPlayer / Media3.
-                        onWatchNow = { /* stub */ },
+                        onWatchNow = { details ->
+                            onPlaybackRequest(TvPlaybackRequest.fromDetails(details))
+                        },
                     )
                 }
                 selected == TvDestination.Home -> {
@@ -144,11 +146,11 @@ fun TvNavigationShell(
                 }
                 selected == TvDestination.Search -> TvPlaceholderPane(
                     title = "Search",
-                    body = "Phase 4 placeholder — Search is out of scope (later phase).",
+                    body = "Phase 5 placeholder — Search is out of scope (later phase).",
                 )
                 selected == TvDestination.Watchlist -> TvPlaceholderPane(
                     title = "Watchlist",
-                    body = "Phase 4 placeholder — Watchlist / History out of scope.",
+                    body = "Phase 5 placeholder — Watchlist / History out of scope.",
                 )
                 selected == TvDestination.Settings -> {
                     if (showFocusProbe) {

@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 /**
  * Lifecycle-aware Details state holder (MVI / [StateContainer]).
  * Loads once per [TvContentRef]; no duplicate fetches on recomposition.
- * Watch Now is a clean stub callback surface — no player wiring.
+ * Watch Now forwards to Activity via [onWatchNowStub] (immutable request; no player in VM).
  */
 class TvDetailsViewModel(
     private val repository: TvDetailsRepository = TvDetailsRepository(),
@@ -29,7 +29,7 @@ class TvDetailsViewModel(
     private var loadJob: Job? = null
     private var boundRef: TvContentRef? = null
 
-    /** Invoked by the UI host for the stub Watch Now action (Phase 4: no player). */
+    /** Invoked by the UI host for Watch Now — Activity builds TvPlaybackRequest / bridge. */
     var onWatchNowStub: (() -> Unit)? = null
 
     fun bind(ref: TvContentRef) {

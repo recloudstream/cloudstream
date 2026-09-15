@@ -53,10 +53,12 @@ import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvDetailsAction
 import com.lagradost.cloudstream3.tv.model.TvDetailsContent
 import com.lagradost.cloudstream3.tv.model.TvDetailsUiState
+import com.lagradost.cloudstream3.tv.model.watchNowDisabledReason
 
 /**
  * Cinematic Details screen. Loads via [TvDetailsViewModel] / [com.lagradost.cloudstream3.tv.data.TvDetailsRepository].
- * Watch Now is a stub callback only — no player.
+ * Watch Now → Activity callback → [com.lagradost.cloudstream3.tv.playback.TvPlaybackBridge] (movies).
+ * Non-movie types keep Watch Now disabled with a clear Phase 6 reason — no custom player UI.
  */
 @Composable
 fun TvDetailsScreen(
@@ -246,9 +248,11 @@ private fun TvDetailsContentPane(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    val disabledReason = details.watchNowDisabledReason()
+                    val watchEnabled = disabledReason == null
                     Button(
                         onClick = onWatchNow,
-                        enabled = !details.comingSoon,
+                        enabled = watchEnabled,
                         modifier = Modifier.focusRequester(watchFocus),
                         scale = ButtonDefaults.scale(focusedScale = TvFocusScale.HeroButtonFocused),
                         glow = ButtonDefaults.glow(
@@ -258,7 +262,13 @@ private fun TvDetailsContentPane(
                             ),
                         ),
                     ) {
-                        Text(if (details.comingSoon) "Coming Soon" else "Watch Now")
+                        Text(
+                            when {
+                                details.comingSoon -> "Coming Soon"
+                                !watchEnabled -> "Watch Now"
+                                else -> "Watch Now"
+                            }
+                        )
                     }
                     Button(
                         onClick = onBack,
@@ -268,7 +278,8 @@ private fun TvDetailsContentPane(
                     }
                 }
                 Text(
-                    text = "Watch Now is a stub in Phase 4 — no player.",
+                    text = details.watchNowDisabledReason()
+                        ?: "Watch Now starts existing CloudStream playback (GeneratorPlayer).",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
                 )

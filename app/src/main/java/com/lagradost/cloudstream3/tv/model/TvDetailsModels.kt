@@ -74,6 +74,6 @@ sealed interface TvDetailsUiState {
 sealed interface TvDetailsAction {
     data object Retry : TvDetailsAction
     data object Back : TvDetailsAction
-    /** Stub only — Phase 4 must not start a player. */
+    /** Activity-level playback request (Phase 5 movies → GeneratorPlayer). */
     data object WatchNow : TvDetailsAction
 }
