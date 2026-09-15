@@ -37,7 +37,7 @@ import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
 
 /**
  * Structural Compose TV shell: left nav + destination content.
- * Phase 5: Watch Now → Activity callback [onPlaybackRequest] (no player inside Compose).
+ * Phase 6: Watch Now / Play Episode → Activity callback [onPlaybackRequest] (no player inside Compose).
  */
 @Composable
 fun TvNavigationShell(
@@ -133,9 +133,7 @@ fun TvNavigationShell(
                     TvDetailsScreen(
                         ref = detailsRef,
                         onBack = { closeDetails() },
-                        onWatchNow = { details ->
-                            onPlaybackRequest(TvPlaybackRequest.fromDetails(details))
-                        },
+                        onPlaybackRequest = onPlaybackRequest,
                     )
                 }
                 selected == TvDestination.Home -> {
@@ -146,11 +144,11 @@ fun TvNavigationShell(
                 }
                 selected == TvDestination.Search -> TvPlaceholderPane(
                     title = "Search",
-                    body = "Phase 5 placeholder — Search is out of scope (later phase).",
+                    body = "Phase 6 placeholder — Search is out of scope (later phase).",
                 )
                 selected == TvDestination.Watchlist -> TvPlaceholderPane(
                     title = "Watchlist",
-                    body = "Phase 5 placeholder — Watchlist / History out of scope.",
+                    body = "Phase 6 placeholder — Watchlist / History out of scope.",
                 )
                 selected == TvDestination.Settings -> {
                     if (showFocusProbe) {

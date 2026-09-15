@@ -1,67 +1,46 @@
-# Compose for TV — Phase 5 Watch Now → existing playback
+# Compose for TV — Phase 6 Series/Anime episode + season selection
 
-Movies: Details Watch Now → immutable `TvPlaybackRequest` → Activity callback → `TvPlaybackBridge` → existing `GeneratorPlayer` / `RepoLinkGenerator` / `CS3IPlayer` / Media3.
-
-**No** custom player UI, extractors, providers, or Media3 config changes.
-
-## Exact existing playback path (traced, not invented)
+Architecture:
 
 ```
-ResultFragmentTv.resultPlayMovieButton
-  → ResultViewModel2.handleAction(EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep))
-  → getPlayerAction(ctx) → typically ACTION_PLAY_EPISODE_IN_PLAYER
-  → generator = RepoLinkGenerator(listOf(movieEpisode), page = currentResponse)
-  → activity.navigate(R.id.global_to_navigation_player,
-        GeneratorPlayer.newInstance(generator, index, syncData))
-  → GeneratorPlayer reads uuid from companion generators map
-  → PlayerGeneratorViewModel.attachGenerator + loadLinks()
-  → RepoLinkGenerator.generateLinks → APIRepository.loadLinks → extractors
-  → CS3IPlayer / Media3
+LoadResponse → TvDetailsMapper → immutable TvSeason/TvEpisode
+  → TvDetailsUiState (seasons, selectedSeason, selectedEpisode)
+  → TvEpisodeSelector → TvPlaybackRequest → TvPlaybackBridge
+  → RepoLinkGenerator → GeneratorPlayer → CS3IPlayer
 ```
 
-Movie `ResultEpisode` is built from `MovieLoadResponse` via `buildResultEpisode` (id = `LoadResponse.getId()`, data = `dataUrl`).
+## Domain episode model (inspected, not invented)
 
-Compose TV Phase 5 reuses the same generator + `GeneratorPlayer.newInstance` entry; Fragment is hosted in `R.id.tv_player_container` (AppCompatActivity) instead of MainActivity NavHost. `exitPlayer` → `popCurrentPage` → `onBackPressed` pops the back stack.
+From `library/.../MainAPI.kt`:
 
-## Phase 5 wiring
+| Type | Episodes |
+|------|----------|
+| `Episode` | `data`, `name?`, `season?`, `episode?`, `posterUrl?`, `score?`, `description?`, `date?`, `runTime?` (season/episode are **Int?** only) |
+| `SeasonData` | `season: Int`, `name?`, `displaySeason?` |
+| `TvSeriesLoadResponse` | `episodes: List<Episode>`, `seasonNames: List<SeasonData>?` |
+| `AnimeLoadResponse` | `episodes: MutableMap<DubStatus, List<Episode>>`, `seasonNames` |
+| `DubStatus` | None(-1), Subbed(0), Dubbed(1) |
 
-```
-TvDetailsScreen Watch Now
-  → TvPlaybackRequest(url, apiName, title, variantLabel)  // no LoadResponse/Activity in UiState
-  → TvComposeProbeActivity.onPlaybackRequest
-  → TvPlaybackBridge.launch
-       · reject mock / comingSoon / non-Movie (clear reason)
-       · API resolve + SyncRedirector + APIRepository.load (same as details)
-       · MovieLoadResponse → buildResultEpisode → RepoLinkGenerator
-       · GeneratorPlayer.newInstance → FragmentTransaction(tv_player_container)
-```
+Specials / missing season: `Episode.season == null` or `0` → TV seasonIndex **0**, label **"No Season"** (mirrors ResultViewModel2 / `R.string.no_season`).
 
-## Unsupported (Phase 5)
+Non-int episodes: **do not exist** in LoadResponse; null `episode` → `(listIndex + 1)`.
 
-| Variant   | Behavior                                      |
-|-----------|-----------------------------------------------|
-| Movie     | Watch Now enabled → existing path             |
-| TvSeries  | Watch Now disabled — episode picker Phase 6   |
-| Anime     | Watch Now disabled — episode/dub Phase 6      |
-| LiveStream| Watch Now disabled — deferred Phase 6         |
-| Torrent   | Watch Now disabled — deferred Phase 6         |
-| Mock/demo | Never launches real playback                  |
+## Default episode rule (no resume / DataStore writes)
 
-## Packages
+1. Dub: Subbed if non-empty, else Dubbed, else None, else first group with episodes.
+2. Season: lowest `seasonIndex != 0` with episodes; else season 0.
+3. Episode: first playable (`data` non-blank) in that season; else first episode.
 
-```
-tv/
-  playback/TvPlaybackBridge.kt
-  model/TvPlaybackModels.kt
-  TvComposeProbeActivity.kt   # AppCompat + activity_tv_compose_probe.xml
-  details/…  home/…  navigation/…
-```
+## Playback
 
-## How to open
+- **Movies**: Watch Now (Phase 5 path unchanged).
+- **Series/Anime**: Play Episode → `TvPlaybackRequest.fromEpisode` → bridge builds `ResultEpisode` via `buildResultEpisode` → `RepoLinkGenerator(listOf(ep), page)` → `GeneratorPlayer` in `tv_player_container`.
+- **Live / Torrent**: explicit unsupported toast.
+- **Mock**: never plays.
 
-```bash
-adb shell am start -n com.lagradost.cloudstream3.debug/com.lagradost.cloudstream3.tv.TvComposeProbeActivity
-```
+## Playback return
+
+GeneratorPlayer is on the Fragment back stack. Back / `exitPlayer` pops it; Compose Details ViewModel keeps dub/season/episode selection. Focus returns to Play Episode CTA (composition FocusRequester).
 
 ## Validate
 
@@ -70,4 +49,4 @@ adb shell am start -n com.lagradost.cloudstream3.debug/com.lagradost.cloudstream
 ./gradlew :app:assembleStableDebug
 ```
 
-Ensure `tv/` has **no** `androidx.compose.material3` imports. Do **not** modify CS3IPlayer / GeneratorPlayer / extractors / library.
+Prefer `app/.../tv/**` only. Do **not** modify library / plugins / extractors / CS3IPlayer / GeneratorPlayer / ResultFragmentTv / TV XML.

@@ -22,7 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -53,19 +55,22 @@ import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvDetailsAction
 import com.lagradost.cloudstream3.tv.model.TvDetailsContent
 import com.lagradost.cloudstream3.tv.model.TvDetailsUiState
+import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
+import com.lagradost.cloudstream3.tv.model.isSeriesOrAnime
 import com.lagradost.cloudstream3.tv.model.watchNowDisabledReason
 
 /**
- * Cinematic Details screen. Loads via [TvDetailsViewModel] / [com.lagradost.cloudstream3.tv.data.TvDetailsRepository].
- * Watch Now → Activity callback → [com.lagradost.cloudstream3.tv.playback.TvPlaybackBridge] (movies).
- * Non-movie types keep Watch Now disabled with a clear Phase 6 reason — no custom player UI.
+ * Cinematic Details screen. Loads via [TvDetailsViewModel] / TvDetailsRepository.
+ * Movies: Watch Now → Activity → TvPlaybackBridge.
+ * Series/Anime: season/episode selector → Play Episode → same bridge path.
+ * Live/Torrent: explicit unsupported. Mock never plays.
  */
 @Composable
 fun TvDetailsScreen(
     ref: TvContentRef,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    onWatchNow: (TvDetailsContent) -> Unit = {},
+    onPlaybackRequest: (TvPlaybackRequest) -> Unit = {},
     viewModel: TvDetailsViewModel = viewModel(
         key = "tv-details:${ref.apiName}|${ref.url}",
     ),
@@ -73,10 +78,7 @@ fun TvDetailsScreen(
     val uiState by viewModel.state.collectAsState()
 
     LaunchedEffect(ref) {
-        viewModel.onWatchNowStub = {
-            val content = (viewModel.state.value as? TvDetailsUiState.Content)?.details
-            if (content != null) onWatchNow(content)
-        }
+        viewModel.onPlaybackRequest = onPlaybackRequest
         viewModel.bind(ref)
     }
 
@@ -89,8 +91,8 @@ fun TvDetailsScreen(
             modifier = modifier,
         )
         is TvDetailsUiState.Content -> TvDetailsContentPane(
-            details = state.details,
-            onWatchNow = { viewModel.onAction(TvDetailsAction.WatchNow) },
+            content = state,
+            onAction = viewModel::onAction,
             onBack = onBack,
             modifier = modifier,
         )
@@ -106,13 +108,14 @@ fun TvDetailsScreen(
 
 @Composable
 private fun TvDetailsContentPane(
-    details: TvDetailsContent,
-    onWatchNow: () -> Unit,
+    content: TvDetailsUiState.Content,
+    onAction: (TvDetailsAction) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val details = content.details
     val context = LocalContext.current
-    val watchFocus = remember { FocusRequester() }
+    val primaryFocus = remember { FocusRequester() }
     val placeholder = ColorPainter(Color(0xFF1A1A1E))
     val imageUrl = details.backdropUrl?.takeIf { it.isNotBlank() }
         ?: details.posterUrl?.takeIf { it.isNotBlank() }
@@ -129,8 +132,11 @@ private fun TvDetailsContentPane(
         .httpHeaders(detailsHeaders(details))
         .build()
 
-    LaunchedEffect(details.url) {
-        runCatching { watchFocus.requestFocus() }
+    var restoreEpisodeFocus by remember { mutableStateOf(false) }
+
+    LaunchedEffect(details.url, details.variantLabel) {
+        // Movies / unsupported: focus primary CTA. Series/Anime: focus Play Episode.
+        runCatching { primaryFocus.requestFocus() }
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -195,7 +201,7 @@ private fun TvDetailsContentPane(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .widthIn(max = 720.dp),
+                    .widthIn(max = 780.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
@@ -230,7 +236,7 @@ private fun TvDetailsContentPane(
                         text = details.synopsis,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.92f),
-                        maxLines = 8,
+                        maxLines = 6,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
@@ -243,17 +249,32 @@ private fun TvDetailsContentPane(
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(12.dp))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     val disabledReason = details.watchNowDisabledReason()
-                    val watchEnabled = disabledReason == null
+                    val playEnabled = disabledReason == null && when {
+                        details.variantLabel == "Movie" -> true
+                        details.isSeriesOrAnime() -> content.selectedEpisode?.isPlayable == true
+                        else -> false
+                    }
+                    val ctaLabel = when {
+                        details.comingSoon -> "Coming Soon"
+                        details.isSeriesOrAnime() -> "Play Episode"
+                        else -> "Watch Now"
+                    }
                     Button(
-                        onClick = onWatchNow,
-                        enabled = watchEnabled,
-                        modifier = Modifier.focusRequester(watchFocus),
+                        onClick = {
+                            if (details.isSeriesOrAnime()) {
+                                onAction(TvDetailsAction.PlaySelectedEpisode)
+                            } else {
+                                onAction(TvDetailsAction.WatchNow)
+                            }
+                        },
+                        enabled = playEnabled,
+                        modifier = Modifier.focusRequester(primaryFocus),
                         scale = ButtonDefaults.scale(focusedScale = TvFocusScale.HeroButtonFocused),
                         glow = ButtonDefaults.glow(
                             focusedGlow = Glow(
@@ -262,13 +283,7 @@ private fun TvDetailsContentPane(
                             ),
                         ),
                     ) {
-                        Text(
-                            when {
-                                details.comingSoon -> "Coming Soon"
-                                !watchEnabled -> "Watch Now"
-                                else -> "Watch Now"
-                            }
-                        )
+                        Text(ctaLabel)
                     }
                     Button(
                         onClick = onBack,
@@ -279,10 +294,30 @@ private fun TvDetailsContentPane(
                 }
                 Text(
                     text = details.watchNowDisabledReason()
-                        ?: "Watch Now starts existing CloudStream playback (GeneratorPlayer).",
+                        ?: when {
+                            details.isSeriesOrAnime() -> {
+                                val ep = content.selectedEpisode
+                                if (ep != null) {
+                                    "Playing ${ep.titleLine} via existing GeneratorPlayer."
+                                } else {
+                                    "Select an episode, then Play Episode."
+                                }
+                            }
+                            else -> "Watch Now starts existing CloudStream playback (GeneratorPlayer)."
+                        },
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
                 )
+
+                if (details.hasEpisodeSelector) {
+                    Spacer(Modifier.height(8.dp))
+                    TvEpisodeSelector(
+                        content = content,
+                        onAction = onAction,
+                        restoreEpisodeFocus = restoreEpisodeFocus,
+                        onRestoreConsumed = { restoreEpisodeFocus = false },
+                    )
+                }
             }
         }
     }

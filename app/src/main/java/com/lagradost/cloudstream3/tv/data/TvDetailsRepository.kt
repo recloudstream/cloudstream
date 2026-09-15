@@ -25,7 +25,7 @@ import com.lagradost.cloudstream3.ui.APIRepository
  * afterPluginsLoadedEvent. Callers should Retry after plugins settle.
  *
  * Intentionally omitted vs ResultViewModel2: DOWNLOAD_HEADER_CACHE writes, trailers,
- * episode lists UI, fillers, AutoResume, applyMeta sync — Phase 4 is details presentation only.
+ * fillers, AutoResume watch-position writes, applyMeta sync — Phase 6 maps episodes read-only for TV selector.
  */
 class TvDetailsRepository {
 

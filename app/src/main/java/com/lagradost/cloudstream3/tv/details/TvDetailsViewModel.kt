@@ -7,6 +7,8 @@ import com.lagradost.cloudstream3.tv.data.TvDetailsRepository
 import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvDetailsAction
 import com.lagradost.cloudstream3.tv.model.TvDetailsUiState
+import com.lagradost.cloudstream3.tv.model.TvEpisodeDefaults
+import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
 import com.lagradost.cloudstream4.compose.ActionHandler
 import com.lagradost.cloudstream4.compose.DefaultStateContainer
 import com.lagradost.cloudstream4.compose.StateContainer
@@ -17,8 +19,11 @@ import kotlinx.coroutines.withContext
 
 /**
  * Lifecycle-aware Details state holder (MVI / [StateContainer]).
- * Loads once per [TvContentRef]; no duplicate fetches on recomposition.
- * Watch Now forwards to Activity via [onWatchNowStub] (immutable request; no player in VM).
+ * Loads once per [TvContentRef]; selection (dub / season / episode) lives in UiState only —
+ * no FocusRequester / Activity in state.
+ *
+ * Playback: builds immutable [TvPlaybackRequest] and forwards via [onPlaybackRequest]
+ * (Activity → TvPlaybackBridge). No resume / DataStore writes for default episode.
  */
 class TvDetailsViewModel(
     private val repository: TvDetailsRepository = TvDetailsRepository(),
@@ -29,12 +34,11 @@ class TvDetailsViewModel(
     private var loadJob: Job? = null
     private var boundRef: TvContentRef? = null
 
-    /** Invoked by the UI host for Watch Now — Activity builds TvPlaybackRequest / bridge. */
-    var onWatchNowStub: (() -> Unit)? = null
+    /** Activity host callback — receives immutable request only. */
+    var onPlaybackRequest: ((TvPlaybackRequest) -> Unit)? = null
 
     fun bind(ref: TvContentRef) {
         if (boundRef == ref && state.value !is TvDetailsUiState.Error) {
-            // Same ref and not in error — keep existing Content / Loading.
             if (state.value is TvDetailsUiState.Content || state.value is TvDetailsUiState.Loading) {
                 return
             }
@@ -46,8 +50,65 @@ class TvDetailsViewModel(
     override fun onAction(action: TvDetailsAction) {
         when (action) {
             TvDetailsAction.Retry -> boundRef?.let { loadDetails(it) }
-            TvDetailsAction.Back -> Unit // navigation owned by shell
-            TvDetailsAction.WatchNow -> onWatchNowStub?.invoke()
+            TvDetailsAction.Back -> Unit
+            TvDetailsAction.WatchNow -> emitMoviePlayback()
+            TvDetailsAction.PlaySelectedEpisode -> emitEpisodePlayback()
+            is TvDetailsAction.SelectDubStatus -> selectDub(action.dubStatusId)
+            is TvDetailsAction.SelectSeason -> selectSeason(action.seasonIndex)
+            is TvDetailsAction.SelectEpisode -> selectEpisode(action.episodeId)
+        }
+    }
+
+    private fun emitMoviePlayback() {
+        val content = state.value as? TvDetailsUiState.Content ?: return
+        if (content.details.variantLabel != "Movie") return
+        onPlaybackRequest?.invoke(TvPlaybackRequest.fromDetails(content.details))
+    }
+
+    private fun emitEpisodePlayback() {
+        val content = state.value as? TvDetailsUiState.Content ?: return
+        if (!content.details.hasEpisodeSelector) return
+        val episode = content.selectedEpisode ?: return
+        if (!episode.isPlayable) return
+        onPlaybackRequest?.invoke(
+            TvPlaybackRequest.fromEpisode(content.details, episode),
+        )
+    }
+
+    private fun selectDub(dubStatusId: Int) {
+        updateState {
+            val content = this as? TvDetailsUiState.Content ?: return@updateState this
+            if (content.selectedDubStatusId == dubStatusId) return@updateState content
+            val seasons = content.details.seasonsForDub(dubStatusId)
+            val seasonIndex = TvEpisodeDefaults.pickSeasonIndex(seasons)
+            val season = seasons.firstOrNull { it.seasonIndex == seasonIndex }
+            val episodeId = TvEpisodeDefaults.pickEpisodeId(season)
+            content.copy(
+                selectedDubStatusId = dubStatusId,
+                selectedSeasonIndex = seasonIndex,
+                selectedEpisodeId = episodeId,
+            )
+        }
+    }
+
+    private fun selectSeason(seasonIndex: Int) {
+        updateState {
+            val content = this as? TvDetailsUiState.Content ?: return@updateState this
+            if (content.selectedSeasonIndex == seasonIndex) return@updateState content
+            val season = content.details.seasonsForDub(content.selectedDubStatusId)
+                .firstOrNull { it.seasonIndex == seasonIndex }
+            val episodeId = TvEpisodeDefaults.pickEpisodeId(season)
+            content.copy(
+                selectedSeasonIndex = seasonIndex,
+                selectedEpisodeId = episodeId,
+            )
+        }
+    }
+
+    private fun selectEpisode(episodeId: Int) {
+        updateState {
+            val content = this as? TvDetailsUiState.Content ?: return@updateState this
+            content.copy(selectedEpisodeId = episodeId)
         }
     }
 
@@ -68,7 +129,12 @@ class TvDetailsViewModel(
             updateState {
                 when (result) {
                     is TvDetailsRepository.LoadResult.Success ->
-                        TvDetailsUiState.Content(result.details)
+                        TvDetailsUiState.Content(
+                            details = result.details,
+                            selectedDubStatusId = result.details.defaultDubStatusId,
+                            selectedSeasonIndex = result.details.defaultSeasonIndex,
+                            selectedEpisodeId = result.details.defaultEpisodeId,
+                        )
 
                     is TvDetailsRepository.LoadResult.Failure ->
                         TvDetailsUiState.Error(

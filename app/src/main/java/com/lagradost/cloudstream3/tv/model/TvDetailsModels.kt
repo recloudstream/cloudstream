@@ -54,7 +54,33 @@ data class TvDetailsContent(
     /** Concrete LoadResponse kind: Movie, TvSeries, Anime, LiveStream, Torrent, Other. */
     val variantLabel: String,
     val posterHeaders: Map<String, String>?,
-)
+    /**
+     * Season/episode tree for TvSeries / Anime (empty for Movie / Live / Torrent).
+     * Anime: one [TvDubGroup] per DubStatus with episodes; Series: single None group.
+     */
+    val dubGroups: List<TvDubGroup> = emptyList(),
+    /** Precomputed defaults — see [TvEpisodeDefaults]. */
+    val defaultDubStatusId: Int? = null,
+    val defaultSeasonIndex: Int? = null,
+    val defaultEpisodeId: Int? = null,
+) {
+    val hasEpisodeSelector: Boolean
+        get() = variantLabel == "TvSeries" || variantLabel == "Anime"
+
+    fun seasonsForDub(dubStatusId: Int?): List<TvSeason> {
+        if (dubGroups.isEmpty()) return emptyList()
+        val match = dubGroups.firstOrNull { it.dubStatusId == dubStatusId }
+        return match?.seasons ?: dubGroups.first().seasons
+    }
+
+    fun episodeById(episodeId: Int?): TvEpisode? {
+        if (episodeId == null) return null
+        return dubGroups.asSequence()
+            .flatMap { it.seasons.asSequence() }
+            .flatMap { it.episodes.asSequence() }
+            .firstOrNull { it.id == episodeId }
+    }
+}
 
 sealed interface TvDetailsUiState {
     data class Loading(
@@ -63,7 +89,29 @@ sealed interface TvDetailsUiState {
 
     data class Content(
         val details: TvDetailsContent,
-    ) : TvDetailsUiState
+        val selectedDubStatusId: Int? = details.defaultDubStatusId,
+        val selectedSeasonIndex: Int? = details.defaultSeasonIndex,
+        val selectedEpisodeId: Int? = details.defaultEpisodeId,
+    ) : TvDetailsUiState {
+        val visibleSeasons: List<TvSeason>
+            get() = details.seasonsForDub(selectedDubStatusId)
+
+        val selectedSeason: TvSeason?
+            get() = visibleSeasons.firstOrNull { it.seasonIndex == selectedSeasonIndex }
+                ?: visibleSeasons.firstOrNull()
+
+        val visibleEpisodes: List<TvEpisode>
+            get() = selectedSeason?.episodes.orEmpty()
+
+        val selectedEpisode: TvEpisode?
+            get() = visibleEpisodes.firstOrNull { it.id == selectedEpisodeId }
+                ?: details.episodeById(selectedEpisodeId)
+                ?: visibleEpisodes.firstOrNull { it.isPlayable }
+                ?: visibleEpisodes.firstOrNull()
+
+        val showDubSelector: Boolean
+            get() = details.variantLabel == "Anime" && details.dubGroups.size > 1
+    }
 
     data class Error(
         val message: String,
@@ -74,6 +122,11 @@ sealed interface TvDetailsUiState {
 sealed interface TvDetailsAction {
     data object Retry : TvDetailsAction
     data object Back : TvDetailsAction
-    /** Activity-level playback request (Phase 5 movies → GeneratorPlayer). */
+    /** Movies — Activity-level playback (Phase 5 path). */
     data object WatchNow : TvDetailsAction
+    /** Series / Anime — play [TvDetailsUiState.Content.selectedEpisode]. */
+    data object PlaySelectedEpisode : TvDetailsAction
+    data class SelectDubStatus(val dubStatusId: Int) : TvDetailsAction
+    data class SelectSeason(val seasonIndex: Int) : TvDetailsAction
+    data class SelectEpisode(val episodeId: Int) : TvDetailsAction
 }
