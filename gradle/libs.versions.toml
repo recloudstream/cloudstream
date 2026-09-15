@@ -52,6 +52,7 @@ safefile = "0.0.8"
 shimmer = "0.5.0"
 torrentserver = "7861970"
 tvprovider = "1.1.0"
+tvMaterial = "1.1.0"
 video = "1.0.0"
 workRuntimeKtx = "2.11.2"
 zipline = "1.27.0"
@@ -139,6 +140,7 @@ safefile = { module = "com.github.LagradOst:SafeFile", version.ref = "safefile" 
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 torrentserver = { module = "com.github.recloudstream:torrentserver", version.ref = "torrentserver" }
 tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovider" }
+tv-material = { module = "androidx.tv:tv-material", version.ref = "tvMaterial" }
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 zipline = { module = "app.cash.zipline:zipline-android", version.ref = "zipline" }
