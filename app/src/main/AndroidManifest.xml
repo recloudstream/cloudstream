@@ -271,6 +271,18 @@
             android:foregroundServiceType="dataSync"
             tools:node="merge" />
 
+
+        <!-- Phase 1 Compose for TV probe: not a launcher; start via adb on debug builds.
+             adb shell am start -n com.lagradost.cloudstream3.debug/com.lagradost.cloudstream3.tv.TvComposeProbeActivity
+             (stableRelease / no debug suffix: com.lagradost.cloudstream3/.tv.TvComposeProbeActivity) -->
+        <activity
+            android:name=".tv.TvComposeProbeActivity"
+            android:exported="false"
+            android:label="TV Compose Probe"
+            android:resizeableActivity="true"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode" />
+
         <activity
             android:name=".ui.ControllerActivity"
             android:exported="false" />
