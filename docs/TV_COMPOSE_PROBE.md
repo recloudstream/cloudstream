@@ -1,31 +1,35 @@
-# Compose for TV — Phase 1 probe
+# Compose for TV — Phase 2 shell (mock)
 
-Isolated smoke test for `androidx.tv:tv-material` focus / theme / D-pad behavior.
+Structural Compose TV UI with **mock data only**. No APIRepository / player / plugins.
 
-## Scope
+## Architecture
 
-- Activity: `com.lagradost.cloudstream3.tv.TvComposeProbeActivity`
-- Theme: `TvTheme` (`androidx.tv.material3.MaterialTheme` only)
-- Screen: title + focusable cards/buttons (no Home, catalog, player, or API bridge)
+`TvComposeProbeActivity` → `TvTheme` → `TvNavigationShell` → `TvHomeScreen` (hero + rails)
 
-Phone UI and legacy XML TV remain the default launch path (`AccountSelectActivity` MAIN + LEANBACK_LAUNCHER).
+Destinations (visual): Home, Search, Watchlist, Settings. Home is real mock UI; others are placeholders. Phase 1 `TvProbeScreen` remains as a canary under Settings.
+
+## Packages
+
+```
+tv/
+  TvComposeProbeActivity.kt
+  TvTheme.kt
+  TvProbeScreen.kt          # Phase 1 canary
+  navigation/TvNavigationShell.kt
+  home/TvHomeScreen.kt, TvHeroSection.kt, TvContentRail.kt
+  components/TvMediaCard.kt, TvFocusScale.kt
+  model/TvMockModels.kt
+```
 
 ## How to open
 
-Build a debug APK, install, then:
+Not a launcher. Debug builds:
 
 ```bash
-# stableDebug (applicationId com.lagradost.cloudstream3.debug)
 adb shell am start -n com.lagradost.cloudstream3.debug/com.lagradost.cloudstream3.tv.TvComposeProbeActivity
 ```
 
-Release / no debug suffix:
-
-```bash
-adb shell am start -n com.lagradost.cloudstream3/.tv.TvComposeProbeActivity
-```
-
-The activity is not exported as a launcher; default startup is unchanged.
+Or **Settings → Updates → Actions → Compose TV (debug)** (`BuildConfig.DEBUG` only).
 
 ## Validate
 

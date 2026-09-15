@@ -4,9 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.lagradost.cloudstream3.tv.navigation.TvNavigationShell
 
 /**
- * Isolated Compose-for-TV probe activity (Phase 1).
+ * Compose-for-TV host activity (Phase 2 shell with mock Home).
  *
  * Not registered as MAIN / LEANBACK_LAUNCHER — default phone + legacy TV startup unchanged.
  *
@@ -15,12 +16,7 @@ import androidx.activity.enableEdgeToEdge
  * adb shell am start -n com.lagradost.cloudstream3.debug/com.lagradost.cloudstream3.tv.TvComposeProbeActivity
  * ```
  *
- * Launch (release / no debug suffix):
- * ```
- * adb shell am start -n com.lagradost.cloudstream3/.tv.TvComposeProbeActivity
- * ```
- *
- * Note: activity is `android:exported="false"`; adb can still start it on debuggable builds.
+ * Also available from Settings → Updates → Actions → "Compose TV (debug)" when BuildConfig.DEBUG.
  */
 class TvComposeProbeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +24,7 @@ class TvComposeProbeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TvTheme {
-                TvProbeScreen()
+                TvNavigationShell()
             }
         }
     }
