@@ -285,8 +285,8 @@ public final class com/lagradost/cloudstream3/AniSearch$Data$Page$Media$Title$Co
 }
 
 public final class com/lagradost/cloudstream3/AnimeLoadResponse : com/lagradost/cloudstream3/EpisodeResponse, com/lagradost/cloudstream3/LoadResponse {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lcom/lagradost/cloudstream3/ShowStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/Score;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lcom/lagradost/cloudstream3/ShowStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/Score;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lcom/lagradost/cloudstream3/ShowStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/Score;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lcom/lagradost/cloudstream3/ShowStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/Score;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Lcom/lagradost/cloudstream3/ShowStatus;
 	public final fun component11 ()Ljava/lang/String;
@@ -296,17 +296,18 @@ public final class com/lagradost/cloudstream3/AnimeLoadResponse : com/lagradost/
 	public final fun component15 ()Ljava/lang/Integer;
 	public final fun component16 ()Ljava/util/List;
 	public final fun component17 ()Ljava/util/List;
-	public final fun component18 ()Ljava/util/List;
-	public final fun component19 ()Z
+	public final fun component18 ()Z
+	public final fun component19 ()Ljava/util/List;
 	public final fun component2 ()Ljava/lang/String;
-	public final fun component20 ()Ljava/util/Map;
+	public final fun component20 ()Z
 	public final fun component21 ()Ljava/util/Map;
-	public final fun component22 ()Lcom/lagradost/cloudstream3/NextAiring;
-	public final fun component23 ()Ljava/util/List;
-	public final fun component24 ()Ljava/lang/String;
+	public final fun component22 ()Ljava/util/Map;
+	public final fun component23 ()Lcom/lagradost/cloudstream3/NextAiring;
+	public final fun component24 ()Ljava/util/List;
 	public final fun component25 ()Ljava/lang/String;
 	public final fun component26 ()Ljava/lang/String;
 	public final fun component27 ()Ljava/lang/String;
+	public final fun component28 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
@@ -314,8 +315,8 @@ public final class com/lagradost/cloudstream3/AnimeLoadResponse : com/lagradost/
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Ljava/lang/Integer;
 	public final fun component9 ()Ljava/util/Map;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lcom/lagradost/cloudstream3/ShowStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/Score;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/AnimeLoadResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/AnimeLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lcom/lagradost/cloudstream3/ShowStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/Score;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/AnimeLoadResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lcom/lagradost/cloudstream3/ShowStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/Score;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/AnimeLoadResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/AnimeLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lcom/lagradost/cloudstream3/ShowStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Lcom/lagradost/cloudstream3/Score;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/AnimeLoadResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getActors ()Ljava/util/List;
 	public fun getApiName ()Ljava/lang/String;
@@ -348,6 +349,7 @@ public final class com/lagradost/cloudstream3/AnimeLoadResponse : com/lagradost/
 	public fun getUrl ()Ljava/lang/String;
 	public fun getYear ()Ljava/lang/Integer;
 	public fun hashCode ()I
+	public fun isHorizontalRecommendations ()Z
 	public fun setActors (Ljava/util/List;)V
 	public fun setApiName (Ljava/lang/String;)V
 	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
@@ -356,6 +358,7 @@ public final class com/lagradost/cloudstream3/AnimeLoadResponse : com/lagradost/
 	public fun setDuration (Ljava/lang/Integer;)V
 	public final fun setEngName (Ljava/lang/String;)V
 	public final fun setEpisodes (Ljava/util/Map;)V
+	public fun setHorizontalRecommendations (Z)V
 	public final fun setJapName (Ljava/lang/String;)V
 	public fun setLogoUrl (Ljava/lang/String;)V
 	public fun setName (Ljava/lang/String;)V
@@ -380,13 +383,14 @@ public final class com/lagradost/cloudstream3/AnimeLoadResponse : com/lagradost/
 }
 
 public final class com/lagradost/cloudstream3/AnimeSearchResponse : com/lagradost/cloudstream3/SearchResponse {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/lang/Integer;
 	public final fun component11 ()Lcom/lagradost/cloudstream3/SearchQuality;
 	public final fun component12 ()Ljava/util/Map;
 	public final fun component13 ()Lcom/lagradost/cloudstream3/Score;
+	public final fun component14 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Lcom/lagradost/cloudstream3/TvType;
@@ -395,10 +399,11 @@ public final class com/lagradost/cloudstream3/AnimeSearchResponse : com/lagrados
 	public final fun component7 ()Ljava/util/Set;
 	public final fun component8 ()Ljava/lang/String;
 	public final fun component9 ()Ljava/util/Map;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)Lcom/lagradost/cloudstream3/AnimeSearchResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/AnimeSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/AnimeSearchResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)Lcom/lagradost/cloudstream3/AnimeSearchResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/AnimeSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Set;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/AnimeSearchResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getApiName ()Ljava/lang/String;
+	public fun getBackgroundPosterUrl ()Ljava/lang/String;
 	public final fun getDubStatus ()Ljava/util/Set;
 	public final fun getEpisodes ()Ljava/util/Map;
 	public fun getId ()Ljava/lang/Integer;
@@ -412,6 +417,7 @@ public final class com/lagradost/cloudstream3/AnimeSearchResponse : com/lagrados
 	public fun getUrl ()Ljava/lang/String;
 	public final fun getYear ()Ljava/lang/Integer;
 	public fun hashCode ()I
+	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
 	public final fun setDubStatus (Ljava/util/Set;)V
 	public final fun setEpisodes (Ljava/util/Map;)V
 	public fun setId (Ljava/lang/Integer;)V
@@ -578,10 +584,11 @@ public abstract interface annotation class com/lagradost/cloudstream3/InternalAP
 public final class com/lagradost/cloudstream3/LiveSearchResponse : com/lagradost/cloudstream3/SearchResponse {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Lcom/lagradost/cloudstream3/Score;
+	public final fun component11 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Lcom/lagradost/cloudstream3/TvType;
@@ -590,10 +597,11 @@ public final class com/lagradost/cloudstream3/LiveSearchResponse : com/lagradost
 	public final fun component7 ()Lcom/lagradost/cloudstream3/SearchQuality;
 	public final fun component8 ()Ljava/util/Map;
 	public final fun component9 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;)Lcom/lagradost/cloudstream3/LiveSearchResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/LiveSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/LiveSearchResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)Lcom/lagradost/cloudstream3/LiveSearchResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/LiveSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/LiveSearchResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getApiName ()Ljava/lang/String;
+	public fun getBackgroundPosterUrl ()Ljava/lang/String;
 	public fun getId ()Ljava/lang/Integer;
 	public final fun getLang ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
@@ -604,6 +612,7 @@ public final class com/lagradost/cloudstream3/LiveSearchResponse : com/lagradost
 	public fun getType ()Lcom/lagradost/cloudstream3/TvType;
 	public fun getUrl ()Ljava/lang/String;
 	public fun hashCode ()I
+	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
 	public fun setId (Ljava/lang/Integer;)V
 	public final fun setLang (Ljava/lang/String;)V
 	public fun setPosterHeaders (Ljava/util/Map;)V
@@ -615,22 +624,23 @@ public final class com/lagradost/cloudstream3/LiveSearchResponse : com/lagradost
 }
 
 public final class com/lagradost/cloudstream3/LiveStreamLoadResponse : com/lagradost/cloudstream3/LoadResponse {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/List;
 	public final fun component11 ()Ljava/lang/Integer;
 	public final fun component12 ()Ljava/util/List;
 	public final fun component13 ()Ljava/util/List;
-	public final fun component14 ()Ljava/util/List;
-	public final fun component15 ()Z
-	public final fun component16 ()Ljava/util/Map;
+	public final fun component14 ()Z
+	public final fun component15 ()Ljava/util/List;
+	public final fun component16 ()Z
 	public final fun component17 ()Ljava/util/Map;
-	public final fun component18 ()Ljava/lang/String;
+	public final fun component18 ()Ljava/util/Map;
 	public final fun component19 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component20 ()Ljava/lang/String;
 	public final fun component21 ()Ljava/lang/String;
+	public final fun component22 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
@@ -638,8 +648,8 @@ public final class com/lagradost/cloudstream3/LiveStreamLoadResponse : com/lagra
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Lcom/lagradost/cloudstream3/TvType;
 	public final fun component9 ()Lcom/lagradost/cloudstream3/Score;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/LiveStreamLoadResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/LiveStreamLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/LiveStreamLoadResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/LiveStreamLoadResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/LiveStreamLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/LiveStreamLoadResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getActors ()Ljava/util/List;
 	public fun getApiName ()Ljava/lang/String;
@@ -664,6 +674,7 @@ public final class com/lagradost/cloudstream3/LiveStreamLoadResponse : com/lagra
 	public fun getUrl ()Ljava/lang/String;
 	public fun getYear ()Ljava/lang/Integer;
 	public fun hashCode ()I
+	public fun isHorizontalRecommendations ()Z
 	public fun setActors (Ljava/util/List;)V
 	public fun setApiName (Ljava/lang/String;)V
 	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
@@ -671,6 +682,7 @@ public final class com/lagradost/cloudstream3/LiveStreamLoadResponse : com/lagra
 	public fun setContentRating (Ljava/lang/String;)V
 	public final fun setDataUrl (Ljava/lang/String;)V
 	public fun setDuration (Ljava/lang/Integer;)V
+	public fun setHorizontalRecommendations (Z)V
 	public fun setLogoUrl (Ljava/lang/String;)V
 	public fun setName (Ljava/lang/String;)V
 	public fun setPlot (Ljava/lang/String;)V
@@ -712,12 +724,14 @@ public abstract interface class com/lagradost/cloudstream3/LoadResponse {
 	public abstract fun getUniqueUrl ()Ljava/lang/String;
 	public abstract fun getUrl ()Ljava/lang/String;
 	public abstract fun getYear ()Ljava/lang/Integer;
+	public fun isHorizontalRecommendations ()Z
 	public abstract fun setActors (Ljava/util/List;)V
 	public abstract fun setApiName (Ljava/lang/String;)V
 	public abstract fun setBackgroundPosterUrl (Ljava/lang/String;)V
 	public abstract fun setComingSoon (Z)V
 	public abstract fun setContentRating (Ljava/lang/String;)V
 	public abstract fun setDuration (Ljava/lang/Integer;)V
+	public fun setHorizontalRecommendations (Z)V
 	public abstract fun setLogoUrl (Ljava/lang/String;)V
 	public abstract fun setName (Ljava/lang/String;)V
 	public abstract fun setPlot (Ljava/lang/String;)V
@@ -783,6 +797,8 @@ public final class com/lagradost/cloudstream3/LoadResponse$Companion {
 
 public final class com/lagradost/cloudstream3/LoadResponse$DefaultImpls {
 	public static fun getRating (Lcom/lagradost/cloudstream3/LoadResponse;)Ljava/lang/Integer;
+	public static fun isHorizontalRecommendations (Lcom/lagradost/cloudstream3/LoadResponse;)Z
+	public static fun setHorizontalRecommendations (Lcom/lagradost/cloudstream3/LoadResponse;Z)V
 	public static fun setRating (Lcom/lagradost/cloudstream3/LoadResponse;Ljava/lang/Integer;)V
 }
 
@@ -869,9 +885,7 @@ public final class com/lagradost/cloudstream3/MainAPIKt {
 	public static synthetic fun addDubStatus$default (Lcom/lagradost/cloudstream3/AnimeSearchResponse;ZZLjava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public static final fun addEpisodes (Lcom/lagradost/cloudstream3/AnimeLoadResponse;Lcom/lagradost/cloudstream3/DubStatus;Ljava/util/List;)V
 	public static final fun addPoster (Lcom/lagradost/cloudstream3/LoadResponse;Ljava/lang/String;Ljava/util/Map;)V
-	public static final fun addPoster (Lcom/lagradost/cloudstream3/SearchResponse;Ljava/lang/String;Ljava/util/Map;)V
 	public static synthetic fun addPoster$default (Lcom/lagradost/cloudstream3/LoadResponse;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
-	public static synthetic fun addPoster$default (Lcom/lagradost/cloudstream3/SearchResponse;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
 	public static final fun addQuality (Lcom/lagradost/cloudstream3/SearchResponse;Ljava/lang/String;)V
 	public static final fun addSeasonNamesSeasonData (Lcom/lagradost/cloudstream3/EpisodeResponse;Ljava/util/List;)V
 	public static final fun addSeasonNamesString (Lcom/lagradost/cloudstream3/EpisodeResponse;Ljava/util/List;)V
@@ -934,7 +948,8 @@ public final class com/lagradost/cloudstream3/MainAPIKt {
 	public static final fun newMovieSearchResponse (Lcom/lagradost/cloudstream3/MainAPI;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;ZLkotlin/jvm/functions/Function1;)Lcom/lagradost/cloudstream3/MovieSearchResponse;
 	public static synthetic fun newMovieSearchResponse$default (Lcom/lagradost/cloudstream3/MainAPI;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/MovieSearchResponse;
 	public static final fun newSearchResponseList (Ljava/util/List;Ljava/lang/Boolean;)Lcom/lagradost/cloudstream3/SearchResponseList;
-	public static synthetic fun newSearchResponseList$default (Ljava/util/List;Ljava/lang/Boolean;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/SearchResponseList;
+	public static final fun newSearchResponseList (Ljava/util/List;Ljava/lang/Boolean;Z)Lcom/lagradost/cloudstream3/SearchResponseList;
+	public static synthetic fun newSearchResponseList$default (Ljava/util/List;Ljava/lang/Boolean;ZILjava/lang/Object;)Lcom/lagradost/cloudstream3/SearchResponseList;
 	public static final fun newSubtitleFile (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun newSubtitleFile$default (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun newTorrentLoadResponse (Lcom/lagradost/cloudstream3/MainAPI;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -946,8 +961,8 @@ public final class com/lagradost/cloudstream3/MainAPIKt {
 	public static final fun newTvSeriesSearchResponse (Lcom/lagradost/cloudstream3/MainAPI;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;ZLkotlin/jvm/functions/Function1;)Lcom/lagradost/cloudstream3/TvSeriesSearchResponse;
 	public static synthetic fun newTvSeriesSearchResponse$default (Lcom/lagradost/cloudstream3/MainAPI;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/TvSeriesSearchResponse;
 	public static final fun sortUrls (Ljava/util/Set;)Ljava/util/List;
-	public static final fun toNewSearchResponseList (Ljava/util/List;Ljava/lang/Boolean;)Lcom/lagradost/cloudstream3/SearchResponseList;
-	public static synthetic fun toNewSearchResponseList$default (Ljava/util/List;Ljava/lang/Boolean;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/SearchResponseList;
+	public static final fun toNewSearchResponseList (Ljava/util/List;Ljava/lang/Boolean;Z)Lcom/lagradost/cloudstream3/SearchResponseList;
+	public static synthetic fun toNewSearchResponseList$default (Ljava/util/List;Ljava/lang/Boolean;ZILjava/lang/Object;)Lcom/lagradost/cloudstream3/SearchResponseList;
 	public static final fun toRatingInt (Ljava/lang/String;)Ljava/lang/Integer;
 	public static final fun updateUrl (Lcom/lagradost/cloudstream3/MainAPI;Ljava/lang/String;)Ljava/lang/String;
 }
@@ -991,22 +1006,23 @@ public final class com/lagradost/cloudstream3/MainPageRequest {
 }
 
 public final class com/lagradost/cloudstream3/MovieLoadResponse : com/lagradost/cloudstream3/LoadResponse {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/List;
 	public final fun component11 ()Ljava/lang/Integer;
 	public final fun component12 ()Ljava/util/List;
 	public final fun component13 ()Ljava/util/List;
-	public final fun component14 ()Ljava/util/List;
-	public final fun component15 ()Z
-	public final fun component16 ()Ljava/util/Map;
+	public final fun component14 ()Z
+	public final fun component15 ()Ljava/util/List;
+	public final fun component16 ()Z
 	public final fun component17 ()Ljava/util/Map;
-	public final fun component18 ()Ljava/lang/String;
+	public final fun component18 ()Ljava/util/Map;
 	public final fun component19 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component20 ()Ljava/lang/String;
 	public final fun component21 ()Ljava/lang/String;
+	public final fun component22 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Lcom/lagradost/cloudstream3/TvType;
 	public final fun component5 ()Ljava/lang/String;
@@ -1014,8 +1030,8 @@ public final class com/lagradost/cloudstream3/MovieLoadResponse : com/lagradost/
 	public final fun component7 ()Ljava/lang/Integer;
 	public final fun component8 ()Ljava/lang/String;
 	public final fun component9 ()Lcom/lagradost/cloudstream3/Score;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/MovieLoadResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/MovieLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/MovieLoadResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/MovieLoadResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/MovieLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/MovieLoadResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getActors ()Ljava/util/List;
 	public fun getApiName ()Ljava/lang/String;
@@ -1040,6 +1056,7 @@ public final class com/lagradost/cloudstream3/MovieLoadResponse : com/lagradost/
 	public fun getUrl ()Ljava/lang/String;
 	public fun getYear ()Ljava/lang/Integer;
 	public fun hashCode ()I
+	public fun isHorizontalRecommendations ()Z
 	public fun setActors (Ljava/util/List;)V
 	public fun setApiName (Ljava/lang/String;)V
 	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
@@ -1047,6 +1064,7 @@ public final class com/lagradost/cloudstream3/MovieLoadResponse : com/lagradost/
 	public fun setContentRating (Ljava/lang/String;)V
 	public final fun setDataUrl (Ljava/lang/String;)V
 	public fun setDuration (Ljava/lang/Integer;)V
+	public fun setHorizontalRecommendations (Z)V
 	public fun setLogoUrl (Ljava/lang/String;)V
 	public fun setName (Ljava/lang/String;)V
 	public fun setPlot (Ljava/lang/String;)V
@@ -1068,10 +1086,11 @@ public final class com/lagradost/cloudstream3/MovieLoadResponse : com/lagradost/
 public final class com/lagradost/cloudstream3/MovieSearchResponse : com/lagradost/cloudstream3/SearchResponse {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Lcom/lagradost/cloudstream3/Score;
+	public final fun component11 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Lcom/lagradost/cloudstream3/TvType;
@@ -1080,10 +1099,11 @@ public final class com/lagradost/cloudstream3/MovieSearchResponse : com/lagrados
 	public final fun component7 ()Ljava/lang/Integer;
 	public final fun component8 ()Lcom/lagradost/cloudstream3/SearchQuality;
 	public final fun component9 ()Ljava/util/Map;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)Lcom/lagradost/cloudstream3/MovieSearchResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/MovieSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/MovieSearchResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)Lcom/lagradost/cloudstream3/MovieSearchResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/MovieSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/MovieSearchResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getApiName ()Ljava/lang/String;
+	public fun getBackgroundPosterUrl ()Ljava/lang/String;
 	public fun getId ()Ljava/lang/Integer;
 	public fun getName ()Ljava/lang/String;
 	public fun getPosterHeaders ()Ljava/util/Map;
@@ -1094,6 +1114,7 @@ public final class com/lagradost/cloudstream3/MovieSearchResponse : com/lagrados
 	public fun getUrl ()Ljava/lang/String;
 	public final fun getYear ()Ljava/lang/Integer;
 	public fun hashCode ()I
+	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
 	public fun setId (Ljava/lang/Integer;)V
 	public fun setPosterHeaders (Ljava/util/Map;)V
 	public fun setPosterUrl (Ljava/lang/String;)V
@@ -1260,6 +1281,7 @@ public final class com/lagradost/cloudstream3/SearchQuality : java/lang/Enum {
 
 public abstract interface class com/lagradost/cloudstream3/SearchResponse {
 	public abstract fun getApiName ()Ljava/lang/String;
+	public fun getBackgroundPosterUrl ()Ljava/lang/String;
 	public abstract fun getId ()Ljava/lang/Integer;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getPosterHeaders ()Ljava/util/Map;
@@ -1268,6 +1290,7 @@ public abstract interface class com/lagradost/cloudstream3/SearchResponse {
 	public abstract fun getScore ()Lcom/lagradost/cloudstream3/Score;
 	public abstract fun getType ()Lcom/lagradost/cloudstream3/TvType;
 	public abstract fun getUrl ()Ljava/lang/String;
+	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
 	public abstract fun setId (Ljava/lang/Integer;)V
 	public abstract fun setPosterHeaders (Ljava/util/Map;)V
 	public abstract fun setPosterUrl (Ljava/lang/String;)V
@@ -1276,17 +1299,26 @@ public abstract interface class com/lagradost/cloudstream3/SearchResponse {
 	public abstract fun setType (Lcom/lagradost/cloudstream3/TvType;)V
 }
 
+public final class com/lagradost/cloudstream3/SearchResponse$DefaultImpls {
+	public static fun getBackgroundPosterUrl (Lcom/lagradost/cloudstream3/SearchResponse;)Ljava/lang/String;
+	public static fun setBackgroundPosterUrl (Lcom/lagradost/cloudstream3/SearchResponse;Ljava/lang/String;)V
+}
+
 public final class com/lagradost/cloudstream3/SearchResponseList {
 	public fun <init> (Ljava/util/List;Z)V
 	public synthetic fun <init> (Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/List;ZZ)V
+	public synthetic fun <init> (Ljava/util/List;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Z
-	public final fun copy (Ljava/util/List;Z)Lcom/lagradost/cloudstream3/SearchResponseList;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/SearchResponseList;Ljava/util/List;ZILjava/lang/Object;)Lcom/lagradost/cloudstream3/SearchResponseList;
+	public final fun component3 ()Z
+	public final fun copy (Ljava/util/List;ZZ)Lcom/lagradost/cloudstream3/SearchResponseList;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/SearchResponseList;Ljava/util/List;ZZILjava/lang/Object;)Lcom/lagradost/cloudstream3/SearchResponseList;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getHasNext ()Z
 	public final fun getItems ()Ljava/util/List;
 	public fun hashCode ()I
+	public final fun isHorizontalImages ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1392,23 +1424,24 @@ public final class com/lagradost/cloudstream3/SubtitleFile {
 }
 
 public final class com/lagradost/cloudstream3/TorrentLoadResponse : com/lagradost/cloudstream3/LoadResponse {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Lcom/lagradost/cloudstream3/Score;
 	public final fun component11 ()Ljava/util/List;
 	public final fun component12 ()Ljava/lang/Integer;
 	public final fun component13 ()Ljava/util/List;
 	public final fun component14 ()Ljava/util/List;
-	public final fun component15 ()Ljava/util/List;
-	public final fun component16 ()Z
-	public final fun component17 ()Ljava/util/Map;
+	public final fun component15 ()Z
+	public final fun component16 ()Ljava/util/List;
+	public final fun component17 ()Z
 	public final fun component18 ()Ljava/util/Map;
-	public final fun component19 ()Ljava/lang/String;
+	public final fun component19 ()Ljava/util/Map;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component20 ()Ljava/lang/String;
 	public final fun component21 ()Ljava/lang/String;
 	public final fun component22 ()Ljava/lang/String;
+	public final fun component23 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
@@ -1416,8 +1449,8 @@ public final class com/lagradost/cloudstream3/TorrentLoadResponse : com/lagrados
 	public final fun component7 ()Lcom/lagradost/cloudstream3/TvType;
 	public final fun component8 ()Ljava/lang/String;
 	public final fun component9 ()Ljava/lang/Integer;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/TorrentLoadResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/TorrentLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/TorrentLoadResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/TorrentLoadResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/TorrentLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/TorrentLoadResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getActors ()Ljava/util/List;
 	public fun getApiName ()Ljava/lang/String;
@@ -1443,12 +1476,14 @@ public final class com/lagradost/cloudstream3/TorrentLoadResponse : com/lagrados
 	public fun getUrl ()Ljava/lang/String;
 	public fun getYear ()Ljava/lang/Integer;
 	public fun hashCode ()I
+	public fun isHorizontalRecommendations ()Z
 	public fun setActors (Ljava/util/List;)V
 	public fun setApiName (Ljava/lang/String;)V
 	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
 	public fun setComingSoon (Z)V
 	public fun setContentRating (Ljava/lang/String;)V
 	public fun setDuration (Ljava/lang/Integer;)V
+	public fun setHorizontalRecommendations (Z)V
 	public fun setLogoUrl (Ljava/lang/String;)V
 	public final fun setMagnet (Ljava/lang/String;)V
 	public fun setName (Ljava/lang/String;)V
@@ -1472,9 +1507,10 @@ public final class com/lagradost/cloudstream3/TorrentLoadResponse : com/lagrados
 public final class com/lagradost/cloudstream3/TorrentSearchResponse : com/lagradost/cloudstream3/SearchResponse {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Lcom/lagradost/cloudstream3/TvType;
@@ -1483,10 +1519,11 @@ public final class com/lagradost/cloudstream3/TorrentSearchResponse : com/lagrad
 	public final fun component7 ()Lcom/lagradost/cloudstream3/SearchQuality;
 	public final fun component8 ()Ljava/util/Map;
 	public final fun component9 ()Lcom/lagradost/cloudstream3/Score;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)Lcom/lagradost/cloudstream3/TorrentSearchResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/TorrentSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/TorrentSearchResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)Lcom/lagradost/cloudstream3/TorrentSearchResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/TorrentSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/TorrentSearchResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getApiName ()Ljava/lang/String;
+	public fun getBackgroundPosterUrl ()Ljava/lang/String;
 	public fun getId ()Ljava/lang/Integer;
 	public fun getName ()Ljava/lang/String;
 	public fun getPosterHeaders ()Ljava/util/Map;
@@ -1496,6 +1533,7 @@ public final class com/lagradost/cloudstream3/TorrentSearchResponse : com/lagrad
 	public fun getType ()Lcom/lagradost/cloudstream3/TvType;
 	public fun getUrl ()Ljava/lang/String;
 	public fun hashCode ()I
+	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
 	public fun setId (Ljava/lang/Integer;)V
 	public fun setPosterHeaders (Ljava/util/Map;)V
 	public fun setPosterUrl (Ljava/lang/String;)V
@@ -1563,25 +1601,26 @@ public final class com/lagradost/cloudstream3/TrailerData {
 }
 
 public final class com/lagradost/cloudstream3/TvSeriesLoadResponse : com/lagradost/cloudstream3/EpisodeResponse, com/lagradost/cloudstream3/LoadResponse {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/ShowStatus;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/ShowStatus;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/ShowStatus;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/ShowStatus;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Lcom/lagradost/cloudstream3/Score;
 	public final fun component11 ()Ljava/util/List;
 	public final fun component12 ()Ljava/lang/Integer;
 	public final fun component13 ()Ljava/util/List;
 	public final fun component14 ()Ljava/util/List;
-	public final fun component15 ()Ljava/util/List;
-	public final fun component16 ()Z
-	public final fun component17 ()Ljava/util/Map;
+	public final fun component15 ()Z
+	public final fun component16 ()Ljava/util/List;
+	public final fun component17 ()Z
 	public final fun component18 ()Ljava/util/Map;
-	public final fun component19 ()Lcom/lagradost/cloudstream3/NextAiring;
+	public final fun component19 ()Ljava/util/Map;
 	public final fun component2 ()Ljava/lang/String;
-	public final fun component20 ()Ljava/util/List;
-	public final fun component21 ()Ljava/lang/String;
+	public final fun component20 ()Lcom/lagradost/cloudstream3/NextAiring;
+	public final fun component21 ()Ljava/util/List;
 	public final fun component22 ()Ljava/lang/String;
 	public final fun component23 ()Ljava/lang/String;
 	public final fun component24 ()Ljava/lang/String;
+	public final fun component25 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Lcom/lagradost/cloudstream3/TvType;
 	public final fun component5 ()Ljava/util/List;
@@ -1589,8 +1628,8 @@ public final class com/lagradost/cloudstream3/TvSeriesLoadResponse : com/lagrado
 	public final fun component7 ()Ljava/lang/Integer;
 	public final fun component8 ()Ljava/lang/String;
 	public final fun component9 ()Lcom/lagradost/cloudstream3/ShowStatus;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/ShowStatus;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/TvSeriesLoadResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/TvSeriesLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/ShowStatus;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/TvSeriesLoadResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/ShowStatus;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/lagradost/cloudstream3/TvSeriesLoadResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/TvSeriesLoadResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Lcom/lagradost/cloudstream3/ShowStatus;Lcom/lagradost/cloudstream3/Score;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;ZLjava/util/List;ZLjava/util/Map;Ljava/util/Map;Lcom/lagradost/cloudstream3/NextAiring;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/TvSeriesLoadResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getActors ()Ljava/util/List;
 	public fun getApiName ()Ljava/lang/String;
@@ -1620,6 +1659,7 @@ public final class com/lagradost/cloudstream3/TvSeriesLoadResponse : com/lagrado
 	public fun getUrl ()Ljava/lang/String;
 	public fun getYear ()Ljava/lang/Integer;
 	public fun hashCode ()I
+	public fun isHorizontalRecommendations ()Z
 	public fun setActors (Ljava/util/List;)V
 	public fun setApiName (Ljava/lang/String;)V
 	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
@@ -1627,6 +1667,7 @@ public final class com/lagradost/cloudstream3/TvSeriesLoadResponse : com/lagrado
 	public fun setContentRating (Ljava/lang/String;)V
 	public fun setDuration (Ljava/lang/Integer;)V
 	public final fun setEpisodes (Ljava/util/List;)V
+	public fun setHorizontalRecommendations (Z)V
 	public fun setLogoUrl (Ljava/lang/String;)V
 	public fun setName (Ljava/lang/String;)V
 	public fun setNextAiring (Lcom/lagradost/cloudstream3/NextAiring;)V
@@ -1651,11 +1692,12 @@ public final class com/lagradost/cloudstream3/TvSeriesLoadResponse : com/lagrado
 public final class com/lagradost/cloudstream3/TvSeriesSearchResponse : com/lagradost/cloudstream3/SearchResponse {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/Map;
 	public final fun component11 ()Lcom/lagradost/cloudstream3/Score;
+	public final fun component12 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Lcom/lagradost/cloudstream3/TvType;
@@ -1664,10 +1706,11 @@ public final class com/lagradost/cloudstream3/TvSeriesSearchResponse : com/lagra
 	public final fun component7 ()Ljava/lang/Integer;
 	public final fun component8 ()Ljava/lang/Integer;
 	public final fun component9 ()Lcom/lagradost/cloudstream3/SearchQuality;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;)Lcom/lagradost/cloudstream3/TvSeriesSearchResponse;
-	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/TvSeriesSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/TvSeriesSearchResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;)Lcom/lagradost/cloudstream3/TvSeriesSearchResponse;
+	public static synthetic fun copy$default (Lcom/lagradost/cloudstream3/TvSeriesSearchResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/lagradost/cloudstream3/TvType;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/lagradost/cloudstream3/SearchQuality;Ljava/util/Map;Lcom/lagradost/cloudstream3/Score;Ljava/lang/String;ILjava/lang/Object;)Lcom/lagradost/cloudstream3/TvSeriesSearchResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getApiName ()Ljava/lang/String;
+	public fun getBackgroundPosterUrl ()Ljava/lang/String;
 	public final fun getEpisodes ()Ljava/lang/Integer;
 	public fun getId ()Ljava/lang/Integer;
 	public fun getName ()Ljava/lang/String;
@@ -1679,6 +1722,7 @@ public final class com/lagradost/cloudstream3/TvSeriesSearchResponse : com/lagra
 	public fun getUrl ()Ljava/lang/String;
 	public final fun getYear ()Ljava/lang/Integer;
 	public fun hashCode ()I
+	public fun setBackgroundPosterUrl (Ljava/lang/String;)V
 	public final fun setEpisodes (Ljava/lang/Integer;)V
 	public fun setId (Ljava/lang/Integer;)V
 	public fun setPosterHeaders (Ljava/util/Map;)V
