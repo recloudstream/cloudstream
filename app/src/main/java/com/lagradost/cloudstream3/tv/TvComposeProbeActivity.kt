@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import com.lagradost.cloudstream3.tv.navigation.TvNavigationShell
 
 /**
- * Compose-for-TV host activity (Phase 2 shell with mock Home).
+ * Compose-for-TV host activity (Phase 3: read-only Home catalog bridge).
  *
  * Not registered as MAIN / LEANBACK_LAUNCHER — default phone + legacy TV startup unchanged.
  *

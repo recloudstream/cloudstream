@@ -20,28 +20,31 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.lagradost.cloudstream3.tv.components.TvMediaCard
-import com.lagradost.cloudstream3.tv.model.TvMockRail
+import com.lagradost.cloudstream3.tv.model.TvContentRail
 
 /**
  * Horizontal content rail with per-rail focus memory.
- * [lastFocusedIndex] is owned by [TvHomeFocusState] so leaving/returning Home restores focus.
+ * Skipped when [rail.items] is empty so empty rails never trap D-pad focus.
+ * [lastFocusedIndex] is owned by [TvHomeFocusState]; coerced to dynamic item count.
  */
 @Composable
 fun TvContentRail(
-    rail: TvMockRail,
+    rail: TvContentRail,
     lastFocusedIndex: Int,
     onFocusedIndexChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
     restoreFocus: Boolean = false,
     onRestoreConsumed: () -> Unit = {},
 ) {
-    val safeIndex = lastFocusedIndex.coerceIn(0, (rail.items.size - 1).coerceAtLeast(0))
+    if (rail.items.isEmpty()) return
+
+    val safeIndex = lastFocusedIndex.coerceIn(0, rail.items.lastIndex)
     val focusRequesters = remember(rail.id, rail.items.size) {
         List(rail.items.size) { FocusRequester() }
     }
     val listState = rememberLazyListState()
 
-    LaunchedEffect(restoreFocus, rail.id, safeIndex) {
+    LaunchedEffect(restoreFocus, rail.id, safeIndex, rail.items.size) {
         if (restoreFocus && focusRequesters.isNotEmpty()) {
             listState.scrollToItem(safeIndex)
             runCatching { focusRequesters[safeIndex].requestFocus() }
@@ -54,7 +57,7 @@ fun TvContentRail(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = rail.title,
+            text = if (rail.isMock) "${rail.title}  ·  Demo" else rail.title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(horizontal = 8.dp),

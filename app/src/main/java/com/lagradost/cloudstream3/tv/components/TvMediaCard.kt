@@ -17,7 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Card
@@ -25,15 +27,38 @@ import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
-import com.lagradost.cloudstream3.tv.model.TvMockMediaItem
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.tv.model.TvMediaItem
+
+private val PosterPlaceholder = Color(0xFF2A2A2E)
+private const val PosterWidthPx = 400
+private const val PosterHeightPx = 600
 
 @Composable
 fun TvMediaCard(
-    item: TvMockMediaItem,
+    item: TvMediaItem,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     onFocused: (() -> Unit)? = null,
 ) {
+    val context = LocalContext.current
+    val placeholder = ColorPainter(PosterPlaceholder)
+    val request = ImageRequest.Builder(context)
+        .data(item.posterUrl?.takeIf { it.isNotBlank() })
+        .size(PosterWidthPx, PosterHeightPx)
+        .crossfade(true)
+        .httpHeaders(
+            NetworkHeaders.Builder().also { headers ->
+                headers["User-Agent"] = USER_AGENT
+                item.posterHeaders?.forEach { (k, v) -> headers[k] = v }
+            }.build(),
+        )
+        .build()
+
     Column(
         modifier = modifier.width(148.dp),
     ) {
@@ -52,9 +77,11 @@ fun TvMediaCard(
         ) {
             Box(Modifier.fillMaxSize()) {
                 AsyncImage(
-                    model = item.posterUrl,
+                    model = request,
                     contentDescription = item.title,
                     contentScale = ContentScale.Crop,
+                    placeholder = placeholder,
+                    error = placeholder,
                     modifier = Modifier.fillMaxSize(),
                 )
                 Box(

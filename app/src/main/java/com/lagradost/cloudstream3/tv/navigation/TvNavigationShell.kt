@@ -100,11 +100,11 @@ fun TvNavigationShell(
                 TvDestination.Home -> TvHomeScreen(focusState = homeFocusState)
                 TvDestination.Search -> TvPlaceholderPane(
                     title = "Search",
-                    body = "Phase 2 placeholder — search UI and providers land in a later phase.",
+                    body = "Phase 3 placeholder — Search is out of scope (later phase).",
                 )
                 TvDestination.Watchlist -> TvPlaceholderPane(
                     title = "Watchlist",
-                    body = "Phase 2 placeholder — no history / library wiring yet.",
+                    body = "Phase 3 placeholder — Watchlist / History out of scope.",
                 )
                 TvDestination.Settings -> {
                     if (showFocusProbe) {

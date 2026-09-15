@@ -19,7 +19,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Button
@@ -28,26 +30,49 @@ import androidx.tv.material3.Glow
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.tv.components.TvFocusScale
-import com.lagradost.cloudstream3.tv.model.TvMockMediaItem
+import com.lagradost.cloudstream3.tv.model.TvMediaItem
 
 @Composable
 fun TvHeroSection(
-    hero: TvMockMediaItem,
+    hero: TvMediaItem,
     watchFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
     onWatchNow: () -> Unit = {},
     onDetails: () -> Unit = {},
 ) {
+    val context = LocalContext.current
+    val placeholder = ColorPainter(Color(0xFF1A1A1E))
+    val imageUrl = hero.backdropUrl?.takeIf { it.isNotBlank() }
+        ?: hero.posterUrl?.takeIf { it.isNotBlank() }
+    val request = ImageRequest.Builder(context)
+        .data(imageUrl)
+        .size(1280, 720)
+        .crossfade(true)
+        .httpHeaders(
+            NetworkHeaders.Builder().also { headers ->
+                headers["User-Agent"] = USER_AGENT
+                hero.posterHeaders?.forEach { (k, v) -> headers[k] = v }
+            }.build(),
+        )
+        .build()
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(320.dp),
     ) {
         AsyncImage(
-            model = hero.backdropUrl,
+            model = request,
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            placeholder = placeholder,
+            error = placeholder,
             modifier = Modifier.fillMaxSize(),
         )
         Box(
@@ -80,7 +105,7 @@ fun TvHeroSection(
             verticalArrangement = Arrangement.Bottom,
         ) {
             Text(
-                text = "FEATURED",
+                text = if (hero.isMock) "FEATURED · DEMO" else "FEATURED",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -98,15 +123,17 @@ fun TvHeroSection(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = hero.synopsis,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.widthIn(max = 480.dp),
-            )
+            if (hero.synopsis.isNotBlank()) {
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = hero.synopsis,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.widthIn(max = 480.dp),
+                )
+            }
             Spacer(Modifier.height(22.dp))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -136,11 +163,12 @@ fun TvHeroSection(
     }
 }
 
-private fun buildMetadataLine(hero: TvMockMediaItem): String {
+private fun buildMetadataLine(hero: TvMediaItem): String {
     val parts = buildList {
         hero.year?.let { add(it.toString()) }
         hero.rating?.let { add("★ $it") }
         hero.runtime?.let { add(it) }
+        hero.typeLabel?.let { add(it) }
         if (hero.genres.isNotEmpty()) add(hero.genres.take(3).joinToString(" · "))
     }
     return parts.joinToString("  •  ")

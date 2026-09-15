@@ -1,12 +1,15 @@
-# Compose for TV — Phase 2 shell (mock)
+# Compose for TV — Phase 3 Home catalog bridge
 
-Structural Compose TV UI with **mock data only**. No APIRepository / player / plugins.
+Read-only Home catalog via thin bridge. No Search / Watchlist / History / Details / Player.
 
 ## Architecture
 
-`TvComposeProbeActivity` → `TvTheme` → `TvNavigationShell` → `TvHomeScreen` (hero + rails)
+```
+APIRepository → TvHomeRepository → immutable TV models → TvHomeViewModel (StateContainer)
+  → TvHomeUiState → TvHomeScreen
+```
 
-Destinations (visual): Home, Search, Watchlist, Settings. Home is real mock UI; others are placeholders. Phase 1 `TvProbeScreen` remains as a canary under Settings.
+`TvComposeProbeActivity` → `TvTheme` → `TvNavigationShell` → `TvHomeScreen`
 
 ## Packages
 
@@ -14,16 +17,27 @@ Destinations (visual): Home, Search, Watchlist, Settings. Home is real mock UI; 
 tv/
   TvComposeProbeActivity.kt
   TvTheme.kt
-  TvProbeScreen.kt          # Phase 1 canary
+  TvProbeScreen.kt
   navigation/TvNavigationShell.kt
-  home/TvHomeScreen.kt, TvHeroSection.kt, TvContentRail.kt
+  home/TvHomeScreen.kt, TvHeroSection.kt, TvContentRail.kt, TvHomeViewModel.kt
   components/TvMediaCard.kt, TvFocusScale.kt
-  model/TvMockModels.kt
+  model/TvHomeModels.kt, TvMockCatalog.kt
+  data/TvMediaMapper.kt, TvHomeRepository.kt
 ```
 
-## How to open
+## Rails honesty
 
-Not a launcher. Debug builds:
+| Rail | Source |
+|------|--------|
+| Continue Watching | **Mock** — resume history needs DataStore / download-header cache (can write); Phase 3 forbids persistence touches |
+| Trending / Movies / Anime | **Real** via `APIRepository.getMainPage(1)` when a homepage provider exists; else mock slot or explicit demo fallback |
+| Hero | First suitable real item (poster as backdrop); else explicit mock hero |
+
+## States
+
+`Loading` → `Content` | `Empty` | `Error` with D-pad **Retry** and explicit **Load demo catalog** (never silent fake success).
+
+## How to open
 
 ```bash
 adb shell am start -n com.lagradost.cloudstream3.debug/com.lagradost.cloudstream3.tv.TvComposeProbeActivity
@@ -35,7 +49,6 @@ Or **Settings → Updates → Actions → Compose TV (debug)** (`BuildConfig.DEB
 
 ```bash
 ./gradlew :app:compileStableDebugKotlin
-# or
 ./gradlew :app:assembleStableDebug
 ```
 
