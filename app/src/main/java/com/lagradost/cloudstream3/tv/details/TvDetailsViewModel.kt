@@ -8,7 +8,8 @@ import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvDetailsAction
 import com.lagradost.cloudstream3.tv.model.TvDetailsContent
 import com.lagradost.cloudstream3.tv.model.TvDetailsUiState
-import com.lagradost.cloudstream3.tv.data.TvContinueWatchingResume
+import com.lagradost.cloudstream3.tv.data.TvContinueWatchingResumeResolver
+import kotlinx.coroutines.CancellationException
 import com.lagradost.cloudstream3.tv.model.TvEpisodeDefaults
 import com.lagradost.cloudstream3.tv.model.TvResumeHint
 import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
@@ -33,7 +34,7 @@ import kotlinx.coroutines.withContext
  */
 class TvDetailsViewModel(
     private val repository: TvDetailsRepository = TvDetailsRepository(),
-    private val resumeResolver: TvContinueWatchingResume = TvContinueWatchingResume(repository),
+    private val resumeResolver: TvContinueWatchingResumeResolver = TvContinueWatchingResumeResolver(repository),
 ) : ViewModel(),
     StateContainer<TvDetailsUiState> by DefaultStateContainer(TvDetailsUiState.Loading()),
     ActionHandler<TvDetailsAction> {
@@ -128,6 +129,7 @@ class TvDetailsViewModel(
             val result = try {
                 withContext(Dispatchers.IO) { repository.load(ref) }
             } catch (t: Throwable) {
+                if (t is CancellationException) throw t
                 logError(t)
                 TvDetailsRepository.LoadResult.Failure(
                     t.message ?: "Unexpected error loading details",

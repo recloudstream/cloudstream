@@ -83,6 +83,20 @@ sealed interface TvHomeAction {
      * No new keys; parentId from resume hint only.
      */
     data class RemoveContinueWatching(val parentId: Int) : TvHomeAction
+    /** Phase 9 — CW card Resume / Continue (resolve in ViewModel, not Composable). */
+    data class ResumeContinueWatching(val item: TvMediaItem) : TvHomeAction
+    /** Phase 10 — Hero Watch Now (series resolve shares CW path). */
+    data class HeroWatchNow(val item: TvMediaItem) : TvHomeAction
+}
+
+/**
+ * One-shot Home navigation / notice events from ViewModel (never hold Activity/FocusRequester).
+ * Collected in Composable; playback still goes through Activity → TvPlaybackBridge.
+ */
+sealed interface TvHomeEvent {
+    data class Play(val request: TvPlaybackRequest) : TvHomeEvent
+    data class OpenDetails(val ref: TvContentRef, val clearNotice: Boolean = true) : TvHomeEvent
+    data class Notice(val message: String) : TvHomeEvent
 }
 
 enum class TvDestination(val label: String) {

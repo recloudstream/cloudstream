@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
@@ -33,23 +32,17 @@ import androidx.tv.material3.WideButtonDefaults
 import com.lagradost.cloudstream3.tv.components.TvConfirmDialog
 import com.lagradost.cloudstream3.tv.components.TvFocusScale
 import com.lagradost.cloudstream3.tv.components.TvOnResume
-import com.lagradost.cloudstream3.tv.data.TvContinueWatchingResume
-import com.lagradost.cloudstream3.tv.model.TvAvailabilityClassifier
 import com.lagradost.cloudstream3.tv.model.TvAvailabilityKind
 import com.lagradost.cloudstream3.tv.model.TvContentRef
-import com.lagradost.cloudstream3.tv.model.TvContinueWatchingClassifier
-import com.lagradost.cloudstream3.tv.model.TvCwClass
 import com.lagradost.cloudstream3.tv.model.TvHeroWatchNow
 import com.lagradost.cloudstream3.tv.model.TvHeroWatchResult
 import com.lagradost.cloudstream3.tv.model.TvHomeAction
 import com.lagradost.cloudstream3.tv.model.TvHomeCatalog
+import com.lagradost.cloudstream3.tv.model.TvHomeEvent
 import com.lagradost.cloudstream3.tv.model.TvHomeUiState
 import com.lagradost.cloudstream3.tv.model.TvMediaItem
 import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
 import com.lagradost.cloudstream3.tv.model.TvRailIds
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * Hoisted Home focus memory — survives destination switches in [com.lagradost.cloudstream3.tv.navigation.TvNavigationShell].
@@ -113,14 +106,30 @@ fun TvHomeScreen(
 ) {
     val uiState by viewModel.state.collectAsState()
     var notice by remember { mutableStateOf<String?>(null) }
-    var resolvingId by remember { mutableStateOf<String?>(null) }
     var removeCandidate by remember { mutableStateOf<CwRemoveCandidate?>(null) }
-    val scope = rememberCoroutineScope()
-    val resumeResolver = remember { TvContinueWatchingResume() }
 
     LaunchedEffect(Unit) { viewModel.onAction(TvHomeAction.RefreshContinueWatching) }
     TvOnResume {
         viewModel.onAction(TvHomeAction.RefreshContinueWatching)
+    }
+
+    // Phase 9/10 — playback / details / notices come from ViewModel (cancel-safe resolve).
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is TvHomeEvent.Play -> {
+                    notice = null
+                    onPlaybackRequest(event.request)
+                }
+                is TvHomeEvent.OpenDetails -> {
+                    if (event.clearNotice) notice = null
+                    onOpenDetails(event.ref)
+                }
+                is TvHomeEvent.Notice -> {
+                    notice = event.message
+                }
+            }
+        }
     }
 
     fun openDetailsOrNotice(item: TvMediaItem) {
@@ -137,114 +146,9 @@ fun TvHomeScreen(
         }
     }
 
-    fun handleSeriesResolve(ref: TvContentRef, hint: com.lagradost.cloudstream3.tv.model.TvResumeHint, trackId: String) {
-        if (resolvingId != null) return
-        resolvingId = trackId
-        notice = "Resuming…"
-        scope.launch {
-            val result = try {
-                withContext(Dispatchers.IO) {
-                    resumeResolver.resolveSeriesResume(ref, hint)
-                }
-            } catch (t: Throwable) {
-                TvContinueWatchingResume.ResolveResult.OpenDetails(
-                    ref,
-                    t.message ?: "Failed to resume — open Details.",
-                )
-            } finally {
-                resolvingId = null
-            }
-            when (result) {
-                is TvContinueWatchingResume.ResolveResult.Playback -> {
-                    if (result.request.isMock) {
-                        notice = "${TvAvailabilityKind.PlaybackUnavailable.label}: Demo item — never becomes a real TvPlaybackRequest."
-                    } else {
-                        notice = null
-                        onPlaybackRequest(result.request)
-                    }
-                }
-                is TvContinueWatchingResume.ResolveResult.OpenDetails -> {
-                    notice = result.message?.let {
-                        "${TvAvailabilityKind.PlaybackUnavailable.label}: $it"
-                    }
-                    onOpenDetails(result.ref.copy(resumeHint = hint))
-                }
-                is TvContinueWatchingResume.ResolveResult.Unavailable -> {
-                    notice = "${TvAvailabilityKind.Unavailable.label}: ${result.message}"
-                }
-            }
-        }
-    }
-
-    fun onContinueWatchingClick(item: TvMediaItem) {
-        val classification = TvContinueWatchingClassifier.classifyMediaItem(item)
-        val availability = TvAvailabilityClassifier.fromCwClassification(classification)
-        when (classification.clazz) {
-            TvCwClass.NotSafelyPlayable -> {
-                notice = "${availability.kind.label}: ${classification.reason}"
-            }
-            TvCwClass.DirectPlayable -> {
-                val request = TvContinueWatchingClassifier.moviePlaybackRequest(item)
-                if (request == null || request.isMock) {
-                    notice = "${TvAvailabilityKind.PlaybackUnavailable.label}: Demo item — never becomes a real TvPlaybackRequest."
-                } else {
-                    notice = null
-                    onPlaybackRequest(request)
-                }
-            }
-            TvCwClass.PlayableAfterDetails -> {
-                val ref = TvContentRef.fromMediaItem(item)
-                if (ref == null) {
-                    notice = "${TvAvailabilityKind.Unavailable.label}: Missing provider URL — cannot open details."
-                    return
-                }
-                val hint = item.resumeHint
-                val seriesTypes = setOf("TvSeries", "Anime", "Cartoon", "AsianDrama", "OVA")
-                val isSeriesFamily = item.typeLabel in seriesTypes
-                if (isSeriesFamily && hint != null && hint.hasExactEpisode) {
-                    handleSeriesResolve(ref, hint, item.id)
-                } else {
-                    notice = null
-                    onOpenDetails(ref)
-                }
-            }
-        }
-    }
-
-    fun onHeroWatchNow(hero: TvMediaItem) {
-        when (val result = TvHeroWatchNow.resolve(hero)) {
-            is TvHeroWatchResult.Play -> {
-                if (result.request.isMock) {
-                    notice = "${TvAvailabilityKind.PlaybackUnavailable.label}: Demo — never plays."
-                } else {
-                    notice = null
-                    onPlaybackRequest(result.request)
-                }
-            }
-            is TvHeroWatchResult.ResolveSeries -> {
-                handleSeriesResolve(result.ref, result.hint, "hero:${hero.id}")
-            }
-            is TvHeroWatchResult.OpenDetails -> {
-                notice = result.message
-                onOpenDetails(result.ref)
-            }
-            is TvHeroWatchResult.Demo -> {
-                notice = "${TvAvailabilityKind.PlaybackUnavailable.label}: ${result.message}"
-            }
-            is TvHeroWatchResult.Unavailable -> {
-                val kind = if (result.playbackRelated) {
-                    TvAvailabilityKind.PlaybackUnavailable
-                } else {
-                    TvAvailabilityKind.Unavailable
-                }
-                notice = "${kind.label}: ${result.message}"
-            }
-        }
-    }
-
     fun onRailItemClick(railId: String, item: TvMediaItem) {
         if (railId == TvRailIds.CONTINUE) {
-            onContinueWatchingClick(item)
+            viewModel.onAction(TvHomeAction.ResumeContinueWatching(item))
         } else {
             openDetailsOrNotice(item)
         }
@@ -271,7 +175,7 @@ fun TvHomeScreen(
                 focusState = focusState,
                 notice = notice,
                 onOpenItem = ::onRailItemClick,
-                onWatchNow = { onHeroWatchNow(state.catalog.hero) },
+                onWatchNow = { viewModel.onAction(TvHomeAction.HeroWatchNow(state.catalog.hero)) },
                 onCwLongClick = { item, index -> requestRemoveCw(item, index) },
                 modifier = Modifier.fillMaxSize(),
             )

@@ -25,6 +25,7 @@ data class TvContinueWatchingItem(
         url = url,
         apiName = apiName,
         title = title,
+        resumeHint = TvContinueWatchingClassifier.resumeHintOf(this),
     )
 
     fun toMediaItem(): TvMediaItem {

@@ -106,7 +106,7 @@ object TvAvailabilityClassifier {
 sealed interface TvHeroWatchResult {
     data class Play(val request: TvPlaybackRequest) : TvHeroWatchResult
 
-    /** Series/Anime with exact S/E or episodeId — resolve via TvContinueWatchingResume. */
+    /** Series/Anime with exact S/E or episodeId — resolve via TvContinueWatchingResumeResolver. */
     data class ResolveSeries(
         val ref: TvContentRef,
         val hint: TvResumeHint,
