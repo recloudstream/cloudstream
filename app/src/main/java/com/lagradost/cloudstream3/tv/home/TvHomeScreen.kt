@@ -30,6 +30,7 @@ import androidx.tv.material3.Text
 import androidx.tv.material3.WideButton
 import androidx.tv.material3.WideButtonDefaults
 import com.lagradost.cloudstream3.tv.components.TvFocusScale
+import com.lagradost.cloudstream3.tv.components.TvOnResume
 import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvHomeAction
 import com.lagradost.cloudstream3.tv.model.TvMediaItem
@@ -84,6 +85,10 @@ fun TvHomeScreen(
 ) {
     val uiState by viewModel.state.collectAsState()
     var demoNotice by remember { mutableStateOf<String?>(null) }
+
+    // Refresh Continue Watching on enter / Activity resume (read-only; no homepage re-fetch).
+    LaunchedEffect(Unit) { viewModel.onAction(TvHomeAction.RefreshContinueWatching) }
+    TvOnResume { viewModel.onAction(TvHomeAction.RefreshContinueWatching) }
 
     fun openOrNotice(item: TvMediaItem) {
         val ref = TvContentRef.fromMediaItem(item)

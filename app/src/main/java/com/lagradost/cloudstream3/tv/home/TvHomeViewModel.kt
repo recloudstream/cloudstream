@@ -16,7 +16,8 @@ import kotlinx.coroutines.withContext
 
 /**
  * Lifecycle-aware Home state holder (MVI / [StateContainer]).
- * Loads once from [TvHomeRepository]; no duplicate fetches on recomposition.
+ * Loads once from [TvHomeRepository]; Continue Watching refreshed on resume (read-only).
+ * No duplicate DataStore reads on recomposition — only enter / resume / Retry.
  */
 class TvHomeViewModel(
     private val repository: TvHomeRepository = TvHomeRepository(),
@@ -25,6 +26,7 @@ class TvHomeViewModel(
     ActionHandler<TvHomeAction> {
 
     private var loadJob: Job? = null
+    private var cwRefreshJob: Job? = null
 
     init {
         loadCatalog()
@@ -35,15 +37,18 @@ class TvHomeViewModel(
             TvHomeAction.Retry -> loadCatalog()
             TvHomeAction.UseMockFallback -> {
                 loadJob?.cancel()
+                cwRefreshJob?.cancel()
                 updateState {
                     TvHomeUiState.Content(repository.mockFallbackCatalog())
                 }
             }
+            TvHomeAction.RefreshContinueWatching -> refreshContinueWatching()
         }
     }
 
     private fun loadCatalog() {
         loadJob?.cancel()
+        cwRefreshJob?.cancel()
         loadJob = viewModelScope.launch {
             updateState { TvHomeUiState.Loading }
             val result = try {
@@ -65,6 +70,29 @@ class TvHomeViewModel(
                     is TvHomeRepository.LoadResult.Failure ->
                         TvHomeUiState.Error(result.message, canUseMockFallback = true)
                 }
+            }
+        }
+    }
+
+    /** Read-only CW rail swap — skips when showing mock fallback or non-Content. */
+    private fun refreshContinueWatching() {
+        val current = state.value
+        if (current !is TvHomeUiState.Content) return
+        if (current.catalog.usingMockFallback) return
+        cwRefreshJob?.cancel()
+        cwRefreshJob = viewModelScope.launch {
+            val refreshed = try {
+                withContext(Dispatchers.IO) {
+                    repository.withRefreshedContinueWatching(current.catalog)
+                }
+            } catch (t: Throwable) {
+                logError(t)
+                return@launch
+            }
+            // Only apply if still Content with same provider catalog (avoid clobbering Retry).
+            val latest = state.value
+            if (latest is TvHomeUiState.Content && !latest.catalog.usingMockFallback) {
+                updateState { TvHomeUiState.Content(refreshed) }
             }
         }
     }

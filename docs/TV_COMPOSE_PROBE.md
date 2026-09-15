@@ -1,43 +1,55 @@
-# Compose for TV — Phase 7 Real Search → same Details as Home
+# Compose for TV — Phase 8 Read-only Continue Watching + Watchlist/Library
 
 Architecture:
 
 ```
-TvSearchScreen → TvSearchViewModel (StateContainer)
-  → TvSearchRepository → APIRepository.search(query, page)
-  → TvSearchMapper → immutable TvSearchResult (+ TvContentRef)
-  → cards → existing TvDetailsScreen / TvDetailsRepository
-  → existing playback / episodes (Phase 5–6)
+Home Continue Watching
+  → TvContinueWatchingRepository (read-only DataStore + header cache)
+  → TvContinueWatchingItem → TvMediaItem / TvContentRef
+  → TvDetailsScreen (Details first, not direct play)
+
+Watchlist destination
+  → TvWatchlistRepository (Local list sources only)
+  → sections (Watching / Completed / On-Hold / Dropped / Plan to Watch / Favorites)
+  → TvWatchlistItem → same TvDetailsScreen
 ```
 
-## Domain search APIs (inspected, not invented)
+## Architectural Q — pure read-only adapters?
 
-From `APIRepository` / `SearchViewModel` / `MainAPI`:
+**Yes** for both CW and Watchlist, with a custom CW path.
 
-| API | Behavior |
-|-----|----------|
-| `APIRepository.search(query, page)` | `Resource<SearchResponseList>`; empty query → Success(empty); timeout `searchTimeoutMs` |
-| `APIRepository.quickSearch(query)` | providers with `hasQuickSearch` only |
-| `SearchResponse` | retains `apiName` + `url` (+ name, poster, type, score, …) |
-| Multi-provider | `APIHolder.apis` → `APIRepository`; parallel `amap`; cancel via job + generation |
-| Partial failure | failed providers skipped; successes kept (`SearchViewModel`) |
-| Mobile/TV legacy | `SearchFragment` submits on IME Done (`onQueryTextSubmit`); suggestions debounce 300ms only |
-| History | `SEARCH_HISTORY_KEY` writes — **forbidden** in Phase 7 TV Compose |
+### Continue Watching — exact read-only APIs
 
-Phase 7 uses **full `search(query, 1)` on explicit submit**, providers from read-only `DataStoreHelper.searchPreferenceProviders` (fallback: all APIs). No quickSearch, no history writes.
+| API | Role |
+|-----|------|
+| `DataStoreHelper.getAllResumeStateIds()` | list parent ids |
+| `DataStoreHelper.getLastWatched(id)` | resume meta |
+| `getKey(DOWNLOAD_HEADER_CACHE, parentId)` | name/url/apiName/poster/type |
+| `getKey(DOWNLOAD_HEADER_CACHE_BACKUP, parentId)` | **read only** fallback if primary missing |
+| `DataStoreHelper.getViewPos(episodeId)` | real progress only |
 
-## Details convergence
+**Blocked write path (not used):** `HomeViewModel.getResumeWatching()` can `setKey(DOWNLOAD_HEADER_CACHE, …)` when restoring from backup. Phase 8 does **not** call it and does **not** modify persistence to “fix” that.
 
-`TvSearchResult.contentRef` is the same `TvContentRef(url, apiName, title)` Home builds via `TvContentRef.fromMediaItem`. Shell opens the **same** `TvDetailsScreen` / `TvDetailsRepository` — no search-only details path. Mock never appears in search results; items missing url/apiName are dropped by the mapper.
+Empty CW → omit rail on real Home (never mix demo CW into live catalog). Full mock fallback still shows explicit demo CW.
+
+### Watchlist / Library — exact read-only APIs
+
+Same sources as `LocalList.library()`:
+
+| API | Role |
+|-----|------|
+| `getAllWatchStateIds()` + `getResultWatchState(id)` | WatchType buckets |
+| `getBookmarkedData(id)` | bookmark card fields |
+| `getAllFavorites()` | Favorites section |
+| `getCurrentAccount()` / `currentAccount` | profile label only |
+
+Does **not** use SyncRepo / MAL / AniList / Simkl / Kitsu (auth + network), does **not** write `LAST_SYNC_API_KEY` or `librarySortingMode`. No remove/edit. No auth UI — remote sync simply omitted.
 
 ## UX
 
-- TV-native large search field + Search / Clear buttons; IME Done submits.
-- Explicit submit (not per-keystroke) — matches production SearchFragment.
-- Cancel superseded searches; generation guard against stale overwrite.
-- Empty / Error with Retry + Clear — never silent demo.
-- Query + result focus preserved across Details round-trip (ViewModel + hoisted `TvSearchFocusState`).
-- Lazy grid + Coil 3.3.0 via existing `TvMediaCard`.
+- CW + Watchlist cards open shared Details; stale url/apiName → Details error OK.
+- Load on enter / Activity resume; no polling; no DataStore reads on recomposition.
+- Lazy rows/columns; focus memory hoisted like Search/Home.
 
 ## Validate
 
@@ -46,4 +58,4 @@ Phase 7 uses **full `search(query, 1)` on explicit submit**, providers from read
 ./gradlew :app:assembleStableDebug
 ```
 
-Prefer `app/.../tv/**` only. Do **not** modify library / plugins / extractors / CS3IPlayer / GeneratorPlayer / ResultFragmentTv / TV XML / Watchlist.
+Prefer `app/.../tv/**` only. No new persistence / DataStore keys / DB / sync.

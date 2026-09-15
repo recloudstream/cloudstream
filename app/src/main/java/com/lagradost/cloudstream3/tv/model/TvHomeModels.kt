@@ -64,6 +64,8 @@ sealed interface TvHomeUiState {
 sealed interface TvHomeAction {
     data object Retry : TvHomeAction
     data object UseMockFallback : TvHomeAction
+    /** Re-read Continue Watching only (enter/resume) — no homepage network. */
+    data object RefreshContinueWatching : TvHomeAction
 }
 
 enum class TvDestination(val label: String) {

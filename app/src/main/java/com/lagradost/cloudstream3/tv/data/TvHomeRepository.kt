@@ -29,10 +29,14 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
  * Provider selection mirrors HomeViewModel (read-only): DataStoreHelper.currentHomePage
  * then first APIHolder.apis entry with hasMainPage. Does not write currentHomePage.
  *
- * Continue Watching: always [TvMockCatalog.continueWatching] — HomeViewModel.getResumeWatching
- * reads/writes DataStore + DOWNLOAD_HEADER_CACHE; Phase 3 forbids touching history persistence.
+ * Continue Watching (Phase 8): [TvContinueWatchingRepository] — pure read-only.
+ * Never calls HomeViewModel.getResumeWatching (that path can setKey DOWNLOAD_HEADER_CACHE).
+ * Empty CW → omit rail (do not mix mock CW into a real catalog).
+ * Full mock fallback still includes explicit demo CW rail.
  */
-class TvHomeRepository {
+class TvHomeRepository(
+    private val continueWatchingRepository: TvContinueWatchingRepository = TvContinueWatchingRepository(),
+) {
 
     sealed interface LoadResult {
         data class Success(val catalog: TvHomeCatalog) : LoadResult
@@ -82,6 +86,18 @@ class TvHomeRepository {
     fun mockFallbackCatalog(): TvHomeCatalog = TvMockCatalog.fullFallback
 
     /**
+     * Read-only CW refresh for an existing real catalog — never injects mock CW.
+     * Returns the catalog with Continue Watching rail replaced/removed.
+     */
+    fun withRefreshedContinueWatching(catalog: TvHomeCatalog): TvHomeCatalog {
+        if (catalog.usingMockFallback) return catalog
+        val cw = continueWatchingRepository.loadContinueWatchingRail()
+        val withoutCw = catalog.rails.filterNot { it.id == TvRailIds.CONTINUE }
+        val rails = if (cw != null) listOf(cw) + withoutCw else withoutCw
+        return catalog.copy(rails = rails.filter { it.items.isNotEmpty() })
+    }
+
+    /**
      * Read-only provider resolve — same sources HomeViewModel uses, no DataStore writes.
      */
     fun resolveHomeApi(): MainAPI? {
@@ -108,18 +124,15 @@ class TvHomeRepository {
         val movies = pickMoviesRail(lists, allItems)
         val anime = pickAnimeRail(lists, allItems)
 
-        // Continue Watching: explicit mock (no read-only history without persistence side effects).
-        val continueWatching = TvMockCatalog.continueWatching
+        // Real CW only — omit when empty (never silent mock mixed into live catalog).
+        val continueWatching = continueWatchingRepository.loadContinueWatchingRail()
 
         val rails = listOfNotNull(
             continueWatching,
             trending,
-            movies ?: TvMockCatalog.movies, // keep Phase 2 slot; mark mock via catalog object
+            movies ?: TvMockCatalog.movies,
             anime ?: TvMockCatalog.anime,
-        ).map { rail ->
-            // Ensure mock copies keep isMock=true when we fell back.
-            rail
-        }
+        )
 
         val hero = pickHero(trending, movies, anime, allItems)
 

@@ -36,10 +36,13 @@ import com.lagradost.cloudstream3.tv.model.TvDestination
 import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
 import com.lagradost.cloudstream3.tv.search.TvSearchScreen
 import com.lagradost.cloudstream3.tv.search.rememberTvSearchFocusState
+import com.lagradost.cloudstream3.tv.watchlist.TvWatchlistScreen
+import com.lagradost.cloudstream3.tv.watchlist.rememberTvWatchlistFocusState
 
 /**
  * Structural Compose TV shell: left nav + destination content.
- * Phase 7: Search → same TvContentRef / TvDetailsScreen as Home; playback via [onPlaybackRequest].
+ * Phase 8: Watchlist / Local Library (read-only) → same TvDetailsScreen as Home/Search.
+ * Continue Watching on Home opens Details first (not direct play).
  */
 @Composable
 fun TvNavigationShell(
@@ -50,6 +53,7 @@ fun TvNavigationShell(
     val selected = runCatching { TvDestination.valueOf(destination) }.getOrDefault(TvDestination.Home)
     val homeFocusState = rememberTvHomeFocusState()
     val searchFocusState = rememberTvSearchFocusState()
+    val watchlistFocusState = rememberTvWatchlistFocusState()
     var showFocusProbe by rememberSaveable { mutableStateOf(false) }
 
     // Compact saveable identity — never store SearchResponse / LoadResponse here.
@@ -151,10 +155,12 @@ fun TvNavigationShell(
                         onOpenDetails = { openDetails(it) },
                     )
                 }
-                selected == TvDestination.Watchlist -> TvPlaceholderPane(
-                    title = "Watchlist",
-                    body = "Phase 7 placeholder — Watchlist / History out of scope.",
-                )
+                selected == TvDestination.Watchlist -> {
+                    TvWatchlistScreen(
+                        focusState = watchlistFocusState,
+                        onOpenDetails = { openDetails(it) },
+                    )
+                }
                 selected == TvDestination.Settings -> {
                     if (showFocusProbe) {
                         TvProbeScreen()
