@@ -1,10 +1,11 @@
 package com.lagradost.cloudstream3.tv.model
 
 /**
- * Immutable TV presentation models for Settings (Phase 11–12).
+ * Immutable TV presentation models for Settings (Phase 11–13).
  * Not a duplicate of [com.lagradost.cloudstream4.AppSettings] — only what the 10ft UI needs.
  * Writes always go through existing PreferenceData / AppSettings / setKey APIs.
  * Phase 12: Subtitles category reuses the SAME CloudStream subtitle keys (no TV-only path).
+ * Phase 13: Downloads multi-select writes the SAME `subs_auto_download` List<String> IETF JSON.
  */
 
 enum class TvSettingsCategory(val label: String) {
@@ -20,6 +21,7 @@ enum class TvSettingsCategory(val label: String) {
 enum class TvSettingControlKind {
     Boolean,
     Enum,
+    MultiSelect,
     Action,
     ReadOnly,
 }
@@ -41,6 +43,10 @@ data class TvSettingItem(
     /** Options when [control] is Enum. */
     val options: List<TvSettingOption> = emptyList(),
     val selectedOptionKey: String? = null,
+    /** Language options when [control] is MultiSelect. */
+    val languageOptions: List<TvLanguageOption> = emptyList(),
+    /** Currently persisted selected values (IETF tags) for MultiSelect. */
+    val selectedValues: Set<String> = emptySet(),
     /** Clear confirm before write — locale / recreate. */
     val requiresRestart: Boolean = false,
     val restartMessage: String? = null,
@@ -68,5 +74,6 @@ sealed interface TvSettingsAction {
     data object Refresh : TvSettingsAction
     data class ToggleBoolean(val id: String) : TvSettingsAction
     data class SelectEnum(val id: String, val optionKey: String) : TvSettingsAction
+    data class ApplyMultiSelect(val id: String, val values: List<String>) : TvSettingsAction
     data class InvokeAction(val id: String) : TvSettingsAction
 }

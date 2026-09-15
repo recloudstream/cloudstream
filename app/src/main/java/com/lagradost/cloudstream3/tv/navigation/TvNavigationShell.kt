@@ -40,8 +40,8 @@ import com.lagradost.cloudstream3.tv.watchlist.rememberTvWatchlistFocusState
 
 /**
  * Structural Compose TV shell: left nav + destination content.
- * Phase 12: Settings Subtitles category over existing CloudStream subtitle prefs;
- * Phase 10 playback pipeline unchanged.
+ * Phase 13: Settings Downloads multi-select over existing `subs_auto_download`;
+ * Phase 12 Subtitles prefs; Phase 10 playback pipeline unchanged.
  * Watchlist → same TvDetailsScreen. Mock never becomes real TvPlaybackRequest.
  */
 @Composable

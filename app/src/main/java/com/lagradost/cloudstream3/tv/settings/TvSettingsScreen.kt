@@ -32,6 +32,7 @@ import androidx.tv.material3.Text
 import com.lagradost.cloudstream3.tv.components.TvConfirmDialog
 import com.lagradost.cloudstream3.tv.components.TvEnumDialog
 import com.lagradost.cloudstream3.tv.components.TvFocusScale
+import com.lagradost.cloudstream3.tv.components.TvMultiSelectDialog
 import com.lagradost.cloudstream3.tv.components.TvOnResume
 import com.lagradost.cloudstream3.tv.model.TvSettingControlKind
 import com.lagradost.cloudstream3.tv.model.TvSettingItem
@@ -40,8 +41,9 @@ import com.lagradost.cloudstream3.tv.model.TvSettingsCatalog
 import com.lagradost.cloudstream3.tv.model.TvSettingsUiState
 
 /**
- * Phase 12 — TV Settings over EXISTING CloudStream prefs (AppSettings + subtitle setKey / PreferenceManager).
- * Same stores as phone; no parallel prefs / new DataStore keys / TV-only subtitle path.
+ * Phase 13 — TV Settings over EXISTING CloudStream prefs, including download
+ * subtitle-language multi-select (`subs_auto_download`) under Downloads.
+ * Same stores as phone; no parallel prefs / new DataStore keys / sync layer.
  */
 @Composable
 fun TvSettingsScreen(
@@ -54,6 +56,7 @@ fun TvSettingsScreen(
     val activity = context as? Activity
 
     var enumTarget by remember { mutableStateOf<TvSettingItem?>(null) }
+    var multiSelectTarget by remember { mutableStateOf<TvSettingItem?>(null) }
     var pendingRestart by remember { mutableStateOf<PendingRestart?>(null) }
     val firstRowFocus = remember { FocusRequester() }
     var sideEffectTick by remember { mutableStateOf(0) }
@@ -92,6 +95,7 @@ fun TvSettingsScreen(
                         viewModel.onAction(TvSettingsAction.ToggleBoolean(item.id))
                     },
                     onOpenEnum = { item -> enumTarget = item },
+                    onOpenMultiSelect = { item -> multiSelectTarget = item },
                     onAction = { item ->
                         viewModel.onAction(TvSettingsAction.InvokeAction(item.id))
                         sideEffectTick += 1
@@ -119,6 +123,22 @@ fun TvSettingsScreen(
                     }
                 },
                 onDismiss = { enumTarget = null },
+            )
+        }
+
+        val multi = multiSelectTarget
+        if (multi != null && multi.control == TvSettingControlKind.MultiSelect) {
+            // Load persisted into temp state on open; no write until Apply.
+            TvMultiSelectDialog(
+                title = multi.title,
+                options = multi.languageOptions,
+                initiallySelected = multi.selectedValues,
+                onApply = { values ->
+                    multiSelectTarget = null
+                    viewModel.onAction(TvSettingsAction.ApplyMultiSelect(multi.id, values))
+                    sideEffectTick += 1
+                },
+                onDismiss = { multiSelectTarget = null },
             )
         }
 
@@ -153,6 +173,7 @@ private fun SettingsList(
     firstRowFocus: FocusRequester,
     onToggle: (TvSettingItem) -> Unit,
     onOpenEnum: (TvSettingItem) -> Unit,
+    onOpenMultiSelect: (TvSettingItem) -> Unit,
     onAction: (TvSettingItem) -> Unit,
 ) {
     val flatRows = remember(catalog) {
@@ -205,6 +226,7 @@ private fun SettingsList(
                             when (row.item.control) {
                                 TvSettingControlKind.Boolean -> onToggle(row.item)
                                 TvSettingControlKind.Enum -> onOpenEnum(row.item)
+                                TvSettingControlKind.MultiSelect -> onOpenMultiSelect(row.item)
                                 TvSettingControlKind.Action -> onAction(row.item)
                                 TvSettingControlKind.ReadOnly -> Unit
                             }
@@ -291,6 +313,7 @@ private fun SettingRow(
                 text = when (item.control) {
                     TvSettingControlKind.Boolean -> if (item.booleanValue) "On" else "Off"
                     TvSettingControlKind.Enum -> item.valueLabel.orEmpty()
+                    TvSettingControlKind.MultiSelect -> item.valueLabel.orEmpty()
                     TvSettingControlKind.Action -> item.valueLabel ?: "Open"
                     TvSettingControlKind.ReadOnly -> item.valueLabel.orEmpty()
                 },

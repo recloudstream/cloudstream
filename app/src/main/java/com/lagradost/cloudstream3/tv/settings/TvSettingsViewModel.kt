@@ -58,6 +58,13 @@ class TvSettingsViewModel(
                     TvSettingsAdapter.ApplyResult.Unknown -> Unit
                 }
             }
+            is TvSettingsAction.ApplyMultiSelect -> {
+                when (adapter.applyMultiSelect(action.id, action.values)) {
+                    TvSettingsAdapter.ApplyResult.Applied -> refresh()
+                    TvSettingsAdapter.ApplyResult.NeedsRecreate -> refresh()
+                    TvSettingsAdapter.ApplyResult.Unknown -> Unit
+                }
+            }
             is TvSettingsAction.InvokeAction -> {
                 if (action.id == TvSettingsAdapter.ID_FOCUS_PROBE) {
                     pendingSideEffect = SideEffect.OpenFocusProbe

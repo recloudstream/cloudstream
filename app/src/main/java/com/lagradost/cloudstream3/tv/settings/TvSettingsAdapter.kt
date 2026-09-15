@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.UnsafeSSL
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.insecureApp
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.tv.model.TvLanguageOption
 import com.lagradost.cloudstream3.tv.model.TvSettingControlKind
 import com.lagradost.cloudstream3.tv.model.TvSettingItem
 import com.lagradost.cloudstream3.tv.model.TvSettingOption
@@ -19,8 +20,11 @@ import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
 import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
+import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_DOWNLOAD_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getDownloadSubsLanguageTagIETF
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
 import com.lagradost.cloudstream4.AppSettings
 import com.mihon.common.preference.AndroidPreferenceStore
@@ -30,6 +34,8 @@ import com.mihon.common.preference.PreferenceData
  * Adapts EXISTING [AppSettings] / PreferenceManager / setKey prefs into TV presentation rows.
  * Architectural Q: YES — same underlying CloudStream preference values/behavior
  * (no TV-specific subtitle config path, no parallel store, no new DataStore keys).
+ * Phase 13: download subtitle languages write EXACT same `subs_auto_download`
+ * JSON List<String> IETF representation as phone (no sync layer).
  */
 class TvSettingsAdapter(
     private val context: Context,
@@ -118,6 +124,21 @@ class TvSettingsAdapter(
                 encodingPref.set(optionKey)
                 // Same companion downstream as the player source/subs HUD after a write.
                 CustomDecoder.updateForcedEncoding(context)
+                ApplyResult.Applied
+            }
+            else -> ApplyResult.Unknown
+        }
+    }
+
+    /**
+     * Commit download-subtitle language multi-select.
+     * Writes EXACT same representation as SubtitlesFragment:
+     * `CloudStreamApp.setKey(SUBTITLE_DOWNLOAD_KEY, List<String> IETF tags)`.
+     */
+    fun applyMultiSelect(id: String, values: List<String>): ApplyResult {
+        return when (id) {
+            ID_DOWNLOAD_SUB_LANGS -> {
+                CloudStreamApp.setKey(SUBTITLE_DOWNLOAD_KEY, values)
                 ApplyResult.Applied
             }
             else -> ApplyResult.Unknown
@@ -223,7 +244,8 @@ class TvSettingsAdapter(
 
     /**
      * Phase 12 — only prefs with established key + API + behavior + TV value.
-     * SaveCaptionStyle blob / Chromecast / download multi-select kept out (see companion notes).
+     * SaveCaptionStyle blob / Chromecast kept out (see companion notes).
+     * Download multi-select lives under Downloads (Phase 13).
      */
     private fun subtitleItems(): List<TvSettingItem> {
         val nextPlayback = EFFECT_NEXT_PLAYBACK
@@ -351,7 +373,78 @@ class TvSettingsAdapter(
                 options = countOptions,
                 selectedKey = settings.general.concurrentConnections.get().coerceIn(1, 10).toString(),
             ),
+            // Phase 13 — EXISTING download subtitle-language preference (multi-select).
+            downloadSubLangsItem(),
         )
+    }
+
+    /**
+     * Same choice source as SubtitlesFragment download multi-dialog:
+     * [languages] IETF tags. Display name != stored value.
+     * Unknown/legacy persisted tags stay as Current until the user replaces them.
+     */
+    private fun downloadSubLangsItem(): TvSettingItem {
+        val persisted = getDownloadSubsLanguageTagIETF()
+        val knownTags = languages.map { it.IETF_tag }.toSet()
+        val knownOptions = languages
+            .map { lang ->
+                TvLanguageOption(
+                    value = lang.IETF_tag,
+                    displayName = lang.nameNextToFlagEmoji(),
+                    isUnknown = false,
+                )
+            }
+            .sortedBy { it.displayName.substringAfter("\u00a0").lowercase() }
+
+        // Preserve unknown/legacy values (including Compose "None" if ever stored) until replaced.
+        val unknownOptions = persisted
+            .filter { tag -> tag !in knownTags }
+            .distinct()
+            .map { tag ->
+                val label = when {
+                    tag.isBlank() -> "Unknown"
+                    tag.equals("None", ignoreCase = true) -> "None (legacy)"
+                    else -> SubtitleHelper.fromTagToEnglishLanguageName(tag)?.let { name ->
+                        "Current · $name ($tag)"
+                    } ?: "Current · $tag"
+                }
+                TvLanguageOption(
+                    value = tag,
+                    displayName = label,
+                    isUnknown = true,
+                )
+            }
+
+        val options = unknownOptions + knownOptions
+        val selected = persisted.toSet()
+        return TvSettingItem(
+            id = ID_DOWNLOAD_SUB_LANGS,
+            category = TvSettingsCategory.Downloads,
+            title = context.getString(R.string.subs_download_languages),
+            summary = "Languages fetched with downloads (same pref as phone)",
+            valueLabel = downloadSubLangsValueLabel(persisted, options),
+            control = TvSettingControlKind.MultiSelect,
+            languageOptions = options,
+            selectedValues = selected,
+            effectHint = "Applies on next download",
+        )
+    }
+
+    private fun downloadSubLangsValueLabel(
+        persisted: List<String>,
+        options: List<TvLanguageOption>,
+    ): String {
+        if (persisted.isEmpty()) return "None (no subtitle downloads)"
+        val byValue = options.associateBy { it.value }
+        val names = persisted.map { tag ->
+            byValue[tag]?.displayName?.substringAfter("\u00a0")?.trim()?.ifBlank { null }
+                ?: byValue[tag]?.displayName
+                ?: tag
+        }
+        return when {
+            names.size <= 2 -> names.joinToString(", ")
+            else -> "${names.take(2).joinToString(", ")} +${names.size - 2}"
+        }
     }
 
     private fun appItems(): List<TvSettingItem> {
@@ -595,6 +688,7 @@ class TvSettingsAdapter(
 
         const val ID_PARALLEL_DOWNLOADS = "downloads.parallel"
         const val ID_CONCURRENT_CONNECTIONS = "downloads.concurrent"
+        const val ID_DOWNLOAD_SUB_LANGS = "downloads.subtitle_languages"
 
         const val ID_ACCOUNT_DISPLAY = "app.account_display"
         const val ID_SKIP_ACCOUNT = "app.skip_account"

@@ -1,4 +1,4 @@
-# Compose for TV — Phase 12 Subtitle preferences in TvSettingsScreen
+# Compose for TV — Phase 13 Download subtitle-language multi-select
 
 Architecture (unchanged playback pipeline):
 
@@ -15,25 +15,35 @@ Settings:
 TvSettingsScreen / TvSettingsAdapter
   → AppSettings (PreferenceData)                  [Phase 11]
   → AndroidPreferenceStore / PreferenceManager    [filter_sub_lang_key, subtitles_encoding_key]
-  → CloudStreamApp.setKey / getKey                [subs_auto_select]
-  SAME values the phone SubtitlesFragment / GeneratorPlayer already use.
+  → CloudStreamApp.setKey / getKey                [subs_auto_select, subs_auto_download]
+  SAME values the phone SubtitlesFragment / DownloadManager already use.
 ```
 
-## Architectural Q — same subtitle preference values/behavior?
+## Architectural Q — TV multi-select writes EXACT same preference representation as phone?
 
-**Yes.** TV Subtitles rows write the existing keys through the existing APIs.  
-**No** TV-specific subtitle config path, **no** second prefs system, **no** new DataStore keys.
+**Yes.** Apply commits `CloudStreamApp.setKey(SUBTITLE_DOWNLOAD_KEY, List<String>)` —
+JSON IETF tags under `subs_auto_download`, same as `SubtitlesFragment` /
+`getDownloadSubsLanguageTagIETF()`. **No** sync layer, **no** second representation,
+**no** new DataStore keys.
 
-## Exposed vs skipped
+## Phase 13 download languages
 
-| Pref | Key | TV Phase 12 |
-|------|-----|-------------|
-| Auto-select language | `subs_auto_select` (setKey JSON IETF / `""` none) | Exposed |
-| Encoding | `subtitles_encoding_key` (PreferenceManager string) | Exposed |
-| Filter by preferred media language | `filter_sub_lang_key` (PreferenceManager bool) | Exposed |
-| Download languages | `subs_auto_download` (List/set IETF, multi-select) | Skipped — no TV multi-select |
-| Caption style blob | `subtitle_settings` (SaveCaptionStyle JSON) | Skipped — fragmented style mapping |
-| Chromecast style | `chome_subtitle_settings` | Skipped — Chromecast / not in-app player |
+| Pref | Key | API | TV |
+|------|-----|-----|----|
+| Download languages | `subs_auto_download` | `getDownloadSubsLanguageTagIETF` / `setKey` JSON `List<String>` IETF | Multi-select under **Downloads** |
+
+- Languages from `SubtitleHelper.languages` (display via `nameNextToFlagEmoji()`).
+- Temp selection + Apply commit; Back/Cancel discards (no partial write).
+- Empty selection = download no subtitles (real DownloadManager semantics); confirm before save.
+- Unknown/legacy tags preserved as Current until the user replaces them.
+- No write on dialog open.
+
+## Still skipped
+
+| Pref | Reason |
+|------|--------|
+| Caption style blob `subtitle_settings` | Fragmented SaveCaptionStyle mapping |
+| Chromecast style | Not in-app player |
 
 ## Validate
 
@@ -42,4 +52,4 @@ TvSettingsScreen / TvSettingsAdapter
 ./gradlew :app:assembleStableDebug
 ```
 
-Prefer `app/.../tv/**` only. STOP after Phase 12.
+Prefer `app/.../tv/**` only. STOP after Phase 13.
