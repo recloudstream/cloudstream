@@ -1,46 +1,43 @@
-# Compose for TV — Phase 6 Series/Anime episode + season selection
+# Compose for TV — Phase 7 Real Search → same Details as Home
 
 Architecture:
 
 ```
-LoadResponse → TvDetailsMapper → immutable TvSeason/TvEpisode
-  → TvDetailsUiState (seasons, selectedSeason, selectedEpisode)
-  → TvEpisodeSelector → TvPlaybackRequest → TvPlaybackBridge
-  → RepoLinkGenerator → GeneratorPlayer → CS3IPlayer
+TvSearchScreen → TvSearchViewModel (StateContainer)
+  → TvSearchRepository → APIRepository.search(query, page)
+  → TvSearchMapper → immutable TvSearchResult (+ TvContentRef)
+  → cards → existing TvDetailsScreen / TvDetailsRepository
+  → existing playback / episodes (Phase 5–6)
 ```
 
-## Domain episode model (inspected, not invented)
+## Domain search APIs (inspected, not invented)
 
-From `library/.../MainAPI.kt`:
+From `APIRepository` / `SearchViewModel` / `MainAPI`:
 
-| Type | Episodes |
-|------|----------|
-| `Episode` | `data`, `name?`, `season?`, `episode?`, `posterUrl?`, `score?`, `description?`, `date?`, `runTime?` (season/episode are **Int?** only) |
-| `SeasonData` | `season: Int`, `name?`, `displaySeason?` |
-| `TvSeriesLoadResponse` | `episodes: List<Episode>`, `seasonNames: List<SeasonData>?` |
-| `AnimeLoadResponse` | `episodes: MutableMap<DubStatus, List<Episode>>`, `seasonNames` |
-| `DubStatus` | None(-1), Subbed(0), Dubbed(1) |
+| API | Behavior |
+|-----|----------|
+| `APIRepository.search(query, page)` | `Resource<SearchResponseList>`; empty query → Success(empty); timeout `searchTimeoutMs` |
+| `APIRepository.quickSearch(query)` | providers with `hasQuickSearch` only |
+| `SearchResponse` | retains `apiName` + `url` (+ name, poster, type, score, …) |
+| Multi-provider | `APIHolder.apis` → `APIRepository`; parallel `amap`; cancel via job + generation |
+| Partial failure | failed providers skipped; successes kept (`SearchViewModel`) |
+| Mobile/TV legacy | `SearchFragment` submits on IME Done (`onQueryTextSubmit`); suggestions debounce 300ms only |
+| History | `SEARCH_HISTORY_KEY` writes — **forbidden** in Phase 7 TV Compose |
 
-Specials / missing season: `Episode.season == null` or `0` → TV seasonIndex **0**, label **"No Season"** (mirrors ResultViewModel2 / `R.string.no_season`).
+Phase 7 uses **full `search(query, 1)` on explicit submit**, providers from read-only `DataStoreHelper.searchPreferenceProviders` (fallback: all APIs). No quickSearch, no history writes.
 
-Non-int episodes: **do not exist** in LoadResponse; null `episode` → `(listIndex + 1)`.
+## Details convergence
 
-## Default episode rule (no resume / DataStore writes)
+`TvSearchResult.contentRef` is the same `TvContentRef(url, apiName, title)` Home builds via `TvContentRef.fromMediaItem`. Shell opens the **same** `TvDetailsScreen` / `TvDetailsRepository` — no search-only details path. Mock never appears in search results; items missing url/apiName are dropped by the mapper.
 
-1. Dub: Subbed if non-empty, else Dubbed, else None, else first group with episodes.
-2. Season: lowest `seasonIndex != 0` with episodes; else season 0.
-3. Episode: first playable (`data` non-blank) in that season; else first episode.
+## UX
 
-## Playback
-
-- **Movies**: Watch Now (Phase 5 path unchanged).
-- **Series/Anime**: Play Episode → `TvPlaybackRequest.fromEpisode` → bridge builds `ResultEpisode` via `buildResultEpisode` → `RepoLinkGenerator(listOf(ep), page)` → `GeneratorPlayer` in `tv_player_container`.
-- **Live / Torrent**: explicit unsupported toast.
-- **Mock**: never plays.
-
-## Playback return
-
-GeneratorPlayer is on the Fragment back stack. Back / `exitPlayer` pops it; Compose Details ViewModel keeps dub/season/episode selection. Focus returns to Play Episode CTA (composition FocusRequester).
+- TV-native large search field + Search / Clear buttons; IME Done submits.
+- Explicit submit (not per-keystroke) — matches production SearchFragment.
+- Cancel superseded searches; generation guard against stale overwrite.
+- Empty / Error with Retry + Clear — never silent demo.
+- Query + result focus preserved across Details round-trip (ViewModel + hoisted `TvSearchFocusState`).
+- Lazy grid + Coil 3.3.0 via existing `TvMediaCard`.
 
 ## Validate
 
@@ -49,4 +46,4 @@ GeneratorPlayer is on the Fragment back stack. Back / `exitPlayer` pops it; Comp
 ./gradlew :app:assembleStableDebug
 ```
 
-Prefer `app/.../tv/**` only. Do **not** modify library / plugins / extractors / CS3IPlayer / GeneratorPlayer / ResultFragmentTv / TV XML.
+Prefer `app/.../tv/**` only. Do **not** modify library / plugins / extractors / CS3IPlayer / GeneratorPlayer / ResultFragmentTv / TV XML / Watchlist.

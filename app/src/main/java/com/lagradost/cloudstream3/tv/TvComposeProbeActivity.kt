@@ -15,7 +15,7 @@ import com.lagradost.cloudstream3.tv.playback.TvPlaybackBridge
 import kotlinx.coroutines.launch
 
 /**
- * Compose-for-TV host activity (Phase 6: Watch Now / Play Episode → existing GeneratorPlayer).
+ * Compose-for-TV host activity (Phase 7: Search + Watch Now / Play Episode → existing GeneratorPlayer).
  *
  * Layout: [R.layout.activity_tv_compose_probe] —
  * Compose shell + [R.id.tv_player_container] Fragment boundary for GeneratorPlayer.
