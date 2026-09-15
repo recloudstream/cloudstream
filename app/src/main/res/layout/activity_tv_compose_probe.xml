@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Compose TV probe host: Compose shell + Fragment container for existing GeneratorPlayer. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/tv_compose_host"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Existing GeneratorPlayer is added here (Fragment boundary). Empty when idle. -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/tv_player_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>
