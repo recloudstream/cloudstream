@@ -63,6 +63,7 @@
     <string name="episode_sync_enabled_key">episode_sync_enabled_key</string>
     <string name="log_enabled_key">log_enabled_key</string>
     <string name="show_logcat_key">show_logcat_key</string>
+    <string name="compose_tv_debug_key">compose_tv_debug_key</string>
     <string name="bottom_title_key">bottom_title_key</string>
     <string name="poster_ui_key">poster_ui_key</string>
     <string name="overscan_key">overscan_key</string>
