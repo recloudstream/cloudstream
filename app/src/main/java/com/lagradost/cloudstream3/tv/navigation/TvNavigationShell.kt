@@ -23,11 +23,8 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.NavigationDrawer
 import androidx.tv.material3.NavigationDrawerItem
 import androidx.tv.material3.Text
-import androidx.tv.material3.WideButton
-import androidx.tv.material3.WideButtonDefaults
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.tv.TvProbeScreen
-import com.lagradost.cloudstream3.tv.components.TvFocusScale
 import com.lagradost.cloudstream3.tv.details.TvDetailsScreen
 import com.lagradost.cloudstream3.tv.home.TvHomeScreen
 import com.lagradost.cloudstream3.tv.home.rememberTvHomeFocusState
@@ -36,13 +33,14 @@ import com.lagradost.cloudstream3.tv.model.TvDestination
 import com.lagradost.cloudstream3.tv.model.TvPlaybackRequest
 import com.lagradost.cloudstream3.tv.model.TvResumeHint
 import com.lagradost.cloudstream3.tv.search.TvSearchScreen
+import com.lagradost.cloudstream3.tv.settings.TvSettingsScreen
 import com.lagradost.cloudstream3.tv.search.rememberTvSearchFocusState
 import com.lagradost.cloudstream3.tv.watchlist.TvWatchlistScreen
 import com.lagradost.cloudstream3.tv.watchlist.rememberTvWatchlistFocusState
 
 /**
  * Structural Compose TV shell: left nav + destination content.
- * Phase 10: CW polish + remove + Hero Watch Now — single pipeline to TvPlaybackBridge.
+ * Phase 11: Settings over existing AppSettings; Phase 10 playback pipeline unchanged.
  * Watchlist → same TvDetailsScreen. Mock never becomes real TvPlaybackRequest.
  */
 @Composable
@@ -208,48 +206,11 @@ fun TvNavigationShell(
                     if (showFocusProbe) {
                         TvProbeScreen()
                     } else {
-                        TvPlaceholderPane(
-                            title = "Settings",
-                            body = "Compose TV settings shell (mock). Release launcher unchanged.",
-                            actionLabel = "Open focus probe (canary)",
-                            onAction = { showFocusProbe = true },
+                        TvSettingsScreen(
+                            onOpenFocusProbe = { showFocusProbe = true },
                         )
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun TvPlaceholderPane(
-    title: String,
-    body: String,
-    actionLabel: String? = null,
-    onAction: (() -> Unit)? = null,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(48.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-        Text(
-            text = body,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        if (actionLabel != null && onAction != null) {
-            WideButton(
-                onClick = onAction,
-                scale = WideButtonDefaults.scale(focusedScale = TvFocusScale.ButtonFocused),
-            ) {
-                Text(actionLabel)
             }
         }
     }
