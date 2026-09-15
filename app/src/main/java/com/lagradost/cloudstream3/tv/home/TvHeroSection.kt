@@ -43,6 +43,7 @@ fun TvHeroSection(
     hero: TvMediaItem,
     watchFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
+    detailsEnabled: Boolean = true,
     onWatchNow: () -> Unit = {},
     onDetails: () -> Unit = {},
 ) {
@@ -154,9 +155,10 @@ fun TvHeroSection(
                 }
                 Button(
                     onClick = onDetails,
+                    enabled = detailsEnabled,
                     scale = ButtonDefaults.scale(focusedScale = TvFocusScale.ButtonFocused),
                 ) {
-                    Text("Details")
+                    Text(if (detailsEnabled) "Details" else "Demo — unavailable")
                 }
             }
         }

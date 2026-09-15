@@ -30,7 +30,9 @@ import androidx.tv.material3.Text
 import androidx.tv.material3.WideButton
 import androidx.tv.material3.WideButtonDefaults
 import com.lagradost.cloudstream3.tv.components.TvFocusScale
+import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvHomeAction
+import com.lagradost.cloudstream3.tv.model.TvMediaItem
 import com.lagradost.cloudstream3.tv.model.TvHomeCatalog
 import com.lagradost.cloudstream3.tv.model.TvHomeUiState
 
@@ -77,15 +79,34 @@ fun rememberTvHomeFocusState(): TvHomeFocusState = remember { TvHomeFocusState()
 fun TvHomeScreen(
     focusState: TvHomeFocusState,
     modifier: Modifier = Modifier,
+    onOpenDetails: (TvContentRef) -> Unit = {},
     viewModel: TvHomeViewModel = viewModel(),
 ) {
     val uiState by viewModel.state.collectAsState()
+    var demoNotice by remember { mutableStateOf<String?>(null) }
+
+    fun openOrNotice(item: TvMediaItem) {
+        val ref = TvContentRef.fromMediaItem(item)
+        if (ref != null) {
+            demoNotice = null
+            onOpenDetails(ref)
+        } else {
+            demoNotice = if (item.isMock) {
+                "Demo item — details unavailable (never loads fake IDs)."
+            } else {
+                "Missing provider URL — cannot open details."
+            }
+        }
+    }
 
     when (val state = uiState) {
         is TvHomeUiState.Loading -> TvHomeLoadingPane(modifier)
         is TvHomeUiState.Content -> TvHomeContentPane(
             catalog = state.catalog,
             focusState = focusState,
+            demoNotice = demoNotice,
+            onOpenItem = ::openOrNotice,
+            onWatchNowStub = { /* Phase 4: clean stub — no player */ },
             modifier = modifier,
         )
         is TvHomeUiState.Empty -> TvHomeStatusPane(
@@ -126,6 +147,9 @@ fun TvHomeScreen(
 private fun TvHomeContentPane(
     catalog: TvHomeCatalog,
     focusState: TvHomeFocusState,
+    demoNotice: String?,
+    onOpenItem: (TvMediaItem) -> Unit,
+    onWatchNowStub: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val watchFocusRequester = remember { FocusRequester() }
@@ -169,13 +193,23 @@ private fun TvHomeContentPane(
                 )
             }
         }
+        if (!demoNotice.isNullOrBlank()) {
+            item(key = "demo-notice") {
+                Text(
+                    text = demoNotice,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                )
+            }
+        }
         item(key = "hero") {
             TvHeroSection(
                 hero = catalog.hero,
                 watchFocusRequester = watchFocusRequester,
-                // Placeholders — no player / details in Phase 3.
-                onWatchNow = {},
-                onDetails = {},
+                detailsEnabled = TvContentRef.fromMediaItem(catalog.hero) != null,
+                onWatchNow = onWatchNowStub,
+                onDetails = { onOpenItem(catalog.hero) },
             )
         }
         itemsIndexed(visibleRails, key = { _, rail -> rail.id }) { _, rail ->
@@ -184,6 +218,7 @@ private fun TvHomeContentPane(
                 rail = rail,
                 lastFocusedIndex = focusState.indexFor(rail.id),
                 onFocusedIndexChanged = { index -> focusState.update(rail.id, index) },
+                onItemClick = onOpenItem,
                 restoreFocus = shouldRestore,
                 onRestoreConsumed = {
                     if (pendingRestoreRailId == rail.id) {

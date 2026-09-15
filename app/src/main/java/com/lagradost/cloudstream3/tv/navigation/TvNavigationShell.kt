@@ -28,13 +28,16 @@ import androidx.tv.material3.WideButtonDefaults
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.tv.TvProbeScreen
 import com.lagradost.cloudstream3.tv.components.TvFocusScale
+import com.lagradost.cloudstream3.tv.details.TvDetailsScreen
 import com.lagradost.cloudstream3.tv.home.TvHomeScreen
 import com.lagradost.cloudstream3.tv.home.rememberTvHomeFocusState
+import com.lagradost.cloudstream3.tv.model.TvContentRef
 import com.lagradost.cloudstream3.tv.model.TvDestination
 
 /**
- * Structural Compose TV shell: left nav (compact → expands on focus) + destination content.
- * Destinations switched via Compose state — no extra navigation library.
+ * Structural Compose TV shell: left nav + destination content.
+ * Phase 4: Details overlays Home via compact [TvContentRef] strings (not LoadResponse in nav state).
+ * Back from Details clears the ref so [TvHomeFocusState] restores focus.
  */
 @Composable
 fun TvNavigationShell(
@@ -44,6 +47,33 @@ fun TvNavigationShell(
     val selected = runCatching { TvDestination.valueOf(destination) }.getOrDefault(TvDestination.Home)
     val homeFocusState = rememberTvHomeFocusState()
     var showFocusProbe by rememberSaveable { mutableStateOf(false) }
+
+    // Compact saveable identity — never store SearchResponse / LoadResponse here.
+    var detailsUrl by rememberSaveable { mutableStateOf<String?>(null) }
+    var detailsApiName by rememberSaveable { mutableStateOf<String?>(null) }
+    var detailsTitle by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val detailsRef = run {
+        val url = detailsUrl
+        val api = detailsApiName
+        if (!url.isNullOrBlank() && !api.isNullOrBlank()) {
+            TvContentRef(url = url, apiName = api, title = detailsTitle.orEmpty())
+        } else {
+            null
+        }
+    }
+
+    fun openDetails(ref: TvContentRef) {
+        detailsUrl = ref.url
+        detailsApiName = ref.apiName
+        detailsTitle = ref.title
+    }
+
+    fun closeDetails() {
+        detailsUrl = null
+        detailsApiName = null
+        detailsTitle = null
+    }
 
     NavigationDrawer(
         modifier = modifier.fillMaxSize(),
@@ -72,8 +102,9 @@ fun TvNavigationShell(
                         TvDestination.Settings -> R.drawable.ic_outline_settings_24
                     }
                     NavigationDrawerItem(
-                        selected = selected == dest,
+                        selected = selected == dest && detailsRef == null,
                         onClick = {
+                            closeDetails()
                             destination = dest.name
                             if (dest != TvDestination.Settings) showFocusProbe = false
                         },
@@ -96,17 +127,30 @@ fun TvNavigationShell(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(start = 8.dp, top = 8.dp, end = 24.dp, bottom = 8.dp),
         ) {
-            when (selected) {
-                TvDestination.Home -> TvHomeScreen(focusState = homeFocusState)
-                TvDestination.Search -> TvPlaceholderPane(
+            when {
+                detailsRef != null -> {
+                    TvDetailsScreen(
+                        ref = detailsRef,
+                        onBack = { closeDetails() },
+                        // Phase 4: clean stub only — no GeneratorPlayer / CS3IPlayer / Media3.
+                        onWatchNow = { /* stub */ },
+                    )
+                }
+                selected == TvDestination.Home -> {
+                    TvHomeScreen(
+                        focusState = homeFocusState,
+                        onOpenDetails = { openDetails(it) },
+                    )
+                }
+                selected == TvDestination.Search -> TvPlaceholderPane(
                     title = "Search",
-                    body = "Phase 3 placeholder — Search is out of scope (later phase).",
+                    body = "Phase 4 placeholder — Search is out of scope (later phase).",
                 )
-                TvDestination.Watchlist -> TvPlaceholderPane(
+                selected == TvDestination.Watchlist -> TvPlaceholderPane(
                     title = "Watchlist",
-                    body = "Phase 3 placeholder — Watchlist / History out of scope.",
+                    body = "Phase 4 placeholder — Watchlist / History out of scope.",
                 )
-                TvDestination.Settings -> {
+                selected == TvDestination.Settings -> {
                     if (showFocusProbe) {
                         TvProbeScreen()
                     } else {

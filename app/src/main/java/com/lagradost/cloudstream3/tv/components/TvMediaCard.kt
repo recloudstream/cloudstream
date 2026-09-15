@@ -121,9 +121,13 @@ fun TvMediaCard(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        if (item.subtitle.isNotBlank()) {
+        val subtitleText = when {
+            item.isMock -> if (item.subtitle.isNotBlank()) "${item.subtitle} · Demo" else "Demo — unavailable"
+            else -> item.subtitle
+        }
+        if (subtitleText.isNotBlank()) {
             Text(
-                text = item.subtitle,
+                text = subtitleText,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,

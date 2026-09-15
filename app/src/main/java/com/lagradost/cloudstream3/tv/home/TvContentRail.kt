@@ -21,6 +21,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.lagradost.cloudstream3.tv.components.TvMediaCard
 import com.lagradost.cloudstream3.tv.model.TvContentRail
+import com.lagradost.cloudstream3.tv.model.TvMediaItem
 
 /**
  * Horizontal content rail with per-rail focus memory.
@@ -33,6 +34,7 @@ fun TvContentRail(
     lastFocusedIndex: Int,
     onFocusedIndexChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    onItemClick: (TvMediaItem) -> Unit = {},
     restoreFocus: Boolean = false,
     onRestoreConsumed: () -> Unit = {},
 ) {
@@ -72,9 +74,10 @@ fun TvContentRail(
                 .focusGroup(),
         ) {
             itemsIndexed(rail.items, key = { _, item -> item.id }) { index, item ->
+                // Keep focusable even for mock (Continue Watching rail); click shows explicit unavailable.
                 TvMediaCard(
                     item = item,
-                    onClick = {},
+                    onClick = { onItemClick(item) },
                     onFocused = { onFocusedIndexChanged(index) },
                     modifier = Modifier.focusRequester(focusRequesters[index]),
                 )

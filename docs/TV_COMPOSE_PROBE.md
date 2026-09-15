@@ -1,41 +1,47 @@
-# Compose for TV — Phase 3 Home catalog bridge
+# Compose for TV — Phase 4 Details (load bridge, no player)
 
-Read-only Home catalog via thin bridge. No Search / Watchlist / History / Details / Player.
+Home → compact content identity → `APIRepository.load` → `TvDetailsRepository` → immutable `TvDetailsUiState` → `TvDetailsScreen` → `onWatchNow` stub.
 
 ## Architecture
 
 ```
-APIRepository → TvHomeRepository → immutable TV models → TvHomeViewModel (StateContainer)
-  → TvHomeUiState → TvHomeScreen
+SearchResponse / TvMediaItem → TvContentRef (url + apiName)
+  → TvDetailsRepository (APIHolder + SyncRedirector + APIRepository.load)
+  → TvDetailsMapper → TvDetailsContent
+  → TvDetailsViewModel (StateContainer) → TvDetailsUiState
+  → TvDetailsScreen
 ```
 
-`TvComposeProbeActivity` → `TvTheme` → `TvNavigationShell` → `TvHomeScreen`
+`TvComposeProbeActivity` → `TvTheme` → `TvNavigationShell` (Details overlay via saveable url/apiName strings) → Home / Details
 
 ## Packages
 
 ```
 tv/
-  TvComposeProbeActivity.kt
-  TvTheme.kt
-  TvProbeScreen.kt
+  details/TvDetailsScreen.kt, TvDetailsViewModel.kt
+  data/TvDetailsRepository.kt, TvDetailsMapper.kt  (+ Phase 3 Home bridge)
+  model/TvDetailsModels.kt (TvContentRef, TvDetailsContent, UiState)
+  home/… (cards + hero Details → openDetails)
   navigation/TvNavigationShell.kt
-  home/TvHomeScreen.kt, TvHeroSection.kt, TvContentRail.kt, TvHomeViewModel.kt
-  components/TvMediaCard.kt, TvFocusScale.kt
-  model/TvHomeModels.kt, TvMockCatalog.kt
-  data/TvMediaMapper.kt, TvHomeRepository.kt
 ```
 
-## Rails honesty
+## Load flow (documented, not invented)
 
-| Rail | Source |
-|------|--------|
-| Continue Watching | **Mock** — resume history needs DataStore / download-header cache (can write); Phase 3 forbids persistence touches |
-| Trending / Movies / Anime | **Real** via `APIRepository.getMainPage(1)` when a homepage provider exists; else mock slot or explicit demo fallback |
-| Hero | First suitable real item (poster as backdrop); else explicit mock hero |
+Mirrors `ResultViewModel2.load` without DataStore / trailer / player side effects:
+
+1. Identity: `url` + `apiName` (same as ResultFragment bundles from SearchResponse)
+2. Resolve API: `getApiFromNameNull` ?: `getApiFromUrlNull`
+3. `SyncRedirector.redirect(url, api)`
+4. `APIRepository(api).load(validUrl)` → `Resource<LoadResponse>`
+5. Map Movie / TvSeries / Anime / LiveStream / Torrent / Other
+
+Mock / demo Home items never call load (no fake IDs).
 
 ## States
 
-`Loading` → `Content` | `Empty` | `Error` with D-pad **Retry** and explicit **Load demo catalog** (never silent fake success).
+`Loading` → `Content` | `Error` with D-pad **Retry** and **Back**. Back restores Home focus via `TvHomeFocusState`.
+
+Watch Now = stub only — no GeneratorPlayer / CS3IPlayer / Media3.
 
 ## How to open
 
