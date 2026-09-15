@@ -349,7 +349,7 @@
     <string name="error_invalid_url">Niepoprawny URL</string>
     <string name="error">Błąd</string>
     <string name="subtitles_remove_captions">Usuń CC z napisów</string>
-    <string name="subtitles_remove_bloat">Usuń nadmiarowe informacje z napisów</string>
+    <string name="subtitles_remove_bloat">Usuń reklamy z napisów</string>
     <string name="subtitles_filter_lang">Filtrowanie wg preferowanego języka</string>
     <string name="extras">Dodatki</string>
     <string name="trailer">Zwiastun</string>
@@ -754,4 +754,8 @@
     <string name="tv_layout_clock_settings">Pokaż zegar czasu rzeczywistego</string>
     <string name="tv_layout_clock_settings_des">Wyświetl zegar czasu rzeczywistego u góry ekranu. Dotyczy strony głównej i odtwarzacza</string>
     <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Uruchamiaj filmy wstrzymane</string>
+    <string name="start_paused_settings_des">Ogranicz obciążenie podczas wyboru źródeł</string>
+    <string name="background">Tło</string>
+    <string name="subs_edge">Krawędź</string>
 </resources>
