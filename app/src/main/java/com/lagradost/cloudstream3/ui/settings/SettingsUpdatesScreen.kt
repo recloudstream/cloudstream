@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import com.lagradost.cloudstream3.AutoDownloadMode
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.tv.TvComposeProbeActivity
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -35,6 +36,7 @@ import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 
 object SettingsUpdatesScreen : SearchableSettings {
     @Composable
@@ -207,22 +209,40 @@ object SettingsUpdatesScreen : SearchableSettings {
             ),
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_actions),
-                preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.TextPreference(
-                        title = stringResource(R.string.show_log_cat),
-                        icon = painterResource(R.drawable.article_24px),
-                        onClick = {
-                            showDialog = true
-                        }
-                    ),
-                    Preference.PreferenceItem.TextPreference(
-                        title = stringResource(R.string.redo_setup_process),
-                        icon = painterResource(R.drawable.construction_24px),
-                        onClick = {
-                            activity?.navigate(R.id.navigation_setup_language)
-                        }
-                    ),
-                )
+                preferenceItems = buildList {
+                    add(
+                        Preference.PreferenceItem.TextPreference(
+                            title = stringResource(R.string.show_log_cat),
+                            icon = painterResource(R.drawable.article_24px),
+                            onClick = {
+                                showDialog = true
+                            }
+                        )
+                    )
+                    if (BuildConfig.DEBUG) {
+                        add(
+                            Preference.PreferenceItem.TextPreference(
+                                title = stringResource(R.string.compose_tv_debug),
+                                subtitle = stringResource(R.string.compose_tv_debug_summary),
+                                icon = painterResource(R.drawable.ic_baseline_tv_24),
+                                onClick = {
+                                    activity?.startActivity(
+                                        Intent(activity, TvComposeProbeActivity::class.java)
+                                    )
+                                }
+                            )
+                        )
+                    }
+                    add(
+                        Preference.PreferenceItem.TextPreference(
+                            title = stringResource(R.string.redo_setup_process),
+                            icon = painterResource(R.drawable.construction_24px),
+                            onClick = {
+                                activity?.navigate(R.id.navigation_setup_language)
+                            }
+                        )
+                    )
+                }.toPersistentList()
             )
         )
     }
