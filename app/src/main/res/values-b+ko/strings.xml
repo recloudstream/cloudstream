@@ -262,7 +262,7 @@
     <string name="poster_image">포스터 이미지</string>
     <string name="title">제목</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
     <string name="quality_blueray">Blu-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
@@ -405,7 +405,7 @@
     <string name="player_load_subtitles_online">인터넷에서 불러오기</string>
     <string name="player_loaded_subtitles" formatted="true">로드됨 %s</string>
     <string name="coming_soon">공개 예정…</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="category_player">플레이어</string>
@@ -664,7 +664,7 @@
     <string name="update_plugins">플러그인 업데이트하기</string>
     <string name="update_plugins_manually">수동으로 플러그인 업데이트 하기</string>
     <string name="starting_plugin_update_manually">플러그인 업데이트 절차를 시작합니다!</string>
-    <string name="plugins_updated_manually">성공적으로 %d 플러그인을 업데이트 하였습니다!</string>
+    <string name="plugins_updated_manually">플러그인 %d개를 성공적으로 업데이트했습니다</string>
     <string name="no_plugins_updated_manually">업데이트 된 플러그인이 없습니다.</string>
     <string name="player_notification_channel_name">플레이어 알림</string>
     <string name="player_notification_channel_description">백그라운드에서 재생을 제어하기 위한 플레이어 알림</string>
@@ -733,4 +733,13 @@
     <string name="video_singular">비디오</string>
     <string name="skip_type_preview">프리뷰</string>
     <string name="player_is_live">라이브</string>
+    <string name="profile_settings">프로필 설정</string>
+    <string name="profile_hide_error_sources">오류가 있는 소스 숨기기</string>
+    <string name="profile_hide_negative_sources">우선순위가 음수인 소스 숨기기</string>
+    <plurals name="links_hidden">
+        <item quantity="other">숨겨진 링크 %d개</item>
+    </plurals>
+    <string name="tv_layout_clock_settings">실시간 시계 표시</string>
+    <string name="tv_layout_clock_settings_des">화면 상단에 실시간 시계를 표시합니다. 홈페이지와 플레이어에 적용됩니다</string>
+    <string name="log_cat">Logcat 🐈</string>
 </resources>

@@ -352,8 +352,8 @@
     <string name="home_random">随机</string>
     <string name="coming_soon">即将到来…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -755,4 +755,5 @@
     <plurals name="links_hidden">
         <item quantity="other">%d 条隐藏链接</item>
     </plurals>
+    <string name="log_cat">Logcat 🐈</string>
 </resources>

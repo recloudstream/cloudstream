@@ -33,6 +33,8 @@ import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.serializers.WriteOnlySerializer
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.SerialName
@@ -185,6 +187,10 @@ object DataStoreHelper {
     var selectedKeyIndex by PreferenceDelegate("$TAG/account_key_index", 0)
     val currentAccount: String get() = selectedKeyIndex.toString()
 
+    private val _selectedAccountNumberFlow = MutableStateFlow(0)
+    /** What account instance we are on, this number changes whenever anything about local accounts changes */
+    val selectedAccountNumberFlow : StateFlow<Int> = _selectedAccountNumberFlow
+
     /**
      * Get or set the current account homepage.
      * Setting this does not automatically reload the homepage.
@@ -212,6 +218,7 @@ object DataStoreHelper {
             // This is not a new account, and the homepage has changed, reload it
             MainActivity.reloadHomeEvent(true)
         }
+        _selectedAccountNumberFlow.value += 1
     }
 
     fun getDefaultAccount(context: Context): Account {

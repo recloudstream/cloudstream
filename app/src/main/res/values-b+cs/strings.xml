@@ -322,8 +322,8 @@
     <string name="home_random">Náhodný</string>
     <string name="coming_soon">Již brzy…</string>
     <string name="quality_cam">Kam</string>
-    <string name="quality_cam_rip">Kam</string>
-    <string name="quality_cam_hd">Kam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -765,4 +765,5 @@
     </plurals>
     <string name="tv_layout_clock_settings">Zobrazit hodiny s reálným časem</string>
     <string name="tv_layout_clock_settings_des">Zobrazit hodiny s reálným časem v horní části obrazovky. Platí pro domovskou obrazovku a přehrávač</string>
+    <string name="log_cat">Logcat 🐈</string>
 </resources>

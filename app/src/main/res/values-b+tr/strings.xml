@@ -351,8 +351,8 @@
     <string name="home_random">Rastgele</string>
     <string name="coming_soon">Çok yakında…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -758,4 +758,5 @@
         <item quantity="one">%d gizli bağlantı</item>
         <item quantity="other">%d gizli bağlantı</item>
     </plurals>
+    <string name="log_cat">Logcat 🐈</string>
 </resources>

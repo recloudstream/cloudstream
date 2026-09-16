@@ -381,8 +381,8 @@
     <string name="extras">Додатково</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -750,4 +750,5 @@
         <item quantity="many">%d прихованих посилань</item>
         <item quantity="other">%d прихованих посилань</item>
     </plurals>
+    <string name="log_cat">Logcat 🐈</string>
 </resources>

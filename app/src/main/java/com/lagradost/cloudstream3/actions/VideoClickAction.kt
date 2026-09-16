@@ -98,7 +98,7 @@ object VideoClickActionHolder {
             ?.second
     }
 
-    fun getPlayers(activity: Activity? = null) = allVideoClickActions.filter { it.isPlayer && it.shouldShowSafe(activity, null) }
+    fun getPlayers(context: Context? = null) = allVideoClickActions.filter { it.isPlayer && it.shouldShowSafe(context, null) }
 }
 
 abstract class VideoClickAction {

@@ -324,8 +324,8 @@
     <string name="home_random">Losowy</string>
     <string name="coming_soon">Już wkrótce…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -753,4 +753,5 @@
     </plurals>
     <string name="tv_layout_clock_settings">Pokaż zegar czasu rzeczywistego</string>
     <string name="tv_layout_clock_settings_des">Wyświetl zegar czasu rzeczywistego u góry ekranu. Dotyczy strony głównej i odtwarzacza</string>
+    <string name="log_cat">Logcat 🐈</string>
 </resources>
