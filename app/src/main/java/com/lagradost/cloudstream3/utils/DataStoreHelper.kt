@@ -58,6 +58,7 @@ const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 const val KEY_RESULT_SORT = "result_sort"
 const val USER_PINNED_PROVIDERS = "user_pinned_providers" // Key for pinned user set
+const val SUBTITLE_TRANSLATION_PROXY = "subtitle_translation_proxy"
 
 class UserPreferenceDelegate<T : Any>(
     private val key: String,
@@ -158,6 +159,16 @@ object DataStoreHelper {
         get() = EpisodeSortType.entries.getOrNull(_resultsSortingMode) ?: EpisodeSortType.NUMBER_ASC
         set(value) {
             _resultsSortingMode = value.ordinal
+        }
+
+    var subtitleTranslationProxy: String?
+        get() = getKey(SUBTITLE_TRANSLATION_PROXY)
+        set(value) {
+            if (value.isNullOrBlank()) {
+                removeKey(SUBTITLE_TRANSLATION_PROXY)
+            } else {
+                setKey(SUBTITLE_TRANSLATION_PROXY, value)
+            }
         }
 
     @Serializable
