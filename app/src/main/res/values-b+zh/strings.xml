@@ -756,4 +756,8 @@
         <item quantity="other">%d 条隐藏链接</item>
     </plurals>
     <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">开始暂停的视频</string>
+    <string name="start_paused_settings_des">降低选择源时的压力</string>
+    <string name="subs_edge">边缘</string>
+    <string name="background">后台</string>
 </resources>
