@@ -759,4 +759,6 @@
         <item quantity="other">%d gizli bağlantı</item>
     </plurals>
     <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Videoları duraklatılmış olarak başlat</string>
+    <string name="start_paused_settings_des">Kaynak seçerken zorlanmayı azalt</string>
 </resources>

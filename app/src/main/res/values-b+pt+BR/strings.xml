@@ -340,8 +340,8 @@
     <string name="home_random">Aleatório</string>
     <string name="coming_soon">Em breve…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">Cam HD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -365,7 +365,7 @@
     <string name="error_invalid_url">URL inválida</string>
     <string name="error">Erro</string>
     <string name="subtitles_remove_captions">Remover legendas ocultas(CC) das legendas</string>
-    <string name="subtitles_remove_bloat">Remover bloat das legendas</string>
+    <string name="subtitles_remove_bloat">Remover anúncios das legendas</string>
     <string name="subtitles_filter_lang">Filtrar por linguagem preferida</string>
     <string name="extras">Extras</string>
     <string name="trailer">Trailer</string>
@@ -762,4 +762,9 @@
         <item quantity="many">%d link ocultos</item>
         <item quantity="other">%d link ocultos</item>
     </plurals>
+    <string name="subs_edge">Borda</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Iniciar vídeos pausados</string>
+    <string name="start_paused_settings_des">Reduza o estresse ao selecionar fontes</string>
+    <string name="background">Fundo</string>
 </resources>

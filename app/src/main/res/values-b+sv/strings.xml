@@ -422,7 +422,7 @@
     <string name="safe_mode_title">Felsäkert läge på</string>
     <string name="apply_on_restart">Starta om appen för att se ändringar.</string>
     <string name="player_settings_play_in_app">Intern spelare</string>
-    <string name="quality_cam_hd">Kamera HD</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="plugin_downloaded">Tillägg nedladdad</string>
     <string name="repository_url_hint">Lager URL eller Shortcode</string>
     <string name="batch_download_start_format" formatted="true">Börjat hämta %1$d %2$s…</string>
@@ -501,7 +501,7 @@
     <string name="duplicate_replace_all">Ersätt alla</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="pref_category_bypass">Förbikoppla ISP</string>
-    <string name="quality_cam_rip">Kamera</string>
+    <string name="quality_cam_rip">CamRip</string>
     <string name="quality_cam">Kamera</string>
     <string name="safe_mode_description">Alla tillägg stängdes av på grund av en krasch för att hjälpa dig hitta det tillägget som orsakar problem.</string>
     <string name="extension_size">Storlek</string>
@@ -744,4 +744,5 @@
         <item quantity="one">%d dold länk</item>
         <item quantity="other">%d dolda länkar</item>
     </plurals>
+    <string name="log_cat">Logcat 🐈</string>
 </resources>
