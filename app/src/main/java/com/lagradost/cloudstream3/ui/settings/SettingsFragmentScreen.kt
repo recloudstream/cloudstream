@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.border
@@ -292,6 +294,8 @@ object SettingsFragmentScreen : Screen {
     @Composable
     fun SettingsSearch(searchBarState: SearchBarState, textFieldState: TextFieldState) {
         val scope = rememberCoroutineScope()
+        val focusManager = LocalFocusManager.current
+        val keyboardController = LocalSoftwareKeyboardController.current
         val inputField =
             @Composable {
                 SearchBarDefaults.InputField(
@@ -320,6 +324,8 @@ object SettingsFragmentScreen : Screen {
                                 SearchBarValue.Expanded -> {
                                     IconButton(onClick = {
                                         textFieldState.edit { replace(0, length, "") }
+                                        focusManager.clearFocus()
+                                        keyboardController?.hide()
                                         scope.launch {
                                             searchBarState.animateToCollapsed()
                                         }
@@ -391,6 +397,8 @@ object SettingsFragmentScreen : Screen {
 
         BackHandler(enabled = searchBarState.targetValue == SearchBarValue.Expanded) {
             textFieldState.edit { replace(0, length, "") }
+            focusManager.clearFocus()
+            keyboardController?.hide()
             scope.launch {
                 searchBarState.animateToCollapsed()
             }
