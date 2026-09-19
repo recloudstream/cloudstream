@@ -44,7 +44,7 @@ class FixedNextRenderersFactory(
         context: Context,
         enableFloatOutput: Boolean,
         enableAudioTrackPlaybackParams: Boolean
-    ): AudioSink {
+    ): AudioSink? {
         val activeCompressor = compressor
             ?: return super.buildAudioSink(context, enableFloatOutput, enableAudioTrackPlaybackParams)
 
