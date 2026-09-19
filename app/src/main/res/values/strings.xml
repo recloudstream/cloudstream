@@ -549,6 +549,8 @@
     <string name="compressor_attack_label">Attack: %d ms</string>
     <string name="compressor_release_label">Release: %d ms</string>
     <string name="compressor_makeup_label">Makeup Gain: +%d dB</string>
+    <string name="compressor_threshold_hint">Sounds louder than %d dB get turned down</string>
+    <string name="compressor_makeup_hint">Turns up the overall volume by +%d dB</string>
     <string name="audio_tracks">Audio tracks</string>
     <string name="video_tracks">Video tracks</string>
     <string name="apply_on_restart">Restart the app to see changes.</string>
