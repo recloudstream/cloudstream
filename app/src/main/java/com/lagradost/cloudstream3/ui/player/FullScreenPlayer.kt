@@ -160,6 +160,13 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
         }
     protected var selectSubtitlesDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
     protected var selectCompressorDialog: Dialog? = null
         set(value) {
             val prevField = field
@@ -169,13 +176,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
         }
     protected var playBackCompressorEnabled = false
-        set(value) {
-            val prevField = field
-            field = value
-            if (value == null && prevField != null) {
-                autoHide()
-            }
-        }
 
     /** Checks if any top level dialog is open and showing */
     fun isDialogOpen() =
@@ -717,6 +717,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         //}
     }
 
+    // getColorStateList(index) on a TypedArray built from a raw intArrayOf(...) can't be
+    // statically verified by lint as a styleable resource index (it isn't tied to an
+    // <declare-styleable>), so it always flags a false-positive ResourceType error here —
+    // this is the standard, expected suppression for this obtainStyledAttributes pattern.
+    @SuppressLint("ResourceType")
     private fun showCompressorDialog() {
         val act = activity ?: return
         val compressor = (player as? CS3IPlayer)?.compressor ?: return
