@@ -78,6 +78,16 @@
         android:paddingTop="8dp"
         tools:text="Threshold: -24 dB" />
 
+    <!-- Dynamic hint explaining what the slider does, updated in Kotlin -->
+    <TextView
+        android:id="@+id/compressor_threshold_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="?attr/grayTextColor"
+        android:textSize="13sp"
+        tools:text="Sounds louder than -24 dB get turned down" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -135,6 +145,16 @@
         android:gravity="center_horizontal"
         android:paddingTop="4dp"
         tools:text="Makeup Gain: +12 dB" />
+
+    <!-- Dynamic hint explaining what the slider does, updated in Kotlin -->
+    <TextView
+        android:id="@+id/compressor_makeup_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="?attr/grayTextColor"
+        android:textSize="13sp"
+        tools:text="Turns up the overall volume by +12 dB" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -270,5 +290,4 @@
     </LinearLayout>
 
 </LinearLayout>
-
 </ScrollView>
