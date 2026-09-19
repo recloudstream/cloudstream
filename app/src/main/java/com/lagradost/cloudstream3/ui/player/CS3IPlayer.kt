@@ -163,8 +163,13 @@ class CS3IPlayer : IPlayer {
     private var ignoreSSL: Boolean = true
     private var playBackSpeed: Float = 1.0f
 
-    /** Shared compressor — created once, injected into the audio sink, params updated live. */
-    val compressor = DynamicRangeCompressor()
+    /**
+     * Shared compressor instance — only created when the setting is enabled.
+     * When disabled, this stays null and the audio pipeline is completely
+     * unmodified (no custom AudioProcessor, no custom AudioSink at all).
+     */
+    var compressor: DynamicRangeCompressor? = null
+        private set
 
     private var lastMuteVolume: Float = 1.0f
 
@@ -1114,6 +1119,15 @@ class CS3IPlayer : IPlayer {
                         else -> isLayout(PHONE or EMULATOR) to false
                     }
 
+                    // Only create the compressor when the setting is actually enabled.
+                    // When it's off, `compressor` stays null and nothing about the audio
+                    // pipeline is touched — same behaviour as before this feature existed.
+                    val isCompressorEnabled = settingsManager.getBoolean(
+                        context.getString(R.string.compressor_enabled_key),
+                        false
+                    )
+                    compressor = if (isCompressorEnabled) DynamicRangeCompressor() else null
+
                     val factory = if (isSoftwareDecodingEnabled) {
                         FixedNextRenderersFactory(context, compressor).apply {
                             setEnableDecoderFallback(true)
@@ -1125,18 +1139,23 @@ class CS3IPlayer : IPlayer {
                             )
                         }
                     } else {
-                        // no nextlib = EXTENSION_RENDERER_MODE_OFF
-                        object : DefaultRenderersFactory(context) {
-                            @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-                            override fun buildAudioSink(
-                                ctx: Context,
-                                enableFloatOutput: Boolean,
-                                enableAudioTrackPlaybackParams: Boolean
-                            ) = DefaultAudioSink.Builder(ctx)
-                                .setEnableFloatOutput(enableFloatOutput)
-                                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
-                                .setAudioProcessors(arrayOf<AudioProcessor>(compressor))
-                                .build()
+                        val activeCompressor = compressor
+                        if (activeCompressor == null) {
+                            // no nextlib = EXTENSION_RENDERER_MODE_OFF, no compressor = fully default sink
+                            DefaultRenderersFactory(context)
+                        } else {
+                            object : DefaultRenderersFactory(context) {
+                                @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+                                override fun buildAudioSink(
+                                    ctx: Context,
+                                    enableFloatOutput: Boolean,
+                                    enableAudioTrackPlaybackParams: Boolean
+                                ) = DefaultAudioSink.Builder(ctx)
+                                    .setEnableFloatOutput(enableFloatOutput)
+                                    .setEnableAudioOutputPlaybackParameters(enableAudioTrackPlaybackParams)
+                                    .setAudioProcessors(arrayOf<AudioProcessor>(activeCompressor))
+                                    .build()
+                            }
                         }
                     }
 
