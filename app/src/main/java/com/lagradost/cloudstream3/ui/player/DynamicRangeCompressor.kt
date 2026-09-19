@@ -192,6 +192,12 @@ class DynamicRangeCompressor : AudioProcessor {
     override fun isEnded(): Boolean =
         inputEnded && outputBuffer === AudioProcessor.EMPTY_BUFFER
 
+    // AudioProcessor.flush() (no-arg) is deprecated upstream in favor of a
+    // seek-aware overload, but this interface implementation still only exposes
+    // the no-arg version to override, so this suppresses that specific warning
+    // without adding @Deprecated (which would cascade to our own reset() below,
+    // since it calls flush() internally).
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun flush() {
         // Called on every seek. Reset envelope so there's no gain burst
         // from stale state — which is what caused crackling after skipping.
