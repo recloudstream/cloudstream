@@ -161,6 +161,13 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
     protected var selectSubtitlesDialog: Dialog? = null
     protected var selectCompressorDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
     protected var playBackCompressorEnabled = false
         set(value) {
             val prevField = field
@@ -710,7 +717,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         //}
     }
 
-    @SuppressLint("ResourceType")
     private fun showCompressorDialog() {
         val act = activity ?: return
         val compressor = (player as? CS3IPlayer)?.compressor ?: return
@@ -727,10 +733,15 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
         // ── Visual update helpers ──────────────────────────────────────────
         fun updateCurrentLabel() {
-            binding.compressorCurrentLabel.text = if (compressor.enabled)
-                act.getString(R.string.compressor_on_format,
-                    compressor.threshold.toInt(), compressor.makeupGain.toInt())
-            else act.getString(R.string.compressor_off)
+            binding.compressorCurrentLabel.text = if (compressor.enabled) {
+                act.getString(
+                    R.string.compressor_on_format,
+                    compressor.threshold.toInt(),
+                    compressor.makeupGain.toInt()
+                )
+            } else {
+                act.getString(R.string.compressor_off)
+            }
         }
 
         fun updateThresholdLabel() {
@@ -743,11 +754,23 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 act.getString(R.string.compressor_makeup_label, compressor.makeupGain.toInt())
         }
 
+        // Short, plain-language explanation of what each slider does, updated live —
+        // same idea as the "Use this if the subtitles are shown X ms too late" hint.
+        fun updateThresholdHint() {
+            binding.compressorThresholdHint.text =
+                act.getString(R.string.compressor_threshold_hint, compressor.threshold.toInt())
+        }
+
+        fun updateMakeupHint() {
+            binding.compressorMakeupHint.text =
+                act.getString(R.string.compressor_makeup_hint, compressor.makeupGain.toInt())
+        }
+
         // WhiteButton = selected/active, BlackButton = unselected — same as speed presets
         fun syncEnableButtons() {
             val ctx = context ?: return
             listOf(
-                binding.compressorEnableBtt  to compressor.enabled,
+                binding.compressorEnableBtt to compressor.enabled,
                 binding.compressorDisableBtt to !compressor.enabled,
             ).forEach { (btn, active) ->
                 // Apply the full WhiteButton or BlackButton style — backgroundTint only.
@@ -767,56 +790,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             updateCurrentLabel()
         }
 
-        // ── Restore UI to current compressor state ─────────────────────────
-        binding.compressorThresholdBar.value = compressor.threshold.coerceIn(-30f, 0f)
-        binding.compressorRatioBar.value     = compressor.makeupGain.coerceIn(0f, 24f)
-        updateThresholdLabel()
-        updateMakeupLabel()
-        syncEnableButtons()
-
-        // ── On / Off ───────────────────────────────────────────────────────
-        binding.compressorEnableBtt.setOnClickListener {
-            compressor.enabled = true; syncEnableButtons()
-        }
-        binding.compressorDisableBtt.setOnClickListener {
-            compressor.enabled = false; syncEnableButtons()
-        }
-
-        // ── Threshold slider + FABs ────────────────────────────────────────
-        binding.compressorThresholdBar.addOnChangeListener { _, value, fromUser ->
-            if (fromUser) { compressor.threshold = value; updateThresholdLabel(); updateCurrentLabel() }
-        }
-        binding.thresholdMinus.setOnClickListener {
-            val v = (compressor.threshold - 1f).coerceIn(-30f, 0f)
-            compressor.threshold = v
-            binding.compressorThresholdBar.value = v
-            updateThresholdLabel(); updateCurrentLabel()
-        }
-        binding.thresholdPlus.setOnClickListener {
-            val v = (compressor.threshold + 1f).coerceIn(-30f, 0f)
-            compressor.threshold = v
-            binding.compressorThresholdBar.value = v
-            updateThresholdLabel(); updateCurrentLabel()
-        }
-
-        // ── Makeup gain slider + FABs (reusing ratio_minus/plus ids) ──────
-        binding.compressorRatioBar.addOnChangeListener { _, value, fromUser ->
-            if (fromUser) { compressor.makeupGain = value; updateMakeupLabel(); updateCurrentLabel() }
-        }
-        binding.ratioMinus.setOnClickListener {
-            val v = (compressor.makeupGain - 1f).coerceIn(0f, 24f)
-            compressor.makeupGain = v
-            binding.compressorRatioBar.value = v
-            updateMakeupLabel(); updateCurrentLabel()
-        }
-        binding.ratioPlus.setOnClickListener {
-            val v = (compressor.makeupGain + 1f).coerceIn(0f, 24f)
-            compressor.makeupGain = v
-            binding.compressorRatioBar.value = v
-            updateMakeupLabel(); updateCurrentLabel()
-        }
-
-        // ── Presets ────────────────────────────────────────────────────────
+        // ── Presets — declared before the sliders so their listeners can call
+        //    syncPresetButtons(matchingPresetButton()) to keep the highlight accurate ──
         val allPresets = listOf(
             binding.compressorPresetLight,
             binding.compressorPresetDialog,
@@ -840,17 +815,112 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
         }
 
-        fun applyPreset(threshold: Float, makeup: Float, activeBtn: com.google.android.material.button.MaterialButton) {
-            compressor.threshold  = threshold
+        // Figures out which preset (if any) matches the current values, so the
+        // correct button stays highlighted when the dialog is reopened, instead
+        // of always resetting to "none selected".
+        fun matchingPresetButton(): com.google.android.material.button.MaterialButton? = when {
+            compressor.threshold == -18f && compressor.makeupGain == 4f -> binding.compressorPresetLight
+            compressor.threshold == -24f && compressor.makeupGain == 12f -> binding.compressorPresetDialog
+            compressor.threshold == -30f && compressor.makeupGain == 16f -> binding.compressorPresetHeavy
+            else -> null
+        }
+
+        fun applyPreset(
+            threshold: Float,
+            makeup: Float,
+            activeBtn: com.google.android.material.button.MaterialButton
+        ) {
+            compressor.threshold = threshold
             compressor.makeupGain = makeup
             binding.compressorThresholdBar.value = threshold.coerceIn(-30f, 0f)
-            binding.compressorRatioBar.value     = makeup.coerceIn(0f, 24f)
-            updateThresholdLabel(); updateMakeupLabel(); updateCurrentLabel()
+            binding.compressorRatioBar.value = makeup.coerceIn(0f, 24f)
+            updateThresholdLabel()
+            updateMakeupLabel()
+            updateThresholdHint()
+            updateMakeupHint()
+            updateCurrentLabel()
             syncPresetButtons(activeBtn)
         }
 
-        syncPresetButtons(null) // none selected by default
+        // ── Restore UI to current compressor state ─────────────────────────
+        binding.compressorThresholdBar.value = compressor.threshold.coerceIn(-30f, 0f)
+        binding.compressorRatioBar.value = compressor.makeupGain.coerceIn(0f, 24f)
+        updateThresholdLabel()
+        updateMakeupLabel()
+        updateThresholdHint()
+        updateMakeupHint()
+        syncEnableButtons()
+        syncPresetButtons(matchingPresetButton())
 
+        // ── On / Off ───────────────────────────────────────────────────────
+        binding.compressorEnableBtt.setOnClickListener {
+            compressor.enabled = true
+            syncEnableButtons()
+        }
+        binding.compressorDisableBtt.setOnClickListener {
+            compressor.enabled = false
+            syncEnableButtons()
+        }
+
+        // ── Threshold slider + FABs ────────────────────────────────────────
+        binding.compressorThresholdBar.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                compressor.threshold = value
+                updateThresholdLabel()
+                updateThresholdHint()
+                updateCurrentLabel()
+                syncPresetButtons(matchingPresetButton())
+            }
+        }
+        binding.thresholdMinus.setOnClickListener {
+            val v = (compressor.threshold - 1f).coerceIn(-30f, 0f)
+            compressor.threshold = v
+            binding.compressorThresholdBar.value = v
+            updateThresholdLabel()
+            updateThresholdHint()
+            updateCurrentLabel()
+            syncPresetButtons(matchingPresetButton())
+        }
+        binding.thresholdPlus.setOnClickListener {
+            val v = (compressor.threshold + 1f).coerceIn(-30f, 0f)
+            compressor.threshold = v
+            binding.compressorThresholdBar.value = v
+            updateThresholdLabel()
+            updateThresholdHint()
+            updateCurrentLabel()
+            syncPresetButtons(matchingPresetButton())
+        }
+
+        // ── Makeup gain slider + FABs (reusing ratio_minus/plus ids) ──────
+        binding.compressorRatioBar.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                compressor.makeupGain = value
+                updateMakeupLabel()
+                updateMakeupHint()
+                updateCurrentLabel()
+                syncPresetButtons(matchingPresetButton())
+            }
+        }
+        binding.ratioMinus.setOnClickListener {
+            val v = (compressor.makeupGain - 1f).coerceIn(0f, 24f)
+            compressor.makeupGain = v
+            binding.compressorRatioBar.value = v
+            updateMakeupLabel()
+            updateMakeupHint()
+            updateCurrentLabel()
+            syncPresetButtons(matchingPresetButton())
+        }
+        binding.ratioPlus.setOnClickListener {
+            val v = (compressor.makeupGain + 1f).coerceIn(0f, 24f)
+            compressor.makeupGain = v
+            binding.compressorRatioBar.value = v
+            updateMakeupLabel()
+            updateMakeupHint()
+            updateCurrentLabel()
+            syncPresetButtons(matchingPresetButton())
+        }
+
+        // ── Preset buttons ─────────────────────────────────────────────────
         binding.compressorPresetLight.setOnClickListener {
             applyPreset(-18f, 4f, binding.compressorPresetLight)
         }
@@ -877,11 +947,12 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
         binding.resetBtt.setOnClickListener {
             applyPreset(-24f, 12f, binding.compressorPresetDialog)
-            compressor.enabled = true; syncEnableButtons()
+            compressor.enabled = true
+            syncEnableButtons()
         }
         binding.cancelBtt.setOnClickListener {
-            compressor.enabled    = snap.enabled
-            compressor.threshold  = snap.threshold
+            compressor.enabled = snap.enabled
+            compressor.threshold = snap.threshold
             compressor.makeupGain = snap.makeupGain
             dialog.dismiss()
         }
@@ -1381,7 +1452,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             playerBinding?.apply {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
                 playerCompressorBtt.isVisible = playBackCompressorEnabled
-                if (playBackCompressorEnabled) restoreCompressorSettings()
+                if (playBackCompressorEnabled) {
+                    restoreCompressorSettings()
+                }
                 playerResizeBtt.isVisible = playerResizeEnabled
                 playerRotateBtt.isVisible =
                     if (isLayout(TV or EMULATOR)) false else playerRotateEnabled
