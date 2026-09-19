@@ -2,15 +2,15 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
 import android.os.Looper
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.Renderer
-import androidx.media3.exoplayer.text.TextOutput
-import androidx.media3.exoplayer.text.TextRenderer
 import androidx.annotation.OptIn
 import androidx.media3.common.audio.AudioProcessor
-import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.Renderer
 import androidx.media3.exoplayer.audio.AudioSink
 import androidx.media3.exoplayer.audio.DefaultAudioSink
+import androidx.media3.exoplayer.text.TextOutput
+import androidx.media3.exoplayer.text.TextRenderer
+import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 
 @UnstableApi
 class FixedNextRenderersFactory(
@@ -33,19 +33,25 @@ class FixedNextRenderersFactory(
         out.add(TextRenderer(output, outputLooper))
     }
 
-
+    /**
+     * Only builds a custom [DefaultAudioSink] when a compressor is actually supplied.
+     * When [compressor] is null (the setting is off, or unsupported on this device) we
+     * fall through to the completely unmodified default sink from the parent factory,
+     * so playback behaves exactly as it did before this feature existed.
+     */
     @OptIn(UnstableApi::class)
     override fun buildAudioSink(
         context: Context,
         enableFloatOutput: Boolean,
         enableAudioTrackPlaybackParams: Boolean
     ): AudioSink {
-        val processors: Array<AudioProcessor> =
-            if (compressor != null) arrayOf(compressor) else emptyArray()
+        val activeCompressor = compressor
+            ?: return super.buildAudioSink(context, enableFloatOutput, enableAudioTrackPlaybackParams)
+
         return DefaultAudioSink.Builder(context)
             .setEnableFloatOutput(enableFloatOutput)
-            .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
-            .setAudioProcessors(processors)
+            .setEnableAudioOutputPlaybackParameters(enableAudioTrackPlaybackParams)
+            .setAudioProcessors(arrayOf<AudioProcessor>(activeCompressor))
             .build()
     }
 }
