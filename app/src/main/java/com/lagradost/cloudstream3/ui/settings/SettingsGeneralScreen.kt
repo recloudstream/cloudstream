@@ -43,6 +43,7 @@ import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentMap
 
 object SettingsGeneralScreen : SearchableSettings {
     @Composable
@@ -142,6 +143,15 @@ object SettingsGeneralScreen : SearchableSettings {
                     preference = settings.provider.preferredMedia,
                     entries = TvType.entries.associate {
                         it.ordinal.toString() to stringResource(it.toStringRes())
+                    }
+                        // Ok this looks strange af, but we do this to avoid double movie
+                        .toPersistentMap().remove(TvType.AnimeMovie.ordinal.toString()), onValueChanged = { diff ->
+                        if(diff.contains(TvType.Movie.ordinal.toString())) {
+                            settings.provider.preferredMedia.set(diff + TvType.AnimeMovie.ordinal.toString())
+                        } else {
+                            settings.provider.preferredMedia.set(diff - TvType.AnimeMovie.ordinal.toString())
+                        }
+                        return@MultiSelectListPreference false
                     }),
             )),
 
