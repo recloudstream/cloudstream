@@ -15,7 +15,6 @@ class FirestreamSite : Firestream() {
     override val mainUrl = "https://firestream.site"
 }
 
-@Prerelease
 open class Firestream : ExtractorApi() {
     override val name = "Firestream"
     override val mainUrl = "https://firestream.to"
