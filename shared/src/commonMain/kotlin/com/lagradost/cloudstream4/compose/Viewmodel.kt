@@ -106,6 +106,14 @@ data class SingleActiveQuery(
     private var job: Job? = null,
     private val mutex: Mutex = Mutex(),
 ) {
+    suspend fun cancel() {
+        mutex.withLock {
+            job?.cancel()
+            job?.join()
+            job = null
+        }
+    }
+
     suspend fun launch(block: suspend CoroutineScope.() -> Unit) {
         val currentScope = CoroutineScope(currentCoroutineContext())
         val obj: suspend CoroutineScope.() -> Unit = {
