@@ -19,6 +19,7 @@ data class GithubState(
     val dialog: GithubDialog? = null,
 )
 
+@Immutable
 sealed class GithubUpdateDialogState {
     data class Error(val error: Throwable) : GithubUpdateDialogState()
     data class DownloadProgress(val progress: Long, val total: Long?) : GithubUpdateDialogState()
@@ -38,6 +39,7 @@ data class GithubDialog(
     val state: GithubUpdateDialogState,
 )
 
+@Immutable
 sealed class GithubAction {
     object AutoSearchForUpdate : GithubAction()
     object SearchForUpdate : GithubAction()
@@ -61,6 +63,20 @@ interface AppUpdater {
     )
 }
 
+/**
+ * Cross-platform downloader for updates served by GitHub.
+ *
+ * To allow this Cross-platform behavior work we split up the UI from the Viewmodel,
+ * and the Viewmodel from the installer.
+ * ```
+ * UI:          Renders the current viewmodel state
+ * Viewmodel:   Searches for updates on GitHub
+ * AppUpdater:  Installs the update from the raw GitHub url
+ *
+ * UI -(onAction)-> Viewmodel -(invokes)-> AppUpdater
+ *   <---(state)---/        <--(callback)--/
+ * ```
+ * */
 class GithubViewModel(
     val remoteUserName: String,
     val remoteRepository: String,
@@ -74,7 +90,7 @@ class GithubViewModel(
     val updater: AppUpdater,
 ) : ViewModel(), StateContainer<GithubState> by DefaultStateContainer(GithubState()),
     ActionHandler<GithubAction> {
-    val updateDispatcher = SingleActiveQuery(Dispatchers.IO)
+    private val updateDispatcher = SingleActiveQuery(Dispatchers.IO)
 
     override fun onAction(action: GithubAction) {
         when (action) {
@@ -116,7 +132,7 @@ class GithubViewModel(
     }
 
     /** Cancel the old update, and catch possible errors from the block and show as a new state */
-    suspend fun dispatchUpdate(block: /* @Throws */ suspend () -> Unit) {
+    private suspend fun dispatchUpdate(block: /* @Throws */ suspend () -> Unit) {
         updateDispatcher.launch {
             try {
                 block()
@@ -133,7 +149,7 @@ class GithubViewModel(
         }
     }
 
-    suspend fun installUpdate(url: String) = dispatchUpdate {
+    private suspend fun installUpdate(url: String) = dispatchUpdate {
         updater.update(settings = settings, url = url) { progress, total ->
             updateState {
                 copy(
@@ -153,7 +169,7 @@ class GithubViewModel(
         }
     }
 
-    suspend fun searchForUpdate(
+    private suspend fun searchForUpdate(
         prerelease: Boolean,
         fromUser: Boolean,
     ) = dispatchUpdate {

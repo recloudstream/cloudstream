@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.os.Build
 import androidx.core.content.FileProvider
-import com.fleeksoft.io.OutputStream
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.ErrorLoadingException
@@ -23,6 +22,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import java.io.File
 import java.io.InputStream
+import java.io.OutputStream
 
 object ApkUpdater : AppUpdater {
     private const val APP_UPDATE_NAME = "CloudStream"
