@@ -80,6 +80,7 @@ import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.Firestream
+import com.lagradost.cloudstream3.extractors.FirestreamSite
 import com.lagradost.cloudstream3.extractors.Multimoviesshg
 import com.lagradost.cloudstream3.extractors.FlaswishCom
 import com.lagradost.cloudstream3.extractors.Flyfile
@@ -1340,6 +1341,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     ByseQekaho(),
     Flyfile(),
     Firestream(),
+    FirestreamSite(),
     Vids(),
     Playmate()
 )
