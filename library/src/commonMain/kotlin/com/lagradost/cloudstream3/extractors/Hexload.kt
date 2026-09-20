@@ -29,7 +29,7 @@ class Hexload: ExtractorApi() {
         val requestArgs = jsDictEntryRegex.findAll(respData).associate {
             it.groupValues[1] to it.groupValues[2]
         }
-        Log.e("requestArgs", requestArgs.toString())
+        Log.d("requestArgs", requestArgs.toString())
         val streamResponse = app.post("$mainUrl/download", data = requestArgs)
             .parsed<StreamResponse>()
 
