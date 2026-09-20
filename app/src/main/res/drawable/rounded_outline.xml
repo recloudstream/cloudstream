@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_focused="true">
-        <shape android:shape="oval">
-            <stroke android:width="4dp" android:color="@android:color/white" />
-        </shape>
-    </item>
-    <item android:state_hovered="true">
-        <shape android:shape="oval">
-            <stroke android:width="4dp" android:color="@android:color/white" />
-        </shape>
-    </item>
-    <item android:state_pressed="true">
-        <shape android:shape="oval">
-            <stroke android:width="4dp" android:color="@android:color/white" />
-        </shape>
-    </item>
+    <item android:state_focused="true" android:drawable="@drawable/oval_stroke_focus" />
+    <item android:state_hovered="true" android:drawable="@drawable/oval_stroke_focus" />
+    <item android:state_pressed="true" android:drawable="@drawable/oval_stroke_focus" />
     <item>
-        <shape android:shape="oval" />
+        <shape android:shape="oval">
+            <stroke android:width="2dp" android:color="#80FFFFFF" />
+        </shape>
     </item>
 </selector>

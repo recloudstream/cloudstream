@@ -20,7 +20,7 @@
         android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
         android:backgroundTint="?attr/primaryGrayBackground"
-        android:foreground="@drawable/rounded_outline"
+        android:foreground="@drawable/outline_drawable_forced_round"
         android:duplicateParentState="true"
         app:cardCornerRadius="100dp"
         app:cardElevation="0dp">
