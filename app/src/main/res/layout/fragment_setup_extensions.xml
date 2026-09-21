@@ -55,6 +55,8 @@
         android:id="@+id/repo_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:nextFocusLeft="@id/prev_btt"
+        android:nextFocusRight="@id/next_btt"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/repository_item"
         tools:visibility="visible" />
