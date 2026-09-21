@@ -4,7 +4,6 @@ import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.JsUnpacker
@@ -17,30 +16,33 @@ class StreamRubyCom : StreamRuby() {
 }
 
 @Prerelease
-open class StreamRuby : ExtractorApi() {
+open class StreamRuby : LuluStream() {
     override var name = "StreamRuby"
     override open var mainUrl = "https://rubyvidhub.com"
-    override val requiresReferer = true
 
-    override suspend fun getUrl(
-        url: String,
-        referer: String?,
-        subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
-    ) {
-        val embedUrl = url.trim().trimEnd('/')
-        val fileCode = embedUrl.substringAfterLast("/")
+    override fun getFileCode(url: String): String {
+        return url.trim().trimEnd('/')
+            .substringAfterLast("/")
             .removeSuffix(".html")
             .substringAfterLast("-")
-        if (fileCode.isBlank()) return
+    }
+
+    override suspend fun getPlayerScript(
+        fileCode: String,
+        url: String,
+        referer: String?
+    ): String {
+        if (fileCode.isBlank()) return ""
+
+        val embedUrl = url.trim().trimEnd('/')
 
         try {
             app.get(embedUrl, referer = referer ?: mainUrl)
         } catch (_: Exception) {
-            return
+            return ""
         }
 
-        val dlText = try {
+        return try {
             app.post(
                 "$mainUrl/dl",
                 data = mapOf(
@@ -53,10 +55,16 @@ open class StreamRuby : ExtractorApi() {
                 referer = embedUrl
             ).text
         } catch (_: Exception) {
-            return
+            ""
         }
+    }
 
-        val unpacked = JsUnpacker(dlText).unpack() ?: dlText
+    override suspend fun parsePlayerScript(
+        script: String,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
+        val unpacked = JsUnpacker(script).unpack() ?: script
 
         val streamUrl = Regex("""file:\s*["']([^"']+\.m3u8[^"']*)["']""")
             .find(unpacked)?.groupValues?.get(1)

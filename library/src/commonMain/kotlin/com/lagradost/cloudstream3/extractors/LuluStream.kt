@@ -22,9 +22,40 @@ class Lulustream2 : LuluStream() {
 }
 
 open class LuluStream : ExtractorApi() {
-    override val  name = "LuluStream"
+    override val name = "LuluStream"
     override val mainUrl = "https://luluvdo.com"
     override val requiresReferer = true
+
+    protected open fun getFileCode(url: String): String {
+        return url.substringAfterLast("/")
+    }
+
+    protected open suspend fun getPlayerScript(
+        fileCode: String,
+        url: String,
+        referer: String?
+    ): String {
+        return app.post(
+            "$mainUrl/dl",
+            data = mapOf(
+                "op" to "embed",
+                "file_code" to fileCode,
+                "auto" to "1",
+                "referer" to (referer ?: "")
+            )
+        ).document
+            .selectFirst("script:containsData(vplayer)")
+            ?.data()
+            .orEmpty()
+    }
+
+    protected open suspend fun parsePlayerScript(
+        script: String,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
+        JwPlayerHelper.extractStreamLinks(script, name, mainUrl, callback, subtitleCallback)
+    }
 
     override suspend fun getUrl(
         url: String,
@@ -32,20 +63,9 @@ open class LuluStream : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val filecode = url.substringAfterLast("/")
-        val postUrl = "$mainUrl/dl"
-        val post = app.post(
-            postUrl,
-            data = mapOf(
-                "op" to "embed",
-                "file_code" to filecode,
-                "auto" to "1",
-                "referer" to (referer ?: "")
-            )
-        ).document
-        post.selectFirst("script:containsData(vplayer)")?.data()
-            ?.let { script ->
-                JwPlayerHelper.extractStreamLinks(script, name, mainUrl, callback, subtitleCallback)
-            }
+        val fileCode = getFileCode(url)
+        val script = getPlayerScript(fileCode, url, referer)
+        if (script.isBlank()) return
+        parsePlayerScript(script, subtitleCallback, callback)
     }
 }

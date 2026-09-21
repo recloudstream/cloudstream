@@ -3253,10 +3253,13 @@ public final class com/lagradost/cloudstream3/extractors/Linkbox$Responses$Compa
 
 public class com/lagradost/cloudstream3/extractors/LuluStream : com/lagradost/cloudstream3/utils/ExtractorApi {
 	public fun <init> ()V
+	protected fun getFileCode (Ljava/lang/String;)Ljava/lang/String;
 	public fun getMainUrl ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
+	protected fun getPlayerScript (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getRequiresReferer ()Z
 	public fun getUrl (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected fun parsePlayerScript (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class com/lagradost/cloudstream3/extractors/Lulustream1 : com/lagradost/cloudstream3/extractors/LuluStream {
