@@ -61,9 +61,9 @@ object MainActivityScreen : Screen {
                 buildSha = activity.currentCommitHash(),
                 settings = settings,
                 updater = ApkUpdater
-            ).apply {
-                onAction(AutoSearchForUpdate)
-            }
+            )/*.apply {
+                onAction(AutoSearchForUpdate) // Remove this for now
+            }*/
         }
     }
 
