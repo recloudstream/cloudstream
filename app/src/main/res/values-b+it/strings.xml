@@ -455,7 +455,7 @@
     <string name="skip_type_mixed_op">Opening misto</string>
     <string name="update_notification_installing">Installazione aggiornamento dell\'app…</string>
     <string name="subtitles_remove_captions">Rimuovi le didascalie chiuse dai sottotitoli</string>
-    <string name="subtitles_remove_bloat">Rimuovi il bloat dai sottotitoli</string>
+    <string name="subtitles_remove_bloat">Rimuovere gli annunci dai sottotitoli</string>
     <string name="skip_type_op">Opening</string>
     <string name="skip_type_ed">Ending</string>
     <string name="skip_type_mixed_ed">Ending misto</string>
@@ -770,4 +770,8 @@
     <string name="tv_layout_clock_settings">Mostra orologio in tempo reale</string>
     <string name="tv_layout_clock_settings_des">Mostra un orologio in tempo reale nella parte superiore dello schermo. Si applica alla homepage e al lettore</string>
     <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Avvia video in pausa</string>
+    <string name="start_paused_settings_des">Riduci lo stress nella scelta delle fonti</string>
+    <string name="background">Sfondo</string>
+    <string name="subs_edge">Bordo</string>
 </resources>

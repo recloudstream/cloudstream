@@ -20,7 +20,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Tốc độ (%.2fx)</string>
     <string name="rated_format" formatted="true">Đánh giá: %.1f</string>
-    <string name="new_update_format" formatted="true">Đã tìm thấy bản cập nhật mới! \n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Đã tìm thấy bản cập nhật mới!\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Bộ lọc</string>
     <string name="duration_format" formatted="true">%d phút</string>
     <string name="app_name">CloudStream</string>
@@ -350,8 +350,8 @@
     <string name="home_random">Ngẫu nhiên</string>
     <string name="coming_soon">Sắp có…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">Bản CAM(Quay rạp)</string>
+    <string name="quality_cam_hd">Bản HD(Đẹp)</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -375,7 +375,7 @@
     <string name="error_invalid_url">Lỗi đường dẫn</string>
     <string name="error">Lỗi</string>
     <string name="subtitles_remove_captions">Xóa bỏ chú thích chi tiết trong phụ đề</string>
-    <string name="subtitles_remove_bloat">Xóa bỏ nội dung thừa trong phụ đề</string>
+    <string name="subtitles_remove_bloat">Xóa quảng cáo trong phụ đề</string>
     <string name="subtitles_filter_lang">Lọc theo ngôn ngữ ưu tiên</string>
     <string name="extras">Thêm</string>
     <string name="trailer">Trailer</string>
@@ -756,4 +756,9 @@
     <plurals name="links_hidden">
         <item quantity="other">%d liên kết bị ẩn</item>
     </plurals>
+    <string name="log_cat">Nhật ký gỡ lỗi</string>
+    <string name="start_paused_settings">Phát video đang dừng</string>
+    <string name="background">Nền</string>
+    <string name="subs_edge">Góc</string>
+    <string name="start_paused_settings_des">Giảm stress khi chọn nguồn</string>
 </resources>

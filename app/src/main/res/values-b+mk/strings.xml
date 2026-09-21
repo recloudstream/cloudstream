@@ -310,7 +310,7 @@
     <string name="video_tracks">Видео резолуција</string>
     <string name="asian_drama">Азиски драми</string>
     <string name="plugin_loaded">Приклучокот е вчитан</string>
-    <string name="subtitles_remove_bloat">Отстрани непотребен текст од преводите</string>
+    <string name="subtitles_remove_bloat">Отстрани реклами од преводите</string>
     <string name="plugins_not_downloaded" formatted="true">Не е преземено: %d</string>
     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
     <string name="audio_tracks">Аудио јазик</string>
@@ -642,7 +642,7 @@
     <string name="starting_plugin_update_manually">Започнување на процесот на ажурирање на приклучоци!</string>
     <string name="update_plugins">Ажурирај приклучоци</string>
     <string name="no_plugins_updated_manually">Ниту еден приклучок не е ажуриран.</string>
-    <string name="plugins_updated_manually">Успешно ажурирани %d приклучоци!</string>
+    <string name="plugins_updated_manually">Успешно ажурирани %d приклучоци</string>
     <string name="sort_episodes_number_asc">Епизода (Растечки)</string>
     <string name="sort_episodes_number_desc">Епизода (Опаѓачки)</string>
     <string name="sort_episodes_rating_high_low">Рејтинг (Највисок)</string>
@@ -738,4 +738,9 @@
         <item quantity="other">%d преземања во редицата</item>
     </plurals>
     <string name="player_is_live">Во живо</string>
+    <string name="start_paused_settings">Започни паузирани видеа</string>
+    <string name="profile_settings">Поставки на профил</string>
+    <string name="profile_hide_negative_sources">Сокриј извори со негативен приоритет</string>
+    <string name="profile_hide_error_sources">Сокриј извори со грешки</string>
+    <string name="background">Позадина</string>
 </resources>

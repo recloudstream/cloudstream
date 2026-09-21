@@ -493,7 +493,7 @@
     <string name="subtitles_depressed">음각</string>
     <string name="subtitles_raised">양각</string>
     <string name="subtitles_example_text">다람쥐 헌 쳇바퀴에 타고파</string>
-    <string name="subtitles_remove_bloat">불필요한 요소/코드 제거</string>
+    <string name="subtitles_remove_bloat">자막에서 광고 제거</string>
     <string name="extras">엑스트라</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="tracks">트랙</string>
@@ -742,4 +742,8 @@
     <string name="tv_layout_clock_settings">실시간 시계 표시</string>
     <string name="tv_layout_clock_settings_des">화면 상단에 실시간 시계를 표시합니다. 홈페이지와 플레이어에 적용됩니다</string>
     <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">동영상을 정지한 채 시작</string>
+    <string name="start_paused_settings_des">소스를 선택할 때의 부하 줄이기</string>
+    <string name="background">배경</string>
+    <string name="subs_edge">윤곽선</string>
 </resources>
