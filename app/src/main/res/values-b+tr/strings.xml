@@ -376,7 +376,7 @@
     <string name="error_invalid_url">Geçersiz URL</string>
     <string name="error">Hata</string>
     <string name="subtitles_remove_captions">Altyazılardan seçmeli altyazıyı (CC) kaldır</string>
-    <string name="subtitles_remove_bloat">Altyazılardaki şişkinliği kaldır</string>
+    <string name="subtitles_remove_bloat">Altyazılardaki reklamları kaldır</string>
     <string name="subtitles_filter_lang">Tercih edilen medya diline göre filtrele</string>
     <string name="extras">Ek içerikler</string>
     <string name="trailer">Fragman</string>
@@ -759,4 +759,8 @@
         <item quantity="other">%d gizli bağlantı</item>
     </plurals>
     <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Videoları duraklatılmış olarak başlat</string>
+    <string name="start_paused_settings_des">Kaynak seçerken zorlanmayı azalt</string>
+    <string name="subs_edge">Kenar</string>
+    <string name="background">Arka plan</string>
 </resources>
