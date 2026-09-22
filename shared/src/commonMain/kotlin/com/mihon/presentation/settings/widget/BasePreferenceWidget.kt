@@ -99,7 +99,7 @@ internal fun Modifier.highlightBackground(highlighted: Boolean): Modifier {
     }
     val highlight by animateColorAsState(
         targetValue = if (highlightFlag) {
-            MaterialTheme.colorScheme.surfaceTint.copy(alpha = .12f)
+            MaterialTheme.colorScheme.onBackground.copy(alpha = .12f)
         } else {
             Color.Transparent
         },

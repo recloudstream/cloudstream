@@ -80,6 +80,7 @@ import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.Firestream
+import com.lagradost.cloudstream3.extractors.FirestreamSite
 import com.lagradost.cloudstream3.extractors.Multimoviesshg
 import com.lagradost.cloudstream3.extractors.FlaswishCom
 import com.lagradost.cloudstream3.extractors.Flyfile
@@ -112,6 +113,7 @@ import com.lagradost.cloudstream3.extractors.HDStreamAble
 import com.lagradost.cloudstream3.extractors.Habetar
 import com.lagradost.cloudstream3.extractors.Handfacesnap
 import com.lagradost.cloudstream3.extractors.Haxloppd
+import com.lagradost.cloudstream3.extractors.Hexload
 import com.lagradost.cloudstream3.extractors.Hgcloudto
 import com.lagradost.cloudstream3.extractors.HglinkTo
 import com.lagradost.cloudstream3.extractors.HgplayCDN
@@ -307,6 +309,7 @@ import com.lagradost.cloudstream3.extractors.Vide0Net
 import com.lagradost.cloudstream3.extractors.Vidmatrixa
 import com.lagradost.cloudstream3.extractors.Vids
 import com.lagradost.cloudstream3.extractors.Vidsonic
+import com.lagradost.cloudstream3.extractors.Vixeo
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
 import com.lagradost.cloudstream3.extractors.Voe1
@@ -1312,6 +1315,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Ds2play(),
     Ds2video(),
     Vidsonic(),
+    Vixeo(),
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
@@ -1338,8 +1342,10 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     ByseQekaho(),
     Flyfile(),
     Firestream(),
+    FirestreamSite(),
     Vids(),
-    Playmate()
+    Playmate(),
+    Hexload(),
 )
 
 

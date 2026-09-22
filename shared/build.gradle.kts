@@ -34,6 +34,7 @@ kotlin {
 
         commonMain.dependencies {
             implementation(libs.bundles.compose)
+            implementation(libs.kotlinx.collections.immutable)
             implementation(project(":library"))
         }
 

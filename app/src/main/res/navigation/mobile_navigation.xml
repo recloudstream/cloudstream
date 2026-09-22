@@ -356,7 +356,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.lagradost.cloudstream3.ui.settings.SettingsFragment"
+        android:name="com.lagradost.cloudstream3.ui.settings.SettingsFragment2"
         android:layout_height="match_parent"
         android:label="@string/title_settings"
         app:enterAnim="@anim/enter_anim"
@@ -416,7 +416,7 @@
 
     <fragment
         android:id="@+id/navigation_subtitles"
-        android:name="com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment"
+        android:name="com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment2"
         android:layout_height="match_parent"
         android:label="@string/subtitles_settings"
         app:enterAnim="@anim/enter_anim"
@@ -427,7 +427,7 @@
 
     <fragment
         android:id="@+id/navigation_chrome_subtitles"
-        android:name="com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment"
+        android:name="com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment2"
         android:layout_height="match_parent"
         android:label="@string/chromecast_subtitles_settings"
         app:enterAnim="@anim/enter_anim"

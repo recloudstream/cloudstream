@@ -220,7 +220,7 @@
     <string name="episode_sync_settings_des">আপনার বর্তমান পর্বের অগ্রগতি স্বয়ংক্রিয়ভাবে সিঙ্ক করুন</string>
     <string name="automatic_plugin_download_mode_title">প্লাগইন ডাউনলোড ফিল্টার করতে মোড নির্বাচন করুন</string>
     <string name="links_reloaded_toast">লিঙ্ক পুনরায় লোড হয়েছে</string>
-    <string name="switch_account">সুইচ অ্যাকাউন্ট</string>
+    <string name="switch_account">অ্যাকাউন্ট পরিবর্তন</string>
     <string name="legal_notice">দাবিত্যাগ</string>
     <string name="asian_drama_singular">এশিয়ান ড্রামা</string>
     <string name="video_source">সোর্স</string>
@@ -256,7 +256,7 @@
     <string name="tv_layout">টিভি লেআউট</string>
     <string name="example_username">ব্যবহারকারীর নাম</string>
     <string name="episodes_range">%1$d-%2$d</string>
-    <string name="example_site_name">NewSiteName</string>
+    <string name="example_site_name">নতুন সাইটের নাম</string>
     <string name="action_default">ডিফল্ট</string>
     <string name="ova">OVA</string>
     <string name="ova_singular">ওভিয়ে</string>
@@ -302,7 +302,7 @@
     <string name="subscribe_tooltip">নতুন এপিসোডের নোটিফিকেশন</string>
     <string name="result_search_tooltip">অন্য এক্সটেনশনের মধ্যে খুঁজুন</string>
     <string name="no_update_found">কোন আপডেট পাওয়া যায়নি</string>
-    <string name="example_password">password123</string>
+    <string name="example_password">অ আ ক খ ১২৩</string>
     <string name="episode_upcoming_format" formatted="true">আসছে %s সময়ের মধ্যে</string>
     <string name="cancel">বাতিল করুন</string>
     <string name="resume_remaining" formatted="true">%s \nঅবশিষ্ট</string>
@@ -322,7 +322,7 @@
     <string name="update">আপডেট</string>
     <string name="watch_quality_pref">ওয়াইফাই তে যে কোয়ালিটিতে দেখতে চান</string>
     <string name="watch_quality_pref_data">মোবাইল ডাটায় যে কোয়ালিটিতে দেখতে চান</string>
-    <string name="limit_title_rez">ভিডিও প্লেয়ারে রেজুলেশন</string>
+    <string name="limit_title_rez">প্লেয়ারের তথ্য দেখুন</string>
     <string name="video_buffer_size_settings">ভিডিও বাফার সাইজ</string>
     <string name="video_buffer_length_settings">ভিডিও বাফার লেনথ</string>
     <string name="dns_pref_summary">যখন আইএসপি ব্লক করবে তখন কার্যকরী</string>
@@ -358,7 +358,7 @@
     <string name="torrent_info">এই ভিডিওটি একটি টরেন্ট, অর্থাৎ আপনার ভিডিও অ্যাক্টিভিটি ট্র্যাক করা সম্ভব।\nএগোনোর আগে টরেন্টিং সম্পর্কে ভালোভাবে বুঝে নিন।</string>
     <string name="downloads_delete_select">ডিলিট করার জন্য আইটেম সিলেক্ট করুন</string>
     <string name="downloads_empty">বর্তমানে কোনো ডাউনলোড নেই।</string>
-    <string name="queue_empty_message">বর্তমানে কোনো ডাউনলোড কিউতে নেই।</string>
+    <string name="queue_empty_message">বর্তমানে কোনো ডাউনলোড অপেক্ষায় নেই।</string>
     <string name="offline_file">অফলাইনে দেখার জন্য উপলব্ধ</string>
     <string name="select_all">সব সিলেক্ট করুন</string>
     <string name="deselect_all">সব ডিসিলেক্ট করুন</string>
@@ -401,4 +401,25 @@
     <string name="tv_layout_clock_settings">লাইভ ঘড়ি দেখান</string>
     <string name="tv_layout_clock_settings_des">পর্দার উপরের অংশে লাইভ ঘড়ি দেখায়। হোমপেজ ও প্লেয়ারে প্রযোজ্য</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
+    <string name="extra_brightness_key">অতিরিক্ত_উজ্জ্বলতা_সক্রিয়</string>
+    <string name="auth_locally">স্থানীয়ভাবে ব্যবহারকারী যাচাই</string>
+    <string name="add_sync">ট্র্যাকিং যোগ করা</string>
+    <string name="upload_sync">সমন্বয়</string>
+    <string name="sync_score">মূল্যায়ন</string>
+    <string name="authenticated_user" formatted="true">%s ব্যবহারকারী প্রমাণিত</string>
+    <string name="added_sync_format" formatted="true">%s যোগ করা হয়েছে</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="authenticated_user_fail" formatted="true">%s-এ লগইন করা যায়নি</string>
+    <string name="none">কোনোটি নয়</string>
+    <string name="normal">স্বাভাবিক</string>
+    <string name="all">সব</string>
+    <string name="max">সর্বোচ্চ</string>
+    <string name="min">সর্বনিম্ন</string>
+    <string name="subtitles_outline">সীমারেখা</string>
+    <string name="subtitles_shadow">ছায়া</string>
+    <string name="subtitles_raised">উত্থিত</string>
+    <string name="subtitle_offset">সাবটাইটেল সিঙ্ক করুন</string>
+    <string name="subtitle_offset_hint">১০০০ মিলিসেকেন্ড</string>
+    <string name="subtitle_offset_title">সাবটাইটেল বিলম্ব</string>
+    <string name="subtitle_offset_extra_hint_later_format">সাবটাইটেল যদি %d মিলিসেকেন্ড আগে দেখায় তবে এটি ব্যবহার করুন</string>
 </resources>

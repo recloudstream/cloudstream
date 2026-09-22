@@ -130,6 +130,7 @@ val appLanguages = arrayListOf(
     Pair("தமிழ்", "ta"),
     Pair("ಕನ್ನಡ", "kn"),
     Pair("മലയാളം", "ml"),
+    Pair("ພາສາລາວ", "lo"),
     Pair("ဗမာစာ", "my"),
     Pair("ትግርኛ", "ti"),
     Pair("አማርኛ", "am"),

@@ -178,7 +178,7 @@ object SettingsUpdatesScreen : SearchableSettings {
 
                     Preference.PreferenceItem.ListPreference(
                         title = stringResource(R.string.automatic_plugin_download),
-                        subtitle = "%s\n"+stringResource(R.string.automatic_plugin_download_summary),
+                        subtitle = "%s\n" + stringResource(R.string.automatic_plugin_download_summary),
                         icon = painterResource(R.drawable.extention_renew2),
                         entries = AutoDownloadMode.entries.map { it.value }.sorted()
                             .zip(stringArrayResource((R.array.auto_download_plugin))).toMap(),
@@ -196,6 +196,13 @@ object SettingsUpdatesScreen : SearchableSettings {
                             }
                         }
                     ),
+                    Preference.PreferenceItem.TextPreference(
+                        title = stringResource(R.string.test_extensions),
+                        subtitle = stringResource(R.string.test_extensions_summary),
+                        icon = painterResource(R.drawable.baseline_network_ping_24),
+                        onClick = {
+                            activity?.navigate(R.id.navigation_test_providers)
+                        })
                 )
             ),
             Preference.PreferenceGroup(

@@ -108,6 +108,7 @@ import com.lagradost.cloudstream3.utils.PLAYREADY_DRM_UUID
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.WIDEVINE_DRM_UUID
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
+import com.lagradost.cloudstream4.AppSettings
 import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
@@ -1389,9 +1390,16 @@ class CS3IPlayer : IPlayer {
             context.getString(if (context.isUsingMobileData()) R.string.quality_pref_mobile_data_key else R.string.quality_pref_key),
             Int.MAX_VALUE
         )
+        val settings = AppSettings(context)
 
         try {
             hasUsedFirstRender = false
+
+            val playWhenReady = if (settings.player.startPaused.get()) {
+                false
+            } else {
+                isPlaying // this keep the current state of the player
+            }
 
             // ye this has to be a val for whatever reason
             // this makes no sense
@@ -1404,7 +1412,7 @@ class CS3IPlayer : IPlayer {
                 playBackSpeed,
                 cacheSize = cacheSize,
                 videoBufferMs = videoBufferMs,
-                playWhenReady = isPlaying, // this keep the current state of the player
+                playWhenReady = playWhenReady,
                 subtitleOffset = currentSubtitleOffset,
                 maxVideoHeight = maxVideoHeight,
                 audioSources = audioSources,

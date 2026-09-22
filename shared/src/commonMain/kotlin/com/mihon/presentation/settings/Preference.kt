@@ -47,19 +47,31 @@ sealed class Preference {
         ) : PreferenceItem<Boolean, Boolean>()
 
         /**
+         * A [PreferenceItem] that provides a color
+         */
+        data class ColorPreference(
+            val preference: PreferenceData<Int>,
+            override val title: String,
+            override val subtitle: String? = null,
+            override val enabled: Boolean = true,
+            override val onValueChanged: suspend (value: Int) -> Boolean = { true },
+            override val icon: Painter? = null
+        ) : PreferenceItem<Int, Boolean>()
+
+        /**
          * A [PreferenceItem] that provides a slider to select an integer number.
          */
         data class SliderPreference(
-            val value: Int,
+            val preference: PreferenceData<Int>,
             override val title: String,
             override val subtitle: String? = null,
             val valueString: String? = null,
             val valueRange: IntProgression = 0..1,
             @IntRange(from = 0) val steps: Int = with(valueRange) { (last - first) - 1 },
             override val enabled: Boolean = true,
-            override val onValueChanged: suspend (value: Int) -> Unit = {},
+            override val onValueChanged: suspend (value: Int) -> Boolean = { true },
             override val icon: Painter? = null
-        ) : PreferenceItem<Int, Unit>()
+        ) : PreferenceItem<Int, Boolean>()
 
         /**
          * A [PreferenceItem] that displays a list of entries as a dialog.
@@ -77,8 +89,8 @@ sealed class Preference {
             override val onValueChanged: suspend (value: T) -> Boolean = { true },
             val iconProvider: (@Composable (key: T, value: String) -> Unit)? = null,
         ) : PreferenceItem<T, Boolean>() {
-            internal fun internalSet(value: Any) = preference.set(value as T)
-            internal suspend fun internalOnValueChanged(value: Any) = onValueChanged(value as T)
+            internal fun internalSet(value: Any?) = preference.set(value as T)
+            internal suspend fun internalOnValueChanged(value: Any?) = onValueChanged(value as T)
 
             @Composable
             internal fun internalSubtitleProvider(value: Any?, entries: Map<out Any?, String>) =
@@ -87,21 +99,6 @@ sealed class Preference {
             internal fun InternalIconProvider(key: Any?, value: String) =
                 iconProvider?.invoke(key as T, value)
         }
-
-        /**
-         * [ListPreference] but with no connection to a [PreferenceData]
-         */
-        data class BasicListPreference(
-            val value: String,
-            val entries: Map<String, String>,
-            override val title: String,
-            override val subtitle: String? = "%s",
-            val subtitleProvider: @Composable (value: String, entries: Map<String, String>) -> String? =
-                { v, e -> subtitle?.format(e[v]) },
-            override val icon: Painter? = null,
-            override val enabled: Boolean = true,
-            override val onValueChanged: suspend (value: String) -> Unit = {},
-        ) : PreferenceItem<String, Unit>()
 
         /**
          * A [PreferenceItem] that displays a list of entries as a dialog.
@@ -148,21 +145,6 @@ sealed class Preference {
             override val icon: Painter? = null
         }
 
-        /**
-         * A [PreferenceItem] for individual tracker.
-         */
-        /*data class TrackerPreference(
-            val tracker: Tracker,
-            val login: () -> Unit,
-            val logout: () -> Unit,
-        ) : PreferenceItem<String, Unit>() {
-            override val title: String = ""
-            override val enabled: Boolean = true
-            override val subtitle: String? = null
-            override val icon: ImageVector? = null
-            override val onValueChanged: suspend (value: String) -> Unit = {}
-        }*/
-
         data class InfoPreference(
             override val title: String,
         ) : PreferenceItem<String, Unit>() {
@@ -187,7 +169,7 @@ sealed class Preference {
         override val title: String,
         override val enabled: Boolean = true,
 
-        val preferenceItems: List<PreferenceItem<out Any, out Any>>,
+        val preferenceItems: List<PreferenceItem<out Any?, out Any?>>,
     ) : Preference()
 }
 

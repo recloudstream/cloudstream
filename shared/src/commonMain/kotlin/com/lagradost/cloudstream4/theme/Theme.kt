@@ -99,15 +99,15 @@ private fun CloudStreamColorScheme.toMaterial3ColorScheme() = if (isLight) {
     )
 }
 
-val LocalSharedInfiniteTransition = staticCompositionLocalOf<InfiniteTransition> { throw NotImplementedError() }
-val LocalCloudStreamColors = staticCompositionLocalOf { darkScheme() }
+internal val LocalSharedInfiniteTransition = staticCompositionLocalOf<InfiniteTransition> { throw NotImplementedError() }
 
-object CloudStreamTheme {
-    val colors: CloudStreamColorScheme @Composable @ReadOnlyComposable get() = LocalCloudStreamColors.current
-    /** Global synchronized animation, so many items in e.g. a LazyList can animate at the same time,
-     * even if they appeared at different times */
-    val transition: InfiniteTransition @Composable @ReadOnlyComposable get() = LocalSharedInfiniteTransition.current
-}
+/**
+ * Global synchronized animation, so many items in e.g. a LazyList can animate at the same time,
+ * even if they appeared at different times
+ * */
+@Composable
+@ReadOnlyComposable
+fun MaterialTheme.infiniteSharedTransition() = LocalSharedInfiniteTransition.current
 
 @Composable
 fun CloudStreamPreviewTheme(content: @Composable () -> Unit) {
@@ -122,7 +122,8 @@ fun CloudStreamTheme(
 ) {
     val csColors = modeToTheme(mode, primaryColor)
     val globalTransition = rememberInfiniteTransition(label = "GlobalSharedTransition")
-    CompositionLocalProvider(LocalCloudStreamColors provides csColors, LocalSharedInfiniteTransition provides globalTransition) {
+    // We do not provide csColors as a global, because people should use MaterialTheme directly instead
+    CompositionLocalProvider(LocalSharedInfiniteTransition provides globalTransition) {
         MaterialTheme(
             colorScheme = csColors.toMaterial3ColorScheme(),
             content = content,
