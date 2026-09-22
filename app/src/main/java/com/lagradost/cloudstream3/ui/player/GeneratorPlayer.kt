@@ -1677,6 +1677,9 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun nextEpisode() {
+        if (isAtVideoEnd()) {
+            saveCurrentAsCompleted()
+        }
         if (viewModel.hasNextEpisode() == true) {
             isNextEpisode = true
             releasePlayer()
@@ -1690,6 +1693,37 @@ class GeneratorPlayer : FullScreenPlayer() {
             releasePlayer()
             viewModel.loadLinksPrev()
         }
+    }
+
+    override fun onVideoEnded() {
+        context?.let { ctx ->
+            val autoplayNext = PreferenceManager.getDefaultSharedPreferences(ctx)
+                ?.getBoolean(ctx.getString(R.string.autoplay_next_key), true) == true
+            if (autoplayNext) return@let
+            saveCurrentAsCompleted()
+        }
+    }
+
+    private fun isAtVideoEnd(): Boolean {
+        val duration = player.getDuration() ?: return false
+        if (duration <= 0L) return false
+        val position = player.getPosition() ?: return false
+        return position >= duration - 1000
+    }
+
+    private fun saveCurrentAsCompleted() {
+        if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
+        if ((currentMeta as? ResultEpisode)?.tvType == TvType.NSFW) return
+        val duration = player.getDuration() ?: return
+        if (duration <= 0L) return
+        DataStoreHelper.setViewPosAndResume(
+            viewModel.state.generatorState?.id,
+            duration,
+            duration,
+            currentMeta,
+            nextMeta,
+            completed = true,
+        )
     }
 
     private fun getNextLink(): DisplayLink? {

@@ -26,7 +26,6 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.player.ExtractorUri
-import com.lagradost.cloudstream3.ui.player.NEXT_WATCH_EPISODE_PERCENTAGE
 import com.lagradost.cloudstream3.ui.result.EpisodeSortType
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
@@ -705,7 +704,14 @@ object DataStoreHelper {
      * Sets the position, duration, and resume data of an episode/movie,
      * If nextEpisode is not specified it will not be able to set the next episode as resumable if progress > NEXT_WATCH_EPISODE_PERCENTAGE
      */
-    fun setViewPosAndResume(id: Int?, position: Long, duration: Long, currentEpisode: Any?, nextEpisode: Any?) {
+    fun setViewPosAndResume(
+        id: Int?,
+        position: Long,
+        duration: Long,
+        currentEpisode: Any?,
+        nextEpisode: Any?,
+        completed: Boolean = false,
+    ) {
         setViewPos(id, position, duration)
         if (id != null) {
             when (val meta = currentEpisode) {
@@ -717,10 +723,8 @@ object DataStoreHelper {
             }
         }
 
-        val percentage = position * 100L / duration
-        val nextEp = percentage >= NEXT_WATCH_EPISODE_PERCENTAGE
-        val resumeMeta = if (nextEp) nextEpisode else currentEpisode
-        if (resumeMeta == null && nextEp) {
+        val resumeMeta = if (completed) nextEpisode else currentEpisode
+        if (resumeMeta == null && completed) {
             // remove last watched as it is the last episode and you have watched too much
             when (val newMeta = currentEpisode) {
                 is ResultEpisode -> {

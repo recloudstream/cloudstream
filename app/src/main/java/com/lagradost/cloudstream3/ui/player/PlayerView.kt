@@ -115,6 +115,7 @@ class PlayerView @JvmOverloads constructor(
         fun nextEpisode() {}
         fun prevEpisode() {}
         fun playerPositionChanged(position: Long, duration: Long) {}
+        fun onVideoEnded() {}
         fun playerStatusChanged() {}
         fun playerDimensionsLoaded(width: Int, height: Int) {}
         fun subtitlesChanged() {}
@@ -772,6 +773,7 @@ class PlayerView @JvmOverloads constructor(
                 duration = event.durationMs
             )
             is VideoEndedEvent -> {
+                callbacks?.onVideoEnded()
                 // Only play next episode if autoplay is on (default).
                 val ctx = context
                 if (PreferenceManager.getDefaultSharedPreferences(ctx)
