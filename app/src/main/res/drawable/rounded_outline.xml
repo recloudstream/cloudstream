@@ -5,7 +5,7 @@
     <item android:state_pressed="true" android:drawable="@drawable/oval_stroke_focus" />
     <item>
         <shape android:shape="oval">
-            <stroke android:width="2dp" android:color="#80FFFFFF" />
+            <stroke android:width="2dp" android:color="#66FFFFFF" />
         </shape>
     </item>
 </selector>
