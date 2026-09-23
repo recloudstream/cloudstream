@@ -11,8 +11,7 @@
     android:layout_margin="10dp"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:defaultFocusHighlightEnabled="false">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
@@ -32,13 +31,6 @@
             android:alpha="0.4"
             android:scaleType="centerCrop" />
 
-        <View
-            android:id="@+id/outline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            tools:visibility="gone" />
-
         <ImageView
             android:id="@+id/lock_icon"
             android:layout_width="24dp"
@@ -47,7 +39,7 @@
             android:layout_margin="4dp"
             android:src="@drawable/video_locked"
             android:visibility="gone"
-            app:tint="@color/textColor"
+            app:tint="?attr/textColor"
             tools:visibility="visible" />
 
         <ImageView
@@ -56,7 +48,7 @@
             android:layout_height="36dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_baseline_edit_24"
-            app:tint="@color/textColor" />
+            app:tint="?attr/textColor" />
 
     </androidx.cardview.widget.CardView>
 
@@ -68,7 +60,7 @@
         android:gravity="center"
         android:maxLines="2"
         android:ellipsize="end"
-        android:textColor="@color/textColor"
+        android:textColor="?attr/textColor"
         android:textSize="15sp"
         tools:text="anime" />
 

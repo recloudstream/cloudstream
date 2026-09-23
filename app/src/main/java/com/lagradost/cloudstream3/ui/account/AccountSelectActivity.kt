@@ -165,6 +165,11 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
                 // Scroll to current account (which is focused by default)
                 val layoutManager = recyclerView.layoutManager as GridLayoutManager
                 layoutManager.scrollToPositionWithOffset(selectedKeyIndex, 0)
+                if (isLayout(TV or EMULATOR)) {
+                    recyclerView.post {
+                        layoutManager.findViewByPosition(selectedKeyIndex)?.requestFocus()
+                    }
+                }
             }
 
             observe(accountViewModel.isEditing) { isEditing ->

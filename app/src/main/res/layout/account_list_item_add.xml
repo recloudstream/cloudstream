@@ -11,8 +11,7 @@
     android:layout_margin="10dp"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:defaultFocusHighlightEnabled="false">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
@@ -32,7 +31,7 @@
             android:layout_height="40dp"
             android:scaleType="centerCrop"
             android:contentDescription="@string/add_account"
-            app:tint="@color/textColor" />
+            app:tint="?attr/textColor" />
 
     </androidx.cardview.widget.CardView>
 
@@ -43,7 +42,7 @@
         android:gravity="center"
         android:maxLines="2"
         android:ellipsize="end"
-        android:textColor="@color/textColor"
+        android:textColor="?attr/textColor"
         android:textSize="15sp"
         android:text="@string/add_account" />
 

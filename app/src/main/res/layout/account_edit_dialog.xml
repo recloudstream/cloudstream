@@ -48,7 +48,7 @@
                 android:layout_height="@dimen/account_select_linear_item_size"
                 android:layout_gravity="center"
                 android:foreground="@drawable/outline_drawable_forced_round"
-                android:focusable="true"
+                android:defaultFocusHighlightEnabled="false"
                 android:nextFocusRight="@id/edit_profile_photo_button_holder"
                 android:nextFocusDown="@id/edit_profile_photo_button_holder"
                 app:cardCornerRadius="100dp"
@@ -71,15 +71,14 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="bottom|end"
-                android:focusable="true"
-                android:clickable="true"
+                android:defaultFocusHighlightEnabled="false"
                 android:foreground="@drawable/outline_drawable_forced_round"
                 android:nextFocusLeft="@id/account_image_holder"
                 android:nextFocusUp="@id/account_image_holder"
                 android:nextFocusDown="@id/account_name"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="?attr/primaryGrayBackground">
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/primaryGrayBackground">
 
                 <ImageView
                     android:id="@+id/edit_profile_photo_button"
@@ -87,7 +86,7 @@
                     android:layout_height="18dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_baseline_edit_24"
-                    app:tint="@color/textColor" />
+                    app:tint="@color/white" />
             </androidx.cardview.widget.CardView>
         </FrameLayout>
 
@@ -109,7 +108,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="?attr/textColor"
-            android:focusable="true"
             android:nextFocusUp="@id/account_name"
             android:nextFocusDown="@id/apply_btt"
             android:text="@string/lock_profile"
@@ -132,7 +130,6 @@
             android:layout_width="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_gravity="center_vertical"
-            android:focusable="true"
             android:nextFocusUp="@id/lockProfileCheckbox"
             android:nextFocusRight="@id/apply_btt"
             android:text="@string/delete" />
@@ -143,7 +140,6 @@
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_toStartOf="@+id/cancel_btt"
-            android:focusable="true"
             android:nextFocusUp="@id/lockProfileCheckbox"
             android:nextFocusDown="@id/cancel_btt"
             android:nextFocusLeft="@id/delete_btt"
@@ -156,7 +152,6 @@
             android:layout_width="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_gravity="center_vertical|end"
-            android:focusable="true"
             android:nextFocusUp="@id/apply_btt"
             android:nextFocusDown="@id/apply_btt"
             android:nextFocusLeft="@id/apply_btt"

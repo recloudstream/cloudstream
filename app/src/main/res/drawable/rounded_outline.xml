@@ -2,10 +2,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_focused="true" android:drawable="@drawable/oval_stroke_focus" />
     <item android:state_hovered="true" android:drawable="@drawable/oval_stroke_focus" />
-    <item android:state_pressed="true" android:drawable="@drawable/oval_stroke_focus" />
     <item>
         <shape android:shape="oval">
-            <stroke android:width="2dp" android:color="#66FFFFFF" />
+            <stroke android:width="2dp" android:color="?attr/account_unselected_stroke" />
         </shape>
     </item>
 </selector>

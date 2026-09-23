@@ -50,7 +50,8 @@ class AccountAdapter(
                 accountImage.loadImage(item.image)
                 lockIcon.isVisible = item.lockPin != null
 
-                if (isLastUsedAccount) root.requestFocus()
+                if (isTv && isLastUsedAccount) root.requestFocus()
+                if (!isTv) cardView.foreground = null
 
                 if (!isTv) {
                     root.setOnLongClickListener {
@@ -71,13 +72,15 @@ class AccountAdapter(
             }
 
             is AccountListItemEditBinding -> binding.apply {
+                val isTv = isLayout(TV or EMULATOR) || !root.isInTouchMode
                 val isLastUsedAccount = item.keyIndex == DataStoreHelper.selectedKeyIndex
 
                 accountName.text = item.name
                 accountImage.loadImage(item.image)
                 lockIcon.isVisible = item.lockPin != null
 
-                if (isLastUsedAccount) root.requestFocus()
+                if (isTv && isLastUsedAccount) root.requestFocus()
+                if (!isTv) cardView.foreground = null
 
                 root.setOnClickListener {
                     showAccountEditDialog(
@@ -95,9 +98,9 @@ class AccountAdapter(
     override fun onBindFooter(holder: ViewHolderState<Any>) {
         val binding = holder.view as? AccountListItemAddBinding ?: return
         binding.apply {
-            if (isLayout(TV or EMULATOR) || !root.isInTouchMode) {
-                root.isFocusableInTouchMode = true
-            }
+            val isTv = isLayout(TV or EMULATOR) || !root.isInTouchMode
+            if (!isTv) cardView.foreground = null
+
             root.setOnClickListener {
                 val accounts = this@AccountAdapter.immutableCurrentList
 
