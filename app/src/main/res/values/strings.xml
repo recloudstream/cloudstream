@@ -535,7 +535,6 @@
     <string name="compressor">Compressor</string>
     <string name="compressor_setting">Dynamic Range Compressor</string>
     <string name="compressor_setting_summary">Show compressor controls in the player (helps balance loud/quiet audio)</string>
-    <string name="compressor_enabled_key" translatable="false">compressor_button_enabled</string>
     <string name="compressor_enable">Enabled</string>
     <string name="compressor_on">On</string>
     <string name="compressor_on_format">On · %1$d dB / +%2$d dB</string>
