@@ -15,6 +15,8 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import android.util.TypedValue
+import android.view.View
 
 class AccountAdapter(
     private val accountSelectCallback: (DataStoreHelper.Account) -> Unit,
@@ -26,6 +28,12 @@ class AccountAdapter(
     companion object {
         const val VIEW_TYPE_SELECT_ACCOUNT = 0
         const val VIEW_TYPE_EDIT_ACCOUNT = 2
+
+        fun View.setRippleForeground() {
+            val outValue = TypedValue()
+            context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
+            foreground = context.getDrawable(outValue.resourceId)
+        }
     }
 
 
@@ -51,7 +59,7 @@ class AccountAdapter(
                 lockIcon.isVisible = item.lockPin != null
 
                 if (isTv && isLastUsedAccount) root.requestFocus()
-                if (!isTv) cardView.foreground = null
+                if (!isTv) cardView.setRippleForeground()
 
                 if (!isTv) {
                     root.setOnLongClickListener {
@@ -80,7 +88,7 @@ class AccountAdapter(
                 lockIcon.isVisible = item.lockPin != null
 
                 if (isTv && isLastUsedAccount) root.requestFocus()
-                if (!isTv) cardView.foreground = null
+                if (!isTv) cardView.setRippleForeground()
 
                 root.setOnClickListener {
                     showAccountEditDialog(
@@ -99,7 +107,7 @@ class AccountAdapter(
         val binding = holder.view as? AccountListItemAddBinding ?: return
         binding.apply {
             val isTv = isLayout(TV or EMULATOR) || !root.isInTouchMode
-            if (!isTv) cardView.foreground = null
+            if (!isTv) cardView.setRippleForeground()
 
             root.setOnClickListener {
                 val accounts = this@AccountAdapter.immutableCurrentList

@@ -41,6 +41,10 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideProgress
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import com.lagradost.cloudstream3.utils.UIHelper.showProgress
+import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.setRippleForeground
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 
 object AccountHelper {
     fun showAccountEditDialog(
@@ -57,6 +61,11 @@ object AccountHelper {
         var currentEditAccount = account
         val dialog = builder.show()
         binding.accountImageHolder.requestFocus()
+
+        if (!isLayout(TV or EMULATOR)) {
+            binding.accountImageHolder.setRippleForeground()
+            binding.editProfilePhotoButtonHolder.setRippleForeground()
+        }
 
         if (!isNewAccount) binding.title.setText(R.string.edit_account)
 
