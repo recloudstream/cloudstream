@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.clear
 import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
+import com.lagradost.cloudstream3.ui.library.PageAdapter
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -62,6 +63,11 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             ParentItemAdapter.sharedPool.clear()
             SearchAdapter.sharedPool.clear()
             context?.let { HomeChildItemAdapter.updatePosterSize(it, newValue as? Int) }
+            true
+        }
+
+        getPref(R.string.library_poster_size_key)?.setOnPreferenceChangeListener { _, newValue ->
+            context?.let { PageAdapter.updatePosterSize(null, it, newValue as? Int) }
             true
         }
 

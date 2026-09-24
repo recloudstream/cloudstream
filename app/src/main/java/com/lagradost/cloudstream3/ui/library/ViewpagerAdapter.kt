@@ -82,10 +82,13 @@ class ViewpagerAdapter(
                 // Which is only determined after the recyclerview is attached.
                 // If this fails then item height becomes 0 when there is only one item
                 doOnAttach {
-                    adapter = PageAdapter(
+                    val pageAdapter = PageAdapter(
                         this,
                         clickCallback
-                    ).apply {
+                    )
+                    // Initialize poster size for this page
+                    PageAdapter.updatePosterSize(this, this.context)
+                    adapter = pageAdapter.apply {
                         submitList(item.items)
                     }
                 }
