@@ -1016,7 +1016,7 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                     binding.apply {
                         resultSearch.isGone = d.title.isBlank()
                         resultSearch.setOnClickListener {
-                            QuickSearchFragment.pushSearch(activity, d.title)
+                            QuickSearchFragment.pushSearch(activity, d.title, type = d.type)
                         }
 
                         resultShare.setOnClickListener {

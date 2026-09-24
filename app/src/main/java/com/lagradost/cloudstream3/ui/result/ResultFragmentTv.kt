@@ -941,7 +941,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         }
 
                         resultSearchButton.setOnClickListener {
-                            QuickSearchFragment.pushSearch(activity, d.title)
+                            QuickSearchFragment.pushSearch(activity, d.title, type = d.type)
                         }
                     }
 
