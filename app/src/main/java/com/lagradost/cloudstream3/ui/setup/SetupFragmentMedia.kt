@@ -4,7 +4,6 @@ import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import androidx.core.content.edit
-import androidx.core.util.forEach
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
@@ -27,40 +26,38 @@ class SetupFragmentMedia : BaseFragment<FragmentSetupMediaBinding>(
         safe {
             val ctx = context ?: return@safe
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+            val prefKey = getString(R.string.prefer_media_type_key)
 
             val arrayAdapter =
                 ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-            val names = enumValues<TvType>().sorted().map { it.name }
-            val selected = mutableListOf<Int>()
+            val sortedTypes = enumValues<TvType>().sorted()
 
-            arrayAdapter.addAll(names)
+            arrayAdapter.addAll(sortedTypes.map { it.name })
             binding.apply {
                 listview1.let {
                     it.adapter = arrayAdapter
                     it.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
 
-                    it.setOnItemClickListener { _, _, _, _ ->
-                        it.checkedItemPositions?.forEach { key, value ->
-                            if (value) {
-                                selected.add(key)
-                            } else {
-                                selected.remove(key)
-                            }
-                        }
-                        val prefValues = selected.mapNotNull { pos ->
-                            val item =
-                                it.getItemAtPosition(pos)?.toString() ?: return@mapNotNull null
-                            val itemVal = TvType.valueOf(item)
-                            itemVal.ordinal.toString()
-                        }.toSet()
-                        settingsManager.edit {
-                            putStringSet(getString(R.string.prefer_media_type_key), prefValues)
-                        }
+                    val stored = settingsManager.getStringSet(prefKey, null)
+                    sortedTypes.forEachIndexed { index, type ->
+                        val isChecked = stored?.contains(type.ordinal.toString())
+                            ?: (type != TvType.NSFW)
+                        it.setItemChecked(index, isChecked)
+                    }
 
-                        // Regenerate set homepage
+                    val saveSelection = {
+                        val values = sortedTypes
+                            .filterIndexed { index, _ -> it.isItemChecked(index) }
+                            .map { type -> type.ordinal.toString() }
+                            .toSet()
+                        settingsManager.edit { putStringSet(prefKey, values) }
                         DataStoreHelper.currentHomePage = null
                     }
+
+                    if (stored == null) saveSelection()
+
+                    it.setOnItemClickListener { _, _, _, _ -> saveSelection() }
                 }
 
                 nextBtt.setOnClickListener {
