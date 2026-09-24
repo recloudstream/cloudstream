@@ -119,6 +119,12 @@ data class PlayerAttachedEvent(
     override val source: PlayerEventSource = PlayerEventSource.Player
 ) : PlayerEvent()
 
+/** Event emitted when the current player has rendered its first video frame. */
+data class FirstFrameRenderedEvent(
+    val player: Any?,
+    override val source: PlayerEventSource = PlayerEventSource.Player,
+) : PlayerEvent()
+
 /** Event from player to inform that subtitles have updated in some way */
 data class SubtitlesUpdatedEvent(
     override val source: PlayerEventSource = PlayerEventSource.Player

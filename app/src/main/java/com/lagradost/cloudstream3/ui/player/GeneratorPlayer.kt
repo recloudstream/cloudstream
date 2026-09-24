@@ -8,16 +8,22 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
 import android.text.Spanned
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -34,6 +40,7 @@ import androidx.core.text.toSpanned
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
@@ -46,11 +53,13 @@ import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.LiveStreamLoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
@@ -76,6 +85,7 @@ import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
+import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
@@ -92,6 +102,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
+import com.lagradost.cloudstream3.ui.result.buildResultEpisode
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -111,6 +122,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
@@ -131,9 +143,11 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.Serializable
 import java.lang.ref.WeakReference
 import java.util.Calendar
@@ -186,6 +200,19 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private var isPlayerActive: AtomicBoolean = AtomicBoolean(false)
     private var isNextEpisode: Boolean = false // this is used to reset the watch time
+
+    private var zappingSession: ZappingSession? = null
+    private val zappingSwitchInProgress = AtomicBoolean(false)
+    private var zappingLoadJob: Job? = null
+    private var zappingOverlayGeneration = 0
+    private var zappingTransitionActive = false
+    private var zappingTransitionPlayer: Any? = null
+    private var zappingTransitionBitmap: Bitmap? = null
+    private var zappingChannelList: LinearLayout? = null
+    private var zappingChannelRecycler: RecyclerView? = null
+    private var zappingChannelOverlay: FrameLayout? = null
+    private var zappingChannelOverlayPoster: ImageView? = null
+    private var zappingChannelAdapter: ZappingChannelAdapter? = null
 
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
     private val allMeta: List<ResultEpisode>?
@@ -438,6 +465,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun playerUpdated(player: Any?) {
         super.playerUpdated(player)
+
+        if (zappingTransitionActive && player != null) {
+            zappingTransitionPlayer = player
+        }
 
         // Cancel the notification when released
         if (player == null) {
@@ -1717,7 +1748,359 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun onDestroy() {
         ResultFragment.updateUI()
         currentVerifyLink?.cancel()
+        zappingLoadJob?.cancel()
+        zappingOverlayGeneration++
+        zappingTransitionActive = false
+        zappingTransitionPlayer = null
+        clearZappingTransitionBitmap()
+        if (activity?.isChangingConfigurations != true) {
+            zappingSession?.close()
+        }
         super.onDestroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val enabled = isZappingEnabled() && zappingSession?.current() != null
+        playerBinding?.playerChannelListBtt?.isVisible = enabled
+        if (!enabled) toggleZappingList(false)
+    }
+
+    private fun isZappingEnabled(): Boolean {
+        return context?.let { ctx ->
+            PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(getString(R.string.zapping_enabled_key), true)
+        } == true
+    }
+
+    private fun zappingOverlayParent(): FrameLayout? {
+        val rootView: View = playerBinding?.root ?: return null
+        if (rootView is FrameLayout) return rootView
+
+        // Keep this defensive for alternate player controller layouts. The generated stable
+        // layouts currently use FrameLayout, but the zapping controls must not disappear merely
+        // because a future controller root changes its concrete class.
+        val parent = rootView as? ViewGroup ?: return null
+        return FrameLayout(rootView.context).also { overlay ->
+            parent.addView(
+                overlay,
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                )
+            )
+        }
+    }
+
+    override fun playerFirstFrameRendered(player: Any?) {
+        super.playerFirstFrameRendered(player)
+        if (zappingTransitionActive && zappingTransitionPlayer === player) {
+            completeZappingTransition()
+        }
+    }
+
+    private fun setupZappingUi() {
+        val session = zappingSession ?: return
+        if (!isZappingEnabled()) return
+        val root = zappingOverlayParent() ?: return
+        if (zappingChannelList != null) return
+        val button = playerBinding?.playerChannelListBtt ?: return
+        button.isVisible = true
+        button.setOnClickListener { toggleZappingList(zappingChannelList?.isVisible != true) }
+
+        val panel = LinearLayout(root.context).apply {
+            orientation = LinearLayout.VERTICAL
+            background = GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                intArrayOf(Color.TRANSPARENT, 0x66000000),
+            )
+            elevation = 12.toPx.toFloat()
+            visibility = View.GONE
+        }
+        val recycler = RecyclerView(root.context).apply {
+            layoutManager = LinearLayoutManager(root.context)
+            overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
+            descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+            clipChildren = false
+            clipToPadding = false
+        }
+        val adapter = ZappingChannelAdapter { index, card ->
+            switchToLiveChannel(index, card)
+        }
+        recycler.adapter = adapter
+        panel.addView(recycler, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
+        root.addView(
+            panel,
+            FrameLayout.LayoutParams(if (isLayout(TV or EMULATOR)) 300.toPx else 260.toPx, ViewGroup.LayoutParams.MATCH_PARENT).apply {
+                gravity = Gravity.TOP or Gravity.END
+            }
+        )
+        zappingChannelList = panel
+        zappingChannelRecycler = recycler
+        zappingChannelAdapter = adapter
+
+        val channelOverlay = FrameLayout(root.context).apply {
+            visibility = View.GONE
+            clipChildren = false
+            clipToPadding = false
+        }
+        val overlayPoster = ImageView(root.context).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            )
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            setBackgroundColor(root.context.colorFromAttribute(R.attr.boxItemBackground))
+        }
+        channelOverlay.addView(overlayPoster)
+        root.addView(
+            channelOverlay,
+            FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        )
+        zappingChannelOverlay = channelOverlay
+        zappingChannelOverlayPoster = overlayPoster
+        adapter.submit(session.current()?.channels.orEmpty(), session.current()?.currentIndex ?: 0)
+    }
+
+    private fun toggleZappingList(show: Boolean) {
+        if (show && !isZappingEnabled()) return
+        val panel = zappingChannelList ?: return
+        panel.isVisible = show
+        if (show) {
+            playerHostView?.cancelAutoHide()
+            val state = zappingSession?.current() ?: return
+            zappingChannelAdapter?.submit(state.channels, state.currentIndex)
+            zappingChannelRecycler?.post {
+                val recycler = zappingChannelRecycler ?: return@post
+                val layoutManager = recycler.layoutManager as? LinearLayoutManager ?: return@post
+                val itemHeight = (recycler.width * 0.70f * 9f / 16f).toInt() + 2.toPx
+                val offset = ((recycler.height - itemHeight) / 2).coerceAtLeast(0)
+                layoutManager.scrollToPositionWithOffset(state.currentIndex, offset)
+                recycler.post {
+                    recycler.findViewHolderForAdapterPosition(state.currentIndex)?.itemView?.requestFocus()
+                }
+            }
+        }
+    }
+
+    private fun beginZappingTransition(channel: ZappingChannel, sourceCard: View): Boolean {
+        if (!isZappingEnabled()) return false
+        val root = zappingOverlayParent() ?: return false
+        val overlay = zappingChannelOverlay ?: return false
+        val poster = zappingChannelOverlayPoster ?: return false
+        if (root.width <= 0 || root.height <= 0 || sourceCard.width <= 0 || sourceCard.height <= 0) {
+            return false
+        }
+
+        val sourceLocation = IntArray(2)
+        val rootLocation = IntArray(2)
+        sourceCard.getLocationOnScreen(sourceLocation)
+        root.getLocationOnScreen(rootLocation)
+
+        val sourceScaleX = sourceCard.scaleX.coerceAtLeast(1f)
+        val sourceScaleY = sourceCard.scaleY.coerceAtLeast(1f)
+        val sourceWidth = sourceCard.width * sourceScaleX
+        val sourceHeight = sourceCard.height * sourceScaleY
+        val sourceLeft = (sourceLocation[0] - rootLocation[0]).toFloat() -
+            (sourceWidth - sourceCard.width) / 2f
+        val sourceTop = (sourceLocation[1] - rootLocation[1]).toFloat() -
+            (sourceHeight - sourceCard.height) / 2f
+        val generation = ++zappingOverlayGeneration
+
+        overlay.animate().cancel()
+        poster.animate().cancel()
+        val transitionBitmap = createSoftwareTransitionBitmap(sourceCard) ?: return false
+        zappingTransitionActive = true
+        zappingTransitionPlayer = null
+        poster.setImageDrawable(null)
+        clearZappingTransitionBitmap()
+        zappingTransitionBitmap = transitionBitmap
+        poster.setImageBitmap(transitionBitmap)
+        poster.pivotX = 0f
+        poster.pivotY = 0f
+        poster.translationX = sourceLeft
+        poster.translationY = sourceTop
+        poster.scaleX = sourceWidth / root.width.toFloat()
+        poster.scaleY = sourceHeight / root.height.toFloat()
+        poster.alpha = 1f
+        overlay.isVisible = true
+        binding?.playerView?.alpha = 0f
+
+        zappingChannelList?.animate()?.cancel()
+        zappingChannelList?.animate()?.alpha(0f)?.setDuration(160L)?.setInterpolator(
+            DecelerateInterpolator()
+        )?.withEndAction {
+            if (generation == zappingOverlayGeneration) {
+                zappingChannelList?.isVisible = false
+                zappingChannelList?.alpha = 1f
+            }
+        }?.start()
+
+        poster.animate()
+            .translationX(0f)
+            .translationY(0f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .alpha(0.08f)
+            .setDuration(850L)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                if (generation == zappingOverlayGeneration && zappingTransitionActive) {
+                    poster.alpha = 0.08f
+                }
+            }
+            .start()
+        return true
+    }
+
+    /**
+     * ImageLoader may provide a hardware BitmapDrawable. Copy only the selected
+     * poster to ARGB_8888 before assigning it to the transition ImageView so no
+     * software Canvas ever tries to draw a hardware bitmap.
+     */
+    private fun createSoftwareTransitionBitmap(sourceCard: View): Bitmap? {
+        return try {
+            val card = sourceCard as? ViewGroup ?: return null
+            val content = card.getChildAt(0) as? ViewGroup ?: return null
+            val poster = content.getChildAt(0) as? ImageView ?: return null
+            val bitmap = (poster.drawable as? BitmapDrawable)?.bitmap ?: return null
+            if (bitmap.isRecycled) return null
+            bitmap.copy(Bitmap.Config.ARGB_8888, false)
+        } catch (error: Throwable) {
+            logError(error)
+            null
+        }
+    }
+
+    private fun clearZappingTransitionBitmap() {
+        val bitmap = zappingTransitionBitmap
+        zappingTransitionBitmap = null
+        if (bitmap != null && !bitmap.isRecycled) {
+            bitmap.recycle()
+        }
+    }
+
+    private fun completeZappingTransition() {
+        if (!zappingTransitionActive) return
+        val overlay = zappingChannelOverlay ?: return
+        val poster = zappingChannelOverlayPoster ?: return
+        val generation = zappingOverlayGeneration
+        zappingTransitionPlayer = null
+        binding?.playerView?.animate()
+            ?.alpha(1f)
+            ?.setDuration(280L)
+            ?.setInterpolator(DecelerateInterpolator())
+            ?.start()
+        poster.animate()
+            .alpha(0f)
+            .setDuration(300L)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                if (generation != zappingOverlayGeneration) return@withEndAction
+                overlay.isVisible = false
+                poster.alpha = 1f
+                poster.setImageDrawable(null)
+                clearZappingTransitionBitmap()
+                zappingTransitionActive = false
+            }
+            .start()
+    }
+
+    private fun cancelZappingTransition() {
+        zappingOverlayGeneration++
+        zappingTransitionActive = false
+        zappingTransitionPlayer = null
+        zappingChannelOverlay?.animate()?.cancel()
+        zappingChannelOverlayPoster?.animate()?.cancel()
+        zappingChannelOverlay?.isVisible = false
+        zappingChannelOverlayPoster?.alpha = 1f
+        zappingChannelOverlayPoster?.setImageDrawable(null)
+        clearZappingTransitionBitmap()
+        binding?.playerView?.animate()?.cancel()
+        binding?.playerView?.alpha = 1f
+    }
+
+    override fun handlePlayerBackPressed(): Boolean {
+        if (zappingChannelList?.isVisible == true) {
+            toggleZappingList(false)
+            playerBinding?.playerChannelListBtt?.requestFocus()
+            return true
+        }
+        return false
+    }
+
+    private fun switchToLiveChannel(targetIndex: Int, sourceCard: View? = null): Boolean {
+        if (!isZappingEnabled()) return false
+        val session = zappingSession ?: return false
+        val state = session.current() ?: return false
+        if (targetIndex !in state.channels.indices) return false
+        if (targetIndex == state.currentIndex) {
+            toggleZappingList(false)
+            return true
+        }
+        if (!zappingSwitchInProgress.compareAndSet(false, true)) return true
+
+        val target = state.channels[targetIndex]
+        if (sourceCard == null || !beginZappingTransition(target, sourceCard)) {
+            toggleZappingList(false)
+        }
+        zappingLoadJob?.cancel()
+        zappingLoadJob = viewLifecycleOwner.lifecycleScope.launch {
+            var playbackLoadStarted = false
+            try {
+                val api = getApiFromNameNull(target.apiName)
+                    ?: error("Provider not found: ${target.apiName}")
+                val response = withContext(Dispatchers.IO) {
+                    APIRepository(api).load(target.url)
+                }
+                val load = (response as? Resource.Success)?.value as? LiveStreamLoadResponse
+                    ?: error("Channel did not return a live response: ${target.name}")
+                val episode = buildResultEpisode(
+                    headerName = load.name,
+                    name = load.name,
+                    poster = target.posterUrl,
+                    episode = 0,
+                    data = load.dataUrl,
+                    apiName = load.apiName,
+                    id = "${target.apiName}:${target.url}".hashCode(),
+                    index = 0,
+                    tvType = load.type,
+                    parentId = "${target.apiName}:${target.url}".hashCode(),
+                )
+
+                releasePlayer()
+                viewModel.attachGenerator(RepoLinkGenerator(listOf(episode), page = load), 0)
+                session.select(targetIndex)
+                zappingChannelAdapter?.submit(state.channels, targetIndex)
+                viewModel.loadLinks()
+                playbackLoadStarted = true
+            } catch (error: Throwable) {
+                logError(error)
+                cancelZappingTransition()
+                showToast(activity, error.message ?: getString(R.string.unexpected_error), Toast.LENGTH_SHORT)
+            } finally {
+                if (!playbackLoadStarted) zappingSwitchInProgress.set(false)
+            }
+        }
+        return true
+    }
+
+    override fun handleLiveChannelKey(keyCode: Int): Boolean {
+        if (keyCode != android.view.KeyEvent.KEYCODE_DPAD_UP &&
+            keyCode != android.view.KeyEvent.KEYCODE_DPAD_DOWN
+        ) return false
+        if (isShowing || isDialogOpen()) return false
+        if (!isZappingEnabled() || zappingChannelList?.isVisible == true) return false
+
+        val session = zappingSession ?: return false
+        val context = session.current() ?: return false
+
+        val targetIndex = if (keyCode == android.view.KeyEvent.KEYCODE_DPAD_UP) {
+            context.previousIndex()
+        } else {
+            context.nextIndex()
+        }
+        return switchToLiveChannel(targetIndex)
     }
 
     var maxEpisodeSet: Int? = null
@@ -2246,6 +2629,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         super.onBindingCreated(binding, savedInstanceState)
 
+        val sessionBundle = savedInstanceState?.takeIf { it.getString("uuid") != null } ?: arguments
+        zappingSession = ZappingPlayerLauncher.session(sessionBundle)
+        setupZappingUi()
+
         // Avoid showing no links found
         if (generator == null || index == null) {
             exitPlayer()
@@ -2337,6 +2724,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
         observe(viewModel.loadingLinks) { (loading, instance) ->
             if (instance != viewModel.state.instance) return@observe // Outdated observe
+
+            if (zappingSwitchInProgress.get() && loading !is Resource.Loading) {
+                zappingSwitchInProgress.set(false)
+            }
 
             when (loading) {
                 is Resource.Loading -> {

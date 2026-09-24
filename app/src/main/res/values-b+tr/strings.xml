@@ -128,6 +128,7 @@
     <string name="swipe_to_change_settings_des">Sol ve sağ taraftan yukarı kaydırarak ekran parlaklığı ve sesi ayarla</string>
     <string name="autoplay_next_settings">Sonraki bölümü otomatik oynat</string>
     <string name="autoplay_next_settings_des">Mevcut bölüm bittiğinde sonraki bölüme başla</string>
+    <string name="player_channel_list">Kanal listesi</string>
     <string name="double_tap_to_seek_settings">Çift dokunarak atla</string>
     <string name="double_tap_to_pause_settings">İki kez dokunarak duraklat</string>
     <string name="double_tap_to_seek_amount_settings">Atlanacak süre (Saniye)</string>

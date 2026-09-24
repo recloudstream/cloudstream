@@ -158,6 +158,9 @@
     <string name="swipe_to_change_settings_des">Slide up or down on the left or right side to change brightness or volume</string>
     <string name="autoplay_next_settings">Autoplay next episode</string>
     <string name="autoplay_next_settings_des">Start the next episode when the current one ends</string>
+    <string name="zapping_settings">Zapping</string>
+    <string name="zapping_settings_des">Use DPAD up/down to switch between Live TV channels in the same Home category</string>
+    <string name="player_channel_list">Channel List</string>
     <string name="start_paused_settings">Start videos paused</string>
     <string name="start_paused_settings_des">Reduce stress when selecting sources</string>
     <string name="double_tap_to_seek_settings">Double tap to seek</string>
@@ -372,6 +375,7 @@
     <string name="pref_category_security">Security</string>
     <string name="pref_category_accounts">Accounts</string>
     <string name="pref_category_player_features">Player features</string>
+    <string name="zapping_enabled_key">zapping_enabled_key</string>
     <string name="pref_category_subtitles">Subtitles</string>
     <string name="pref_category_player_layout">Layout</string>
     <string name="pref_category_defaults">Defaults</string>

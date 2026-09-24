@@ -77,6 +77,7 @@ import com.lagradost.cloudstream3.ui.player.LOADTYPE_CHROMECAST
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP_DOWNLOAD
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
+import com.lagradost.cloudstream3.ui.player.ZappingPlayerLauncher
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
@@ -1559,11 +1560,21 @@ class ResultViewModel2 : ViewModel() {
                         callback = {},
                         subtitleCallback = {})
                 } else {
+                    val response = currentResponse
                     activity?.navigate(
                         R.id.global_to_navigation_player,
-                        GeneratorPlayer.newInstance(
-                            generator, index,list
-                        )
+                        if (response?.type == TvType.Live) {
+                            ZappingPlayerLauncher.newInstanceFromPending(
+                                generator = generator,
+                                index = index,
+                                syncData = list,
+                                url = response.url,
+                                apiName = response.apiName,
+                                channelName = response.name,
+                            )
+                        } else {
+                            GeneratorPlayer.newInstance(generator, index, list)
+                        }
                     )
                 }
             }
