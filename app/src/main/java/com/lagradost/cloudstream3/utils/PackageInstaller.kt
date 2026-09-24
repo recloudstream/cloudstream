@@ -52,6 +52,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
         Preparing,
         Downloading,
         Installing,
+        Finished,
         Failed,
     }
 

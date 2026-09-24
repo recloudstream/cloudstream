@@ -186,6 +186,39 @@ object InAppUpdater {
 
     private val updateLock = Mutex()
 
+    private suspend fun Context.downloadUpdateSilently(url: String, version: String): File? {
+        return try {
+            val appUpdateName = "CloudStream-$version"
+            val appUpdateSuffix = "apk"
+            val targetFile = File(this.cacheDir, "$appUpdateName.$appUpdateSuffix")
+
+            if (targetFile.exists() && targetFile.length() > 0) {
+                return targetFile
+            }
+
+            // Delete old downloaded apk files
+            this.cacheDir.listFiles()?.filter {
+                it.name.startsWith("CloudStream") && it.extension == appUpdateSuffix
+            }?.forEach { deleteFileOnExit(it) }
+
+            val tempFile = File.createTempFile("CloudStream_tmp", ".$appUpdateSuffix", this.cacheDir)
+            updateLock.withLock {
+                val sink: BufferedSink = tempFile.sink().buffer()
+                sink.writeAll(app.get(url).body.source())
+                sink.close()
+            }
+
+            if (tempFile.renameTo(targetFile)) {
+                targetFile
+            } else {
+                tempFile
+            }
+        } catch (e: Exception) {
+            logError(e)
+            null
+        }
+    }
+
     private suspend fun Activity.downloadUpdate(url: String): Boolean {
         try {
             Log.d(LOG_TAG, "Downloading update: $url")
@@ -273,6 +306,13 @@ object InAppUpdater {
             return false
         }
 
+        // Silent Background Download first (no notifications, no toast, no UI)
+        val targetVersion = update.updateVersion ?: "latest"
+        val downloadedApk = downloadUpdateSilently(update.updateURL, targetVersion)
+        if (downloadedApk == null || !downloadedApk.exists()) {
+            return false
+        }
+
         runOnUiThread {
             safe {
                 val currentVersion = packageName?.let {
@@ -297,8 +337,6 @@ object InAppUpdater {
                         // Forcefully start any delayed installations
                         if (ApkInstaller.delayedInstaller?.startInstallation() == true) return@setPositiveButton
 
-                        showToast(R.string.download_started, Toast.LENGTH_LONG)
-
                         // Check if the setting hasn't been changed
                         if (settingsManager.getInt(
                                 getString(R.string.apk_installer_key), -1
@@ -317,26 +355,21 @@ object InAppUpdater {
                         )
 
                         when (currentInstaller) {
-                            // New method
+                            // New method (PackageInstaller with progress dialog)
                             0 -> {
-                                val intent = PackageInstallerService.Companion.getIntent(
-                                    this@runAutoUpdate, update.updateURL
+                                // Start progress dialog activity
+                                startActivity(UpdateProgressActivity.intent(this@runAutoUpdate))
+
+                                val intent = PackageInstallerService.getInstallFromFileIntent(
+                                    this@runAutoUpdate, downloadedApk.absolutePath
                                 )
                                 ContextCompat.startForegroundService(
                                     this@runAutoUpdate, intent
                                 )
                             }
-                            // Legacy
+                            // Legacy (System Package Installer)
                             1 -> {
-                                ioSafe {
-                                    if (!downloadUpdate(update.updateURL)) {
-                                        runOnUiThread {
-                                            showToast(
-                                                R.string.download_failed, Toast.LENGTH_LONG
-                                            )
-                                        }
-                                    }
-                                }
+                                openApk(this@runAutoUpdate, Uri.fromFile(downloadedApk))
                             }
                         }
                     }
@@ -350,6 +383,7 @@ object InAppUpdater {
                                     getString(R.string.skip_update_key), update.updateNodeId ?: ""
                                 )
                             }
+                            downloadedApk.delete()
                         }
                     }
                 }

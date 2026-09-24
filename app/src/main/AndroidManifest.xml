@@ -275,6 +275,12 @@
             android:name=".ui.ControllerActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".utils.UpdateProgressActivity"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden"
+            android:exported="false" />
+
         <service
             android:name=".services.PackageInstallerService"
             android:foregroundServiceType="dataSync"

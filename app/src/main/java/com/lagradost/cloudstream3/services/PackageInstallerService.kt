@@ -116,6 +116,7 @@ class PackageInstallerService : Service() {
         val text = when (state) {
             ApkInstaller.InstallProgressStatus.Installing -> R.string.update_notification_installing
             ApkInstaller.InstallProgressStatus.Preparing, ApkInstaller.InstallProgressStatus.Downloading -> R.string.update_notification_downloading
+            ApkInstaller.InstallProgressStatus.Finished -> R.string.download_done
             ApkInstaller.InstallProgressStatus.Failed -> R.string.update_notification_failed
         }
 
@@ -141,12 +142,37 @@ class PackageInstallerService : Service() {
         val id =
             if (state == ApkInstaller.InstallProgressStatus.Failed) UPDATE_NOTIFICATION_ID + 1 else UPDATE_NOTIFICATION_ID
         notificationManager.notify(id, newNotification)
+
+        // Broadcast to UpdateProgressActivity if active
+        try {
+            sendBroadcast(
+                Intent(PROGRESS_UPDATE_ACTION).apply {
+                    putExtra("progress", percentage)
+                    setPackage(packageName)
+                }
+            )
+            sendBroadcast(
+                Intent(STATUS_UPDATE_ACTION).apply {
+                    putExtra("status", state.name)
+                    setPackage(packageName)
+                }
+            )
+        } catch (e: Exception) {
+            logError(e)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val url = intent?.getStringExtra(EXTRA_URL) ?: return START_NOT_STICKY
+        val url = intent?.getStringExtra(EXTRA_URL)
+        val filePath = intent?.getStringExtra(EXTRA_FILE_PATH)
+        if (url == null && filePath == null) return START_NOT_STICKY
+
         ioSafe {
-            downloadUpdate(url)
+            if (filePath != null) {
+                installFromFile(filePath)
+            } else if (url != null) {
+                downloadUpdate(url)
+            }
             // Close the service after the update is done
             // If no sleep then the install prompt may not appear and the notification
             // will disappear instantly
@@ -154,6 +180,47 @@ class PackageInstallerService : Service() {
             this@PackageInstallerService.stopSelf()
         }
         return START_NOT_STICKY
+    }
+
+    private suspend fun installFromFile(filePath: String): Boolean {
+        try {
+            Log.d("PackageInstallerService", "Installing update from file: $filePath")
+            val file = java.io.File(filePath)
+            if (!file.exists()) {
+                updateNotificationProgress(0f, ApkInstaller.InstallProgressStatus.Failed)
+                return false
+            }
+
+            updateLock.withLock {
+                updateNotificationProgress(
+                    0f,
+                    ApkInstaller.InstallProgressStatus.Preparing
+                )
+
+                val inputStream = file.inputStream()
+                installer = ApkInstaller(this)
+                val totalSize = file.length()
+                var currentSize = 0L
+
+                installer?.installApk(this, inputStream, totalSize, { bytesRead ->
+                    currentSize += bytesRead
+                    if (totalSize == 0L) return@installApk
+
+                    val percentage = (currentSize / totalSize.toFloat()).coerceIn(0f, 1f)
+                    updateNotificationProgress(
+                        percentage,
+                        ApkInstaller.InstallProgressStatus.Installing
+                    )
+                }) { status ->
+                    updateNotificationProgress(1f, status)
+                }
+            }
+            return true
+        } catch (e: Exception) {
+            logError(e)
+            updateNotificationProgress(0f, ApkInstaller.InstallProgressStatus.Failed)
+            return false
+        }
     }
 
     override fun onDestroy() {
@@ -172,6 +239,10 @@ class PackageInstallerService : Service() {
 
     companion object {
         private const val EXTRA_URL = "EXTRA_URL"
+        private const val EXTRA_FILE_PATH = "EXTRA_FILE_PATH"
+
+        const val PROGRESS_UPDATE_ACTION = "com.lagradost.cloudstream3.PROGRESS_UPDATE"
+        const val STATUS_UPDATE_ACTION = "com.lagradost.cloudstream3.STATUS_UPDATE"
 
         const val UPDATE_CHANNEL_ID = "cloudstream3.updates"
         const val UPDATE_CHANNEL_NAME = "App Updates"
@@ -184,6 +255,14 @@ class PackageInstallerService : Service() {
         ): Intent {
             return Intent(context, PackageInstallerService::class.java)
                 .putExtra(EXTRA_URL, url)
+        }
+
+        fun getInstallFromFileIntent(
+            context: Context,
+            filePath: String,
+        ): Intent {
+            return Intent(context, PackageInstallerService::class.java)
+                .putExtra(EXTRA_FILE_PATH, filePath)
         }
     }
 }
