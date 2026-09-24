@@ -41,6 +41,7 @@ class SetupFragmentMedia : BaseFragment<FragmentSetupMediaBinding>(
 
                     val stored = settingsManager.getStringSet(prefKey, null)
                     sortedTypes.forEachIndexed { index, type ->
+                        // All media types except NSFW are checked by default
                         val isChecked = stored?.contains(type.ordinal.toString())
                             ?: (type != TvType.NSFW)
                         it.setItemChecked(index, isChecked)
@@ -52,6 +53,8 @@ class SetupFragmentMedia : BaseFragment<FragmentSetupMediaBinding>(
                             .map { type -> type.ordinal.toString() }
                             .toSet()
                         settingsManager.edit { putStringSet(prefKey, values) }
+
+                        // Regenerate set homepage
                         DataStoreHelper.currentHomePage = null
                     }
 
