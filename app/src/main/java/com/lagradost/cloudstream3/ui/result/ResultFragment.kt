@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.os.Bundle
+import android.util.LruCache
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -14,6 +15,8 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.SeasonData
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiDubstatusSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
@@ -144,6 +147,8 @@ object ResultFragment {
     private const val START_VALUE_BUNDLE = "startValue"
     private const val RESTART_BUNDLE = "restart"
 
+    private val logoTitleToggleCache = LruCache<String, Boolean>(100)
+
     fun newInstance(
         card: SearchResponse, startAction: Int = 0, startValue: Int? = null
     ): Bundle {
@@ -246,8 +251,25 @@ object ResultFragment {
         logoView: ImageView,
         titleView: TextView
     ) {
-        // Cancel it, as we want to remove the listener onSuccess race condition
+        // Cancel any pending image load to avoid race conditions when scrolling fast
         logoView.dispose()
+
+        // Clean up the views completely before we do anything. 
+        // This stops weird state bleeding when RecyclerView recycles these views.
+        logoView.clearAnimation()
+        titleView.clearAnimation()
+        logoView.setOnClickListener(null)
+        titleView.setOnClickListener(null)
+        logoView.isEnabled = true
+        titleView.isEnabled = true
+        logoView.alpha = 1f
+        titleView.alpha = 1f
+
+        // CloudStream convention for TV touch focus
+        logoView.isFocusable = true
+        logoView.isFocusableInTouchMode = isLayout(TV)
+        titleView.isFocusable = true
+        titleView.isFocusableInTouchMode = isLayout(TV)
 
         if (url.isNullOrBlank()) {
             logoView.isVisible = false
@@ -255,29 +277,54 @@ object ResultFragment {
             return
         }
 
-        logoView.isVisible = true
-        titleView.isVisible = false
+        // Grab the toggle state from our session cache (in case they've clicked it before)
+        val isShowingTitle = logoTitleToggleCache.get(url) == true
+
+        logoView.isVisible = !isShowingTitle
+        titleView.isVisible = isShowingTitle
+
+        // Hiding logo, showing title
+        logoView.setOnClickListener {
+            val wasFocused = logoView.isFocused
+            logoTitleToggleCache.put(url, true)
+            logoView.isVisible = false
+            titleView.isVisible = true
+            if (wasFocused) titleView.requestFocus()
+        }
+
+        // Hiding title, showing logo
+        titleView.setOnClickListener {
+            val wasFocused = titleView.isFocused
+            logoTitleToggleCache.put(url, false)
+            logoView.isVisible = true
+            titleView.isVisible = false
+            if (wasFocused) logoView.requestFocus()
+        }
 
         logoView.loadImage(
             imageData = UiImage.Image(url, headers = headers),
             builder = {
                 listener(
                     onSuccess = { _, _ ->
-                        logoView.isVisible = true
-                        titleView.isVisible = false
+                        // Only show the logo if the user hasn't already toggled to the title while we were loading
+                        if (logoTitleToggleCache.get(url) != true) {
+                            logoView.isVisible = true
+                            titleView.isVisible = false
+                        }
                     },
                     onError = { _, _ ->
+                        // If the logo is broken or missing, force the title text and disable the toggle so they aren't stuck with a blank image
                         logoView.isVisible = false
                         titleView.isVisible = true
+                        titleView.setOnClickListener(null)
                     },
                     onCancel = {
-                        // If we manually cancel, then it should not do anything
+                        // If we manually cancelled it (like when scrolling away), just do nothing
                     }
                 )
             }
         )
     }
-
     fun Fragment.getStoredData(): StoredData? {
         val context = this.context ?: this.activity ?: return null
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
