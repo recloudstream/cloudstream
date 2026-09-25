@@ -1725,7 +1725,11 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun isLiveZapping(): Boolean {
         return isZappingEnabled() &&
-            viewModel.generator is LiveZappingGenerator
+            (viewModel.generator as? LiveZappingGenerator)?.videos?.size?.let { it > 1 } == true
+    }
+
+    override fun shouldPreserveLiveDpadNavigation(): Boolean {
+        return (currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true && !isLiveZapping()
     }
 
     private fun switchToLiveChannel(targetIndex: Int): Boolean {

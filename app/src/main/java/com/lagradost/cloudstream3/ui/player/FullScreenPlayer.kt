@@ -854,6 +854,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
      */
     protected open fun handleLiveChannelKey(keyCode: Int): Boolean = false
 
+    /** Live players may leave DPAD navigation to the focused view when zapping is inactive. */
+    protected open fun shouldPreserveLiveDpadNavigation(): Boolean = false
+
     override fun playerStatusChanged() {
         super.playerStatusChanged()
         scheduleMetadataVisibility()
@@ -982,6 +985,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 }
                 if (handleLiveChannelKey(keyCode)) {
                     return true
+                }
+                if (shouldPreserveLiveDpadNavigation()) {
+                    return null
                 }
                 onClickChange()
             }
