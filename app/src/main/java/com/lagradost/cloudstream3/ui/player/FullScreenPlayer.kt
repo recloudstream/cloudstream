@@ -857,6 +857,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     /** Live players may leave DPAD navigation to the focused view when zapping is inactive. */
     protected open fun shouldPreserveLiveDpadNavigation(): Boolean = false
 
+    /** Episode overlays pause regular video, but live channel lists may stay non-blocking. */
+    protected open fun shouldPauseForEpisodeOverlay(): Boolean = true
+
     override fun playerStatusChanged() {
         super.playerStatusChanged()
         scheduleMetadataVisibility()
@@ -1352,12 +1355,16 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     private fun toggleEpisodesOverlay(show: Boolean) {
         if (show && !isShowingEpisodeOverlay) {
             previousPlayStatus = player.getIsPlaying()
-            player.handleEvent(CSPlayerEvent.Pause)
+            if (shouldPauseForEpisodeOverlay()) {
+                player.handleEvent(CSPlayerEvent.Pause)
+            }
             showEpisodesOverlay()
             isShowingEpisodeOverlay = true
             animateEpisodesOverlay(true)
         } else if (isShowingEpisodeOverlay) {
-            if (previousPlayStatus) player.handleEvent(CSPlayerEvent.Play)
+            if (previousPlayStatus && shouldPauseForEpisodeOverlay()) {
+                player.handleEvent(CSPlayerEvent.Play)
+            }
             isShowingEpisodeOverlay = false
             animateEpisodesOverlay(false)
         }
