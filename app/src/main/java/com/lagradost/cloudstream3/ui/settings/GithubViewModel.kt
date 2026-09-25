@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.compose.ActionHandler
@@ -59,8 +60,51 @@ interface AppUpdater {
     suspend fun update(
         settings: AppSettings,
         url: String,
-        downloadProgress: (Long, Long?) -> Unit
+        digest: DigestPair?,
+        downloadProgress: (Long, Long?) -> Unit,
     )
+}
+
+/** The digest pair to verify that a file is correctly downloaded */
+data class DigestPair(
+    val algorithm : String,
+    val digest : ByteArray,
+) {
+    companion object {
+        // "sha256:XXXX" or "sha256-XXXX" -> "sha256", bytearray(XXXX)
+        fun parse(digestPair: String?) : DigestPair? {
+            if(digestPair == null) return null
+
+            var split = digestPair.split(":", limit = 2)
+            if(split.size != 2) {
+                split = digestPair.split("-", limit = 2)
+            }
+            if(split.size != 2) {
+                return null
+            }
+
+            val digestAlgorithm = split.getOrNull(0) ?: return null
+            val digestByteArray = safe { split.getOrNull(1)?.hexToByteArray() } ?: return null
+
+            return DigestPair(digestAlgorithm, digestByteArray)
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        val other = other as? DigestPair ?: return false
+
+        if (algorithm != other.algorithm) return false
+        if (!digest.contentEquals(other.digest)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = algorithm.hashCode()
+        result = 31 * result + digest.contentHashCode()
+        return result
+    }
 }
 
 /**
@@ -125,7 +169,7 @@ class GithubViewModel(
 
             is GithubAction.Update -> {
                 ioSafe {
-                    installUpdate(action.file.downloadUrl)
+                    installUpdate(action.file.downloadUrl, action.file.digest)
                 }
             }
         }
@@ -149,8 +193,12 @@ class GithubViewModel(
         }
     }
 
-    private suspend fun installUpdate(url: String) = dispatchUpdate {
-        updater.update(settings = settings, url = url) { progress, total ->
+    private suspend fun installUpdate(url: String, digestPair: String?) = dispatchUpdate {
+        updater.update(
+            settings = settings,
+            url = url,
+            digest = DigestPair.parse(digestPair),
+        ) { progress, total ->
             updateState {
                 copy(
                     dialog = dialog?.copy(

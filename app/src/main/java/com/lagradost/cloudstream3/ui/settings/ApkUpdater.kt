@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.receivers.PackageInstallerStatusReceiver
 import com.lagradost.cloudstream4.AppSettings
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.security.DigestException
+import java.security.MessageDigest
 
 object ApkUpdater : AppUpdater {
     private const val APP_UPDATE_NAME = "CloudStream"
@@ -31,6 +34,7 @@ object ApkUpdater : AppUpdater {
     override suspend fun update(
         settings: AppSettings,
         url: String,
+        digest: DigestPair?,
         downloadProgress: (Long, Long?) -> Unit
     ) {
         val activity = CommonActivity.activity ?: throw ErrorLoadingException("No activity found")
@@ -45,11 +49,17 @@ object ApkUpdater : AppUpdater {
 
             when (settings.updates.apkInstaller.get()) {
                 0 -> {
-                    packageInstallerDownloader(activity, readStream, length, downloadProgress)
+                    packageInstallerDownloader(
+                        activity,
+                        readStream,
+                        length,
+                        digest,
+                        downloadProgress
+                    )
                 }
 
                 else -> {
-                    legacyDownloader(activity, readStream, length, downloadProgress)
+                    legacyDownloader(activity, readStream, length, digest, downloadProgress)
                 }
             }
         }
@@ -71,7 +81,8 @@ object ApkUpdater : AppUpdater {
         activity: Activity,
         readStream: InputStream,
         length: Long?,
-        downloadProgress: (Long, Long?) -> Unit
+        digest: DigestPair?,
+        downloadProgress: (Long, Long?) -> Unit,
     ) = withContext(Dispatchers.IO) {
         var sessionId: Int? = null
         val packageInstaller = activity.packageManager.packageInstaller
@@ -92,7 +103,7 @@ object ApkUpdater : AppUpdater {
             // We do not need to buffer this because transfer has large writes
             session.openWrite(activity.packageName, 0, length ?: -1L)
                 .use { writeStream ->
-                    transfer(writeStream, readStream, length, downloadProgress)
+                    transfer(writeStream, readStream, length, downloadProgress, digest)
                     session.fsync(writeStream)
                 }
 
@@ -116,13 +127,41 @@ object ApkUpdater : AppUpdater {
         }
     }
 
+    /**
+     * Write the "readStream" to the "writeStream", while notifying the "downloadProgress" and
+     * calculating the digest
+     *
+     * ------------------------------------------------------------------------------------------
+     *
+     * throws a DigestException if the Digest can be calculated (non-null + correct algorithm),
+     * and is mismatched
+     *
+     * throws a CancellationException if canceled, but may not be "instant" if the read is blocking
+     *
+     * throws IOException and similar for reading
+     *
+     * ------------------------------------------------------------------------------------------
+     *
+     * In case of crashes from the digest, we ignore it as we do not want to "block" someone from
+     * updating if they got a broken OS without the desired algorithm or implementation.
+     *
+     * This is because a malicious CDN should not be able to "crash" the algorithm, but a broken
+     * OS will. And recovering from a broken OS by ignoring it is better than refusing it.
+     * */
     @Throws
     suspend fun transfer(
         writeStream: OutputStream,
         readStream: InputStream,
         length: Long?,
-        downloadProgress: (Long, Long?) -> Unit
+        downloadProgress: (Long, Long?) -> Unit,
+        digest: DigestPair?,
     ) = withContext(Dispatchers.IO) {
+        val md = digest?.algorithm?.let { digestAlgorithm ->
+            safe {
+                MessageDigest.getInstance(digestAlgorithm)
+            }
+        }
+
         val context = currentCoroutineContext()
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         var read: Int
@@ -131,11 +170,21 @@ object ApkUpdater : AppUpdater {
                 .also { read = it }) >= 0
         ) {
             writeStream.write(buffer, 0, read)
+
+            safe {
+                md?.update(buffer, 0, read)
+            }
+
             transferred += read.toLong()
             downloadProgress(transferred, length)
             context.ensureActive()
         }
         writeStream.flush()
+
+        val check = safe { md?.digest() }
+        if (check != null && !check.contentEquals(digest?.digest)) {
+            throw DigestException("Mismatched digest on transfer ${digest?.algorithm} : ${check.toHexString()} / ${digest?.digest?.toHexString()}")
+        }
     }
 
     @Throws
@@ -143,13 +192,14 @@ object ApkUpdater : AppUpdater {
         activity: Activity,
         readStream: InputStream,
         length: Long?,
+        digest: DigestPair?,
         downloadProgress: (Long, Long?) -> Unit
     ) = withContext(Dispatchers.IO) {
         val downloadedFile = File.createTempFile(APP_UPDATE_NAME, ".$APP_UPDATE_SUFFIX")
 
         // We do not need to buffer this because transfer has large writes
         downloadedFile.outputStream().use { writeStream ->
-            transfer(writeStream, readStream, length, downloadProgress)
+            transfer(writeStream, readStream, length, downloadProgress, digest)
         }
 
         openApk(activity, downloadedFile)
