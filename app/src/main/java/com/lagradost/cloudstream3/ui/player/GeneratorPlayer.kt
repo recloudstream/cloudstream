@@ -187,6 +187,12 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var isPlayerActive: AtomicBoolean = AtomicBoolean(false)
     private var isNextEpisode: Boolean = false // this is used to reset the watch time
 
+    private val stuckBufferingWatcher = StuckBufferingWatcher(
+        isBuffering = { currentPlayerStatus == CSPlayerLoading.IsBuffering },
+        currentPosition = { player.getPosition() ?: 0L },
+        onSwitchSource = ::autoSwitchFromStall,
+    )
+
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
     private val allMeta: List<ResultEpisode>?
         get() = viewModel.state.generatorState?.allMeta?.filterIsInstance<ResultEpisode>()
@@ -547,6 +553,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             player.addTimeStamps(emptyList()) // clear stamps
             // Resets subtitle delay, as we watch some other content
             player.setSubtitleOffset(0)
+            stuckBufferingWatcher.reset() // new episode/link: restart the stall counters
         }
     }
 
@@ -1564,6 +1571,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun playerError(exception: Throwable) {
         currentSelectedLink?.let { link ->
+            StuckBufferingWatcher.recordHostFailure(link.first?.url)
             viewModel.modifyState { this.addError(link) }
         }
 
@@ -1627,6 +1635,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
         loadLink(firstAvailableLink, false)
         showPlayerMetadata()
+        stuckBufferingWatcher.start()
     }
 
     private fun showPlayerMetadata() {
@@ -1714,9 +1723,18 @@ class GeneratorPlayer : FullScreenPlayer() {
         loadLink(nextLink.link, true)
     }
 
+    /** Called by [StuckBufferingWatcher] when the current source is stuck buffering. */
+    private fun autoSwitchFromStall() {
+        if (!hasNextMirror()) return
+        StuckBufferingWatcher.recordHostFailure(currentSelectedLink?.first?.url)
+        showToast(activity?.getString(R.string.auto_switch_source_toast))
+        nextMirror()
+    }
+
     override fun onDestroy() {
         ResultFragment.updateUI()
         currentVerifyLink?.cancel()
+        stuckBufferingWatcher.stop()
         super.onDestroy()
     }
 
