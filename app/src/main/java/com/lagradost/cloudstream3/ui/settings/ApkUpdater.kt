@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import okhttp3.ResponseBody
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -42,14 +41,15 @@ object ApkUpdater : AppUpdater {
         val body = request.body
         body.use { body ->
             val length = length ?: body.contentLength()
+            val readStream = body.byteStream()
 
             when (settings.updates.apkInstaller.get()) {
                 0 -> {
-                    packageInstallerDownloader(activity, body, length, downloadProgress)
+                    packageInstallerDownloader(activity, readStream, length, downloadProgress)
                 }
 
                 else -> {
-                    legacyDownloader(activity, body, length, downloadProgress)
+                    legacyDownloader(activity, readStream, length, downloadProgress)
                 }
             }
         }
@@ -63,12 +63,13 @@ object ApkUpdater : AppUpdater {
             deleteFileOnExit(it)
         }
     }
+
     /** https://medium.com/@solrudev/painless-building-of-an-android-package-installer-app-d5a09b5df432 */
     @SuppressLint("RequestInstallPackagesPolicy")
     @Throws
     suspend fun packageInstallerDownloader(
         activity: Activity,
-        body: ResponseBody,
+        readStream: InputStream,
         length: Long?,
         downloadProgress: (Long, Long?) -> Unit
     ) = withContext(Dispatchers.IO) {
@@ -87,7 +88,6 @@ object ApkUpdater : AppUpdater {
 
             sessionId = packageInstaller.createSession(installParams)
             val session = packageInstaller.openSession(sessionId)
-            val readStream = body.byteStream()
 
             // We do not need to buffer this because transfer has large writes
             session.openWrite(activity.packageName, 0, length ?: -1L)
@@ -102,7 +102,8 @@ object ApkUpdater : AppUpdater {
             } else {
                 PendingIntent.FLAG_UPDATE_CURRENT
             }
-            val receiverPendingIntent = PendingIntent.getBroadcast(activity, 0, receiverIntent, flags)
+            val receiverPendingIntent =
+                PendingIntent.getBroadcast(activity, 0, receiverIntent, flags)
 
             // Avoid delayed updates, and just commit instantly
             session.commit(receiverPendingIntent.intentSender)
@@ -140,12 +141,11 @@ object ApkUpdater : AppUpdater {
     @Throws
     suspend fun legacyDownloader(
         activity: Activity,
-        body: ResponseBody,
+        readStream: InputStream,
         length: Long?,
         downloadProgress: (Long, Long?) -> Unit
     ) = withContext(Dispatchers.IO) {
         val downloadedFile = File.createTempFile(APP_UPDATE_NAME, ".$APP_UPDATE_SUFFIX")
-        val readStream = body.byteStream()
 
         // We do not need to buffer this because transfer has large writes
         downloadedFile.outputStream().use { writeStream ->
