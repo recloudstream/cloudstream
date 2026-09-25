@@ -13,6 +13,8 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Spanned
 import android.util.Log
+import android.view.InputDevice
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -1752,11 +1754,18 @@ class GeneratorPlayer : FullScreenPlayer() {
         return true
     }
 
-    override fun handleLiveChannelKey(keyCode: Int): Boolean {
+    override fun handleLiveChannelKey(event: KeyEvent): Boolean {
+        if (event.action != KeyEvent.ACTION_DOWN || event.repeatCount > 0) return false
         if (isShowing || isDialogOpen() || !isLiveZapping()) return false
-        return when (keyCode) {
-            android.view.KeyEvent.KEYCODE_DPAD_UP -> switchToLiveChannel(viewModel.episodeIndex - 1)
-            android.view.KeyEvent.KEYCODE_DPAD_DOWN -> switchToLiveChannel(viewModel.episodeIndex + 1)
+        if (event.isFromSource(InputDevice.SOURCE_KEYBOARD)) return false
+        if (!event.isFromSource(InputDevice.SOURCE_DPAD) &&
+            !event.isFromSource(InputDevice.SOURCE_GAMEPAD) &&
+            !event.isFromSource(InputDevice.SOURCE_JOYSTICK)
+        ) return false
+
+        return when (event.keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> switchToLiveChannel(viewModel.episodeIndex - 1)
+            KeyEvent.KEYCODE_DPAD_DOWN -> switchToLiveChannel(viewModel.episodeIndex + 1)
             else -> false
         }
     }

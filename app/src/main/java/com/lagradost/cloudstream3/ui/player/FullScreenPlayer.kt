@@ -857,7 +857,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
      * Gives specialised players a chance to consume TV channel-style DPAD input while the
      * controls are hidden. Normal player navigation remains unchanged when this returns false.
      */
-    protected open fun handleLiveChannelKey(keyCode: Int): Boolean = false
+    protected open fun handleLiveChannelKey(event: KeyEvent): Boolean = false
 
     /** Live players may leave DPAD navigation to the focused view when zapping is inactive. */
     protected open fun shouldPreserveLiveDpadNavigation(): Boolean = false
@@ -900,7 +900,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         playerHostView?.requestUpdateBrightnessOverlayOnNextLayout()
     }
 
-    private fun handleKeyDownEvent(keyCode: Int): Boolean? {
+    private fun handleKeyDownEvent(event: KeyEvent): Boolean? {
+        val keyCode = event.keyCode
         // adb shell input keyevent [INT]
         when (keyCode) {
             KeyEvent.KEYCODE_FORWARD, KeyEvent.KEYCODE_D, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
@@ -994,7 +995,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 if (isShowing || isShowingEpisodeOverlay || isDialogOpen()) {
                     return null
                 }
-                if (handleLiveChannelKey(keyCode)) {
+                if (handleLiveChannelKey(event)) {
                     return true
                 }
                 if (shouldPreserveLiveDpadNavigation()) {
@@ -1054,7 +1055,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         val keyCode = event.keyCode
 
         if (event.action == KeyEvent.ACTION_DOWN) {
-            val value = handleKeyDownEvent(keyCode)
+            val value = handleKeyDownEvent(event)
             if (value != null) {
                 return value
             }
