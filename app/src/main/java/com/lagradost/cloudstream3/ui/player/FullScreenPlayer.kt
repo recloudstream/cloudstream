@@ -773,6 +773,19 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             val showPlayerEpisodes = !isGone && isThereEpisodes()
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
+            if (isLayout(TV or EMULATOR)) {
+                val channelSelectorFocus = isLiveChannelSelector()
+                playerGoForward.nextFocusRightId = if (channelSelectorFocus) {
+                    playerEpisodesButton.id
+                } else {
+                    downloadHeaderToggle.id
+                }
+                playerEpisodesButton.nextFocusLeftId = if (channelSelectorFocus) {
+                    playerGoForward.id
+                } else {
+                    downloadHeaderToggle.id
+                }
+            }
             if (isLiveChannelSelector()) {
                 playerEpisodesButton.setImageResource(R.drawable.baseline_list_alt_24)
                 playerEpisodesButton.contentDescription = getString(R.string.player_channel_list)
