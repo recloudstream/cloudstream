@@ -1736,6 +1736,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         return !((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true && isLiveZapping())
     }
 
+    override fun isLiveChannelSelector(): Boolean {
+        return (currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true && isLiveZapping()
+    }
+
     private fun switchToLiveChannel(targetIndex: Int): Boolean {
         if (!isLiveZapping()) return false
         val generator = viewModel.generator as? LiveZappingGenerator ?: return false

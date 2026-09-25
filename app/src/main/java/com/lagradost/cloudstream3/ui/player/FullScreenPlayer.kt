@@ -773,6 +773,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             val showPlayerEpisodes = !isGone && isThereEpisodes()
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
+            if (isLiveChannelSelector()) {
+                playerEpisodesButton.setImageResource(R.drawable.baseline_list_alt_24)
+                playerEpisodesButton.contentDescription = getString(R.string.player_channel_list)
+                playerEpisodesButtonText.setText(R.string.player_channel_list)
+            }
             playerVideoTitleHolder.isGone = togglePlayerTitleGone || playerVideoTitle.text.isBlank()
             playerVideoTitleRez.isGone = isGone || playerVideoTitleRez.text.isBlank()
             playerEpisodeFiller.isGone = isGone
@@ -859,6 +864,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
     /** Episode overlays pause regular video, but live channel lists may stay non-blocking. */
     protected open fun shouldPauseForEpisodeOverlay(): Boolean = true
+
+    /** Live zapping may label the existing episode selector as a channel list. */
+    protected open fun isLiveChannelSelector(): Boolean = false
 
     override fun playerStatusChanged() {
         super.playerStatusChanged()

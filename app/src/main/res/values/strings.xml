@@ -230,6 +230,7 @@
     <string name="no_season">No Season</string>
     <string name="episode">Episode</string>
     <string name="episodes">Episodes</string>
+    <string name="player_channel_list">Channel List</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="episode_upcoming_format" formatted="true">Upcoming in %s</string>
