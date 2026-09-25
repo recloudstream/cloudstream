@@ -1120,20 +1120,10 @@
                             android:id="@+id/player_tracks_btt"
                             style="@style/VideoButtonTV"
                             android:nextFocusLeft="@id/player_sources_btt"
-                            android:nextFocusRight="@id/player_channel_list_btt"
+                            android:nextFocusRight="@id/player_skip_op"
                             android:nextFocusUp="@id/player_pause_play"
                             android:text="@string/tracks"
                             app:icon="@drawable/ic_baseline_equalizer_24" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/player_channel_list_btt"
-                            style="@style/VideoButtonTV"
-                            android:nextFocusLeft="@id/player_tracks_btt"
-                            android:nextFocusRight="@id/player_skip_op"
-                            android:nextFocusUp="@id/player_pause_play"
-                            android:text="@string/player_channel_list"
-                            android:visibility="gone"
-                            app:icon="@drawable/baseline_list_alt_24" />
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>

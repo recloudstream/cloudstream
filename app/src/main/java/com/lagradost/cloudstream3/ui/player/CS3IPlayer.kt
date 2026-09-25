@@ -1639,7 +1639,6 @@ class CS3IPlayer : IPlayer {
 
                 override fun onRenderedFirstFrame() {
                     super.onRenderedFirstFrame()
-                    event(FirstFrameRenderedEvent(exoPlayer))
                     onRenderFirst()
                     updatedTime(source = PlayerEventSource.Player)
                 }

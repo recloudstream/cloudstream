@@ -160,7 +160,6 @@
     <string name="autoplay_next_settings_des">Start the next episode when the current one ends</string>
     <string name="zapping_settings">Zapping</string>
     <string name="zapping_settings_des">Use DPAD up/down to switch between Live TV channels in the same Home category</string>
-    <string name="player_channel_list">Channel List</string>
     <string name="start_paused_settings">Start videos paused</string>
     <string name="start_paused_settings_des">Reduce stress when selecting sources</string>
     <string name="double_tap_to_seek_settings">Double tap to seek</string>

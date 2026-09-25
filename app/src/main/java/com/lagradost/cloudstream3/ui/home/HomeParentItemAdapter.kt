@@ -17,9 +17,7 @@ import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.newSharedPool
-import com.lagradost.cloudstream3.ui.player.PendingZappingStore
-import com.lagradost.cloudstream3.ui.player.ZappingChannel
-import com.lagradost.cloudstream3.ui.player.ZappingContext
+import com.lagradost.cloudstream3.ui.player.LiveZappingGenerator
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
@@ -47,17 +45,22 @@ open class ParentItemAdapter(
     id,
     diffCallback = BaseDiffCallback(
         itemSame = { a, b -> a.list.name == b.list.name },
-        contentSame = { a, b -> a.list.list == b.list.list }
-    )
+        contentSame = { a, b ->
+            a.list.list == b.list.list
+        })
 ) {
     companion object {
-        val sharedPool = newSharedPool { setMaxRecycledViews(CONTENT, 4) }
+        val sharedPool =
+            newSharedPool { setMaxRecycledViews(CONTENT, 4) }
     }
 
     data class ParentItemHolder(val binding: ViewBinding) : ViewHolderState<Bundle>(binding) {
         override fun save(): Bundle = Bundle().apply {
             val recyclerView = (binding as? HomepageParentBinding)?.homeChildRecyclerview
-            putParcelable("value", recyclerView?.layoutManager?.onSaveInstanceState())
+            putParcelable(
+                "value",
+                recyclerView?.layoutManager?.onSaveInstanceState()
+            )
             (recyclerView?.adapter as? BaseAdapter<*, *>)?.save(recyclerView)
         }
 
@@ -68,11 +71,18 @@ open class ParentItemAdapter(
         }
     }
 
-    override fun submitList(list: Collection<HomeViewModel.ExpandableHomepageList>?, commitCallback: Runnable?) {
+    override fun submitList(
+        list: Collection<HomeViewModel.ExpandableHomepageList>?,
+        commitCallback: Runnable?
+    ) {
         super.submitList(list?.sortedBy { it.list.list.isEmpty() }, commitCallback)
     }
 
-    override fun onUpdateContent(holder: ViewHolderState<Bundle>, item: HomeViewModel.ExpandableHomepageList, position: Int) {
+    override fun onUpdateContent(
+        holder: ViewHolderState<Bundle>,
+        item: HomeViewModel.ExpandableHomepageList,
+        position: Int
+    ) {
         val binding = holder.view
         if (binding !is HomepageParentBinding) return
         (binding.homeChildRecyclerview.adapter as? HomeChildItemAdapter)?.submitList(item.list.list)
@@ -85,22 +95,17 @@ open class ParentItemAdapter(
                 it.url == callback.card.url && it.apiName == callback.card.apiName
             }
             if (currentIndex >= 0 && channels.isNotEmpty()) {
-                PendingZappingStore.put(
-                    callback.card.url,
-                    callback.card.apiName,
-                    ZappingContext(
-                        channels = channels.map {
-                            ZappingChannel(it.name, it.url, it.apiName, it.posterUrl)
-                        },
-                        currentIndex = currentIndex,
-                    )
-                )
+                LiveZappingGenerator.remember(callback.card, channels)
             }
         }
         clickCallback(callback)
     }
 
-    override fun onBindContent(holder: ViewHolderState<Bundle>, item: HomeViewModel.ExpandableHomepageList, position: Int) {
+    override fun onBindContent(
+        holder: ViewHolderState<Bundle>,
+        item: HomeViewModel.ExpandableHomepageList,
+        position: Int
+    ) {
         val startFocus = R.id.nav_rail_view
         val endFocus = FOCUS_SELF
         val binding = holder.view
@@ -131,18 +136,37 @@ open class ParentItemAdapter(
                 }
             }
 
-            homeChildRecyclerview.setLinearListLayout(isHorizontal = true, nextLeft = startFocus, nextRight = endFocus)
+            homeChildRecyclerview.setLinearListLayout(
+                isHorizontal = true,
+                nextLeft = startFocus,
+                nextRight = endFocus,
+            )
             homeChildMoreInfo.text = info.name
 
-            homeChildRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            homeChildRecyclerview.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
                 var expandCount = 0
                 val name = item.list.name
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+
+                override fun onScrollStateChanged(
+                    recyclerView: RecyclerView,
+                    newState: Int
+                ) {
                     super.onScrollStateChanged(recyclerView, newState)
+
                     val adapter = recyclerView.adapter
                     if (adapter !is HomeChildItemAdapter) return
+
                     val count = adapter.itemCount
                     val hasNext = adapter.hasNext
+                    /*println(
+                        "scolling ${recyclerView.isRecyclerScrollable()} ${
+                            recyclerView.canScrollHorizontally(
+                                1
+                            )
+                        }"
+                    )*/
+                    //!recyclerView.canScrollHorizontally(1)
                     if (!recyclerView.isRecyclerScrollable() && hasNext && expandCount != count) {
                         expandCount = count
                         expandCallback?.invoke(name)
@@ -150,7 +174,12 @@ open class ParentItemAdapter(
                 }
             })
 
-            if (isLayout(PHONE)) homeChildMoreInfo.setOnClickListener { moreInfoClickCallback.invoke(item) }
+            //(recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
+            if (isLayout(PHONE)) {
+                homeChildMoreInfo.setOnClickListener {
+                    moreInfoClickCallback.invoke(item)
+                }
+            }
         }
     }
 
@@ -160,13 +189,16 @@ open class ParentItemAdapter(
             isLayout(EMULATOR) -> R.layout.homepage_parent_emulator
             else -> R.layout.homepage_parent
         }
+
         val inflater = LayoutInflater.from(parent.context)
         val binding = try {
             HomepageParentBinding.bind(inflater.inflate(layoutResId, parent, false))
         } catch (t: Throwable) {
             logError(t)
+            // just in case someone forgot we don't want to crash
             HomepageParentBinding.inflate(inflater)
         }
+
         return ParentItemHolder(binding)
     }
 }

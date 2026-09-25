@@ -129,8 +129,6 @@ class PlayerView @JvmOverloads constructor(
         fun playerError(exception: Throwable) {}
         /** Called after [PlayerView] finishes its own player-attached setup (MediaSession, ExoPlayer view). */
         fun playerUpdated(player: Any?) {}
-        /** Called when the current player renders its first video frame. */
-        fun playerFirstFrameRendered(player: Any?) {}
         /** Called on a short single-tap on empty player area (no swipe, no double-tap). */
         fun onSingleTap() {}
         /** Called when the hold-for-speedup gesture starts (show=true) or ends (show=false). */
@@ -753,7 +751,6 @@ class PlayerView @JvmOverloads constructor(
                 callbacks?.playerDimensionsLoaded(event.width, event.height)
             }
             is PlayerAttachedEvent -> playerUpdated(event.player)
-            is FirstFrameRenderedEvent -> callbacks?.playerFirstFrameRendered(event.player)
             is SubtitlesUpdatedEvent -> callbacks?.subtitlesChanged()
             is TimestampSkippedEvent -> callbacks?.onTimestampSkipped(event.timestamp)
             is TimestampInvokedEvent -> callbacks?.onTimestamp(event.timestamp)
