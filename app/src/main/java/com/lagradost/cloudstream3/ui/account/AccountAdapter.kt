@@ -57,8 +57,9 @@ class AccountAdapter(
                 accountName.text = item.name
                 accountImage.loadImage(item.image)
                 lockIcon.isVisible = item.lockPin != null
+                root.isSelected = isLastUsedAccount
+                cardView.isSelected = isLastUsedAccount
 
-                if (isTv && isLastUsedAccount) root.requestFocus()
                 if (!isTv) cardView.setRippleForeground()
 
                 if (!isTv) {
@@ -86,8 +87,9 @@ class AccountAdapter(
                 accountName.text = item.name
                 accountImage.loadImage(item.image)
                 lockIcon.isVisible = item.lockPin != null
+                root.isSelected = isLastUsedAccount
+                cardView.isSelected = isLastUsedAccount
 
-                if (isTv && isLastUsedAccount) root.requestFocus()
                 if (!isTv) cardView.setRippleForeground()
 
                 root.setOnClickListener {
