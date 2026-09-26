@@ -33,6 +33,7 @@ kotlin {
         }
 
         commonMain.dependencies {
+            implementation(libs.coil.network.ktor3)
             implementation(libs.bundles.compose)
             implementation(libs.kotlinx.collections.immutable)
             implementation(project(":library"))
@@ -41,6 +42,15 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.activity.compose)
             implementation(libs.preference.ktx)
+            implementation(libs.ktor.client.android)
+        }
+
+        appleMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.java)
         }
     }
 }
