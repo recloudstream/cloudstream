@@ -9,6 +9,8 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:layout_margin="10dp"
+    android:focusable="true"
+    android:clickable="true"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:defaultFocusHighlightEnabled="false">
