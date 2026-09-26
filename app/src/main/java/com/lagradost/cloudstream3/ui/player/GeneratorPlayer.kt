@@ -1402,6 +1402,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                     }
                     if (init) {
                         filteredLinks.getOrNull(sourceIndex)?.let {
+                            // User's explicit pick: the previous source's stall history
+                            // must not auto-switch away from it while it buffers up.
+                            stuckBufferingWatcher.resetStallTracking()
                             loadLink(it.link, true)
                         }
                     }
