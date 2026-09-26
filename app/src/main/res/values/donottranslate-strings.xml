@@ -28,6 +28,7 @@
     <string name="use_system_brightness_key">use_system_brightness_key</string>
     <string name="swipe_enabled_key">swipe_enabled_key</string>
     <string name="playback_speed_enabled_key">playback_speed_enabled_key</string>
+    <string name="compressor_enabled_key">compressor_enabled_key</string>
     <string name="player_resize_enabled_key">player_resize_enabled_key</string>
     <string name="player_source_priority_key">player_source_priority_key</string>
     <string name="pip_enabled_key">pip_enabled_key</string>
