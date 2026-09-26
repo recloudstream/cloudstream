@@ -91,6 +91,36 @@ class StuckBufferingWatcherTest {
     }
 
     @Test
+    fun `successful switch restores the budget`() {
+        val w = TestableWatcher()
+        w.buffering = true
+        w.position = 0
+        repeat(3) {
+            w.advance(11_000) // arm
+            w.advance(11_000) // fire
+            w.advance(60_000) // wait out cooldown
+        }
+        assertEquals(3, w.fired.size)
+        // a dead cycle: nothing plays, budget must not come back
+        w.advance(11_000)
+        w.advance(11_000)
+        w.advance(60_000)
+        w.advance(11_000)
+        w.advance(11_000)
+        assertEquals("cap must hold while nothing plays", 3, w.fired.size)
+        // now the switch worked: playback continues well past the switch point
+        w.position = 40_000
+        w.buffering = false
+        w.advance(1_000)
+        // and stalls again — full budget available
+        w.buffering = true
+        w.position = 40_000
+        w.advance(11_000)
+        w.advance(11_000)
+        assertEquals("working switch must reset the cap", 4, w.fired.size)
+    }
+
+    @Test
     fun `max three switches per session`() {
         val w = TestableWatcher()
         w.buffering = true
