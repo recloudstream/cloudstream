@@ -88,7 +88,7 @@ class StuckBufferingWatcher(
     private var switchesThisSession: Int = 0
 
     /** Position where the last switch fired; progress past +[SWITCH_SUCCESS_PROGRESS_MS] resets the budget. */
-    private var lastSwitchPositionMs: Long = Long.MIN_VALUE
+    private var lastSwitchPositionMs: Long = 0L
 
     /**
      * Start watching. Polls once per second; each tick checks whether the player is
@@ -140,7 +140,7 @@ class StuckBufferingWatcher(
             val position = currentPosition()
             val buffering = isBuffering()
             updateBufferingWindow(buffering, now)
-            updateStallClock(position, buffering)
+            updateStallClock(position, buffering, now)
 
             // A switch that got us watching again earns a fresh budget: position moved
             // well past where the last switch fired.
@@ -164,7 +164,7 @@ class StuckBufferingWatcher(
         }
     }
 
-    private fun updateStallClock(position: Long, buffering: Boolean) {
+    private fun updateStallClock(position: Long, buffering: Boolean, now: Long) {
         when {
             !buffering -> {
                 stuckSinceMs = 0L
@@ -175,7 +175,7 @@ class StuckBufferingWatcher(
                 lastProgressMs = position
                 stuckSinceMs = 0L
             }
-            stuckSinceMs == 0L -> stuckSinceMs = timeSource()
+            stuckSinceMs == 0L -> stuckSinceMs = now
         }
     }
 

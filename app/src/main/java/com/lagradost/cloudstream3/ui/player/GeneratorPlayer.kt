@@ -554,6 +554,10 @@ class GeneratorPlayer : FullScreenPlayer() {
             // Resets subtitle delay, as we watch some other content
             player.setSubtitleOffset(0)
             stuckBufferingWatcher.reset() // new episode/link: restart the stall counters
+        } else {
+            // Any same-episode mirror switch (user pick, error failover, auto-switch)
+            // must not inherit the previous source's armed stall clock.
+            stuckBufferingWatcher.resetStallTracking()
         }
     }
 
@@ -1402,9 +1406,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                     }
                     if (init) {
                         filteredLinks.getOrNull(sourceIndex)?.let {
-                            // User's explicit pick: the previous source's stall history
-                            // must not auto-switch away from it while it buffers up.
-                            stuckBufferingWatcher.resetStallTracking()
                             loadLink(it.link, true)
                         }
                     }
@@ -1729,9 +1730,21 @@ class GeneratorPlayer : FullScreenPlayer() {
     /** Called by [StuckBufferingWatcher] when the current source is stuck buffering. */
     private fun autoSwitchFromStall() {
         if (!hasNextMirror()) return
+        // Live streams: mirror-switching fights the live-edge logic.
+        if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
+        // Torrents buffer by nature; switching mirrors cannot help.
+        val type = currentSelectedLink?.first?.type
+        if (type == ExtractorLinkType.MAGNET || type == ExtractorLinkType.TORRENT) return
         StuckBufferingWatcher.recordHostFailure(currentSelectedLink?.first?.url)
         showToast(activity?.getString(R.string.auto_switch_source_toast))
         nextMirror()
+    }
+
+    override fun onDestroyView() {
+        // The host view (and with it the status/position we poll) may be torn down
+        // before onDestroy; stop watching so a dying fragment cannot fire a switch.
+        stuckBufferingWatcher.stop()
+        super.onDestroyView()
     }
 
     override fun onDestroy() {
