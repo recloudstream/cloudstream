@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
@@ -71,6 +72,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
+import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral.Companion.pickDownloadPath
 import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
@@ -1450,12 +1452,30 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         val isInvalid = rec.isNullOrEmpty()
         val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
+        val isHorizontal = viewModel.isRecommendationsHorizontal(rec)
 
         recommendationBinding?.apply {
             root.isGone = isInvalid
+            val orientation = root.context.resources.configuration.orientation
+            resultRecommendationsList.spanCount = if (isHorizontal) {
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
+            } else {
+                root.context.getSpanCount(false)
+            }
+            val currentAdapter = resultRecommendationsList.adapter as? SearchAdapter
+            val adapter = if (currentAdapter != null) {
+                currentAdapter.apply { this.isHorizontal = isHorizontal }
+            } else {
+                SearchAdapter(
+                    resultRecommendationsList,
+                    isHorizontal = isHorizontal,
+                ) { callback ->
+                    SearchHelper.handleSearchClickCallback(callback)
+                }.also { resultRecommendationsList.adapter = it }
+            }
             root.post {
                 rec?.let { list ->
-                    (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(list.filter { it.apiName == matchAgainst })
+                    adapter.submitList(list.filter { it.apiName == matchAgainst })
                 }
             }
         }

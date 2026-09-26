@@ -15,10 +15,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.isHorizontalCard
 import com.lagradost.cloudstream3.databinding.QuickSearchBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -146,10 +149,13 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
 
         val firstProvider = providers?.firstOrNull()
         if (isSingleProvider && firstProvider != null) {
+            val isHorizontal = APIHolder.isApiHorizontal(firstProvider)
             binding.quickSearchAutofitResults.apply {
+                spanCount = context.getSpanCount(isHorizontal)
                 setRecycledViewPool(SearchAdapter.sharedPool)
                 adapter = SearchAdapter(
                     this,
+                    isHorizontal = isHorizontal,
                 ) { callback ->
                     SearchHelper.handleSearchClickCallback(callback)
                 }
@@ -268,12 +274,15 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
-                        val adapter =
-                            (binding.quickSearchAutofitResults.adapter as? SearchAdapter)
-                        adapter?.submitList(
-                            context?.filterSearchResultByFilmQuality(data.list) ?: data.list
-                        )
-                        adapter?.hasNext = data.hasNext
+                        val list = context?.filterSearchResultByFilmQuality(data.list) ?: data.list
+                        val isHorizontal = list.any { item -> item.isHorizontalCard() }
+                        binding.quickSearchAutofitResults.spanCount =
+                            context?.getSpanCount(isHorizontal) ?: binding.quickSearchAutofitResults.spanCount
+                        (binding.quickSearchAutofitResults.adapter as? SearchAdapter)?.apply {
+                            this.isHorizontal = isHorizontal
+                            submitList(list)
+                            hasNext = data.hasNext
+                        }
                     }
                     searchExitIcon?.alpha = 1f
                     binding.quickSearchLoadingBar.alpha = 0f
