@@ -159,6 +159,7 @@ class PlayerPreferences(preferences: PreferenceStore) {
     val defaultPlayer = preferences.getString("player_default_key", "")
     val limitPlayerTitle = preferences.getInt("prefer_limit_title_key", 0)
     val hidePlayerControlNames = preferences.getBoolean("hide_player_control_names_key", false)
+    val showInfoWhenLocked = preferences.getBoolean("show_info_when_locked_key", true)
     val showName = preferences.getBoolean("show_name", true)
     val showResolution = preferences.getBoolean("show_resolution", true)
     val showMediaInfo = preferences.getBoolean("show_media_info", false)
