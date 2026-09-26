@@ -3,8 +3,8 @@ package com.lagradost.cloudstream3.ui.settings
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.edit
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.APIRepository
@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpTo
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiDubstatusSettings
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -32,6 +33,32 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_providers, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+        val cachePref = getPref(R.string.cache_time_key)
+        val cacheNames = resources.getStringArray(R.array.cache_time_names)
+        val cacheValues = resources.getIntArray(R.array.cache_time_values)
+
+        fun updateCacheSummary() {
+            val idx = cacheValues.indexOf(DataStoreHelper.cacheTimeMinutes)
+            cachePref?.summary = cacheNames.getOrNull(idx) ?: "${DataStoreHelper.cacheTimeMinutes}m"
+        }
+        updateCacheSummary()
+
+        cachePref?.setOnPreferenceClickListener {
+            val currentIndex = cacheValues.indexOf(DataStoreHelper.cacheTimeMinutes).coerceAtLeast(0)
+            activity?.showBottomDialog(
+                cacheNames.toList(),
+                currentIndex,
+                getString(R.string.cache_time_settings),
+                false,
+                {}
+            ) { selectedIndex ->
+                DataStoreHelper.cacheTimeMinutes = cacheValues.getOrElse(selectedIndex) { 0 }
+                updateCacheSummary()
+            }
+            true
+        }
+
 
         getPref(R.string.display_sub_key)?.setOnPreferenceClickListener {
             activity?.getApiDubstatusSettings()?.let { current ->
