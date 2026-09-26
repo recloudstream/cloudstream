@@ -63,7 +63,7 @@ object BatteryOptimizationChecker {
         return isRestricted && isOptimizedNotShown && isLayout(PHONE)
     }
 
-    private fun Context.showRequestIgnoreBatteryOptDialog() {
+    fun Context.showRequestIgnoreBatteryOptDialog() {
         try {
             val intent = Intent().apply {
                 action =  Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS

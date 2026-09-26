@@ -86,6 +86,7 @@ import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
 import com.lagradost.cloudstream3.utils.JsUnpacker.Companion.load
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream4.AppSettings
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Cache
@@ -481,14 +482,14 @@ object AppContextUtils {
     fun Context.filterSearchResultByFilmQuality(data: List<SearchResponse>): List<SearchResponse> {
         // Filter results omitting entries with certain quality
         if (data.isNotEmpty()) {
-            val filteredSearchQuality = PreferenceManager.getDefaultSharedPreferences(this)
+            val filteredSearchQuality = AppSettings(this).ui.filterQuality.get() /*PreferenceManager.getDefaultSharedPreferences(this)
                 ?.getStringSet(getString(R.string.pref_filter_search_quality_key), setOf())
                 ?.mapNotNull { entry ->
                     entry.toIntOrNull() ?: return@mapNotNull null
-                } ?: listOf()
+                } ?: listOf()*/
             if (filteredSearchQuality.isNotEmpty()) {
                 return data.filter { item ->
-                    val searchQualVal = item.quality?.ordinal ?: -1
+                    val searchQualVal = item.quality //?.ordinal ?: -1
                     //Log.i("filterSearch", "QuickSearch item => ${item.toJson()}")
                     !filteredSearchQuality.contains(searchQualVal)
                 }
@@ -500,17 +501,17 @@ object AppContextUtils {
     fun Context.filterHomePageListByFilmQuality(data: HomePageList): HomePageList {
         // Filter results omitting entries with certain quality
         if (data.list.isNotEmpty()) {
-            val filteredSearchQuality = PreferenceManager.getDefaultSharedPreferences(this)
+            val filteredSearchQuality = AppSettings(this).ui.filterQuality.get() /*PreferenceManager.getDefaultSharedPreferences(this)
                 ?.getStringSet(getString(R.string.pref_filter_search_quality_key), setOf())
                 ?.mapNotNull { entry ->
                     entry.toIntOrNull() ?: return@mapNotNull null
-                } ?: listOf()
+                } ?: listOf()*/
             if (filteredSearchQuality.isNotEmpty()) {
                 return HomePageList(
                     name = data.name,
                     isHorizontalImages = data.isHorizontalImages,
                     list = data.list.filter { item ->
-                        val searchQualVal = item.quality?.ordinal ?: -1
+                        val searchQualVal = item.quality //?.ordinal ?: -1
                         //Log.i("filterSearch", "QuickSearch item => ${item.toJson()}")
                         !filteredSearchQuality.contains(searchQualVal)
                     }

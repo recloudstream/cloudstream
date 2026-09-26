@@ -647,7 +647,7 @@
     <string name="update_plugins">Actualizar complementos</string>
     <string name="sort_episodes_date_oldest">Fecha de emisión (más antigua)</string>
     <string name="sort_button_rating">Puntuar %s</string>
-    <string name="plugins_updated_manually">¡%d complemento(s) actualizados correctamente!</string>
+    <string name="plugins_updated_manually">%d complemento(s) actualizados correctamente</string>
     <string name="no_plugins_updated_manually">No se actualizó ningún complemento.</string>
     <string name="sort_episodes_number_asc">Episodio (Ascendente)</string>
     <string name="speech_recognition_unavailable">Reconocimiento de habla no disponible</string>
@@ -742,4 +742,9 @@
     <string name="profile_settings">Configuración del perfil</string>
     <string name="profile_hide_negative_sources">Ocultar fuentes con prioridad negativa</string>
     <string name="profile_hide_error_sources">Ocultar fuentes con errores</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d enlace oculto</item>
+        <item quantity="many">%d enlaces ocultos</item>
+        <item quantity="other">%d enlaces ocultos</item>
+    </plurals>
 </resources>

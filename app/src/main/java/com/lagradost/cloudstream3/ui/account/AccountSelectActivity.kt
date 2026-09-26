@@ -54,10 +54,15 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
             false
         )
 
+        val isFromMainActivity = intent.getBooleanExtra(
+            "isFromMainActivity",
+            false
+        )
+
         // Sometimes we start this activity when we have already logged in
         // For example when using cloudstreamsearch://
         // In those cases we want to just go to the main activity instantly
-        if (hasLoggedIn && !isEditingFromMainActivity) {
+        if (hasLoggedIn && !isEditingFromMainActivity && !isFromMainActivity) {
             navigateToMainActivity()
             return
         }
@@ -98,7 +103,7 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
 
         // Don't show account selection if there is only
         // one account that exists
-        if (!isEditingFromMainActivity && skipStartup) {
+        if (!isFromMainActivity && !isEditingFromMainActivity && skipStartup) {
             val currentAccount = accounts.firstOrNull { it.keyIndex == selectedKeyIndex }
             if (currentAccount?.lockPin != null) {
                 CommonActivity.init(this)
@@ -160,6 +165,11 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
                 // Scroll to current account (which is focused by default)
                 val layoutManager = recyclerView.layoutManager as GridLayoutManager
                 layoutManager.scrollToPositionWithOffset(selectedKeyIndex, 0)
+                if (isLayout(TV or EMULATOR)) {
+                    recyclerView.post {
+                        layoutManager.findViewByPosition(selectedKeyIndex)?.requestFocus()
+                    }
+                }
             }
 
             observe(accountViewModel.isEditing) { isEditing ->
