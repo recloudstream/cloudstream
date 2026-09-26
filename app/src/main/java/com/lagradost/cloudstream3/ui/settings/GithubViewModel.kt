@@ -24,6 +24,7 @@ data class GithubState(
 sealed class GithubUpdateDialogState {
     data class Error(val error: Throwable) : GithubUpdateDialogState()
     data class DownloadProgress(val progress: Long, val total: Long?) : GithubUpdateDialogState()
+    data class InstallProgress(val progress: Long, val total: Long?) : GithubUpdateDialogState()
     object Loading : GithubUpdateDialogState()
     object NoUpdateFound : GithubUpdateDialogState()
     data class UpdateFound(
@@ -153,6 +154,7 @@ class GithubViewModel(
 
             is GithubAction.SkipThisUpdate -> {
                 settings.updates.skipUpdate.set(action.file.nodeId)
+                deleteCachedApk(action.file.tagName)
             }
 
             GithubAction.AutoSearchForUpdate -> {
@@ -165,11 +167,12 @@ class GithubViewModel(
 
             is GithubAction.SkipUpdate -> {
                 settings.updates.skipUpdate.set(action.file.nodeId)
+                deleteCachedApk(action.file.tagName)
             }
 
             is GithubAction.Update -> {
                 ioSafe {
-                    installUpdate(action.file.downloadUrl, action.file.digest)
+                    installUpdate(action.file)
                 }
             }
         }
@@ -193,21 +196,51 @@ class GithubViewModel(
         }
     }
 
-    private suspend fun installUpdate(url: String, digestPair: String?) = dispatchUpdate {
-        updater.update(
-            settings = settings,
-            url = url,
-            digest = DigestPair.parse(digestPair),
-        ) { progress, total ->
+    private suspend fun installUpdate(file: GithubReleases.GithubFile) = dispatchUpdate {
+        val activity = com.lagradost.cloudstream3.CommonActivity.activity
+        val cachedFile = activity?.let {
+            ApkUpdater.getCachedUpdateFile(it, file.tagName)
+        }
+
+        if (activity != null && cachedFile != null && cachedFile.exists() && cachedFile.length() > 0) {
             updateState {
                 copy(
                     dialog = dialog?.copy(
-                        state = GithubUpdateDialogState.DownloadProgress(
-                            progress = progress,
-                            total = total
+                        state = GithubUpdateDialogState.InstallProgress(
+                            progress = 0,
+                            total = cachedFile.length()
                         )
                     )
                 )
+            }
+            ApkUpdater.installFromFile(activity, cachedFile, settings) { progress, total ->
+                updateState {
+                    copy(
+                        dialog = dialog?.copy(
+                            state = GithubUpdateDialogState.InstallProgress(
+                                progress = progress,
+                                total = total
+                            )
+                        )
+                    )
+                }
+            }
+        } else {
+            updater.update(
+                settings = settings,
+                url = file.downloadUrl,
+                digest = DigestPair.parse(file.digest),
+            ) { progress, total ->
+                updateState {
+                    copy(
+                        dialog = dialog?.copy(
+                            state = GithubUpdateDialogState.DownloadProgress(
+                                progress = progress,
+                                total = total
+                            )
+                        )
+                    )
+                }
             }
         }
         updateState {
@@ -266,6 +299,19 @@ class GithubViewModel(
             return@dispatchUpdate
         }
 
+        // If automated background search, download the update APK silently in advance
+        if (!fromUser) {
+            val activity = com.lagradost.cloudstream3.CommonActivity.activity
+            if (activity != null) {
+                ApkUpdater.downloadSilently(
+                    activity,
+                    release.downloadUrl,
+                    release.tagName,
+                    DigestPair.parse(release.digest)
+                )
+            }
+        }
+
         updateState {
             copy(
                 dialog = baseDialog.copy(
@@ -296,4 +342,14 @@ class GithubViewModel(
             userName = remoteUserName,
             repository = remoteRepository,
         )
+
+    private fun deleteCachedApk(tagName: String) {
+        val activity = com.lagradost.cloudstream3.CommonActivity.activity
+        if (activity != null) {
+            val file = ApkUpdater.getCachedUpdateFile(activity, tagName)
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+    }
 }
