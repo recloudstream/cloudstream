@@ -133,6 +133,8 @@ class PlayerView @JvmOverloads constructor(
         fun onSingleTap() {}
         /** Called when the hold-for-speedup gesture starts (show=true) or ends (show=false). */
         fun onHoldSpeedUp(show: Boolean) {}
+        fun onHoldSecondarySubtitle(show: Boolean) {}
+        fun onOpenDualSubtitleDialog() {}
         /** Called during brightness swipe with the current extra-brightness alpha (0–1). */
         fun onBrightnessExtra(alpha: Float) {}
 
