@@ -981,8 +981,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private fun updateTvRailFocus() {
         if (!isLayout(TV or EMULATOR)) return
+        // home_api_holder is glued to the header row's top by the mirror logic in
+        // the scroll listener above. Only target the provider button while the
+        // holder is actually on screen; once the header scrolls off (y < 0) let
+        // the rail fall back to default focus search so RIGHT enters content rows
+        val holder = binding?.homeApiHolder
         val target =
-            if (binding?.homeMasterRecycler?.computeVerticalScrollOffset() == 0) R.id.home_change_api
+            if (holder != null && holder.isVisible && holder.y >= 0f) R.id.home_change_api
             else View.NO_ID
         val rail = activity?.findViewById<View>(R.id.nav_rail_view) ?: return
         rail.nextFocusRightId = target
