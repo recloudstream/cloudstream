@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
+import androidx.core.view.doOnLayout
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -799,8 +800,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         }
                     }
                     super.onScrolled(recyclerView, dx, dy)
+                    updateTvRailFocus()
                 }
             })
+
+            homeMasterRecycler.doOnLayout { updateTvRailFocus() }
 
         }
 
@@ -973,6 +977,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 break
             }
         }*/
+    }
+
+    private fun updateTvRailFocus() {
+        if (!isLayout(TV or EMULATOR)) return
+        // home_api_holder is glued to the header row's top by the mirror logic in
+        // the scroll listener above. Only target the provider button while the
+        // holder is actually on screen; once the header scrolls off (y < 0) let
+        // the rail fall back to default focus search so RIGHT enters content rows
+        val holder = binding?.homeApiHolder
+        val target =
+            if (holder != null && holder.isVisible && holder.y >= 0f) R.id.home_change_api
+            else View.NO_ID
+        val rail = activity?.findViewById<View>(R.id.nav_rail_view) ?: return
+        rail.nextFocusRightId = target
+        for (focusView in arrayOf(
+            R.id.navigation_downloads,
+            R.id.navigation_home,
+            R.id.navigation_search,
+            R.id.navigation_library,
+            R.id.navigation_settings,
+        )) {
+            rail.findViewById<View>(focusView)?.nextFocusRightId = target
+        }
     }
 
     private fun handleTvBackPress(helper: BackPressedCallbackHelper.CallbackHelper) {
