@@ -3,7 +3,7 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24"
-    android:tint="?attr/colorControlNormal">
+    android:tint="?attr/white">
   <!-- Left tall bar (loud input) -->
   <path android:fillColor="@android:color/white"
       android:pathData="M2,4 h2 v16 h-2 z"/>
