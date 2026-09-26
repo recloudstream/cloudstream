@@ -149,7 +149,7 @@ class StuckBufferingWatcher(
             }
 
             if (switchesThisSession >= MAX_SWITCHES_PER_SESSION) return
-            if (isStuck(now, buffering)) fireSwitch(position, now)
+            if (isStuck(now)) fireSwitch(position, now)
         } catch (e: Exception) {
             Log.e(TAG, "tick failed", e)
         }
@@ -179,7 +179,7 @@ class StuckBufferingWatcher(
         }
     }
 
-    private fun isStuck(now: Long, buffering: Boolean): Boolean {
+    private fun isStuck(now: Long): Boolean {
         val singleStall = stuckSinceMs != 0L && now - stuckSinceMs >= STALL_TIMEOUT_MS
         // ponytail: repeated-stall trigger ignores user scrubbing; cooldown + budget-reset
         // bound the damage, revisit only if scrub-heavy usage misfires
@@ -189,8 +189,7 @@ class StuckBufferingWatcher(
 
     private fun fireSwitch(position: Long, now: Long) {
         Log.i(TAG, "Stuck at ${position}ms, switching source (${switchesThisSession + 1}/$MAX_SWITCHES_PER_SESSION)")
-        stuckSinceMs = 0L
-        bufferingTicks.clear() // hysteresis: window restarts after a switch
+        resetStallTracking() // hysteresis: stall clock + window restart after a switch
         lastSwitchAtMs = now
         lastSwitchPositionMs = position
         switchesThisSession++
