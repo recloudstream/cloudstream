@@ -429,8 +429,8 @@
     <string name="category_ui">Изглед</string>
     <string name="add_sync">Додај тракинг</string>
     <string name="sync_score">Оценет</string>
-    <string name="quality_cam_rip">Камера</string>
-    <string name="quality_cam_hd">Камера</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_sdr">SDR</string>
     <string name="app_not_found_error">Апликацијата не е пронајдена</string>
     <string name="example_username">Корисничко име</string>
@@ -743,4 +743,13 @@
     <string name="profile_hide_negative_sources">Сокриј извори со негативен приоритет</string>
     <string name="profile_hide_error_sources">Сокриј извори со грешки</string>
     <string name="background">Позадина</string>
+    <string name="subs_edge">Edge</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings_des">Намалете го оптоварувањето при избирање извори</string>
+    <string name="tv_layout_clock_settings">Прикажи часовник во реално време</string>
+    <string name="tv_layout_clock_settings_des">Прикажи часовник во реално време на врвот на екранот. Се применува на почетната страница и плеерот</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d скриена врска</item>
+        <item quantity="other">%d скриени врски</item>
+    </plurals>
 </resources>
