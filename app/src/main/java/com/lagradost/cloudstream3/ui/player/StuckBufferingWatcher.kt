@@ -46,6 +46,7 @@ class StuckBufferingWatcher(
         private const val BUFFERING_TICKS_THRESHOLD = 15 // ~25% of the time buffering
         private const val SWITCH_COOLDOWN_MS = 60_000L
         private const val MAX_SWITCHES_PER_SESSION = 3
+
         /** Watching this much content past a switch means it worked: budget resets. */
         private const val SWITCH_SUCCESS_PROGRESS_MS = 30_000L
 
@@ -81,9 +82,11 @@ class StuckBufferingWatcher(
     private var lastProgressMs: Long = 0L
     private var stuckSinceMs: Long = 0L
     private val bufferingTicks = ArrayDeque<Long>()
+
     // Start outside cooldown so the first tick can fire
     private var lastSwitchAtMs: Long = timeSource() - SWITCH_COOLDOWN_MS
     private var switchesThisSession: Int = 0
+
     /** Position where the last switch fired; progress past +[SWITCH_SUCCESS_PROGRESS_MS] resets the budget. */
     private var lastSwitchPositionMs: Long = Long.MIN_VALUE
 
@@ -127,23 +130,8 @@ class StuckBufferingWatcher(
 
             val position = currentPosition()
             val buffering = isBuffering()
-            if (buffering) {
-                bufferingTicks.addLast(now)
-            }
-            while (bufferingTicks.isNotEmpty() && now - bufferingTicks.first() > BUFFERING_WINDOW_MS) {
-                bufferingTicks.removeFirst()
-            }
-
-            if (!buffering) {
-                stuckSinceMs = 0L
-                lastProgressMs = position
-            } else if (position > lastProgressMs) {
-                // buffering but still making progress (normal startup / fast network)
-                lastProgressMs = position
-                stuckSinceMs = 0L
-            } else if (stuckSinceMs == 0L) {
-                stuckSinceMs = now
-            }
+            updateBufferingWindow(buffering, now)
+            updateStallClock(position, buffering)
 
             // A switch that got us watching again earns a fresh budget: position moved
             // well past where the last switch fired.
@@ -151,28 +139,52 @@ class StuckBufferingWatcher(
                 switchesThisSession = 0
             }
 
-            val singleStall = stuckSinceMs != 0L && now - stuckSinceMs >= STALL_TIMEOUT_MS
-            // ponytail: repeated-stall trigger ignores user scrubbing; cooldown + budget-reset
-            // bound the damage, revisit only if scrub-heavy usage misfires
-            val repeatedStalls = bufferingTicks.size >= BUFFERING_TICKS_THRESHOLD
-
             if (switchesThisSession >= MAX_SWITCHES_PER_SESSION) return
-
-            if (singleStall || repeatedStalls) {
-                Log.i(
-                    TAG,
-                    "${if (singleStall) "Stuck buffering" else "Repeated buffering"} at ${position}ms, " +
-                        "switching source (${switchesThisSession + 1}/$MAX_SWITCHES_PER_SESSION)"
-                )
-                stuckSinceMs = 0L
-                bufferingTicks.clear() // hysteresis: window restarts after a switch
-                lastSwitchAtMs = now
-                lastSwitchPositionMs = position
-                switchesThisSession++
-                onSwitchSource()
-            }
+            if (isStuck(now, buffering)) fireSwitch(position, now)
         } catch (e: Exception) {
             Log.e(TAG, "tick failed", e)
         }
+    }
+
+    private fun updateBufferingWindow(buffering: Boolean, now: Long) {
+        if (buffering) {
+            bufferingTicks.addLast(now)
+        }
+        while (bufferingTicks.isNotEmpty() && now - bufferingTicks.first() > BUFFERING_WINDOW_MS) {
+            bufferingTicks.removeFirst()
+        }
+    }
+
+    private fun updateStallClock(position: Long, buffering: Boolean) {
+        when {
+            !buffering -> {
+                stuckSinceMs = 0L
+                lastProgressMs = position
+            }
+            position > lastProgressMs -> {
+                // buffering but still making progress (normal startup / fast network)
+                lastProgressMs = position
+                stuckSinceMs = 0L
+            }
+            stuckSinceMs == 0L -> stuckSinceMs = timeSource()
+        }
+    }
+
+    private fun isStuck(now: Long, buffering: Boolean): Boolean {
+        val singleStall = stuckSinceMs != 0L && now - stuckSinceMs >= STALL_TIMEOUT_MS
+        // ponytail: repeated-stall trigger ignores user scrubbing; cooldown + budget-reset
+        // bound the damage, revisit only if scrub-heavy usage misfires
+        val repeatedStalls = bufferingTicks.size >= BUFFERING_TICKS_THRESHOLD
+        return singleStall || repeatedStalls
+    }
+
+    private fun fireSwitch(position: Long, now: Long) {
+        Log.i(TAG, "Stuck at ${position}ms, switching source (${switchesThisSession + 1}/$MAX_SWITCHES_PER_SESSION)")
+        stuckSinceMs = 0L
+        bufferingTicks.clear() // hysteresis: window restarts after a switch
+        lastSwitchAtMs = now
+        lastSwitchPositionMs = position
+        switchesThisSession++
+        onSwitchSource()
     }
 }
