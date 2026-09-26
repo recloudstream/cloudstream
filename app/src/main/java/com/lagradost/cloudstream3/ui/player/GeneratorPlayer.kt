@@ -13,6 +13,8 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Spanned
 import android.util.Log
+import android.view.InputDevice
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,8 +46,8 @@ import androidx.media3.ui.PlayerNotificationManager
 import androidx.media3.ui.PlayerNotificationManager.EXTRA_INSTANCE_ID
 import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
@@ -186,7 +188,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private var isPlayerActive: AtomicBoolean = AtomicBoolean(false)
     private var isNextEpisode: Boolean = false // this is used to reset the watch time
-
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
     private val allMeta: List<ResultEpisode>?
         get() = viewModel.state.generatorState?.allMeta?.filterIsInstance<ResultEpisode>()
@@ -1718,6 +1719,55 @@ class GeneratorPlayer : FullScreenPlayer() {
         ResultFragment.updateUI()
         currentVerifyLink?.cancel()
         super.onDestroy()
+    }
+
+    private fun isZappingEnabled(): Boolean {
+        return context?.let { com.lagradost.cloudstream4.AppSettings(it).player.zappingEnabled.get() } == true
+    }
+
+    private fun isLiveZapping(): Boolean {
+        return isZappingEnabled() &&
+            (viewModel.generator as? LiveZappingGenerator)?.videos?.size?.let { it > 1 } == true
+    }
+
+    override fun shouldPreserveLiveDpadNavigation(): Boolean {
+        return (currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true && !isLiveZapping()
+    }
+
+    override fun shouldPauseForEpisodeOverlay(): Boolean {
+        return !((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true && isLiveZapping())
+    }
+
+    override fun isLiveChannelSelector(): Boolean {
+        return (currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true && isLiveZapping()
+    }
+
+    private fun switchToLiveChannel(targetIndex: Int): Boolean {
+        if (!isLiveZapping()) return false
+        val generator = viewModel.generator as? LiveZappingGenerator ?: return false
+        if (generator.videos.isEmpty()) return false
+        val wrappedIndex = ((targetIndex % generator.videos.size) + generator.videos.size) % generator.videos.size
+        if (wrappedIndex == viewModel.episodeIndex) return true
+        isNextEpisode = true
+        releasePlayer()
+        viewModel.loadThisEpisode(wrappedIndex)
+        return true
+    }
+
+    override fun handleLiveChannelKey(event: KeyEvent): Boolean {
+        if (event.action != KeyEvent.ACTION_DOWN || event.repeatCount > 0) return false
+        if (isShowing || isDialogOpen() || !isLiveZapping()) return false
+        if (event.isFromSource(InputDevice.SOURCE_KEYBOARD)) return false
+        if (!event.isFromSource(InputDevice.SOURCE_DPAD) &&
+            !event.isFromSource(InputDevice.SOURCE_GAMEPAD) &&
+            !event.isFromSource(InputDevice.SOURCE_JOYSTICK)
+        ) return false
+
+        return when (event.keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> switchToLiveChannel(viewModel.episodeIndex - 1)
+            KeyEvent.KEYCODE_DPAD_DOWN -> switchToLiveChannel(viewModel.episodeIndex + 1)
+            else -> false
+        }
     }
 
     var maxEpisodeSet: Int? = null

@@ -773,6 +773,24 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             val showPlayerEpisodes = !isGone && isThereEpisodes()
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
+            if (isLayout(TV or EMULATOR)) {
+                val channelSelectorFocus = isLiveChannelSelector()
+                playerGoForward.nextFocusRightId = if (channelSelectorFocus) {
+                    playerEpisodesButton.id
+                } else {
+                    downloadHeaderToggle.id
+                }
+                playerEpisodesButton.nextFocusLeftId = if (channelSelectorFocus) {
+                    playerGoForward.id
+                } else {
+                    downloadHeaderToggle.id
+                }
+            }
+            if (isLiveChannelSelector()) {
+                playerEpisodesButton.setImageResource(R.drawable.baseline_list_alt_24)
+                playerEpisodesButton.contentDescription = getString(R.string.player_channel_list)
+                playerEpisodesButtonText.setText(R.string.player_channel_list)
+            }
             playerVideoTitleHolder.isGone = togglePlayerTitleGone || playerVideoTitle.text.isBlank()
             playerVideoTitleRez.isGone = isGone || playerVideoTitleRez.text.isBlank()
             playerEpisodeFiller.isGone = isGone
@@ -848,6 +866,21 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         autoHide()
     }
 
+    /**
+     * Gives specialised players a chance to consume TV channel-style DPAD input while the
+     * controls are hidden. Normal player navigation remains unchanged when this returns false.
+     */
+    protected open fun handleLiveChannelKey(event: KeyEvent): Boolean = false
+
+    /** Live players may leave DPAD navigation to the focused view when zapping is inactive. */
+    protected open fun shouldPreserveLiveDpadNavigation(): Boolean = false
+
+    /** Episode overlays pause regular video, but live channel lists may stay non-blocking. */
+    protected open fun shouldPauseForEpisodeOverlay(): Boolean = true
+
+    /** Live zapping may label the existing episode selector as a channel list. */
+    protected open fun isLiveChannelSelector(): Boolean = false
+
     override fun playerStatusChanged() {
         super.playerStatusChanged()
         scheduleMetadataVisibility()
@@ -880,7 +913,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         playerHostView?.requestUpdateBrightnessOverlayOnNextLayout()
     }
 
-    private fun handleKeyDownEvent(keyCode: Int): Boolean? {
+    private fun handleKeyDownEvent(event: KeyEvent): Boolean? {
+        val keyCode = event.keyCode
         // adb shell input keyevent [INT]
         when (keyCode) {
             KeyEvent.KEYCODE_FORWARD, KeyEvent.KEYCODE_D, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
@@ -971,7 +1005,13 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             KeyEvent.KEYCODE_DPAD_DOWN,
             KeyEvent.KEYCODE_DPAD_UP -> {
-                if (isShowing || isShowingEpisodeOverlay) {
+                if (isShowing || isShowingEpisodeOverlay || isDialogOpen()) {
+                    return null
+                }
+                if (handleLiveChannelKey(event)) {
+                    return true
+                }
+                if (shouldPreserveLiveDpadNavigation()) {
                     return null
                 }
                 onClickChange()
@@ -1028,7 +1068,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         val keyCode = event.keyCode
 
         if (event.action == KeyEvent.ACTION_DOWN) {
-            val value = handleKeyDownEvent(keyCode)
+            val value = handleKeyDownEvent(event)
             if (value != null) {
                 return value
             }
@@ -1337,12 +1377,16 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     private fun toggleEpisodesOverlay(show: Boolean) {
         if (show && !isShowingEpisodeOverlay) {
             previousPlayStatus = player.getIsPlaying()
-            player.handleEvent(CSPlayerEvent.Pause)
+            if (shouldPauseForEpisodeOverlay()) {
+                player.handleEvent(CSPlayerEvent.Pause)
+            }
             showEpisodesOverlay()
             isShowingEpisodeOverlay = true
             animateEpisodesOverlay(true)
         } else if (isShowingEpisodeOverlay) {
-            if (previousPlayStatus) player.handleEvent(CSPlayerEvent.Play)
+            if (previousPlayStatus && shouldPauseForEpisodeOverlay()) {
+                player.handleEvent(CSPlayerEvent.Play)
+            }
             isShowingEpisodeOverlay = false
             animateEpisodesOverlay(false)
         }

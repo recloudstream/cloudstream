@@ -142,6 +142,12 @@ object SettingsPlayerScreen : SearchableSettings {
                         icon = painterResource(R.drawable.skip_next_24px),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.player.zappingEnabled,
+                        title = stringResource(R.string.zapping_settings),
+                        subtitle = stringResource(R.string.zapping_settings_des),
+                        icon = painterResource(R.drawable.autorenew_24px),
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.startPaused,
                         title = stringResource(R.string.start_paused_settings),
                         subtitle = stringResource(R.string.start_paused_settings_des),
