@@ -13,44 +13,54 @@
     android:clipToPadding="false"
     android:defaultFocusHighlightEnabled="false">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:backgroundTint="?attr/primaryGrayBackground"
-        android:foreground="@drawable/rounded_outline"
-        android:duplicateParentState="true"
-        app:cardCornerRadius="100dp"
-        app:cardElevation="0dp">
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
-        <ImageView
-            android:id="@+id/account_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.4"
-            android:scaleType="centerCrop" />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:backgroundTint="?attr/primaryGrayBackground"
+            android:foreground="@drawable/rounded_outline"
+            android:duplicateParentState="true"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/account_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.4"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/pencil_icon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_edit_24"
+                app:tint="?attr/textColor" />
+
+        </androidx.cardview.widget.CardView>
 
         <ImageView
             android:id="@+id/lock_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:layout_gravity="top|end"
-            android:layout_margin="4dp"
+            android:background="@drawable/lock_icon_bg"
+            android:padding="5dp"
             android:src="@drawable/video_locked"
             android:visibility="gone"
-            app:tint="?attr/textColor"
+            app:tint="@color/white"
             tools:visibility="visible" />
 
-        <ImageView
-            android:id="@+id/pencil_icon"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_baseline_edit_24"
-            app:tint="?attr/textColor" />
-
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/account_name"
