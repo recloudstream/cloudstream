@@ -117,6 +117,15 @@ class StuckBufferingWatcher(
     /** Reset session counters, e.g. when a new episode starts. */
     fun reset() {
         switchesThisSession = 0
+        resetStallTracking()
+    }
+
+    /**
+     * Clear the stall clock and buffering window without touching the switch budget —
+     * for when the user manually picks a source and the old source's stall history
+     * must not fire against the fresh one.
+     */
+    fun resetStallTracking() {
         stuckSinceMs = 0L
         bufferingTicks.clear()
     }

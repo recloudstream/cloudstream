@@ -121,6 +121,27 @@ class StuckBufferingWatcherTest {
     }
 
     @Test
+    fun `manual switch clears stall tracking but keeps budget`() {
+        val w = TestableWatcher()
+        w.buffering = true
+        w.position = 0
+        // burn one switch
+        w.advance(11_000) // arm
+        w.advance(11_000) // fire (1/3)
+        assertEquals(1, w.fired.size)
+        // the old source's stall is mid-armed when the user picks a new source
+        w.watcher.resetStallTracking()
+        w.advance(9_000) // new source buffers 9s: under the stall timeout, no fire
+        assertEquals("fresh source must not inherit the stall clock", 1, w.fired.size)
+        // and the budget is untouched: still 2 switches left
+        w.advance(2_000) // 11s stuck
+        w.advance(60_000) // wait out cooldown
+        w.advance(11_000)
+        w.advance(11_000)
+        assertEquals(2, w.fired.size)
+    }
+
+    @Test
     fun `max three switches per session`() {
         val w = TestableWatcher()
         w.buffering = true
