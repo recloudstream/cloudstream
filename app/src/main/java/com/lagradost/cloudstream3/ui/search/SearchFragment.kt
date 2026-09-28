@@ -48,6 +48,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseFragment
+import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.currentSpan
@@ -234,6 +235,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         binding: FragmentSearchBinding,
         savedInstanceState: Bundle?
     ) {
+        context?.let { HomeChildItemAdapter.updatePosterSize(it) }
         reloadRepos()
         binding.apply {
             val adapter =
@@ -469,9 +471,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     it.value.let { data ->
                         val list = data.list
                         if (list.isNotEmpty()) {
-                            (binding.searchAutofitResults.adapter as? SearchAdapter)?.submitList(
-                                list
-                            )
+                            val isHorizontal = data.isHorizontalImages
+                            binding.searchAutofitResults.spanCount = view?.context?.getSpanCount(isHorizontal) ?: currentSpan
+                            (binding.searchAutofitResults.adapter as? SearchAdapter)?.apply {
+                                this.isHorizontal = isHorizontal
+                                submitList(list)
+                            }
                         }
                     }
                     searchExitIcon?.alpha = 1f
@@ -512,7 +517,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
                         val homePageList = HomePageList(
                             providerName,
-                            dataListFiltered
+                            dataListFiltered,
+                            isHorizontalImages = providerData.isHorizontalImages
                         )
 
                         HomeViewModel.ExpandableHomepageList(
