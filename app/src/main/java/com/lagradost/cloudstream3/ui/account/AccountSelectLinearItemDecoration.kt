@@ -8,7 +8,7 @@ class AccountSelectLinearItemDecoration(private val size: Int) : RecyclerView.It
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val layoutParams = view.layoutParams as RecyclerView.LayoutParams
         layoutParams.width = size
-        layoutParams.height = size
+        layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT
         view.layoutParams = layoutParams
     }
 }

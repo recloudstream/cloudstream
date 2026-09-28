@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player.source_priority
 
+import android.app.Activity
 import android.app.Dialog
 import androidx.annotation.StyleRes
 import androidx.core.view.isVisible
@@ -26,7 +27,7 @@ data class LinkSource(
 
 
 class QualityProfileDialog private constructor(
-    val activity: FragmentActivity,
+    val activity: Activity,
     @StyleRes val themeRes: Int,
     private val links: List<LinkSource>,
     private val usedProfile: Int?,
@@ -34,7 +35,7 @@ class QualityProfileDialog private constructor(
     private val useProfileSelection: Boolean
 ) : Dialog(activity, themeRes) {
     constructor(
-        activity: FragmentActivity,
+        activity: Activity,
         @StyleRes themeRes: Int,
         links: List<LinkSource>,
         usedProfile: Int,
@@ -42,7 +43,7 @@ class QualityProfileDialog private constructor(
     ) : this(activity, themeRes, links, usedProfile, profileSelectionCallback, true)
 
     constructor(
-        activity: FragmentActivity,
+        activity: Activity,
         @StyleRes themeRes: Int,
         links: List<LinkSource>
     ) : this(activity, themeRes, links, null, null, false)

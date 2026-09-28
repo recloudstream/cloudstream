@@ -65,7 +65,7 @@
     <string name="download_storage_text">Kaydka gudaha</string>
     <string name="app_dubbed_text">Trj</string>
     <string name="download_started">Way bilaabmatay soo dejintu</string>
-    <string name="stream">Daalaco</string>
+    <string name="stream">Khadka ka daaro</string>
     <string name="download_canceled">Waa la joojiyey dejintan</string>
     <string name="update_started">Way bilaabantay cuaboonaysiintu</string>
     <string name="error_loading_links_toast">Soo raridda lifaaqyadu way fashilantay</string>
@@ -91,7 +91,7 @@
     <string name="sort_clear">Tirtir</string>
     <string name="subs_edge_type">Nooca cidhifyada</string>
     <string name="use_system_brightness_settings_des">Isticmaal xaddiga iftiinka ee moobilkaaga halkii aad adigu habayn lahayd ugu horreynba</string>
-    <string name="category_updates">Gurmadka iyo cusbooneysiinta</string>
+    <string name="category_updates">Cusboonaysiinta iyo Kaydinta</string>
     <string name="restore_success">Waa la kaydiyet xogta gurmadka</string>
     <string name="advanced_search_des">Raadinta waxay kuugu kala qaybinaysaa mid kasta iyo qaybiyihiisa</string>
     <string name="restore_failed_format" formatted="true">Way fashilantay in xogta laga soo celiyo faylka gurmadka%s</string>
@@ -100,7 +100,7 @@
     <string name="backup_success">Xogta waa la kaydiyey</string>
     <string name="status">Heerka</string>
     <string name="backup_failed">Ogolaanshaha lagu kaydinayo ma hayno. Fadlan isku day mar kale.</string>
-    <string name="category_account">Koontooyinka</string>
+    <string name="category_account">Akoonada iyo Amniga</string>
     <string name="settings_info">Xog</string>
     <string name="automatic_plugin_download">Si iskii ah usoo deji sidkanaha</string>
     <string name="pref_filter_search_quality">Qari tayada muqaalka aad dooratay natiijada waxa aad raadiso</string>
@@ -153,7 +153,7 @@
     <string name="kitsu_settings">Tusi Boodhka Kitsu</string>
     <string name="automatic_plugin_updates">Si iskii ah u cusbooneysii sidkanaha</string>
     <string name="automatic_plugin_download_summary">Si iskii ah usoo deji dhamaan sidkanayaasha aan weli lasoo dejin ee ku jira kaydka aad keentay.</string>
-    <string name="updates_settings_des">Marka ugu horreysa ee aad appka furto ayaad arkaysaa haddii wax cusub yihiin</string>
+    <string name="updates_settings_des">Si toos ah u raadi update cusub markii aad furto appka.</string>
     <string name="lightnovel">Light novel app, isla dhiseyaasha appkan baa leh</string>
     <string name="updates_settings">Tus wixii appka ku cusub</string>
     <string name="redo_setup_process">Dib uso bilow fadhiisinta appka</string>
@@ -238,13 +238,13 @@
     <string name="player_size_settings_des">Hareeraha madow ka saar markaad daawanayso</string>
     <string name="player_subtitles_settings">Qoraal-hoosaadka</string>
     <string name="chromecast_subtitles_settings_des">Habaynta Qrl-hoosaadka Koromakaastiga</string>
-    <string name="eigengraumode_settings">Habka Xawaare-kordhinta</string>
-    <string name="swipe_to_seek_settings_des">Midig iyo bidix u jiid si aad marba dhinac ugu dhaafiso muqaalka</string>
+    <string name="eigengraumode_settings">Xawaaraha muuqaalka</string>
+    <string name="swipe_to_seek_settings_des">Midig iyo bidix u jiid si aad u xakameyso halka uu muuqaalku marayo</string>
     <string name="double_tap_to_seek_settings_des">Laba jeer taabo midig ama bidix si aad u dhaafiso ama ku ceshato</string>
     <string name="double_tap_to_seek_settings">Laba jeer taabo si aad u dhaafiso</string>
-    <string name="double_tap_to_seek_amount_settings">Inta aad is dhaafinayso</string>
+    <string name="double_tap_to_seek_amount_settings">Inta aad is-dhaafinayso (Ilbiriqsiyo ahaan)</string>
     <string name="double_tap_to_pause_settings">Laba jeer taabo si aad u qallajiso</string>
-    <string name="double_tap_to_pause_settings_des">Dhexda taabo si aad u qallajisato</string>
+    <string name="double_tap_to_pause_settings_des">Labo jeer dhexda taabo si aad u joojiso</string>
     <string name="backup_settings">Gurmad u samee xogta</string>
     <string name="use_system_brightness_settings">Iftiinka moobilka istcimaal</string>
     <string name="episode_sync_settings">Cusbooneysii marba halkaad marayso daawashada</string>
@@ -285,7 +285,7 @@
     <string name="downloaded">La degtay</string>
     <string name="downloading">Soo degaya</string>
     <string name="action_remove_from_bookmarks">Ka Saar</string>
-    <string name="swipe_to_change_settings_des">Kor ama hoos u jiid labada dhinaca ee daaraha si aad u maamusho codka ama iftiinka</string>
+    <string name="swipe_to_change_settings_des">Kor ama hoos u jiid geesaha muuqaalka si aad u maamusho codka ama iftiinka</string>
     <string name="autoplay_next_settings">Iskii-u-daarka xalqadda xigta</string>
     <string name="autoplay_next_settings_des">Si iskii ah ayuu u daarayaa xalqadda xigta marka aad dhamaysato kaad daawanayso</string>
     <string name="episode_sync_settings_des">Si iskii ah ha ula socdo appku hadba xalqadda aad marayso</string>
@@ -310,7 +310,7 @@
     <string name="safe_mode_title">Safe mode ayaa daaran</string>
     <string name="safe_mode_description">Dhammaan Kordhiyeyaasha waa la wada demiyey cillad timi aawadeed si aad u ogaato ka cillada sababaya.</string>
     <string name="single_plugin_disabled" formatted="true">%s (La xayiray)</string>
-    <string name="apply_on_restart">Marka dambe eed gasho isticmaal</string>
+    <string name="apply_on_restart">Dib u fur app-ka si aad u aragto isbeddelada.</string>
     <string name="safe_mode_crash_info">Eeg warbixinra Cilladda</string>
     <string name="extension_rating" formatted="true">Qiimeynta: %s</string>
     <string name="extension_authors">Lahaanshaha</string>
@@ -424,8 +424,8 @@
     <string name="plugins_disabled" formatted="true">Xayiran: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Aan dejinayn: %d</string>
     <string name="plugins_updated" formatted="true">Waxa la cusbooneysiiyey %d sidkane</string>
-    <string name="blank_repo_message">Ugu horreyn cloudstream ma laha wax websaydyo uu filimaanta kasoo xigto, waxay noqonaysaa inaad adigu rakibato reboositarradooda... \n \nSababtuna waa in mar dhexdaas ah na dacweeyeen shirkadda Sky UK Limited🤮, markaa si aan mar dambe taasi u dhicin anagu kuma rakibi karno... \n \nDiscord naga soo qabo ama internetka ka baadh.</string>
-    <string name="download_all_plugins_from_repo">Soo deji dhamaan sidkanayaasha reboositarkan?</string>
+    <string name="blank_repo_message">Ugu horreyn cloudstream ma laha wax websaydyo uu filimaanta kasoo xigto, waxay noqonaysaa inaad adigu rakibato reboositarradooda. Sababtuna waa in mar dhexdaas ah na dacweeyeen shirkadda Sky UK Limited, markaa si aan mar dambe taasi u dhicin anagu kuma rakibi karno...\n\nDiscord naga soo qabo ama internetka ka baadh.</string>
+    <string name="download_all_plugins_from_repo">Digniin: CloudStream mas\'uuliyad kama qaadanayo isticmaalka kordhinnada (extensions) dhinac saddexaad mana bixiyo wax taageero ah oo iyaga ku saabsan!</string>
     <string name="result_poster_img_des">Boodhka</string>
     <string name="episode_poster_img_des">Boodhka xalqadda</string>
     <string name="home_main_poster_img_des">Boodhka weyn</string>
@@ -465,4 +465,45 @@
     <string name="skip_type_op">Bilowga</string>
     <string name="skip_type_mixed_op">Bilow isku qasan</string>
     <string name="skip_type_credits">Qoraalka dhamaadka</string>
+    <string name="next_season_episode_format" formatted="true">Seasonka %1$d Xalqada %2$d waxaa la soo deyn doonaa</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d saac %2$d daq %3$d ilb</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$ddaq %2$dilb</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dilb</string>
+    <string name="search_poster_img_des">Sawirka</string>
+    <string name="play_from_beginning_img_des">Ka bilow bilowga</string>
+    <string name="download_queue">Waxa soo degaya</string>
+    <string name="speech_recognition_unavailable">Aqoonsiga codka ma shaqeynayo</string>
+    <string name="begin_speaking">Bilow hadalka…</string>
+    <string name="browser">biraawsar</string>
+    <string name="play_full_series_button">Daaro musalsalka oo dhan</string>
+    <string name="torrent_info">Fiidiyowgaan waa Torrent, taasi waxay la macno tahay in la raadraaci karo dhaqdhaqaaqaaga daawashada.\nHubi inaad fahamsan tahay sida Torrent-ku u shaqeeyo ka hor intaadan sii socon.</string>
+    <string name="downloads_delete_select">Dooro waxyaabaha aad tirayso</string>
+    <string name="downloads_empty">Ma jiro muuqaal aad soo degsatay.</string>
+    <string name="queue_empty_message">Hadda ma jiro wax safka ku jira oo soo degaya.</string>
+    <string name="offline_file">Waxaa laa daawan karaa khad la\'aan</string>
+    <string name="select_all">Dooro dhammaan</string>
+    <string name="deselect_all">Ha dooran dhammaan</string>
+    <string name="open_local_video">Daaro muuqaallada taleefanka kuugu jira</string>
+    <string name="links_reloaded_toast">Linkska dib ayaa loo cusboonaysiiyay</string>
+    <string name="repo_copy_label">Magaca Repository-ka iyo URL-ka</string>
+    <string name="toast_copied">Waa la koobiyeeyay!</string>
+    <string name="subscribe_tooltip">Ogeysiiska xalqada cusub</string>
+    <string name="result_search_tooltip">Ka raadi extensions-ka kale</string>
+    <string name="recommendations_tooltip">Muuji waxyaabaha laguu soo jeediyay</string>
+    <string name="action_open_play">Daaro</string>
+    <string name="test_log">Diiwaanka</string>
+    <string name="speed_setting_summary">Wuxuu ku darayaa inaad doorato xawaaraha muuqaalka</string>
+    <string name="extra_brightness_settings">Iftiin dheeraad ah</string>
+    <string name="extra_brightness_settings_des">Daar filter-ka iftiinka marka uu iftiinku 100% ka bato</string>
+    <string name="extra_brightness_key">Iftiinka dheeraadka ah waa shidan yahay</string>
+    <string name="backup_frequency">Inta jeer ee la kaydinayo</string>
+    <string name="library">Kaydka</string>
+    <string name="search_suggestions">Talooyinka Raadinta</string>
+    <string name="search_suggestions_des">Soo bandhig talooyinka inta aad wax qorayso</string>
+    <string name="clear_suggestions">Tirtir Talooyinka</string>
+    <string name="show_player_metadata_overlay">Muuji xogta dulsaaran muuqaalka</string>
+    <string name="show_cast_in_details">Soo bandhig guddiga dhibidda</string>
+    <string name="automatic_plugin_download_mode_title">Dooro habka loo kala saarayo soo dejinta plugins-ka</string>
+    <string name="install_prerelease">Soo deji nooca hordhaca ah</string>
+    <string name="prerelease_already_installed">Nooca hordhaca ah horey ayaa loo soo dejiyay.</string>
 </resources>

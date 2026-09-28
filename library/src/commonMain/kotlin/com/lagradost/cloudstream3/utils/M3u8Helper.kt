@@ -121,6 +121,15 @@ object M3u8Helper2 {
         return !url.startsWith("https://") && !url.startsWith("http://")
     }
 
+    /** Resolves a playlist entry against the playlist url, as done for variants in [HlsPlaylistParser] */
+    private fun resolveUrl(playlistUrl: String, url: String): String {
+        return if (isNotCompleteUrl(url)) {
+            HlsPlaylistParser.UrlUtil.resolveToUrl(playlistUrl, url).toString()
+        } else {
+            url
+        }
+    }
+
     @Throws
     suspend fun m3u8Generation(
         m3u8: M3u8Helper.M3u8Stream,
@@ -320,11 +329,7 @@ object M3u8Helper2 {
 
         if (!match.isNullOrEmpty()) {
             encryptionState = true
-            var encryptionUrl = match[2]
-
-            if (isNotCompleteUrl(encryptionUrl)) {
-                encryptionUrl = "${getParentLink(playlistStream.streamUrl)}/$encryptionUrl"
-            }
+            val encryptionUrl = resolveUrl(playlistStream.streamUrl, match[2])
 
             encryptionIv = match[3].encodeToByteArray()
             val encryptionKeyResponse =
@@ -339,12 +344,7 @@ object M3u8Helper2 {
         val relativeUrl = getParentLink(playlistStream.streamUrl)
         val allTsList = TS_EXTENSION_REGEX.findAll(playlistResponse + "\n").map { ts ->
             val time = ts.groupValues[1]
-            val value = ts.groupValues[3]
-            val url = if (isNotCompleteUrl(value)) {
-                "$relativeUrl/${value}"
-            } else {
-                value
-            }
+            val url = resolveUrl(playlistStream.streamUrl, ts.groupValues[3].trim())
             TsLink(url = url, time = time.toDoubleOrNull())
         }.toList()
 

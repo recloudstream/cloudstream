@@ -253,6 +253,10 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".receivers.PackageInstallerStatusReceiver"
+            android:exported="false" />
+
         <service
             android:name=".services.VideoDownloadService"
             android:enabled="true"

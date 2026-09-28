@@ -18,7 +18,7 @@
         android:nextFocusDown="@id/account_recycler_view"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/manage_accounts"
-        app:tint="@color/player_on_button_tv_attr" />
+        app:tint="@color/account_edit_btn_tint" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/select_an_account"
+            android:textColor="?attr/textColor"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
@@ -42,6 +43,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:paddingLeft="16dp"
             android:paddingRight="16dp" />
 

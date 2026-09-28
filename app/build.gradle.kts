@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.dokka)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.compose.compiler)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -288,7 +290,12 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     implementation(libs.nicehttp) // HTTP Lib
 
+    implementation(libs.bundles.compose)
+    implementation(libs.activity.compose)
+    implementation(libs.kotlinx.io.core) // Logcat parser
+
     implementation(project(":library"))
+    implementation(project(":shared"))
 }
 
 tasks.register<Jar>("androidSourcesJar") {
