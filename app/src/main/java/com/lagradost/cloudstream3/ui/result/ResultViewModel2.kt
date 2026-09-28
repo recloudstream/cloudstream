@@ -194,6 +194,7 @@ data class ResultData(
     val nextAiringEpisode: UiText?,
     val plotHeaderText: UiText,
     val posterHeaders: Map<String, String>? = null,
+    val type: TvType? = null,
 )
 
 data class CheckDuplicateData(
@@ -278,6 +279,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
     }
     val dur = duration
     return ResultData(
+        type = type,
         syncData = syncData,
         plotHeaderText = txt(
             when (this.type) {
