@@ -187,6 +187,12 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var isPlayerActive: AtomicBoolean = AtomicBoolean(false)
     private var isNextEpisode: Boolean = false // this is used to reset the watch time
 
+    private val stuckBufferingWatcher = StuckBufferingWatcher(
+        isBuffering = { currentPlayerStatus == CSPlayerLoading.IsBuffering },
+        currentPosition = { player.getPosition() ?: 0L },
+        onSwitchSource = ::autoSwitchFromStall,
+    )
+
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
     private val allMeta: List<ResultEpisode>?
         get() = viewModel.state.generatorState?.allMeta?.filterIsInstance<ResultEpisode>()
@@ -547,6 +553,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             player.addTimeStamps(emptyList()) // clear stamps
             // Resets subtitle delay, as we watch some other content
             player.setSubtitleOffset(0)
+            stuckBufferingWatcher.reset() // new episode/link: restart the stall counters
+        } else {
+            // Any same-episode mirror switch (user pick, error failover, auto-switch)
+            // must not inherit the previous source's armed stall clock.
+            stuckBufferingWatcher.resetStallTracking()
         }
     }
 
@@ -1564,6 +1575,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun playerError(exception: Throwable) {
         currentSelectedLink?.let { link ->
+            StuckBufferingWatcher.recordHostFailure(link.first?.url)
             viewModel.modifyState { this.addError(link) }
         }
 
@@ -1627,6 +1639,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
         loadLink(firstAvailableLink, false)
         showPlayerMetadata()
+        stuckBufferingWatcher.start()
     }
 
     private fun showPlayerMetadata() {
@@ -1714,9 +1727,30 @@ class GeneratorPlayer : FullScreenPlayer() {
         loadLink(nextLink.link, true)
     }
 
+    /** Called by [StuckBufferingWatcher] when the current source is stuck buffering. */
+    private fun autoSwitchFromStall() {
+        if (!hasNextMirror()) return
+        // Live streams: mirror-switching fights the live-edge logic.
+        if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
+        // Torrents buffer by nature; switching mirrors cannot help.
+        val type = currentSelectedLink?.first?.type
+        if (type == ExtractorLinkType.MAGNET || type == ExtractorLinkType.TORRENT) return
+        StuckBufferingWatcher.recordHostFailure(currentSelectedLink?.first?.url)
+        showToast(activity?.getString(R.string.auto_switch_source_toast))
+        nextMirror()
+    }
+
+    override fun onDestroyView() {
+        // The host view (and with it the status/position we poll) may be torn down
+        // before onDestroy; stop watching so a dying fragment cannot fire a switch.
+        stuckBufferingWatcher.stop()
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         ResultFragment.updateUI()
         currentVerifyLink?.cancel()
+        stuckBufferingWatcher.stop()
         super.onDestroy()
     }
 
