@@ -495,7 +495,7 @@ class ResultViewModel2 : ViewModel() {
     val page: LiveData<Resource<ResultData>?> = _page
 
     fun isRecommendationsHorizontal(): Boolean {
-        return (page.value as? Resource.Success)?.value?.isHorizontalImages == true || currentResponse?.isHorizontalImages == true
+        return (page.value as? Resource.Success)?.value?.isHorizontalImages == true
     }
 
     private val _episodes: MutableLiveData<Resource<List<ResultEpisode>>?> =

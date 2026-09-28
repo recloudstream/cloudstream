@@ -496,7 +496,7 @@ fun newSearchResponseList(
     )
 }
 
-fun List<SearchResponse>.toNewSearchResponseList(hasNext: Boolean? = null): SearchResponseList {
+fun List<SearchResponse>.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
     return newSearchResponseList(this, hasNext)
 }
 
