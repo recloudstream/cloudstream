@@ -10,14 +10,17 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.HomepageParentBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.newSharedPool
+import com.lagradost.cloudstream3.ui.player.LiveZappingGenerator
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -85,6 +88,19 @@ open class ParentItemAdapter(
         (binding.homeChildRecyclerview.adapter as? HomeChildItemAdapter)?.submitList(item.list.list)
     }
 
+    private fun callbackFor(item: HomeViewModel.ExpandableHomepageList): (SearchClickCallback) -> Unit = { callback ->
+        if (callback.action == SEARCH_ACTION_LOAD && callback.card.type == TvType.Live) {
+            val channels = item.list.list.filter { it.type == TvType.Live }
+            val currentIndex = channels.indexOfFirst {
+                it.url == callback.card.url && it.apiName == callback.card.apiName
+            }
+            if (currentIndex >= 0 && channels.isNotEmpty()) {
+                LiveZappingGenerator.remember(callback.card, channels)
+            }
+        }
+        clickCallback(callback)
+    }
+
     override fun onBindContent(
         holder: ViewHolderState<Bundle>,
         item: HomeViewModel.ExpandableHomepageList,
@@ -101,7 +117,7 @@ open class ParentItemAdapter(
                 homeChildRecyclerview.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
                 homeChildRecyclerview.adapter = HomeChildItemAdapter(
                     id = id + position + 100,
-                    clickCallback = clickCallback,
+                    clickCallback = callbackFor(item),
                     nextFocusUp = homeChildRecyclerview.nextFocusUpId,
                     nextFocusDown = homeChildRecyclerview.nextFocusDownId,
                 ).apply {
@@ -113,7 +129,7 @@ open class ParentItemAdapter(
                 currentAdapter.apply {
                     isHorizontal = info.isHorizontalImages
                     hasNext = item.hasNext
-                    this.clickCallback = this@ParentItemAdapter.clickCallback
+                    this.clickCallback = callbackFor(item)
                     nextFocusUp = homeChildRecyclerview.nextFocusUpId
                     nextFocusDown = homeChildRecyclerview.nextFocusDownId
                     submitIncomparableList(item.list.list)

@@ -77,6 +77,7 @@ import com.lagradost.cloudstream3.ui.player.LOADTYPE_CHROMECAST
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP_DOWNLOAD
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
+import com.lagradost.cloudstream3.ui.player.LiveZappingGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
@@ -1559,11 +1560,25 @@ class ResultViewModel2 : ViewModel() {
                         callback = {},
                         subtitleCallback = {})
                 } else {
+                    val response = currentResponse
                     activity?.navigate(
                         R.id.global_to_navigation_player,
-                        GeneratorPlayer.newInstance(
-                            generator, index,list
-                        )
+                        if (response?.type == TvType.Live &&
+                            context?.let { com.lagradost.cloudstream4.AppSettings(it).player.zappingEnabled.get() } == true
+                        ) {
+                            LiveZappingGenerator.take(
+                                response.url,
+                                response.apiName,
+                                response.name,
+                            )?.let { (liveGenerator, liveIndex) ->
+                                GeneratorPlayer.newInstance(liveGenerator, liveIndex, list)
+                            } ?: GeneratorPlayer.newInstance(generator, index, list)
+                        } else {
+                            if (response?.type == TvType.Live) {
+                                response.let { LiveZappingGenerator.discard(it.url, it.apiName) }
+                            }
+                            GeneratorPlayer.newInstance(generator, index, list)
+                        }
                     )
                 }
             }
