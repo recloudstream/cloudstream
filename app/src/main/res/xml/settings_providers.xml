@@ -23,6 +23,12 @@
         app:defaultValue="false" />
 
     <Preference
+        android:icon="@drawable/ic_baseline_clock_24"
+        android:key="@string/cache_time_key"
+        android:title="@string/cache_time_settings" />
+
+
+    <Preference
         android:icon="@drawable/baseline_network_ping_24"
         android:key="@string/test_providers_key"
         android:title="@string/test_extensions"

@@ -8,7 +8,9 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
+import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -319,6 +321,8 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
             pref.setOnPreferenceClickListener {
                 try {
                     cacheDir.deleteRecursively()
+                    APIRepository.clearCache()
+                    RepoLinkGenerator.cache.clear()
                     updateSummary()
                 } catch (e: Exception) {
                     logError(e)
