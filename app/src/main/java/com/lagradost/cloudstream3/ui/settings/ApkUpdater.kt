@@ -65,9 +65,101 @@ object ApkUpdater : AppUpdater {
         }
     }
 
-    fun clearOldFiles(activity: Activity) {
+    fun getCachedUpdateFile(context: Context, versionTag: String): File {
+        return File(context.cacheDir, "${APP_UPDATE_NAME}_$versionTag.$APP_UPDATE_SUFFIX")
+    }
+
+    suspend fun downloadSilently(
+        context: Context,
+        url: String,
+        versionTag: String,
+        digest: DigestPair?
+    ): File? = withContext(Dispatchers.IO) {
+        try {
+            val targetFile = getCachedUpdateFile(context, versionTag)
+            if (targetFile.exists() && targetFile.length() > 0) {
+                return@withContext targetFile
+            }
+
+            clearOldFiles(context)
+            val request = app.get(url)
+            val length = request.size
+            val body = request.body
+            val tempFile = File.createTempFile(APP_UPDATE_NAME, ".$APP_UPDATE_SUFFIX", context.cacheDir)
+            body.use { body ->
+                val readStream = body.byteStream()
+                tempFile.outputStream().use { writeStream ->
+                    transfer(writeStream, readStream, length ?: body.contentLength(), { _, _ -> }, digest)
+                }
+            }
+
+            if (tempFile.renameTo(targetFile)) {
+                targetFile
+            } else {
+                tempFile
+            }
+        } catch (_: Throwable) {
+            null
+        }
+    }
+
+    @Throws
+    suspend fun installFromFile(
+        activity: Activity,
+        file: File,
+        settings: AppSettings,
+        installProgress: (Long, Long?) -> Unit
+    ) = withContext(Dispatchers.IO) {
+        when (settings.updates.apkInstaller.get()) {
+            0 -> {
+                val length = file.length()
+                file.inputStream().use { inputStream ->
+                    var sessionId: Int? = null
+                    val packageInstaller = activity.packageManager.packageInstaller
+                    try {
+                        val installParams =
+                            PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            installParams.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED)
+                        }
+                        installParams.setSize(length)
+
+                        sessionId = packageInstaller.createSession(installParams)
+                        val session = packageInstaller.openSession(sessionId)
+
+                        session.openWrite(activity.packageName, 0, length)
+                            .use { writeStream ->
+                                transfer(writeStream, inputStream, length, installProgress, null)
+                                session.fsync(writeStream)
+                            }
+
+                        val receiverIntent = Intent(activity, PackageInstallerStatusReceiver::class.java)
+                        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                        } else {
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        }
+                        val receiverPendingIntent = PendingIntent.getBroadcast(activity, 0, receiverIntent, flags)
+                        session.commit(receiverPendingIntent.intentSender)
+                        session.close()
+                    } catch (t: Throwable) {
+                        sessionId?.let { id ->
+                            packageInstaller.abandonSession(id)
+                        }
+                        throw t
+                    }
+                }
+            }
+            else -> {
+                openApk(activity, file)
+            }
+        }
+    }
+
+    fun clearOldFiles(context: Context) {
         // Delete old files
-        activity.cacheDir.listFiles()?.filter {
+        context.cacheDir.listFiles()?.filter {
             it.name.startsWith(APP_UPDATE_NAME) && it.extension == APP_UPDATE_SUFFIX
         }?.forEach {
             deleteFileOnExit(it)
