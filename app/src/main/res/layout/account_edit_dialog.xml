@@ -49,8 +49,8 @@
                 android:layout_gravity="center"
                 android:foreground="@drawable/outline_drawable_forced_round"
                 android:defaultFocusHighlightEnabled="false"
-                android:nextFocusRight="@id/edit_profile_photo_button_holder"
-                android:nextFocusDown="@id/edit_profile_photo_button_holder"
+                android:nextFocusRight="@id/edit_profile_photo_button"
+                android:nextFocusDown="@id/edit_profile_photo_button"
                 app:cardCornerRadius="100dp"
                 app:cardElevation="0dp">
 
@@ -159,3 +159,4 @@
 
     </RelativeLayout>
 </LinearLayout>
+

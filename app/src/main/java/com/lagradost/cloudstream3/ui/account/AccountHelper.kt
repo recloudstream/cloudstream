@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.account
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -46,6 +48,42 @@ import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 
+private object ProfileImagePicker {
+    fun pickImage(context: Context, callback: (String) -> Unit) {
+        runCatching {
+            CommonActivity.selectFile(arrayOf("image/*")) { uri ->
+                if (uri == null) return@selectFile
+                // Ensure context lifecycle
+                val ctx = context.applicationContext
+
+                try {
+                    ctx.contentResolver.takePersistableUriPermission(
+                        uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (error: Exception) {
+                    logError(error)
+                    showToast(R.string.edit_profile_image_error_invalid)
+                }
+
+                ImageLoader(ctx).enqueue(
+                    ImageRequest.Builder(ctx).data(uri)
+                        .allowHardware(false).size(512, 512).listener(
+                            onSuccess = { _, _ ->
+                                callback(uri.toString())
+                                showToast(R.string.edit_profile_image_success, Toast.LENGTH_SHORT)
+                            },
+                            onError = { _, _ ->
+                                showToast(R.string.edit_profile_image_error_invalid)
+                            }
+                        ).build()
+                )
+            }
+        }.onFailure {
+            showToast(R.string.error)
+        }
+    }
+}
+
 object AccountHelper {
     fun showAccountEditDialog(
         context: Context,
@@ -60,12 +98,6 @@ object AccountHelper {
 
         var currentEditAccount = account
         val dialog = builder.show()
-        binding.accountImageHolder.requestFocus()
-
-        if (!isLayout(TV or EMULATOR)) {
-            binding.accountImageHolder.setRippleForeground()
-            binding.editProfilePhotoButtonHolder.setRippleForeground()
-        }
 
         if (!isNewAccount) binding.title.setText(R.string.edit_account)
 
@@ -176,12 +208,12 @@ object AccountHelper {
 
         canSetPin = true
 
-        binding.editProfilePhotoButtonHolder.setOnClickListener {
-            val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
+        val showProfileImageUrlDialog = { callback: (String) -> Unit ->
+            val bottomSheetDialog = BottomSheetDialog(context)
             val sheetBinding = BottomInputDialogBinding.inflate(LayoutInflater.from(context))
-            builder.setView(sheetBinding.root)
-            val dialog = builder.create()
-            dialog.show()
+            bottomSheetDialog.setContentView(sheetBinding.root)
+            bottomSheetDialog.show()
+
 
             sheetBinding.apply {
                 text1.text = context.getString(R.string.edit_profile_image_title)
@@ -200,13 +232,14 @@ object AccountHelper {
                         .allowHardware(false)
                         .listener(
                             onSuccess = { _, _ ->
-                                currentEditAccount = currentEditAccount.copy(customImage = url)
-                                binding.accountImage.loadImage(url)
+
+                                callback(url)
                                 showToast(
                                     R.string.edit_profile_image_success,
                                     Toast.LENGTH_SHORT
                                 )
-                                dialog.dismissSafe()
+                                bottomSheetDialog.dismissSafe()
+
                             },
                             onError = { _, _ ->
                                 showToast(
@@ -226,6 +259,31 @@ object AccountHelper {
                     dialog.dismissSafe()
                 }
             }
+        }
+
+        binding.editProfilePhotoButton.setOnClickListener {
+            AlertDialog.Builder(context)
+                .setTitle(R.string.edit_profile_image_title)
+                .setItems(
+                    arrayOf(
+                        context.getString(R.string.edit_profile_image_from_file),
+                        context.getString(R.string.edit_profile_image_hint),
+                    )
+                ) { _, selection ->
+                    if (selection == 0) {
+                        ProfileImagePicker.pickImage(context) { image ->
+                            if (!dialog.isShowing) return@pickImage
+                            currentEditAccount = currentEditAccount.copy(customImage = image)
+                            binding.accountImage.loadImage(image)
+                        }
+                    } else {
+                        showProfileImageUrlDialog { image ->
+                            currentEditAccount = currentEditAccount.copy(customImage = image)
+                            binding.accountImage.loadImage(image)
+                        }
+                    }
+                }
+                .show()
         }
     }
 
@@ -289,7 +347,10 @@ object AccountHelper {
                 val activity = context.getActivity()
                 if (activity is AccountSelectActivity) {
                     isPinValid = true
-                    activity.accountViewModel.handleAccountSelect(getDefaultAccount(context), activity)
+                    activity.accountViewModel.handleAccountSelect(
+                        getDefaultAccount(context),
+                        activity
+                    )
                 }
             }
         }

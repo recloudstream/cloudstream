@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.Manifest
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -20,6 +21,7 @@ import android.view.View.NO_ID
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.annotation.StringRes
@@ -39,18 +41,11 @@ import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
-import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.player.PlayerPipHelper.isPIPPossible
 import com.lagradost.cloudstream3.ui.player.Torrent
-import com.lagradost.cloudstream3.ui.result.ActorAdaptor
-import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
-import com.lagradost.cloudstream3.ui.result.ImageAdapter
-import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
-import com.lagradost.cloudstream3.ui.settings.extensions.PluginAdapter
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
@@ -241,6 +236,21 @@ object CommonActivity {
         setLocale(this, localeCode)
     }
 
+
+    private var activityFileLauncher: ActivityResultLauncher<Array<String>>? = null
+    private var activityFileLauncherCallback: Pair<Int, ((Uri?) -> Unit)>? = null
+
+    // Ensure that previous launches do not trigger current callbacks.
+    private var fileLaunchCounter = 0
+
+    /** Use the ActivityResultContracts.OpenDocument() file picker to select a file.
+     * Note: Is only able to handle ONE callback at once. Multiple calls will overwrite the old calls.
+     */
+    fun selectFile(mimetypes: Array<String>, callback: (Uri?) -> Unit) {
+        activityFileLauncherCallback = ++fileLaunchCounter to callback
+        activityFileLauncher?.launch(mimetypes)
+    }
+
     fun init(act: Activity) {
         setActivityInstance(act)
         ioSafe { Torrent.deleteAllFiles() }
@@ -262,6 +272,16 @@ object CommonActivity {
                     action.onResultSafe(act, result.data)
                     removeKey("last_click_action")
                     removeKey("last_opened")
+                }
+            }
+
+        activityFileLauncher =
+            componentActivity.registerForActivityResult(ActivityResultContracts.OpenDocument()) { result ->
+                val callback = activityFileLauncherCallback ?: return@registerForActivityResult
+                activityFileLauncherCallback = null
+
+                if (fileLaunchCounter == callback.first) {
+                    callback.second.invoke(result)
                 }
             }
 
