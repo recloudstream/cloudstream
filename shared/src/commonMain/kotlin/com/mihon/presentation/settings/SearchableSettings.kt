@@ -3,10 +3,11 @@ package com.mihon.presentation.settings
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import com.lagradost.cloudstream4.compose.HasStatusBarColor
 import com.lagradost.cloudstream4.compose.Screen
 import com.mihon.presentation.LocalBackPress
 
-interface SearchableSettings : Screen {
+interface SearchableSettings : Screen, HasStatusBarColor {
     @Composable
     @ReadOnlyComposable
     fun getTitleRes(): String

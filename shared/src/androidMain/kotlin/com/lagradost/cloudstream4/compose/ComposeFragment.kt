@@ -1,15 +1,21 @@
 package com.lagradost.cloudstream4.compose
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.view.WindowCompat
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.lagradost.cloudstream4.theme.CloudStreamTheme
 import com.lagradost.cloudstream4.theme.perfToColor
@@ -39,6 +45,22 @@ fun Screen.createComposeView(
             val backDispatcher = checkNotNull(LocalOnBackPressedDispatcherOwner.current) {
                 "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
             }.onBackPressedDispatcher
+
+            /** Sync status bar and background color with optional HasStatusBarColor
+             * or else colors might be messed up. */
+            val statusBarColor = (this@createComposeView as? HasStatusBarColor)?.statusBarColor()
+            if (statusBarColor != null) {
+                SideEffect {
+                    setBackgroundColor(statusBarColor.toArgb())
+                    (context as? Activity)?.window?.let {
+                        WindowCompat.getInsetsController(
+                            it,
+                            this@apply
+                        ).isAppearanceLightStatusBars =
+                            statusBarColor.luminance() > 0.5f
+                    }
+                }
+            }
 
             CompositionLocalProvider(
                 LocalBackPress provides backDispatcher::onBackPressed,
