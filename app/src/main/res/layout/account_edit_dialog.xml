@@ -48,11 +48,14 @@
                 android:layout_height="@dimen/account_select_linear_item_size"
                 android:layout_gravity="center"
                 android:foreground="@drawable/outline_drawable_forced_round"
+
                 android:defaultFocusHighlightEnabled="false"
-                android:nextFocusRight="@id/edit_profile_photo_button_holder"
-                android:nextFocusDown="@id/edit_profile_photo_button_holder"
+                android:nextFocusRight="@id/edit_profile_photo_button"
+                android:nextFocusDown="@id/edit_profile_photo_button"
                 app:cardCornerRadius="100dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_bg_blue"
 
                 <requestFocus />
 
@@ -71,6 +74,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="bottom|end"
+<<<<<<< HEAD
                 android:defaultFocusHighlightEnabled="false"
                 android:foreground="@drawable/outline_drawable_forced_round"
                 android:nextFocusLeft="@id/account_image_holder"
@@ -89,6 +93,17 @@
                     app:tint="@color/white" />
             </androidx.cardview.widget.CardView>
         </FrameLayout>
+=======
+                android:background="@color/skipOpTransparent"
+                android:contentDescription="@string/edit_profile_image_title"
+                android:focusable="true"
+                android:foreground="@drawable/outline_drawable_forced_round"
+                android:nextFocusLeft="@id/account_image"
+                android:nextFocusDown="@id/account_name"
+                android:padding="5dp"
+                android:src="@drawable/ic_baseline_edit_24" />
+        </androidx.cardview.widget.CardView>
+>>>>>>> arpit/fix/3079-account-pfp-from-file
 
         <EditText
             android:id="@+id/account_name"
