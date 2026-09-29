@@ -286,6 +286,12 @@ object SettingsPlayerScreen : SearchableSettings {
                         title = stringResource(R.string.resolution),
                         icon = painterResource(R.drawable.high_res_24px),
                     ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.player.showInfoWhenLocked,
+                        title = stringResource(R.string.show_info_when_locked),
+                        subtitle = stringResource(R.string.show_info_when_locked_desc),
+                        icon = painterResource(R.drawable.lock_24px),
+                    ),
 
                     // Unsure if we want to have MultiSelectListPreference or boolean
                     /*Preference.PreferenceItem.MultiSelectListPreference(

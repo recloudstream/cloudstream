@@ -100,6 +100,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     protected var playerRotateEnabled = false
     protected var rotatedManually = false
     private var hideControlsNames = false
+
+    /** Show the title and the (read only) progress bar when tapping the screen while locked. */
+    private var showInfoWhenLocked = true
     protected var subtitleDelay
         set(value) = try {
             player.setSubtitleOffset(value)
@@ -289,9 +292,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
         playerBinding?.apply {
 
-            if (isLayout(PHONE)) { // isEnabled also disables the onKeyDown
-                exoProgress.isEnabled = isShowing // Prevent accidental clicks/drags
-            }
+            // isEnabled also disables the onKeyDown
+            exoProgress.isEnabled = isProgressBarInteractive()
 
             if (isShowing) {
                 updateUIVisibility()
@@ -739,11 +741,13 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             // video_bar.startAnimation(fadeAnimation)
 
             // TITLE
-            playerVideoTitleRez.startAnimation(fadeAnimation)
-            playerVideoInfo.startAnimation(fadeAnimation)
             playerEpisodeFiller.startAnimation(fadeAnimation)
-            playerVideoTitleHolder.startAnimation(fadeAnimation)
-            playerTopHolder.startAnimation(fadeAnimation)
+            if (!showInfoWhenLocked) {
+                playerVideoTitleRez.startAnimation(fadeAnimation)
+                playerVideoInfo.startAnimation(fadeAnimation)
+                playerVideoTitleHolder.startAnimation(fadeAnimation)
+                playerTopHolder.startAnimation(fadeAnimation)
+            }
             // BOTTOM
             playerLockHolder.startAnimation(fadeAnimation)
             // player_go_back_holder?.startAnimation(fadeAnimation)
@@ -753,9 +757,23 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         updateLockUI()
     }
 
+    /**
+     * Whether the seekbar may be scrubbed/focused. While locked it is only a read only
+     * position indicator, and on phones it is disabled when hidden to prevent
+     * accidental clicks/drags.
+     */
+    private fun isProgressBarInteractive(): Boolean =
+        !isLocked && (isShowing || !isLayout(PHONE))
+
+    /** If the info (title + progress bar) should be kept when the controls are locked. */
+    private val keepsInfoWhenLocked: Boolean get() = isLocked && showInfoWhenLocked
+
     private fun updateUIVisibility() {
         val isGone = isLocked || !isShowing
-        var togglePlayerTitleGone = isGone
+        // The title and the progress bar may be kept while locked, so the playback position
+        // can be read without unlocking first, exoProgress is disabled to keep it read only.
+        val isInfoGone = if (keepsInfoWhenLocked) !isShowing else isGone
+        var togglePlayerTitleGone = isInfoGone
         context?.let {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
             val limitTitle = settingsManager.getInt(getString(R.string.prefer_limit_title_key), 0)
@@ -765,16 +783,17 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
         playerBinding?.apply {
             playerLockHolder.isGone = isGone
-            playerVideoBar.isGone = isGone
+            playerVideoBar.isGone = isInfoGone
+            exoProgress.isEnabled = isProgressBarInteractive()
 
             playerPausePlayHolderHolder.isGone =
                 isGone || currentPlayerStatus == CSPlayerLoading.IsBuffering
-            playerTopHolder.isGone = isGone
+            playerTopHolder.isGone = isInfoGone
             val showPlayerEpisodes = !isGone && isThereEpisodes()
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
             playerVideoTitleHolder.isGone = togglePlayerTitleGone || playerVideoTitle.text.isBlank()
-            playerVideoTitleRez.isGone = isGone || playerVideoTitleRez.text.isBlank()
+            playerVideoTitleRez.isGone = isInfoGone || playerVideoTitleRez.text.isBlank()
             playerEpisodeFiller.isGone = isGone
             playerCenterMenu.isGone = isGone
             playerLock.isGone = !isShowing
@@ -1151,6 +1170,10 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 hideControlsNames = settingsManager.getBoolean(
                     ctx.getString(R.string.hide_player_control_names_key),
                     false
+                )
+                showInfoWhenLocked = settingsManager.getBoolean(
+                    ctx.getString(R.string.show_info_when_locked_key),
+                    true
                 )
 
                 val profiles = QualityDataHelper.getProfiles()

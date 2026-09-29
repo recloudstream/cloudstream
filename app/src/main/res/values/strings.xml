@@ -717,6 +717,8 @@
     <string name="hide_player_control_names">Hide names of the player\'s controls</string>
     <string name="preview_seekbar">Seekbar preview</string>
     <string name="preview_seekbar_desc">Enable preview thumbnail on seekbar</string>
+    <string name="show_info_when_locked">Show info when locked</string>
+    <string name="show_info_when_locked_desc">Show the title and playback progress when tapping the screen with the controls locked</string>
     <string name="no_subtitles_loaded">No subtitles loaded yet</string>
     <string name="backup_path_title">Backup folder location</string>
     <string name="custom">Custom</string>
