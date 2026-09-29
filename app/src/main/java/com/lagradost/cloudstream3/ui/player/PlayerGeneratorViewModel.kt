@@ -54,6 +54,7 @@ data class DisplayLink(
 // @Immutable
 data class VideoState(
     val subtitles: PersistentSet<SubtitleData> = persistentSetOf(),
+    val secondarySubtitle: SubtitleData? = null,
     val links: PersistentSet<VideoLink> = persistentSetOf(),
     val erroredLinks: PersistentSet<VideoLink> = persistentSetOf(),
     val stamps: PersistentList<VideoSkipStamp> = persistentListOf(),
@@ -196,6 +197,9 @@ class PlayerGeneratorViewModel : ViewModel() {
     private val _currentSubtitles = MutableLiveData<VideoLive<Set<SubtitleData>>>(null)
     val currentSubtitles: LiveData<VideoLive<Set<SubtitleData>>> = _currentSubtitles
 
+    private val _currentSecondarySubtitle = MutableLiveData<VideoLive<SubtitleData?>>(null)
+    val currentSecondarySubtitle: LiveData<VideoLive<SubtitleData?>> = _currentSecondarySubtitle
+
     private val _loadingLinks = MutableLiveData<VideoLive<Resource<Unit>>>()
     val loadingLinks: LiveData<VideoLive<Resource<Unit>>> = _loadingLinks
 
@@ -216,6 +220,7 @@ class PlayerGeneratorViewModel : ViewModel() {
         /** New instance, always push state */
         if (state.instance != oldState.instance) {
             _currentSubtitles.postValue(VideoLive(state.subtitles, state.instance))
+            _currentSecondarySubtitle.postValue(VideoLive(state.secondarySubtitle, state.instance))
             _currentStamps.postValue(VideoLive(state.stamps, state.instance))
             _currentLinks.postValue(VideoLive(state.links, state.instance))
             _loadingLinks.postValue(VideoLive(state.loading, state.instance))
@@ -234,6 +239,8 @@ class PlayerGeneratorViewModel : ViewModel() {
             _currentStamps.postValue(VideoLive(state.stamps, state.instance))
         if (state.subtitles !== oldState.subtitles)
             _currentSubtitles.postValue(VideoLive(state.subtitles, state.instance))
+        if (state.secondarySubtitle !== oldState.secondarySubtitle)
+            _currentSecondarySubtitle.postValue(VideoLive(state.secondarySubtitle, state.instance))
 
         /** Normal equality here as it is not a collection */
         if (state.loading != oldState.loading)
@@ -252,6 +259,10 @@ class PlayerGeneratorViewModel : ViewModel() {
 
     fun setSubtitleYear(year: Int?) {
         _currentSubtitleYear.postValue(year)
+    }
+
+    fun setSecondarySubtitle(subtitle: SubtitleData?) {
+        modifyState { copy(secondarySubtitle = subtitle) }
     }
 
     fun loadLinksPrev() {
