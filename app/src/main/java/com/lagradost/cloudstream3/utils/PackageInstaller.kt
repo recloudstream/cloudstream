@@ -29,6 +29,12 @@ class ApkInstaller(private val service: PackageInstallerService) {
         var delayedInstaller: DelayedInstaller? = null
         private var isReceiverRegistered = false
         private const val TAG = "ApkInstaller"
+
+        fun hasDelayedInstaller(): Boolean = delayedInstaller != null
+
+        fun startDelayedInstallation(): Boolean {
+            return delayedInstaller?.startInstallation() == true
+        }
     }
 
     inner class DelayedInstaller(
