@@ -458,10 +458,10 @@
     <string name="pref_category_looks">Görünüm</string>
     <string name="pref_category_ui_features">Özellikler</string>
     <string name="delayed_update_notice">Uygulama çıkışta güncellenecektir</string>
-    <string name="skip_type_ed">Bitiş</string>
-    <string name="skip_type_op">Açılış</string>
+    <string name="skip_type_ed">Kapanışı</string>
+    <string name="skip_type_op">Açılışı</string>
     <string name="no">Hayır</string>
-    <string name="skip_type_recap">Özet</string>
+    <string name="skip_type_recap">Özeti</string>
     <string name="confirm_exit_dialog">Çıkmak istediğinize emin misin?</string>
     <string name="yes">Evet</string>
     <string name="update_notification_downloading">Uygulama güncellemesi indiriliyor…</string>
@@ -471,7 +471,7 @@
     <string name="apk_installer_legacy">Eski</string>
     <string name="pref_category_gestures">Hareketler</string>
     <string name="all_languages_preference">Tüm Diller</string>
-    <string name="skip_type_format" formatted="true">Geç %s</string>
+    <string name="skip_type_format" formatted="true">%s Atla</string>
     <string name="action_remove_from_watched">İzlenenlerden kaldır</string>
     <string name="skip_type_mixed_ed">Karışık son</string>
     <string name="skip_type_mixed_op">Karışık başlangıç</string>
@@ -530,7 +530,7 @@
     <string name="quality_profile_help">Burada kaynakların nasıl sıralandığını değiştirebilirsiniz. Bir video daha yüksek bir önceliğe sahipse, kaynak seçiminde daha yüksek görünecektir. Kaynak önceliği ve kalite önceliğinin toplamı video önceliğidir. \n \nKaynak A: 3 \nKalite B: 7 \nBirleştirilmiş video önceliği 10 olacaktır. \n \nNOT: Toplam 10 veya daha fazlaysa, bu bağlantı yüklendiğinde oynatıcı otomatik olarak yüklemeyi atlayacaktır!</string>
     <string name="qualities">Kaliteler</string>
     <string name="profile_background_des">Profil arkaplanı</string>
-    <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
+    <string name="unable_to_inflate">Kullanıcı arayüzü düzgün şekilde oluşturulamadı, bu BÜYÜK BİR HATADIR ve derhal bildirilmelidir %s</string>
     <string name="automatic_plugin_download_mode_title">Eklenti indirmeyi filtrelemek için mod seç</string>
     <string name="favorite_removed">%s favorilerden çıkarıldı</string>
     <string name="favorites_list_name">Favoriler</string>

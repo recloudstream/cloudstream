@@ -350,7 +350,7 @@
     <string name="home_random">Ngẫu nhiên</string>
     <string name="coming_soon">Sắp có…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Bản CAM(Quay rạp)</string>
+    <string name="quality_cam_rip">CamRip</string>
     <string name="quality_cam_hd">Bản HD(Đẹp)</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
@@ -760,5 +760,5 @@
     <string name="start_paused_settings">Phát video đang dừng</string>
     <string name="background">Nền</string>
     <string name="subs_edge">Góc</string>
-    <string name="start_paused_settings_des">Giảm stress khi chọn nguồn</string>
+    <string name="start_paused_settings_des">Giảm bớt căng thẳng khi chọn nguồn phát</string>
 </resources>
