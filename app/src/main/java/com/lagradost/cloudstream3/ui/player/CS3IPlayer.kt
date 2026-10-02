@@ -839,12 +839,16 @@ class CS3IPlayer : IPlayer {
         }
 
         private fun getCache(context: Context, cacheSize: Long): SimpleCache? {
+            // 0 means "automatic/off" in the player settings. Do not construct an
+            // LRU evictor with a 0-byte limit: that makes every newly written HLS
+            // cache span immediately eligible for eviction and causes the loader
+            // threads to contend inside SimpleCache.removeSpan/startFile.
+            if (cacheSize <= 0L) return null
+
             return try {
                 val databaseProvider = StandaloneDatabaseProvider(context)
                 SimpleCache(
-                    File(
-                        context.cacheDir, "exoplayer"
-                    ).also { deleteFileOnExit(it) }, // Ensures always fresh file
+                    File(context.cacheDir, "exoplayer"),
                     LeastRecentlyUsedCacheEvictor(cacheSize),
                     databaseProvider
                 )
@@ -1226,6 +1230,11 @@ class CS3IPlayer : IPlayer {
                 .setSeekParameters(SeekParameters(toleranceBeforeUs, toleranceAfterUs))
                 .setLoadControl(
                     DefaultLoadControl.Builder()
+                        // The RAM-buffer preference is a byte target, but HLS streaming should
+                        // not stop loading merely because that byte target was reached while
+                        // less than the minimum amount of media is buffered. This is especially
+                        // important for high-bitrate streams where a small byte target can
+                        // represent only a fraction of a second.
                         .setTargetBufferBytes(
                             if (cacheSize <= 0) {
                                 DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES
@@ -1233,6 +1242,7 @@ class CS3IPlayer : IPlayer {
                                 if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt()
                             }
                         )
+                        .setPrioritizeTimeOverSizeThresholdsForStreaming(true)
                         .setBackBuffer(
                             30000,
                             true
@@ -1258,14 +1268,22 @@ class CS3IPlayer : IPlayer {
         val dataSourceFactory = if (onlineSource == null) {
             null
         } else {
-            if (simpleCache == null)
+            if (simpleCache == null && simpleCacheSize > 0L) {
                 simpleCache = getCache(context, simpleCacheSize)
-
-            val cacheFactory = CacheDataSource.Factory().apply {
-                simpleCache?.let { setCache(it) }
-                setUpstreamDataSourceFactory(onlineSource)
             }
-            cacheFactory
+
+            // Keep the hot HLS path completely out of SimpleCache when disk caching
+            // is disabled. CacheDataSource without a real cache adds no value and
+            // the old code could accidentally create a 0-byte LRU cache.
+            if (simpleCache == null) {
+                onlineSource
+            } else {
+                CacheDataSource.Factory().apply {
+                    setCache(simpleCache!!)
+                    setUpstreamDataSourceFactory(onlineSource)
+                    setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+                }
+            }
         }
 
         val defaultMediaSourceFactory = if (dataSourceFactory != null) {
