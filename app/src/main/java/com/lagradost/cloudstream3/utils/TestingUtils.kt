@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.MovieLoadResponse
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.mvvm.getStackTracePretty
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream4.state.Log
 import com.lagradost.cloudstream4.state.LogItem
@@ -330,7 +331,11 @@ object TestingUtils {
                 logger.e(tag, "Link loading failed")
                 TestResultProvider(false, null)
             }
+        } catch (e : CancellationException) {
+            logger.e(tag, "Testing of ${api.name} was cancelled")
+            TestResultProvider(false, e)
         } catch (e: Throwable) {
+            logger.e(tag, e.getStackTracePretty().trim())
             TestResultProvider(false, e)
         }
     }

@@ -28,22 +28,40 @@ import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.Uuid
 
 @Immutable
 data class ImmutableTestResult(
     val name: String,
     val language: String,
-    val plugin : String?,
+    val plugin: String?,
     override val uuid: Uuid,
     val log: PersistentList<LogItem> = persistentListOf(),
     val highestLogLevel: LogLevel = LogLevel.Verbose,
     val isLoading: Boolean = false,
     val result: TestResultProvider? = null,
 ) : UniqueItem {
-    fun addMessage(message: LogItem): ImmutableTestResult = copy(
-        log = log.adding(message)
-    )
+    fun addMessage(message: LogItem): ImmutableTestResult {
+        val lastMessage = log.lastOrNull()
+
+        /** If we have a very similar message at almost the same time,
+         * then append it instead of adding a new message*/
+        if (lastMessage != null
+            && lastMessage.level == message.level
+            && lastMessage.tag == message.tag
+            && (message.date - lastMessage.date) < 100.milliseconds
+        ) {
+            return copy(
+                log = log.replacingAt(log.lastIndex, lastMessage.copy(
+                    message = lastMessage.message + "\n" + message.message,
+                    date = message.date
+                ))
+            )
+        }
+
+        return copy(log = log.adding(message))
+    }
 }
 
 @Immutable
@@ -74,6 +92,7 @@ data class DerivedTestState(
     override fun clearing(): DerivedTestState = DerivedTestState()
     override fun adding(value: ImmutableTestResult): DerivedTestState =
         copy(highestLogLevelCount = highestLogLevelCount.edit(value.highestLogLevel) { plus(1) })
+
     override fun removing(value: ImmutableTestResult): DerivedTestState =
         copy(highestLogLevelCount = highestLogLevelCount.edit(value.highestLogLevel) { minus(1) })
 }
@@ -147,7 +166,11 @@ class TestViewModel2 : ViewModel(), StateContainer<TestState> by DefaultStateCon
                     dispatcher.launch(action.uuid) {
                         updateState {
                             copy(items = items.updating(action.uuid) {
-                                copy(log = log.cleared(), highestLogLevel = LogLevel.Verbose, result = null)
+                                copy(
+                                    log = log.cleared(),
+                                    highestLogLevel = LogLevel.Verbose,
+                                    result = null
+                                )
                             })
                         }
                     }

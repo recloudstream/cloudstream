@@ -1,8 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings.testing
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component1
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
@@ -47,6 +45,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -54,6 +53,7 @@ import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.SettingsSearch
 import com.lagradost.cloudstream3.ui.settings.logcat.toHumanReadable
+import com.lagradost.cloudstream3.utils.TestingUtils
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream4.compose.BlackButton
@@ -67,13 +67,53 @@ import com.lagradost.cloudstream4.compose.WhiteFilterChip
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.state.LogItem
 import com.lagradost.cloudstream4.state.LogLevel
+import com.lagradost.cloudstream4.state.SearchableDataState
+import com.lagradost.cloudstream4.state.SortByName
+import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.mihon.material.AppBar
 import com.mihon.material.Scaffold
 import com.mihon.material.padding
 import com.mihon.presentation.LocalBackPress
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentList
+import kotlin.uuid.Uuid
+
+
+@PreviewLightDark
+@Composable
+fun Preview() {
+    val uuid1 = Uuid.random()
+    val uuid2 = Uuid.random()
+    CloudStreamPreviewTheme {
+        TestScreen.Content(
+            state = TestState(
+                items = SearchableDataState.from(
+                    state = DerivedTestState(),
+                    data = persistentMapOf(
+                        uuid1 to ImmutableTestResult(
+                            name = "test",
+                            language = "en",
+                            uuid = uuid1,
+                            plugin = "test plugin"
+                        ),
+                        uuid2 to ImmutableTestResult(
+                            name = "aaa",
+                            language = "se",
+                            uuid = uuid2,
+                            plugin = "test plugin",
+                            highestLogLevel = LogLevel.Error,
+                            result = TestingUtils.TestResultProvider(false, Throwable())
+                        )
+                    ),
+                    sortedBy = SortByName { it.name },
+                    filteredBy = null,
+                )
+            ), onAction = {})
+    }
+}
+
 
 object TestScreen : Screen {
     @Composable
@@ -229,10 +269,7 @@ object TestScreen : Screen {
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
             modifier = Modifier
                 .fillMaxWidth()
-                .scrollable(
-                    state = rememberScrollState(),
-                    orientation = Orientation.Horizontal
-                )
+                .horizontalScroll(state = rememberScrollState())
         ) {
             Spacer(modifier = Modifier.width(MaterialTheme.padding.small))
             val highestLogLevelCount = state.items.state.highestLogLevelCount
@@ -371,13 +408,7 @@ object TestScreen : Screen {
             Column(modifier = Modifier.weight(1.0f)) {
                 Text(text = result.name)
 
-                Row {
-                    if (result.plugin != null) {
-                        Text(
-                            text = result.plugin,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small)) {
                     if (result.result != null) {
                         val (text, color) = when (result.highestLogLevel) {
                             LogLevel.Fatal, LogLevel.Error -> R.string.test_failed to R.color.colorTestFail
@@ -385,6 +416,12 @@ object TestScreen : Screen {
                             LogLevel.Verbose, LogLevel.Debug, LogLevel.Info -> R.string.test_passed to R.color.colorTestPass
                         }
                         Text(text = stringResource(text), color = colorResource(color))
+                    }
+                    if (result.plugin != null) {
+                        Text(
+                            text = result.plugin,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }
