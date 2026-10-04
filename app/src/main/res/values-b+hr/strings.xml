@@ -350,8 +350,8 @@
     <string name="home_random">Slučajno</string>
     <string name="coming_soon">Dolazi uskoro …</string>
     <string name="quality_cam">Kamera</string>
-    <string name="quality_cam_rip">Kamera</string>
-    <string name="quality_cam_hd">Kamera</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -375,7 +375,7 @@
     <string name="error_invalid_url">Nevažeći URL</string>
     <string name="error">Pogreška</string>
     <string name="subtitles_remove_captions">Ukloni titlove za gluhe osobe iz titlova</string>
-    <string name="subtitles_remove_bloat">Ukloni nepotrebne elemente iz titlova (npr. oglase)</string>
+    <string name="subtitles_remove_bloat">Ukloni oglase iz titlova</string>
     <string name="subtitles_filter_lang">Filtriraj po preferiranom jeziku medija</string>
     <string name="extras">Dodatni sadržaji</string>
     <string name="trailer">Trailer</string>
@@ -664,7 +664,7 @@
     <string name="update_plugins_manually">Ažuriraj podatke ručno</string>
     <string name="starting_plugin_update_manually">Pokreće se postupak ažuriranja dodataka!</string>
     <string name="player_notification_channel_name">Obavijesti reproduktora</string>
-    <string name="plugins_updated_manually">Uspješno ažuriranih dodataka: %d!</string>
+    <string name="plugins_updated_manually">Uspješno ažurirano %d dodataka</string>
     <string name="player_notification_channel_description">Obavijest reproduktora za upravljanje reprodukcijom iz pozadine</string>
     <string name="all_subtitles_italic">Ukosite sve titlove</string>
     <string name="all_subtitles_bold">Podebljajte sve titlove</string>
@@ -751,4 +751,19 @@
     <string name="skip_type_preview">Pregled</string>
     <string name="player_is_live">Uživo</string>
     <string name="show_player_metadata_overlay">Prikaži sloj metapodataka playera</string>
+    <string name="subs_edge">Rub</string>
+    <string name="log_cat">Logmačka 🐈</string>
+    <string name="start_paused_settings">Pokreni videozapise pauzirane</string>
+    <string name="start_paused_settings_des">Smanjite stres pri odabiru izvora</string>
+    <string name="tv_layout_clock_settings">Prikaži sat u stvarnom vremenu</string>
+    <string name="tv_layout_clock_settings_des">Prikaži sat stvarnog vremena na vrhu zaslona. Odnosi se na početnu stranicu i player</string>
+    <string name="profile_settings">Postavke profila</string>
+    <string name="profile_hide_negative_sources">Sakrij izvore s negativnim prioritetom</string>
+    <string name="profile_hide_error_sources">Sakrij izvore s pogreškama</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d skrivena poveznica</item>
+        <item quantity="few">%d skrivene poveznice</item>
+        <item quantity="other">%d skrivenih poveznica</item>
+    </plurals>
+    <string name="background">Pozadina</string>
 </resources>
