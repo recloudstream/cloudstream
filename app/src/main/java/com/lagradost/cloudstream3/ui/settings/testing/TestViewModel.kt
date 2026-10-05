@@ -28,11 +28,11 @@ class TestViewModel : ViewModel() {
     val providerProgress: LiveData<TestProgress> = _providerProgress
 
     private val _providerResults =
-        MutableLiveData<List<Pair<MainAPI, TestingUtils.TestResultProvider>>>(
+        MutableLiveData<List<Triple<MainAPI, TestingUtils.TestResultProvider, TestingUtils.Logger>>>(
             emptyList()
         )
 
-    val providerResults: LiveData<List<Pair<MainAPI, TestingUtils.TestResultProvider>>> =
+    val providerResults: LiveData<List<Triple<MainAPI, TestingUtils.TestResultProvider, TestingUtils.Logger>>> =
         _providerResults
 
     private var scope: CoroutineScope? = null
@@ -40,7 +40,8 @@ class TestViewModel : ViewModel() {
         get() = scope != null
 
     private var filter = ProviderFilter.All
-    private val providers = atomicListOf<Pair<MainAPI, TestingUtils.TestResultProvider>>()
+    private val providers =
+        atomicListOf<Triple<MainAPI, TestingUtils.TestResultProvider, TestingUtils.Logger>>()
     private var passed = 0
     private var failed = 0
     private var total = 0
@@ -67,14 +68,19 @@ class TestViewModel : ViewModel() {
         postProviders()
     }
 
-    private fun addProvider(api: MainAPI, results: TestingUtils.TestResultProvider) {
+    private fun addProvider(
+        api: MainAPI,
+        results: TestingUtils.TestResultProvider,
+        logger: TestingUtils.Logger
+    ) {
         providers.withLock {
             val index = providers.indexOfFirst { it.first == api }
+            val triple = Triple(api, results, logger)
             if (index == -1) {
-                providers.add(api to results)
+                providers.add(triple)
                 if (results.success) passed++ else failed++
             } else {
-                providers[index] = api to results
+                providers[index] = triple
             }
             updateProgress()
         }
@@ -95,8 +101,8 @@ class TestViewModel : ViewModel() {
         providers.clear()
         updateProgress()
 
-        TestingUtils.getDeferredProviderTests(scope ?: return, apis) { api, result ->
-            addProvider(api, result)
+        TestingUtils.getDeferredProviderTests(scope ?: return, apis) { api, result, log ->
+            addProvider(api, result, log)
         }
     }
 

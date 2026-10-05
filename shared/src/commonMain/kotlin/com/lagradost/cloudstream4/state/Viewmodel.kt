@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream4.compose
+package com.lagradost.cloudstream4.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +10,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +31,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.uuid.Uuid
 
 /**
  * Use with the DefaultStateContainer
@@ -133,6 +137,63 @@ data class SingleActiveQuery(
     }
 }
 
+/** Multiple active jobs with labels, cancelling the old job if a new one is launched with the same label */
+data class MultiActiveQuery<T>(
+    val dispatcher: CoroutineDispatcher,
+    private var supervisor: Job = SupervisorJob(),
+    private val mutex: Mutex = Mutex(),
+    private val queries: MutableMap<T, Job> = mutableMapOf()
+) {
+    suspend fun cancelAll() {
+        mutex.withLock {
+            supervisor.cancelAndJoin()
+            queries.clear()
+            supervisor = SupervisorJob()
+        }
+    }
+
+    suspend fun cancelOne(label: T, message: String? = null) {
+        mutex.withLock {
+            queries.remove(label)?.let { job ->
+                if(message != null) {
+                    job.cancel(message)
+                } else {
+                    job.cancel()
+                }
+                job.join()
+            }
+        }
+    }
+
+    suspend fun launch(label: T, block: suspend CoroutineScope.() -> Unit) {
+        val currentScope = CoroutineScope(currentCoroutineContext() + supervisor)
+        val obj: suspend CoroutineScope.() -> Unit = {
+            try {
+                withContext(dispatcher) {
+                    block()
+                }
+            } catch (_: Throwable) {
+            } finally {
+                // This actually does not need a `withContext(NonCancellable)`, because if this gets
+                // canceled the callee will also clear this key. This means that it is free to skip
+                // in case of cancellation
+                mutex.withLock {
+                    // Clean up the key so we do not leek shit
+                    queries.remove(label)
+                }
+            }
+        }
+
+        mutex.withLock {
+            queries[label]?.let { activeJob ->
+                activeJob.cancel()
+                activeJob.join()
+            }
+            queries[label] = currentScope.launch(block = obj)
+        }
+    }
+}
+
 /** Debounce Query to handle e.g. user search without spamming the endpoint */
 data class DebounceQuery(
     private val pipe: MutableSharedFlow<String> = MutableSharedFlow(
@@ -151,3 +212,24 @@ data class DebounceQuery(
         this.pipe.emit(query)
     }
 }
+
+/**
+ * This interface is used to mark each item as unique no matter the content.
+ *
+ * For UI, we might have to display the item as a list
+ * To do this we use a randomized uuid to act as a unique "key" to act as a cheap hash function.
+ * */
+interface UniqueItem {
+    val uuid: Uuid
+}
+
+/**
+ * Allows the use of `UniqueItem by NonCopyUniqueItem()` on regular classes by using `Uuid.random()`
+ *
+ * HOWEVER: This is different from using `: UniqueItem` on a data class, because a `.copy(...)` will
+ * generate a ***New*** `randomUuid` as opposed to keeping the same `randomUuid`.
+ *
+ * For data classes the preferred behavior is almost always:
+ * `override val randomUuid : Uuid = Uuid.random()` and `: UniqueItem`
+ * */
+data class NonCopyUniqueItem(override val uuid: Uuid = Uuid.random()) : UniqueItem
