@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream4.AppSettings
@@ -197,7 +198,7 @@ class GithubViewModel(
     }
 
     private suspend fun installUpdate(file: GithubReleases.GithubFile) = dispatchUpdate {
-        val activity = com.lagradost.cloudstream3.CommonActivity.activity
+        val activity = CommonActivity.activity
         val cachedFile = activity?.let {
             ApkUpdater.getCachedUpdateFile(it, file.tagName)
         }
@@ -301,7 +302,7 @@ class GithubViewModel(
 
         // If automated background search, download the update APK silently in advance
         if (!fromUser) {
-            val activity = com.lagradost.cloudstream3.CommonActivity.activity
+            val activity = CommonActivity.activity
             if (activity != null) {
                 ApkUpdater.downloadSilently(
                     activity,
@@ -344,7 +345,7 @@ class GithubViewModel(
         )
 
     private fun deleteCachedApk(tagName: String) {
-        val activity = com.lagradost.cloudstream3.CommonActivity.activity
+        val activity = CommonActivity.activity
         if (activity != null) {
             val file = ApkUpdater.getCachedUpdateFile(activity, tagName)
             if (file.exists()) {
