@@ -69,7 +69,7 @@
     <string name="open_local_video">Buka video tempatan</string>
     <string name="subtitles_settings">Tetapan Sari Kata</string>
     <string name="subscribe_tooltip">Pemberitahuan episod baru</string>
-    <string name="result_search_tooltip">Carian dalam sambungan lain</string>
+    <string name="result_search_tooltip">Cari dalam sambungan lain</string>
     <string name="recommendations_tooltip">Paparkan cadangan</string>
     <string name="error_bookmarks_text">Penanda halaman</string>
     <string name="home_play">Pasang</string>
@@ -105,7 +105,7 @@
     <string name="search_provider_text_providers">Carian mengikut sumber</string>
     <string name="benene_count_text">%d Pisang yang diberikan kepada pemaju</string>
     <string name="subs_font_size">Saiz Teks</string>
-    <string name="sort_apply">Mohon</string>
+    <string name="sort_apply">Simpan</string>
     <string name="subs_text_color">Warna teks</string>
     <string name="subs_background_color">Warna latar belakang</string>
     <string name="benene_count_text_none">Tiada Benenes diberikan</string>
@@ -116,7 +116,7 @@
     <string name="action_remove_watching">Buang</string>
     <string name="action_open_watching">Lebih Maklumat</string>
     <string name="vpn_torrent">Sumber ini adalah torrent, penggunaan VPN digalakkan</string>
-    <string name="provider_info_meta">Metadata tidak diberikan oleh laman web, video lalai akan gagala sekiranya tidak wujud di laman web.</string>
+    <string name="provider_info_meta">Metadata tidak diberikan oleh laman web, video lalai akan gagal sekiranya tidak wujud di laman web.</string>
     <string name="torrent_plot">Penerangan</string>
     <string name="show_log_cat">Papar Logcat🐈</string>
     <string name="player_size_settings">Saiz butang pemain</string>
@@ -533,4 +533,10 @@
     <string name="live_singular">Siaran Langsung</string>
     <string name="audio_singular">Audio</string>
     <string name="podcast_singular">Podcast</string>
+    <string name="download_queue">Giliran muat turun</string>
+    <string name="play_full_series_button">Main Siri Penuh</string>
+    <string name="queue_empty_message">Pada masa ini tiada muat turun digilirkan.</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Mulakan video dijeda</string>
+    <string name="start_paused_settings_des">Kurangkan tekanan apabila memilih simber</string>
 </resources>
