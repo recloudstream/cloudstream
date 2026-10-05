@@ -213,7 +213,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/compressor_preset_light"
             style="@style/BlackButton"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:nextFocusLeft="@id/compressor_preset_heavy"
@@ -225,7 +225,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/compressor_preset_dialog"
             style="@style/BlackButton"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:nextFocusLeft="@id/compressor_preset_light"
@@ -237,7 +237,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/compressor_preset_heavy"
             style="@style/BlackButton"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:nextFocusLeft="@id/compressor_preset_dialog"
@@ -252,6 +252,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:paddingBottom="20dp"
         android:layout_gravity="bottom"
         android:gravity="bottom|end"
         android:orientation="horizontal">
