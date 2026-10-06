@@ -691,7 +691,7 @@
 
     <activity
         android:id="@+id/accountSelectActivity"
-        android:name="com.lagradost.cloudstream3.ui.account.AccountSelectActivity"
+        android:name="com.lagradost.cloudstream3.ui.account.AccountSelectActivity2"
         android:label="AccountSelectActivity"
         tools:layout="@layout/activity_account_select" />
 

@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.content.Context
+import androidx.compose.runtime.Immutable
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
@@ -163,6 +164,7 @@ object DataStoreHelper {
         }
 
     @Serializable
+    @Immutable
     data class Account(
         @JsonProperty("keyIndex") @SerialName("keyIndex") val keyIndex: Int,
         @JsonProperty("name") @SerialName("name") val name: String,
