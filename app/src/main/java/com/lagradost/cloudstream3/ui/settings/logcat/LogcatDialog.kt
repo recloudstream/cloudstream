@@ -1,17 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings.logcat
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -31,11 +21,8 @@ import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -44,9 +31,10 @@ import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream4.compose.BlackButton
+import com.lagradost.cloudstream4.compose.LogBoxBlack
+import com.lagradost.cloudstream4.compose.LogBoxWhite
+import com.lagradost.cloudstream4.compose.LogText
 import com.lagradost.cloudstream4.compose.WhiteButton
-import com.lagradost.cloudstream4.compose.circle
-import com.lagradost.cloudstream4.compose.rounded
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
@@ -108,7 +96,7 @@ fun LogcatDialog(dismiss: () -> Unit) {
                     end = confirmFocus
                 }
             ) {
-                items(items = list.value) { item ->
+                items(items = list.value, key = { item -> item.uuid }) { item ->
                     LogcatItem(item, modifier = Modifier.focusProperties {
                         start = dismissFocus
                         end = confirmFocus
@@ -147,38 +135,6 @@ fun LogcatDialog(dismiss: () -> Unit) {
                             logError(t)
                             showToast(t.message)
                         }
-                        /*try {
-                            val date = SimpleDateFormat(
-                                "yyyy_MM_dd_HH_mm",
-                                Locale.getDefault()
-                            ).format(
-                                Date(System.currentTimeMillis())
-                            )
-
-                            val file = FileHelper.logcat.createFile(context, "logcat_${date}")
-                                ?: throw ErrorLoadingException("Unable to create file")
-                            val stream = file.openOutputStream(append = false)
-                                ?: throw ErrorLoadingException("Unable to create stream")
-
-                            stream.bufferedWriter()
-                                .use { writer ->
-                                    list.value.forEach {
-                                        writer.write(it.toString())
-                                        writer.write("\n\n")
-                                    }
-                                }
-                            dismiss()
-                            showToast(
-                                txt(
-                                    R.string.logcat_success,
-                                    file.absolutePath ?: file.uri.toString()
-                                ),
-                                Toast.LENGTH_LONG
-                            )
-                        } catch (t: Throwable) {
-                            logError(t)
-                            showToast(t.message)
-                        }*/
                     }
                 }
             }
@@ -209,74 +165,17 @@ fun LogcatDialog(dismiss: () -> Unit) {
     )
 }
 
-
 @Composable
 fun LogcatItem(item: LogcatItem, modifier: Modifier = Modifier) {
-    val color = when (item.level) {
-        LogcatLevel.Fatal -> Color.Magenta
-        LogcatLevel.Error -> Color.Red
-        LogcatLevel.Warning -> Color.Yellow
-        LogcatLevel.Info -> Color.White
-        LogcatLevel.Debug -> Color.Green
-        LogcatLevel.Verbose -> Color.Gray
-        null -> Color.Transparent
-    }
-
     Row(modifier = Modifier.fillMaxWidth()) {
         item.level?.identifier?.let { value ->
-            Text(
-                value,
-                modifier = Modifier
-                    .padding(2.dp)
-                    .rounded()
-                    .background(MaterialTheme.colorScheme.onBackground)
-                    .padding(4.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant
-            )
+            LogBoxWhite(value)
         }
-        Text(
-            item.date.toHumanReadable(),
-            modifier = Modifier
-                .padding(2.dp)
-                .rounded()
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(4.dp),
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Text(
-            item.tag,
-            modifier = Modifier
-                .padding(2.dp)
-                .rounded()
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(4.dp),
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        LogBoxBlack(item.date.toHumanReadable())
+        LogBoxBlack(item.tag)
     }
-    Row(
-        modifier = modifier
-            .height(IntrinsicSize.Min)
-            .fillMaxWidth()
-            .rounded()
-            .clickable(
-                onClick = {
-                    clipboardHelper(txt("Logcat"), item.toString())
-                })
-            .padding(5.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(4.dp)
-                .circle()
-                .background(color)
-        )
-        Spacer(modifier = Modifier.width(5.dp))
-        Text(
-            item.message,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 14.sp,
-            lineHeight = 15.sp,
-        )
-    }
+
+    LogText(level = item.level, message = item.message, modifier = modifier, onClick = {
+        clipboardHelper(txt("Logcat"), item.toString())
+    })
 }

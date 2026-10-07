@@ -170,7 +170,7 @@
     <string name="update">עדכון</string>
     <string name="watch_quality_pref">איכות צפייה מועדפת (WiFi)</string>
     <string name="limit_title">נגן וידאו כותרת מקסימום תווים</string>
-    <string name="limit_title_rez">רזולוציית נגן וידאו</string>
+    <string name="limit_title_rez">הצג מידע על הנגן</string>
     <string name="add_sync">הוסף מעקב</string>
     <string name="create_account">צור חשבון</string>
     <string name="next">הבא</string>
@@ -178,7 +178,7 @@
     <string name="provider_info_meta">מטא-דאטה לא מסופק על ידי האתר, טעינת הסרטון תיכשל אם הוא לא קיים באתר.</string>
     <string name="swipe_to_change_settings_des">החלק בצד השמאלי או הימני כדי לשנות את הבהירות או עוצמת הקול</string>
     <string name="restore_failed_format" formatted="true">שחזור הנתונים מהקובץ נכשל %s</string>
-    <string name="category_updates">עדכונים וגיבויים</string>
+    <string name="category_updates">עדכונים וגיבוי</string>
     <string name="advanced_search_des">נותן לך את תוצאות החיפוש מופרדות לפי ספק</string>
     <string name="show_fillers_settings">הצג פרק פילר (לא הכרחי לעלילה) לאנימה</string>
     <string name="automatic_plugin_download">הורדה אוטומטית של תוספים</string>
@@ -190,7 +190,7 @@
     <string name="render_error">שגיאת מעבד</string>
     <string name="episode_action_download_mirror">הורד מראה</string>
     <string name="episode_action_download_subtitle">הורד כתוביות</string>
-    <string name="random_button_settings_desc">הצג כפתור אקראי בדף הבית</string>
+    <string name="random_button_settings_desc">הצג כפתור אקראי בדף הבית ובספרייה</string>
     <string name="show_dub">תווית דיבוב</string>
     <string name="video_ram_description">גורם לקריסות אם מוגדר גבוה מדי במכשירים עם זיכרון נמוך, כגון Android TV.</string>
     <string name="video_source">מקור</string>
@@ -232,21 +232,21 @@
     <string name="subtitle_offset_extra_hint_later_format">השתמש בזה אם הכתוביות מוצגות %d מילישניות מוקדם יותר</string>
     <string name="home_random">אקראי</string>
     <string name="resolution">רזולוציה</string>
-    <string name="quality_cam_hd">איכות מצלמה</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="error_invalid_url">כתובת אתר לא מזוהה</string>
-    <string name="network_adress_example">קישור לשידור</string>
-    <string name="referer">המפנה</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="referer">Referer (אופציונלי)</string>
     <string name="quality_tc">TC</string>
     <string name="quality_sd">SD</string>
     <string name="quality_uhd">UHD</string>
-    <string name="repository_url_hint">כתובת אתר למאגר</string>
+    <string name="repository_url_hint">כתובת URL של המאגר או קוד מקוצר</string>
     <string name="preferred_media_settings">מדיה מועדפת</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="play_episode_toast">נגן את הפרק</string>
     <string name="no_links_found_toast">לא נמצאו קישורים</string>
     <string name="example_lang_name">קוד שפה (אנגלית)</string>
     <string name="error">שגיאה</string>
-    <string name="provider_lang_settings">שפות ספק</string>
+    <string name="provider_lang_settings">שפות ההרחבות</string>
     <string name="pref_category_links">קישורים</string>
     <string name="app_layout">פריסת אפליקציה</string>
     <string name="advanced_search">חיפוש מתקדם</string>
@@ -258,7 +258,7 @@
     <string name="double_tap_to_seek_amount_settings">כמות הזזת הנגן (שניות)</string>
     <string name="other_singular">סרטון</string>
     <string name="github">גיטהאב</string>
-    <string name="quality_cam_rip">מצלמה</string>
+    <string name="quality_cam_rip">CamRip</string>
     <string name="swipe_to_change_settings">החלק כדי לשנות הגדרות</string>
     <string name="browser">‪דפדפן</string>
     <string name="subs_window_color">צבע חלון</string>
@@ -280,7 +280,7 @@
     <string name="kitsu_settings">הצג פוסטרים מKitsu</string>
     <string name="pref_filter_search_quality">הסתר את איכות הסרטון שנבחרה בתוצאות החיפוש</string>
     <string name="apk_installer_settings">מתקין APK</string>
-    <string name="apk_installer_settings_des">חלק מהטלפונים אינם תומכים במתקין החבילות החדש. נסו את האפשרות מדור קודם אם העדכונים לא מתקינים.</string>
+    <string name="apk_installer_settings_des">חלק מהמכשירים אינם תומכים במתקין החבילות החדש. אם עדכונים לא מותקנים, נסה את האפשרות הישנה.</string>
     <string name="lightnovel">אפליקצית רומנים קלים על ידי אותו מפתחים</string>
     <string name="anim">אפליקצית אנימה על ידי אותו מפתחים</string>
     <string name="discord">הצטרפות לדיסקורד</string>
@@ -347,7 +347,7 @@
     <string name="pref_category_ui_features">תכונות</string>
     <string name="category_general">כללי</string>
     <string name="random_button_settings">כפתור אקראי</string>
-    <string name="enable_nsfw_on_providers">הרשה NSFW בספקים נתמכים</string>
+    <string name="enable_nsfw_on_providers">אפשר תוכן למבוגרים (NSFW) בהרחבות נתמכות</string>
     <string name="subtitles_encoding">קידוד כתוביות</string>
     <string name="category_ui">פריסה</string>
     <string name="phone_layout">פריסת טלפון</string>
@@ -355,11 +355,11 @@
     <string name="primary_color_settings">צבע ראשוני</string>
     <string name="bottom_title_settings_des">שים את הכותרת מתחת לפוסטר</string>
     <string name="example_password">סיסמה123</string>
-    <string name="example_username">שםהמשתמשהמגניבשלי</string>
+    <string name="example_username">שם משתמש</string>
     <string name="example_email">hello@world.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">האתרהמגניבשלי</string>
-    <string name="example_site_url">דוגמה.com</string>
+    <string name="example_site_name">שם האתר החדש</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="account">חשבון</string>
     <string name="switch_account">החלף חשבון</string>
     <string name="add_account">הוסף חשבון</string>
@@ -398,7 +398,7 @@
     <string name="error_invalid_id">לא מזוהה ID</string>
     <string name="error_invalid_data">נתונים לא מזוהים</string>
     <string name="subtitles_remove_captions">הסר כיתובים סגורים מהכתוביות</string>
-    <string name="subtitles_remove_bloat">הסר נפיחות מכתוביות</string>
+    <string name="subtitles_remove_bloat">הסר פרסומות מהכתוביות</string>
     <string name="extras">תוספות</string>
     <string name="trailer">טריילר</string>
     <string name="provider_languages_tip">צפה בסרטונים בשפות אלה</string>
@@ -407,7 +407,7 @@
     <string name="setup_done">סוים</string>
     <string name="extensions">הרחבות</string>
     <string name="add_repository">הוסף מאגר</string>
-    <string name="repository_name_hint">שם מאגר</string>
+    <string name="repository_name_hint">שם המאגר (אופציונלי)</string>
     <string name="plugin_downloaded">תוסף הורד</string>
     <string name="plugin_deleted">התוסף נמחק</string>
     <string name="plugin_load_fail" formatted="true">לא יכול לטעון %s</string>
@@ -427,7 +427,7 @@
     <string name="update_notification_failed">לא ניתן להתקין את הגרסה החדשה של האפליקציה</string>
     <string name="batch_download">הורדת אצווה</string>
     <string name="plugin_singular">תוסף</string>
-    <string name="download_all_plugins_from_repo">הורד את כל התוספים ממאגר זה?</string>
+    <string name="download_all_plugins_from_repo">אזהרה: קלאודסטרים אינה לוקחת אחריות על השימוש בהרחבות צד שלישי ואינה מספקת להן תמיכה כלשהי!</string>
     <string name="audio_tracks">רצועות שמע</string>
     <string name="tracks">מסלולים</string>
     <string name="safe_mode_description">כל התוספים נכבו עקב התרסקות כדי לעזור לך למצוא את האחד הגורם לצרות.</string>
@@ -439,13 +439,13 @@
     <string name="plugins_downloaded" formatted="true">הורד: %d</string>
     <string name="plugins_disabled" formatted="true">מוגבל: %d</string>
     <string name="plugins_not_downloaded" formatted="true">לא מורד: %d</string>
-    <string name="blank_repo_message">לקלאודסטרים אין אתרים מותקנים כברירת מחדל. עליכם להתקין את האתרים ממאגרים. \n \nבגלל הסרת DMCA על ידי Sky UK LImited 🤮 אנחנו לא יכולים לקשר את אתר המאגרים באפליקציה. \n \nתצטרפו לדיסקורד שלנו או תחפשו באינטרנט.</string>
+    <string name="blank_repo_message">לקלאודסטרים אין אתרים מותקנים כברירת מחדל. עליך להתקין את האתרים ממאגרים. \n \nהצטרף לדיסקורד שלנו או חפש באינטרנט.</string>
     <string name="view_public_repositories_button">הצג מאגרים קהילתיים</string>
     <string name="view_public_repositories_button_short">רשימה ציבורית</string>
     <string name="uppercase_all_subtitles">לשים את הכתוביות באותיות רישיות</string>
     <string name="single_plugin_disabled" formatted="true">%s (מוגבל)</string>
     <string name="video_tracks">רצועות וידאו</string>
-    <string name="apply_on_restart">החל על הפעלה מחדש</string>
+    <string name="apply_on_restart">הפעל מחדש את האפליקציה כדי לראות את השינויים.</string>
     <string name="safe_mode_title">מצב בטוח מופעל</string>
     <string name="safe_mode_crash_info">הצג מידע על ההתרסקות</string>
     <string name="extension_rating" formatted="true">דירוג: %s</string>
@@ -489,7 +489,7 @@
     <string name="subscription_list_name">רשום</string>
     <string name="revert">חזור</string>
     <string name="subscription_deleted">הרשמה ל-%s מבוטלת</string>
-    <string name="jsdelivr_proxy">פרוקסי עבור raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy">מתווך GitHub</string>
     <string name="profiles">פרופילים</string>
     <string name="unable_to_inflate">הממשק לא נוצר נכון. זוהי שגיאה רצינית, נא לדווח עליה מיידית ל-%s</string>
     <string name="edit">עריכה</string>
@@ -503,7 +503,7 @@
     <string name="android_tv_interface_on_seek_settings_summary">הזמן שיזוז כשהנגן מוצג</string>
     <string name="android_tv_interface_on_seek_settings">נגן מוצג - כמות הזזה</string>
     <string name="restart">אתחול</string>
-    <string name="jsdelivr_proxy_summary">עוקף את החסימה של GitHub באמצעות jsDelivr. עלול לגרום לעדכונים להתעכב בכמה ימים.</string>
+    <string name="jsdelivr_proxy_summary">עקיפת חסימה של כתובות raw של GitHub באמצעות jsDelivr. עלול לגרום לעיכוב של כמה ימים בעדכונים.</string>
     <string name="automatic_plugin_download_mode_title">בחר מצב כדי לסנן תוספים להורדה</string>
     <string name="qualities">איכויות</string>
     <string name="use">השתמש</string>
@@ -544,4 +544,212 @@
     <string name="recommendations_tooltip">הראה המלצות</string>
     <string name="speed_setting_summary">מוסיף אפשרות מהירות בנגן</string>
     <string name="backup_frequency">תדירות גיבוי</string>
+    <string name="favorites_list_name">מועדפים</string>
+    <string name="favorite_added">%s נוסף למועדפים</string>
+    <string name="favorite_removed">%s הוסר מהמועדפים</string>
+    <string name="action_add_to_favorites">הוסף למועדפים</string>
+    <string name="action_remove_from_favorites">הסר מהמועדפים</string>
+    <string name="action_subscribe">הירשם</string>
+    <string name="action_unsubscribe">בטל הרשמה</string>
+    <string name="duplicate_title">נמצא פריט כפול אפשרי</string>
+    <string name="duplicate_add">הוסף</string>
+    <string name="duplicate_replace">החלף</string>
+    <string name="duplicate_replace_all">החלף הכול</string>
+    <string name="duplicate_message_single" formatted="true">נראה שפריט שעשוי להיות כפול כבר קיים בספרייה שלך: \'%s.\' \n\nהאם להוסיף את הפריט בכל זאת, להחליף את הפריט הקיים או לבטל את הפעולה?</string>
+    <string name="duplicate_message_multiple" formatted="true">נמצאו בספרייה שלך פריטים שעשויים להיות כפולים: \n\n%s \n\nהאם להוסיף את הפריט בכל זאת, להחליף את הפריטים הקיימים או לבטל את הפעולה?</string>
+    <string name="enter_pin">הזן קוד PIN</string>
+    <string name="enter_current_pin">הזן את קוד ה־PIN הנוכחי</string>
+    <string name="lock_profile">נעל פרופיל</string>
+    <string name="pin">PIN</string>
+    <string name="pin_error_incorrect">קוד PIN שגוי. נא לנסות שוב.</string>
+    <string name="pin_error_length">קוד ה־PIN חייב להכיל 4 תווים</string>
+    <string name="select_an_account">בחר חשבון</string>
+    <string name="enter_pin_with_name" formatted="true">הזן קוד PIN עבור %s</string>
+    <string name="manage_accounts">ניהול חשבונות</string>
+    <string name="edit_account">ערוך חשבון</string>
+    <string name="logged_account" formatted="true">מחובר בתור %s</string>
+    <string name="skip_startup_account_select_pref">דלג על בחירת החשבון בהפעלה</string>
+    <string name="use_default_account">השתמש בחשבון ברירת המחדל</string>
+    <string name="rotate_video">סיבוב</string>
+    <string name="rotate_video_desc">הצג כפתור להחלפת כיוון המסך</string>
+    <string name="auto_rotate_video_desc">אפשר החלפה אוטומטית של כיוון המסך בהתאם לכיוון הסרטון</string>
+    <string name="auto_rotate_video">סיבוב אוטומטי</string>
+    <string name="test_extensions">בדוק את כל ההרחבות</string>
+    <string name="test_extensions_summary">בדיקה זו מיועדת למפתחים בלבד ואינה מאשרת או שוללת את תקינות פעולתה של הרחבה כלשהי.</string>
+    <string name="biometric_authentication_title">בטל את נעילת קלאודסטרים</string>
+    <string name="biometric_setting">נעילה באמצעות זיהוי ביומטרי</string>
+    <string name="password_pin_authentication_title">אימות באמצעות סיסמה/PIN</string>
+    <string name="biometric_unsupported">אימות ביומטרי אינו נתמך במכשיר זה</string>
+    <string name="biometric_setting_summary">בטל את נעילת האפליקציה באמצעות טביעת אצבע, זיהוי פנים, PIN, תבנית וסיסמה.</string>
+    <string name="biometric_prompt_description">לאחר כמה ניסיונות כושלים, החלון ייסגר. פשוט הפעל מחדש את האפליקציה כדי לנסות שוב.</string>
+    <string name="biometric_warning">הנתונים שלך בקלאודסטרים גובו כעת. אף שהסיכוי לכך נמוך מאוד, כל מכשיר עשוי להתנהג אחרת. במקרה הנדיר שבו תינעל מחוץ לאפליקציה, נקה את נתוני האפליקציה לחלוטין ושחזר מגיבוי. אנו מתנצלים מאוד על כל אי נוחות שעלולה להיגרם מכך.</string>
+    <string name="resume_remaining" formatted="true">%s\nנותרו</string>
+    <string name="favorite">מועדף</string>
+    <string name="unfavorite">הסר ממועדפים</string>
+    <string name="clipboard_permission_error">שגיאה בגישה ללוח העריכה, נא לנסות שוב.</string>
+    <string name="clipboard_unknown_error">שגיאה בהעתקה, נא להעתיק את ה־logcat ולפנות לתמיכה של האפליקציה.</string>
+    <string name="ok">אישור</string>
+    <string name="battery_dialog_title">השבת את מיטוב הסוללה</string>
+    <string name="battery_dialog_message">כדי להבטיח הורדות והתראות רציפות עבור סדרות טלוויזיה שנרשמת אליהן, קלאודסטרים זקוקה להרשאה לפעול ברקע. בלחיצה על אישור תוצג לך בקשת הרשאה. נא ללחוץ על \'אפשר\'.\n\nלתשומת לבך, הרשאה זו אינה אומרת ש־CS3 תרוקן את הסוללה שלך. היא תפעל ברקע רק כשיש בכך צורך, למשל בעת קבלת התראות או הורדת סרטונים מהרחבות רשמיות.</string>
+    <string name="app_unrestricted_toast">השימוש בסוללה של האפליקציה כבר מוגדר כבלתי מוגבל</string>
+    <string name="app_info_intent_error">לא ניתן לפתוח את פרטי האפליקציה של קלאודסטרים.</string>
+    <string name="audio_book_singular">ספר שמע</string>
+    <string name="reset_btn">איפוס</string>
+    <string name="episode_upcoming_format" formatted="true">בקרוב בעוד %s</string>
+    <string name="episode_action_cast_mirror">שדר מראה</string>
+    <string name="player_settings_select_cast_device">בחר מכשיר שידור</string>
+    <string name="cs3wiki">הוויקי של קלאודסטרים</string>
+    <string name="pref_category_security">אבטחה</string>
+    <string name="pref_category_accounts">חשבונות</string>
+    <string name="auth_locally">אימות מקומי</string>
+    <string name="qr_image">תמונת קוד QR</string>
+    <string name="device_pin_url_message">יש להיכנס אל <b>%s</b> בטלפון החכם או במחשב ולהזין את הקוד שלמעלה</string>
+    <string name="device_pin_error_message">לא ניתן לקבל את קוד ה־PIN של המכשיר, נסה אימות מקומי</string>
+    <string name="device_pin_expired_message">תוקף קוד ה־PIN פג !</string>
+    <string name="device_pin_counter_text">תוקף הקוד יפוג בעוד %1$d דק׳ %2$d שנ׳</string>
+    <string name="dismiss">סגור</string>
+    <string name="open_downloaded_repo">פתח מאגר</string>
+    <string name="test_warning">אזהרה</string>
+    <string name="delete_plugin">מחק תוסף</string>
+    <string name="hide_player_control_names">הסתר את שמות הפקדים של הנגן</string>
+    <string name="sort_release_date_new">תאריך יציאה (מהחדש לישן)</string>
+    <string name="sort_release_date_old">תאריך יציאה (מהישן לחדש)</string>
+    <string name="delete_files">מחק קבצים</string>
+    <string name="delete_format" formatted="true">מחק (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">האם אתה בטוח שברצונך למחוק לצמיתות את הפריטים הבאים?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">האם אתה בטוח שברצונך למחוק לצמיתות את הפרקים הבאים ב־%1$s?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">תמחק לצמיתות גם את כל הפרקים בסדרות הבאות:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">האם אתה בטוח שברצונך למחוק לצמיתות את כל הפרקים בסדרות הבאות?\n\n%s</string>
+    <string name="preview_seekbar">תצוגה מקדימה בסרגל ההזזה</string>
+    <string name="preview_seekbar_desc">אפשר תמונה ממוזערת לתצוגה מקדימה בסרגל ההזזה</string>
+    <string name="no_subtitles_loaded">עדיין לא נטענו כתוביות</string>
+    <string name="confirm_before_exiting_title">אישור לפני יציאה</string>
+    <string name="confirm_before_exiting_desc">הצג חלון אישור לפני היציאה מהאפליקציה</string>
+    <string name="show">הצג</string>
+    <string name="dont_show">אל תציג</string>
+    <string name="backup_path_title">מיקום תיקיית הגיבוי</string>
+    <string name="custom">מותאם אישית</string>
+    <string name="subs_edge_size">גודל הקצה</string>
+    <string name="encoding_error">שגיאת קידוד</string>
+    <string name="unsupported_error">שגיאה לא נתמכת</string>
+    <string name="player_load_one_subtitle_online">טען את הראשונה הזמינה</string>
+    <string name="torrent_preferred_media">הפעל טורנט בהגדרות/ספקים/מדיה מועדפת</string>
+    <string name="torrent_not_accepted">הפעל מחדש את האפליקציה ואשר את החלון הקופץ של שידור טורנט כדי להמשיך.</string>
+    <string name="software_decoding">פענוח בתוכנה</string>
+    <string name="software_decoding_desc">פענוח בתוכנה מאפשר לנגן להפעיל קובצי וידאו שהמכשיר שלך אינו תומך בהם, אך עלול לגרום לניגון מקוטע או לא יציב ברזולוציה גבוהה.</string>
+    <string name="sort_episodes_number_asc">פרק (סדר עולה)</string>
+    <string name="sort_episodes_number_desc">פרק (סדר יורד)</string>
+    <string name="sort_episodes_rating_high_low">דירוג (הגבוה ביותר)</string>
+    <string name="sort_episodes_rating_low_high">דירוג (הנמוך ביותר)</string>
+    <string name="sort_episodes_date_newest">תאריך שידור (החדש ביותר)</string>
+    <string name="sort_episodes_date_oldest">תאריך שידור (הישן ביותר)</string>
+    <string name="sort_button_episode">פרק %s</string>
+    <string name="sort_button_rating">דירוג %s</string>
+    <string name="sort_button_date">תאריך %s</string>
+    <string name="update_plugins">עדכן תוספים</string>
+    <string name="update_plugins_manually">עדכן תוספים ידנית</string>
+    <string name="starting_plugin_update_manually">תהליך עדכון התוספים מתחיל!</string>
+    <string name="plugins_updated_manually">התוספים עודכנו בהצלחה: %d</string>
+    <string name="no_plugins_updated_manually">לא עודכנו תוספים.</string>
+    <string name="player_notification_channel_name">התראות הנגן</string>
+    <string name="player_notification_channel_description">התראת הנגן לשליטה בניגון מהרקע</string>
+    <string name="subtitles_from_embedded">מוטמעות</string>
+    <string name="subtitles_from_online">מקוונות</string>
+    <string name="all_subtitles_bold">הצג את כל הכתוביות בגופן מודגש</string>
+    <string name="all_subtitles_italic">הצג את כל הכתוביות בגופן נטוי</string>
+    <string name="background_radius">רדיוס הרקע</string>
+    <string name="volume_exceeded_100">עוצמת הקול חרגה מ־100%</string>
+    <string name="slide_up_again_to_exceed_100">החלק שוב למעלה כדי לחרוג מ־100%</string>
+    <string name="download_parallel_settings_des">כמה פריטים שונים ניתן להוריד במקביל</string>
+    <string name="parallel_downloads">הורדות מקבילות</string>
+    <string name="concurrent_connections">חיבורים בו־זמניים</string>
+    <string name="concurrent_connections_settings_des">בכמה חיבורים בו־זמניים כל הורדה יכולה להשתמש במהלך ההורדה</string>
+    <string name="go_to_downloads">עבור להורדות</string>
+    <string name="no_internet_connection">אין חיבור לאינטרנט. \n\nנא להתחבר לאינטרנט ולנסות שוב, או לצפות בהורדות שלך במצב לא מקוון.</string>
+    <string name="overscan_settings_des">משנה את גבולות המסך</string>
+    <string name="overscan_settings">Overscan</string>
+    <string name="poster_size_settings_des">משנה את גודל הפוסטרים</string>
+    <string name="poster_size_settings">גודל הפוסטרים</string>
+    <string name="speedup_title">הגברת מהירות בלחיצה ארוכה</string>
+    <string name="speedup_summary">החזק כדי לקבל מהירות פי 2</string>
+    <string name="player_settings_always_ask">שאל תמיד</string>
+    <string name="show_rating">תווית דירוג</string>
+    <string name="no_account">אין חשבון</string>
+    <string name="edit_profile_image_title">ערוך את תמונת הפרופיל</string>
+    <string name="edit_profile_image_hint">הזן כתובת URL של תמונת הפרופיל</string>
+    <string name="edit_profile_image_error_empty">לא נמצאה כתובת URL</string>
+    <string name="edit_profile_image_error_invalid">כתובת URL או תמונה לא תקינה</string>
+    <string name="edit_profile_image_success">התמונה עודכנה בהצלחה</string>
+    <string name="action_mark_watched_up_to_this_episode">סמן כנצפה עד פרק זה</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">הסר סימון נצפה עד פרק זה</string>
+    <string name="action_reload">נטען מחדש</string>
+    <string name="reload_provider">טען מחדש את הספק</string>
+    <string name="episode_action_play_mirror">נגן מראה</string>"
+    <string name="name">שם</string>
+    <string name="resolution_and_name">רזולוציה ושם</string>
+    <string name="subs_subtitle_alignment">יישור הכתוביות</string>
+    <string name="bottom_left">למטה משמאל</string>
+    <string name="bottom_center">למטה במרכז</string>
+    <string name="bottom_right">למטה מימין</string>
+    <string name="middle_left">באמצע משמאל</string>
+    <string name="middle_center">באמצע במרכז</string>
+    <string name="middle_right">באמצע מימין</string>
+    <string name="top_left">למעלה משמאל</string>
+    <string name="top_center">למעלה במרכז</string>
+    <string name="top_right">למעלה מימין</string>
+    <string name="play_full_series_button">נגן את כל הסדרה</string>
+    <string name="install_prerelease">התקן גרסת טרום־הפצה</string>
+    <string name="prerelease_already_installed">גרסת טרום־ההפצה כבר מותקנת.</string>
+    <string name="prerelease_install_failed">התקנת גרסת טרום־ההפצה נכשלה.</string>
+    <string name="show_episode_text">טקסט הפרק</string>
+    <string name="search_suggestions">הצעות חיפוש</string>
+    <string name="search_suggestions_des">הצג הצעות חיפוש בזמן ההקלדה</string>
+    <string name="clear_suggestions">נקה הצעות</string>
+    <string name="show_cast_in_details">הצג את חלונית צוות השחקנים</string>
+    <string name="video_info">פרטי המדיה</string>
+    <string name="source_name">שם המקור</string>
+    <string name="extra_brightness_settings">בהירות נוספת</string>
+    <string name="extra_brightness_settings_des">אפשר מסנן בהירות כאשר חורגים מ־100% בהירות תצוגה</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="download_queue">תור הורדות</string>
+    <string name="queue_empty_message">אין כרגע הורדות בתור.</string>
+    <string name="download_all">הורד הכול</string>
+    <string name="cancel_all">בטל הכול</string>
+    <string name="download_episode_range">האם להוריד את פרק %s?</string>
+    <string name="cancel_queue_message">האם לבטל את כל ההורדות שבתור?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d הורדה פעילה</item>
+        <item quantity="two">%d הורדות פעילות</item>
+        <item quantity="other">%d הורדות פעילות</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d הורדה בתור</item>
+        <item quantity="two">%d הורדות בתור</item>
+        <item quantity="other">%d הורדות בתור</item>
+    </plurals>
+    <string name="source_priority">עדיפות המקורות</string>
+    <string name="source_priority_help">קבע כיצד ימוינו מקורות הווידאו בנגן</string>
+    <string name="show_player_metadata_overlay">הצג שכבת מטא־נתונים בנגן</string>
+    <string name="music_singular">מוזיקה</string>
+    <string name="custom_media_singular">מדיה</string>
+    <string name="audio_singular">שמע</string>
+    <string name="podcast_singular">פודקאסט</string>
+    <string name="video_singular">וידאו</string>
+    <string name="skip_type_preview">תצוגה מקדימה</string>
+    <string name="player_is_live">חי</string>
+    <string name="profile_settings">הגדרות פרופיל</string>
+    <string name="profile_hide_negative_sources">הסתר מקורות בעדיפות שלילית</string>
+    <string name="profile_hide_error_sources">הסתר מקורות עם שגיאות</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d קישור מוסתר</item>
+        <item quantity="two">%d קישורים מוסתרים</item>
+        <item quantity="other">%d קישורים מוסתרים</item>
+    </plurals>
+    <string name="tv_layout_clock_settings">הצג שעון בזמן אמת</string>
+    <string name="tv_layout_clock_settings_des">הצג שעון בזמן אמת בראש המסך. חל על דף הבית ועל הנגן</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">התחל סרטונים במצב מושהה</string>
+    <string name="start_paused_settings_des">הפחתת לחץ בעת בחירת מקורות</string>
+    <string name="subs_edge">קצה</string>
+    <string name="background">רקע</string>
 </resources>

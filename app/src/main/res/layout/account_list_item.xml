@@ -9,6 +9,8 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:layout_margin="10dp"
+    android:focusable="true"
+    android:clickable="true"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:defaultFocusHighlightEnabled="false">
@@ -17,8 +19,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:clipChildren="false"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:duplicateParentState="true">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_view"

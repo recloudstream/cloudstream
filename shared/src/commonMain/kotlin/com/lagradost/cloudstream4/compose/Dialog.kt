@@ -1,7 +1,5 @@
 package com.lagradost.cloudstream4.compose
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +26,6 @@ import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
@@ -76,60 +71,6 @@ fun ActionDialog(
             BlackButton(text = dismissText, onClick = dismiss)
         }
     )
-}
-
-@Composable
-fun WhiteButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    BaseButton(
-        text = text,
-        onClick = onClick,
-        buttonColors = Colors.whiteButton,
-        modifier = modifier
-    )
-}
-
-@Composable
-fun BlackButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    BaseButton(
-        text = text,
-        onClick = onClick,
-        buttonColors = Colors.blackButton,
-        modifier = modifier
-    )
-}
-
-@Composable
-fun BaseButton(
-    text: String, onClick: () -> Unit, buttonColors: ButtonColors,
-    modifier: Modifier = Modifier,
-) {
-    var hasFocus by remember { mutableStateOf(false) }
-    val canHaveFocus = LocalFocusOutlineDefault.current
-    Button(
-        onClick = onClick,
-        colors = buttonColors,
-        modifier = modifier.onFocusChanged { newFocus ->
-            hasFocus = canHaveFocus && newFocus.hasFocus
-        },
-        border = if (hasFocus) BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground) else null
-    ) {
-        AnimatedVisibility(hasFocus) {
-            Icon(
-                painter = painterResource(Res.drawable.check),
-                modifier = Modifier.padding(end = 5.dp),
-                contentDescription = null
-            )
-        }
-        Text(text = text)
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

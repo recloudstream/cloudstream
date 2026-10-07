@@ -422,4 +422,22 @@
     <string name="subtitle_offset_hint">১০০০ মিলিসেকেন্ড</string>
     <string name="subtitle_offset_title">সাবটাইটেল বিলম্ব</string>
     <string name="subtitle_offset_extra_hint_later_format">সাবটাইটেল যদি %d মিলিসেকেন্ড আগে দেখায় তবে এটি ব্যবহার করুন</string>
+    <string name="subs_edge">প্রান্ত</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">ভিডিওগুলি বিরত অবস্থায় চালু করুন</string>
+    <string name="start_paused_settings_des">উৎস নির্বাচন করার সময় চাপ কমান</string>
+    <string name="sync_score_format" formatted="true">%d / ১০</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="disable">নিষ্ক্রিয় করুন</string>
+    <string name="subtitles_depressed">অবদমিত</string>
+    <string name="subtitle_offset_extra_hint_before_format">সাবটাইটেল %d মিলিসেকেন্ড দেরিতে প্রদর্শিত হলে এটি ব্যবহার করুন</string>
+    <string name="subtitle_offset_extra_hint_none_format">সাবটাইটেলে কোনো বিলম্ব নেই</string>
+    <string name="subtitles_example_text">ঐ ভোরে ক্ষুদ্র কৃষক গৌরবী ঋষির সঙ্গে জ্ঞানী ছাত্রকে নিয়ে চাঁদ, ঝর্ণা, ঠাকুর, ডাল, ঢেঁকি, তীর, ধান, পাখি, ফুল, বাগান, ভ্রমর, মেঘ, যাত্রা, রথ, লতা, শঙ্খ, ষাঁড়, সাপ ও হরিণের গল্প শোনাল। অ আ ই ঈ উ ঊ ঋ এ ঐ ও ঔ ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য র ল শ ষ স হ ক্ষ জ্ঞ শ্র</string>
+    <string name="recommended">প্রস্তাবিত</string>
+    <string name="player_loaded_subtitles" formatted="true">%s লোড হয়েছে</string>
+    <string name="player_load_subtitles">ফাইল থেকে লোড করুন</string>
+    <string name="player_load_subtitles_online">ইন্টারনেট থেকে লোড করুন</string>
+    <string name="player_load_one_subtitle_online">প্রথম উপলভ্যটি লোড করুন</string>
+    <string name="downloaded_file">ডাউনলোড করা ফাইল</string>
+    <string name="actor_main">প্রধান</string>
 </resources>

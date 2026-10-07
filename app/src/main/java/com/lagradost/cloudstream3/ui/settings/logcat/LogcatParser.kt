@@ -1,21 +1,24 @@
 package com.lagradost.cloudstream3.ui.settings.logcat
 
 import androidx.compose.runtime.Immutable
+import com.lagradost.cloudstream4.state.LogLevel
+import com.lagradost.cloudstream4.state.UniqueItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.Closeable
-import java.io.InputStream
-import kotlin.time.Instant
 import kotlinx.io.Buffer
 import kotlinx.io.asSource
 import kotlinx.io.readByteArray
 import kotlinx.io.readIntLe
 import kotlinx.io.readString
 import kotlinx.io.readUShortLe
+import java.io.Closeable
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 fun Instant.toHumanReadable(): String {
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).apply {
@@ -23,27 +26,20 @@ fun Instant.toHumanReadable(): String {
     }
     return formatter.format(Date(this.toEpochMilliseconds()))
 }
+
 @Immutable
 data class LogcatItem(
     val date: Instant,
     val pid: Int,
     val tid: Int,
-    val level: LogcatLevel?,
+    val level: LogLevel?,
     val tag: String,
     val message: String,
-) {
+    override val uuid : Uuid = Uuid.random(),
+) : UniqueItem {
     override fun toString(): String {
         return "${date.toHumanReadable()} $pid-$tid $tag ${level?.identifier ?: "?"} $message"
     }
-}
-
-enum class LogcatLevel(val identifier: String) {
-    Fatal("WTF"),
-    Error("E"),
-    Warning("W"),
-    Info("I"),
-    Debug("D"),
-    Verbose("V"),
 }
 
 /**https://github.com/brudaswen/android-logcat/blob/main/library/logcat-core/src/main/kotlin/de/brudaswen/android/logcat/core/parser/LogcatBinaryParser.kt  */
@@ -119,12 +115,12 @@ class LogcatBinaryParser(
         )
 
         val level = when (priority) {
-            2.toByte() -> LogcatLevel.Verbose
-            3.toByte() -> LogcatLevel.Debug
-            4.toByte() -> LogcatLevel.Info
-            5.toByte() -> LogcatLevel.Warning
-            6.toByte() -> LogcatLevel.Error
-            7.toByte() -> LogcatLevel.Fatal
+            2.toByte() -> LogLevel.Verbose
+            3.toByte() -> LogLevel.Debug
+            4.toByte() -> LogLevel.Info
+            5.toByte() -> LogLevel.Warning
+            6.toByte() -> LogLevel.Error
+            7.toByte() -> LogLevel.Fatal
             else -> null
         }
 

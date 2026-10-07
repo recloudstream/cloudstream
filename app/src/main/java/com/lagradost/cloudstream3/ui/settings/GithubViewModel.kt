@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream4.AppSettings
-import com.lagradost.cloudstream4.compose.ActionHandler
-import com.lagradost.cloudstream4.compose.DefaultStateContainer
-import com.lagradost.cloudstream4.compose.SingleActiveQuery
-import com.lagradost.cloudstream4.compose.StateContainer
+import com.lagradost.cloudstream4.state.ActionHandler
+import com.lagradost.cloudstream4.state.DefaultStateContainer
+import com.lagradost.cloudstream4.state.SingleActiveQuery
+import com.lagradost.cloudstream4.state.StateContainer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch

@@ -571,7 +571,7 @@
 
     <fragment
         android:id="@+id/navigation_test_providers"
-        android:name="com.lagradost.cloudstream3.ui.settings.testing.TestFragment"
+        android:name="com.lagradost.cloudstream3.ui.settings.testing.TestFragment2"
         android:layout_height="match_parent"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
