@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
-import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import android.content.Context
 import android.content.DialogInterface
@@ -68,14 +67,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import kotlin.math.roundToInt
-
-private const val COMPRESSOR_ENABLED_KEY   = "player_compressor_enabled"
-private const val COMPRESSOR_THRESHOLD_KEY = "player_compressor_threshold"
-private const val COMPRESSOR_RATIO_KEY     = "player_compressor_ratio"
-private const val COMPRESSOR_ATTACK_KEY    = "player_compressor_attack"
-private const val COMPRESSOR_RELEASE_KEY   = "player_compressor_release"
-private const val COMPRESSOR_MAKEUP_KEY    = "player_compressor_makeup"
-
 
 private const val SUBTITLE_DELAY_BUNDLE_KEY = "subtitle_delay"
 
@@ -976,12 +967,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
     protected fun restoreCompressorSettings() {
         val c = (player as? CS3IPlayer)?.compressor ?: return
-        c.enabled     = getKey(COMPRESSOR_ENABLED_KEY)   ?: false
-        c.threshold   = getKey(COMPRESSOR_THRESHOLD_KEY) ?: -24f
-        c.ratio       = getKey(COMPRESSOR_RATIO_KEY)     ?: 8f
-        c.attackMs    = getKey(COMPRESSOR_ATTACK_KEY)    ?: 5f
-        c.releaseMs   = getKey(COMPRESSOR_RELEASE_KEY)   ?: 400f
-        c.makeupGain  = getKey(COMPRESSOR_MAKEUP_KEY)    ?: 12f
+        c.restoreSavedSettings()
     }
 
     private fun onClickChange() {

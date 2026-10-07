@@ -1127,7 +1127,7 @@ class CS3IPlayer : IPlayer {
                         context.getString(R.string.compressor_enabled_key),
                         false
                     )
-                    compressor = if (isCompressorEnabled) DynamicRangeCompressor() else null
+                    compressor = if (isCompressorEnabled) DynamicRangeCompressor().apply { restoreSavedSettings() } else null
 
                     val factory = if (isSoftwareDecodingEnabled) {
                         FixedNextRenderersFactory(context, compressor).apply {
