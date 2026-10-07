@@ -203,11 +203,13 @@ object DataStoreHelper {
             }
         }
 
-    fun setAccount(account: Account) {
+    fun setAccount(account: Account, showToast : Boolean = true) {
         val homepage = currentHomePage
         selectedKeyIndex = account.keyIndex
         AccountManager.updateAccountIds()
-        showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
+        if(showToast) {
+            showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
+        }
         MainActivity.bookmarksUpdatedEvent(true)
         MainActivity.reloadLibraryEvent(true)
         val oldAccount = accounts.find { it.keyIndex == account.keyIndex }

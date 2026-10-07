@@ -11,7 +11,6 @@ import com.lagradost.cloudstream4.state.SearchableData
 import com.lagradost.cloudstream4.state.StateContainer
 import com.lagradost.cloudstream4.state.sortByInt
 import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.collections.immutable.toPersistentMap
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -52,15 +51,8 @@ sealed class AccountAction {
 
 class AccountViewModel2(
     val defaultAccount: DataStoreHelper.Account,
-) : ViewModel(), StateContainer<AccountState> by DefaultStateContainer(
-    AccountState(
-        lastLoginKeyIndex = DataStoreHelper.selectedKeyIndex,
-        accounts = SearchableData.from(
-            data = (mapOf(defaultAccount.keyIndex to defaultAccount) + DataStoreHelper.accounts.associateBy { it.keyIndex }).toPersistentMap(),
-            sortedBy = sortByInt { it.keyIndex }
-        )
-    )
-), ActionHandler<AccountAction> {
+    initialState : AccountState,
+) : ViewModel(), StateContainer<AccountState> by DefaultStateContainer(initialState), ActionHandler<AccountAction> {
     fun updateAccount(
         updater: (SearchableData<Int, DataStoreHelper.Account>) -> SearchableData<Int, DataStoreHelper.Account>
     ) {
@@ -133,8 +125,10 @@ class AccountViewModel2(
             }
 
             is AccountAction.LoginWithAccount -> {
-                val loginAccount = state.value.accounts.data[action.accountKeyIndex] ?: return
-                DataStoreHelper.setAccount(loginAccount)
+                val accounts = state.value.accounts
+                val loginAccount = accounts.data[action.accountKeyIndex] ?: return
+                // Show toast if we have many accounts, as it is unnecessary for 1 account
+                DataStoreHelper.setAccount(loginAccount, showToast = accounts.data.size > 1)
                 updateState { copy(loggedInWith = loginAccount.keyIndex, lastLoginKeyIndex = loginAccount.keyIndex) }
             }
 
