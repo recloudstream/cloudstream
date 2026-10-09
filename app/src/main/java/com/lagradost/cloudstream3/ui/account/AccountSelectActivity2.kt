@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.ui.account
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
@@ -8,8 +10,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
+import com.lagradost.cloudstream3.CommonActivity.updateLocale
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -32,6 +36,15 @@ import com.lagradost.cloudstream4.state.sortByInt
 import kotlinx.collections.immutable.persistentMapOf
 
 class AccountSelectActivity2 : FragmentActivity(), BiometricCallback {
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(CloudStreamApp.updateBaseContextLocale(base))
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        updateLocale()
+    }
+
     companion object {
         var hasLoggedIn: Boolean = false
         const val IS_FROM_MAIN_ACTIVITY = "isFromMainActivity"
