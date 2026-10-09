@@ -24,9 +24,11 @@ import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showNginxTextInputDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 
 class SettingsPlayer : BasePreferenceFragmentCompat() {
@@ -244,6 +246,29 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
 
         getPref(R.string.subtitle_settings_chromecast_key)?.setOnPreferenceClickListener {
             ChromecastSubtitlesFragment.push(activity, false)
+            return@setOnPreferenceClickListener true
+        }
+
+        val translationProxyPref = getPref(R.string.subtitle_translation_proxy_key)
+        fun updateProxySummary() {
+            val current = DataStoreHelper.subtitleTranslationProxy
+            translationProxyPref?.summary = if (current.isNullOrBlank()) {
+                getString(R.string.subtitle_translation_proxy_not_set)
+            } else {
+                current
+            }
+        }
+        updateProxySummary()
+        translationProxyPref?.setOnPreferenceClickListener {
+            activity?.showNginxTextInputDialog(
+                name = getString(R.string.subtitle_translation_proxy_title),
+                value = DataStoreHelper.subtitleTranslationProxy ?: "",
+                textInputType = null,
+                dismissCallback = {}
+            ) { input ->
+                DataStoreHelper.subtitleTranslationProxy = input.trim().ifBlank { null }
+                updateProxySummary()
+            }
             return@setOnPreferenceClickListener true
         }
 
