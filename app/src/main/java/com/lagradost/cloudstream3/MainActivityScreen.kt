@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +32,7 @@ import com.lagradost.cloudstream3.ui.settings.GithubReleases.APK_PRERELEASE
 import com.lagradost.cloudstream3.ui.settings.GithubReleases.APK_REPOSITORY
 import com.lagradost.cloudstream3.ui.settings.GithubReleases.APK_USERNAME
 import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
+import com.lagradost.cloudstream3.utils.parseMarkdown
 import com.lagradost.cloudstream4.compose.BlackButton
 import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.WhiteButton
@@ -46,7 +49,7 @@ import com.lagradost.cloudstream4.viewmodels.GithubViewModel
 import com.mihon.material.padding
 
 object MainActivityScreen : Screen {
-    private var hasSearchedForUpdate : Boolean = false
+    private var hasSearchedForUpdate: Boolean = false
 
     @Composable
     fun githubViewModel(): GithubViewModel? {
@@ -68,7 +71,7 @@ object MainActivityScreen : Screen {
                 repository = GithubReleases,
             ).apply {
                 /** Only search once per session when not in safe mode */
-                if(!hasSearchedForUpdate && !PluginManager.isSafeMode()) {
+                if (!hasSearchedForUpdate && !PluginManager.isSafeMode()) {
                     hasSearchedForUpdate = true
                     onAction(AutoSearchForUpdate)
                 }
@@ -161,7 +164,12 @@ object MainActivityScreen : Screen {
                     (state.oldSha ?: BuildConfig.VERSION_NAME),
                     (state.newSha ?: state.file.displayName)
                 )
-                body = { Text(text = state.file.changeLog) }
+                body = {
+                    Text(
+                        text = parseMarkdown(state.file.changeLog),
+                        modifier = Modifier.verticalScroll(rememberScrollState())
+                    )
+                }
                 confirmButton = {
                     WhiteButton(text = stringResource(R.string.update), onClick = {
                         onAction(Update(state.file))
