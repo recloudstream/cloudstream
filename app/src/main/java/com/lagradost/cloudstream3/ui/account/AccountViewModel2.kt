@@ -129,6 +129,7 @@ class AccountViewModel2(
                 val loginAccount = accounts.data[action.accountKeyIndex] ?: return
                 // Show toast if we have many accounts, as it is unnecessary for 1 account
                 DataStoreHelper.setAccount(loginAccount, showToast = accounts.data.size > 1)
+                MainActivity.reloadAccountEvent(true)
                 updateState { copy(loggedInWith = loginAccount.keyIndex, lastLoginKeyIndex = loginAccount.keyIndex) }
             }
 

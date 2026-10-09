@@ -152,7 +152,8 @@ object AccountScreen {
                         .focusRequester(edit)
                         .focusProperties {
                             down = accounts
-                        }.focusOutline(shape = CircleShape)
+                        }
+                        .focusOutline(shape = CircleShape)
                 ) {
                     Icon(
                         painter = if (state.canEditAccount) {
@@ -165,7 +166,8 @@ object AccountScreen {
                 }
                 Column(
                     modifier = Modifier
-                        .fillMaxSize().verticalScroll(rememberScrollState()),
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -381,9 +383,24 @@ object AccountScreen {
                     BlackTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = account.name,
-                        onValueChange = { value ->
-                            onAction(AccountAction.EditAccount(account.copy(name = value)))
+                        onValueChange = { newText ->
+                            val newName = if (newText.length <= 100) {
+                                newText
+                            } else {
+                                newText.substring(0, 100)
+                            }
+                            onAction(
+                                AccountAction.EditAccount(
+                                    account.copy(
+                                        name = newName
+                                    )
+                                )
+                            )
                         },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.PersonName,
+                        ),
                         placeHolder = stringResource(R.string.name)
                     )
 
@@ -606,10 +623,20 @@ object AccountScreen {
                 PinTextField(
                     value = inputText,
                     onValueChange = { newText ->
-                        inputText = if (newText.length <= 4) {
+                        /**
+                         * We require isDigit for SetPin,
+                         * but do not for the EnterPin to avoid inaccessable accounts
+                         * */
+                        val newTextFilter = if (newText.all(Char::isDigit)) {
                             newText
                         } else {
-                            newText.substring(0, 4)
+                            newText.filter(Char::isDigit)
+                        }
+
+                        inputText = if (newTextFilter.length <= 4) {
+                            newTextFilter
+                        } else {
+                            newTextFilter.substring(0, 4)
                         }
                     },
                 )
