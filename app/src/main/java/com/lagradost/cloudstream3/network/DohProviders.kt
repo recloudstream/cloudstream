@@ -17,6 +17,11 @@ fun OkHttpClient.Builder.addGenericDns(url: String, ips: List<String>) = dns(
         .bootstrapDnsHosts(
             ips.map { InetAddress.getByName(it) }
         )
+        // Android TV often has a broken IPv6 stack — connections time out
+        // silently, causing ExoPlayer errors 2004/2001 on TV while the same
+        // stream works fine on mobile (same Wi-Fi). Force IPv4-only so OkHttp
+        // never attempts the broken IPv6 path.
+        .includeIPv6(false)
         .build()
 )
 
