@@ -82,7 +82,11 @@ open class ParentItemAdapter(
     ) {
         val binding = holder.view
         if (binding !is HomepageParentBinding) return
-        (binding.homeChildRecyclerview.adapter as? HomeChildItemAdapter)?.submitList(item.list.list)
+        (binding.homeChildRecyclerview.adapter as? HomeChildItemAdapter)?.apply {
+            isHorizontal = item.list.isHorizontalImages
+            hasNext = item.hasNext
+            submitList(item.list.list)
+        }
     }
 
     override fun onBindContent(
