@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.utils.InAppUpdater.installPreReleaseIfNeeded
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.rememberAppSettings
+import com.lagradost.cloudstream4.viewmodels.GithubAction
 import com.lagradost.safefile.SafeFile
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
