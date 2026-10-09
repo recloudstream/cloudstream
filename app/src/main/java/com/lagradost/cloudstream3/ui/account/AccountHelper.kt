@@ -368,6 +368,11 @@ object AccountHelper {
 
     fun Activity?.showAccountSelectLinear() {
         val activity = this as? MainActivity ?: return
+        activity.navigate(
+            R.id.accountSelectActivity,
+            Bundle().apply { putBoolean(AccountSelectActivity2.IS_FROM_MAIN_ACTIVITY, true) }
+        )
+        /*
         val viewModel = ViewModelProvider(activity)[AccountViewModel::class.java]
 
         val binding: AccountSelectLinearBinding = AccountSelectLinearBinding.inflate(
@@ -425,6 +430,6 @@ object AccountHelper {
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 layoutManager.scrollToPositionWithOffset(selectedKeyIndex, 0)
             }
-        }
+        }*/
     }
 }

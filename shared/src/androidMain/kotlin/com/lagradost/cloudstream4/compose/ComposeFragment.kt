@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
@@ -24,28 +25,32 @@ fun Screen.createComposeView(
     savedInstanceState: Bundle?,
 ): View = ComposeView(inflater.context).apply {
     setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-
     setContent {
-        val settings = rememberAppSettings()
-        val mode by settings.ui.theme.collectAsState()
-        val primaryColor by settings.ui.primaryColor.collectAsState()
-        val layout by settings.ui.layout.collectAsState()
-        val layoutFlag = DeviceLayout.layoutToFlag(LocalContext.current, layout)
+        CloudStreamThemeAppSettings(this@createComposeView::Content)
+    }
+}
 
-        CloudStreamTheme(
-            mode = perfToMode(mode),
-            primaryColor = perfToColor(primaryColor),
+@Composable
+fun CloudStreamThemeAppSettings(content: @Composable () -> Unit) {
+    val settings = rememberAppSettings()
+    val mode by settings.ui.theme.collectAsState()
+    val primaryColor by settings.ui.primaryColor.collectAsState()
+    val layout by settings.ui.layout.collectAsState()
+    val layoutFlag = DeviceLayout.layoutToFlag(LocalContext.current, layout)
+
+    CloudStreamTheme(
+        mode = perfToMode(mode),
+        primaryColor = perfToColor(primaryColor),
+    ) {
+        val backDispatcher = checkNotNull(LocalOnBackPressedDispatcherOwner.current) {
+            "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
+        }.onBackPressedDispatcher
+
+        CompositionLocalProvider(
+            LocalBackPress provides backDispatcher::onBackPressed,
+            DeviceLayout.LocalLayout provides layoutFlag
         ) {
-            val backDispatcher = checkNotNull(LocalOnBackPressedDispatcherOwner.current) {
-                "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
-            }.onBackPressedDispatcher
-
-            CompositionLocalProvider(
-                LocalBackPress provides backDispatcher::onBackPressed,
-                DeviceLayout.LocalLayout provides layoutFlag
-            ) {
-                this@createComposeView.Content()
-            }
+            content()
         }
     }
 }

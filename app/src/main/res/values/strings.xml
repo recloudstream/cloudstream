@@ -776,6 +776,9 @@
     <string name="speedup_title">LongPress Speed Toggle</string>
     <string name="speedup_summary">Hold to get 2x speed</string>
     <string name="edit_profile_image_title">Edit Profile Image</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">Image picker</string>
+    <string name="edit_profile_image_default">Default images</string>
     <string name="edit_profile_image_hint">Enter Profile Image URL</string>
     <string name="edit_profile_image_error_empty">No URL Found</string>
     <string name="edit_profile_image_error_invalid">Invalid URL or Image</string>

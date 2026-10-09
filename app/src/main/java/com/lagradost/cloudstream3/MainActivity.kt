@@ -179,6 +179,7 @@ import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream4.compose.CloudStreamThemeAppSettings
 import com.lagradost.cloudstream4.theme.CloudStreamTheme
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
@@ -1301,7 +1302,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
             composeView.apply {
                 setContent {
-                    CloudStreamTheme {
+                    CloudStreamThemeAppSettings {
                         MainActivityScreen.Content()
                     }
                 }

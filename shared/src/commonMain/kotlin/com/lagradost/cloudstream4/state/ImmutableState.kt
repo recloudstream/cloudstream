@@ -68,7 +68,7 @@ data class FilterByQuery<Value>(
     }
 }
 
-/** Default sorting by name (Ascending A->Z), use `reversed()` if Z->A is desired */
+/** Default sorting by name (Ascending A->Z), use `rev()` if Z->A is desired */
 @Immutable
 data class SortByName<Value>(
     val ignoreCase: Boolean = true,
@@ -79,6 +79,30 @@ data class SortByName<Value>(
         if (p0 == null) return -1
         if (p1 == null) return 1
         return transform(p0).compareTo(transform(p1), ignoreCase)
+    }
+}
+
+fun <T> sortByLong(keyExtractor: ((T) -> Long)): Comparator<T> {
+    return Comparator { c1: T, c2: T ->
+        keyExtractor(c1).compareTo(keyExtractor(c2))
+    }
+}
+
+fun <T> sortByFloat(keyExtractor: ((T) -> Float)): Comparator<T> {
+    return Comparator { c1: T, c2: T ->
+        keyExtractor(c1).compareTo(keyExtractor(c2))
+    }
+}
+
+fun <T> sortByInt(keyExtractor: ((T) -> Int)): Comparator<T> {
+    return Comparator { c1: T, c2: T ->
+        keyExtractor(c1).compareTo(keyExtractor(c2))
+    }
+}
+
+fun <T> Comparator<T>.rev(): Comparator<T> {
+    return Comparator { c1: T, c2: T ->
+        this@rev.compare(c2, c1)
     }
 }
 

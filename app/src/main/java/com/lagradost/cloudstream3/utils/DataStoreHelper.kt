@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.content.Context
+import androidx.compose.runtime.Immutable
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
@@ -163,6 +164,7 @@ object DataStoreHelper {
         }
 
     @Serializable
+    @Immutable
     data class Account(
         @JsonProperty("keyIndex") @SerialName("keyIndex") val keyIndex: Int,
         @JsonProperty("name") @SerialName("name") val name: String,
@@ -201,11 +203,13 @@ object DataStoreHelper {
             }
         }
 
-    fun setAccount(account: Account) {
+    fun setAccount(account: Account, showToast : Boolean = true) {
         val homepage = currentHomePage
         selectedKeyIndex = account.keyIndex
         AccountManager.updateAccountIds()
-        showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
+        if(showToast) {
+            showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
+        }
         MainActivity.bookmarksUpdatedEvent(true)
         MainActivity.reloadLibraryEvent(true)
         val oldAccount = accounts.find { it.keyIndex == account.keyIndex }
