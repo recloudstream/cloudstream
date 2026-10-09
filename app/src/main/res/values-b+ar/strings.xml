@@ -340,7 +340,7 @@
     <string name="home_random">عشوائي</string>
     <string name="coming_soon">قريبا…</string>
     <string name="quality_cam">تصوير كام</string>
-    <string name="quality_cam_rip">تصوير كام قطع</string>
+    <string name="quality_cam_rip">مقطع مسجل CamRip</string>
     <string name="quality_cam_hd">تصوير كام جودة عالية</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">عالِ الدقة</string>
@@ -761,4 +761,9 @@
     <string name="profile_settings">اعدادات الملف الشخصي</string>
     <string name="profile_hide_negative_sources">أخفي المصادر صاحبة الأولوية السلبية</string>
     <string name="profile_hide_error_sources">أخفي المصادر التي تحتوي أخطاء</string>
+    <string name="subs_edge">حواف النص</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">استئناف المقاطع الموقوفة</string>
+    <string name="start_paused_settings_des">تقليل الضغط عند اختيار مصادر</string>
+    <string name="background">خلفية النص</string>
 </resources>

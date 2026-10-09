@@ -387,7 +387,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="subtitles_remove_bloat">Вилучати роздуття субтитрів</string>
+    <string name="subtitles_remove_bloat">Вилучати рекламу з субтитрів</string>
     <string name="referer">Джерело переходу (необов’язково)</string>
     <string name="next">Далі</string>
     <string name="provider_languages_tip">Переглядайте відео на цих мовах</string>
@@ -751,4 +751,8 @@
         <item quantity="other">%d прихованих посилань</item>
     </plurals>
     <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Запускати відео на паузі</string>
+    <string name="start_paused_settings_des">Зменште стрес під час вибору джерел</string>
+    <string name="subs_edge">Край</string>
+    <string name="background">Тло</string>
 </resources>

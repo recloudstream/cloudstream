@@ -366,7 +366,7 @@
     <string name="quality_uhd">UHD</string>
     <string name="quality_hdr">HDR</string>
     <string name="quality_sdr">SDR</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_4k">4K</string>
@@ -384,7 +384,7 @@
     <string name="go_forward_30">+30</string>
     <string name="quality_cam">Cam</string>
     <string name="subtitles_remove_bloat">Supprimer les éléments superflus des sous-titres</string>
-    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
     <string name="trailer">Trailer</string>
     <string name="provider_languages_tip">Regardez les vidéos dans ces langues</string>
     <string name="app_layout_subtext">Modifier le style de l\'application pour être assortie à votre appareil</string>
@@ -748,4 +748,7 @@
         <item quantity="many">%d liens cachés</item>
         <item quantity="other">%d liens cachés</item>
     </plurals>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Commencer des vidéos en pause</string>
+    <string name="start_paused_settings_des">Réduire le stress lors du choix des sources</string>
 </resources>

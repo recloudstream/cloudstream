@@ -130,6 +130,13 @@ object SettingsPlayerScreen : SearchableSettings {
                     ),
 
                     Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.player.compressorEnabled,
+                        title = stringResource(R.string.compressor_setting),
+                        subtitle = stringResource(R.string.compressor_setting_summary),
+                        icon = painterResource(R.drawable.ic_compressor_24),
+                    ),
+
+                    Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.tiktokEnabled,
                         title = stringResource(R.string.speedup_title),
                         subtitle = stringResource(R.string.speedup_summary),

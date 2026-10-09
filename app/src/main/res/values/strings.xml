@@ -536,6 +536,19 @@
     <string name="download_all_plugins_from_repo">Warning: CloudStream does not take any responsibility for using third-party extensions and does not provide any support for them!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
     <string name="tracks">Tracks</string>
+    <string name="compressor">Compressor</string>
+    <string name="compressor_setting">Dynamic Range Compressor</string>
+    <string name="compressor_setting_summary">Show compressor controls in the player (helps balance loud/quiet audio)</string>
+    <string name="compressor_on">On</string>
+    <string name="compressor_on_format">On · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Off</string>
+    <string name="compressor_preset_light">Light</string>
+    <string name="compressor_preset_dialog">Dialogue Boost</string>
+    <string name="compressor_preset_heavy">Heavy</string>
+    <string name="compressor_threshold_label">Threshold: %d dB</string>
+    <string name="compressor_makeup_label">Makeup Gain: +%d dB</string>
+    <string name="compressor_threshold_hint">Sounds louder than %d dB get turned down</string>
+    <string name="compressor_makeup_hint">Turns up the overall volume by +%d dB</string>
     <string name="audio_tracks">Audio tracks</string>
     <string name="video_tracks">Video tracks</string>
     <string name="apply_on_restart">Restart the app to see changes.</string>
@@ -763,6 +776,9 @@
     <string name="speedup_title">LongPress Speed Toggle</string>
     <string name="speedup_summary">Hold to get 2x speed</string>
     <string name="edit_profile_image_title">Edit Profile Image</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">Image picker</string>
+    <string name="edit_profile_image_default">Default images</string>
     <string name="edit_profile_image_hint">Enter Profile Image URL</string>
     <string name="edit_profile_image_error_empty">No URL Found</string>
     <string name="edit_profile_image_error_invalid">Invalid URL or Image</string>

@@ -313,8 +313,8 @@
     <string name="home_random">Acak</string>
     <string name="coming_soon">Segera hadir…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -444,7 +444,7 @@
     <string name="action_mark_as_watched">Telah ditonton</string>
     <string name="error_invalid_data">Data salah</string>
     <string name="subtitles_remove_captions">Hapus closed caption dari subtitlel</string>
-    <string name="subtitles_remove_bloat">Hapus teks tidak perlu pada subtitel</string>
+    <string name="subtitles_remove_bloat">Hapus iklan dari subtitle</string>
     <string name="audio_tracks">Audio Trek</string>
     <string name="video_tracks">Video Trek</string>
     <string name="extension_types">Dukungan</string>
@@ -661,7 +661,7 @@
     <string name="sort_button_rating">Rating %s</string>
     <string name="update_plugins">Perbarui Plugin</string>
     <string name="starting_plugin_update_manually">Mulai proses pembaruan plugin!</string>
-    <string name="plugins_updated_manually">Berhasil memperbarui %d plugin!</string>
+    <string name="plugins_updated_manually">Berhasil memperbarui %d plugin(s)</string>
     <string name="update_plugins_manually">Perbarui plugin secara manual</string>
     <string name="no_plugins_updated_manually">Tidak ada plugin yang diperbarui.</string>
     <string name="player_notification_channel_description">Pemberitahuan pemutar untuk mengontrol pemutaran dari latar belakang</string>
@@ -755,4 +755,9 @@
     <plurals name="links_hidden">
         <item quantity="other">%d link tersembunyi</item>
     </plurals>
+    <string name="subs_edge">Edge</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Memulai video yang sedang dijeda</string>
+    <string name="start_paused_settings_des">Kurangi stres saat memilih sumber informasi</string>
+    <string name="background">Latar Belakang</string>
 </resources>

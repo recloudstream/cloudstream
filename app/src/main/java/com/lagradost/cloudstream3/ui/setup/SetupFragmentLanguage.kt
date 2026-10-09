@@ -50,18 +50,18 @@ class SetupFragmentLanguage : BaseFragment<FragmentSetupLanguageBinding>(
                     appIconImage.setImageDrawable(ContextCompat.getDrawable(ctx, drawable))
                 }
 
-                val current = getCurrentLocale(ctx)
-                val languageTagsIETF = appLanguages.map { it.second }
-                val languageNames = appLanguages.map { it.nameNextToFlagEmoji() }
-                val currentIndex = languageTagsIETF.indexOf(current)
+                val tags = appLanguages.map { it.second }
+                val current = getCurrentLocale(ctx).replace('_', '-')
+                val currentIndex = tags.indexOf(current).takeIf { it >= 0 }
+                    ?: tags.indexOf(current.substringBefore('-'))
 
-                arrayAdapter.addAll(languageNames)
+                arrayAdapter.addAll(appLanguages.map { it.nameNextToFlagEmoji() })
                 listview1.adapter = arrayAdapter
                 listview1.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-                listview1.setItemChecked(currentIndex, true)
+                if (currentIndex >= 0) listview1.setItemChecked(currentIndex, true)
 
                 listview1.setOnItemClickListener { _, _, selectedLangIndex, _ ->
-                    val langTagIETF = languageTagsIETF[selectedLangIndex]
+                    val langTagIETF = tags[selectedLangIndex]
                     CommonActivity.setLocale(activity, langTagIETF)
                     settingsManager.edit {
                         putString(getString(R.string.locale_key), langTagIETF)

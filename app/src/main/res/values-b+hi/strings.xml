@@ -414,4 +414,14 @@
     <string name="queue_empty_message">फिलहाल कोई डाउनलोड कतार में नहीं है।</string>
     <string name="extra_brightness_settings">अतिरिक्त चमक</string>
     <string name="extra_brightness_settings_des">डिस्प्ले की चमक 100% से अधिक होने पर ब्राइटनेस फ़िल्टर चालू करें</string>
+    <string name="subs_edge">किनारा</string>
+    <string name="log_cat">लॉगकैट 🐈</string>
+    <string name="start_paused_settings">रुके हुए वीडियो को शुरू करें</string>
+    <string name="start_paused_settings_des">स्रोत चुनते समय तनाव कम करें</string>
+    <string name="extra_brightness_key">अतिरिक्त चमक सक्षम</string>
+    <string name="search_suggestions">खोज के सुझाव</string>
+    <string name="search_suggestions_des">टाइप करते समय खोज सुझाव दिखाएं</string>
+    <string name="show_cast_in_details">कास्ट पैनल दिखाएँ</string>
+    <string name="episodes">एपिसोड</string>
+    <string name="video_singular">वीडियो</string>
 </resources>

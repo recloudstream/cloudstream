@@ -45,6 +45,8 @@ class BackupPreferences(preferences: PreferenceStore) {
 class UpdatePreferences(preferences: PreferenceStore) {
     val apkInstaller = preferences.getInt("apk_installer_key",1)
     val showAppUpdates = preferences.getBoolean("auto_update", true)
+    // Node id for this update
+    val skipUpdate = preferences.getString("skip_update_key", "")
 }
 
 class SecurityPreferences(preferences: PreferenceStore) {
@@ -163,6 +165,7 @@ class PlayerPreferences(preferences: PreferenceStore) {
     val pipEnabled = preferences.getBoolean("pip_enabled_key", true)
     val resizeEnabled = preferences.getBoolean("player_resize_enabled_key", true)
     val speedEnabled = preferences.getBoolean("playback_speed_enabled_key", false)
+    val compressorEnabled = preferences.getBoolean("compressor_enabled_key", false)
     val tiktokEnabled = preferences.getBoolean("speedup_key", false)
     val autoPlayEnabled = preferences.getBoolean("autoplay_next_key", true)
     val startPaused = preferences.getBoolean("start_paused_key", false)

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -34,9 +35,12 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.lagradost.cloudstream4.compose.colorpicker.DoubleColorPicker
+import com.lagradost.cloudstream4.compose.colorpicker.HsvColor
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.cancel
 import com.lagradost.cloudstream4.generated.resources.color
+import com.lagradost.cloudstream4.generated.resources.color_wheel
 import com.lagradost.cloudstream4.generated.resources.luminance
 import com.lagradost.cloudstream4.generated.resources.ok
 import com.lagradost.cloudstream4.generated.resources.transparency
@@ -84,7 +88,9 @@ fun ColorDialog(
     confirm: (Color) -> Unit,
 ) {
     var alpha by remember { mutableFloatStateOf(color.alpha) }
-    var selectedColor by remember { mutableStateOf(color) }
+    var selectedColor by remember { mutableStateOf(HsvColor(color)) }
+    val renderedColor = selectedColor.toColor().copy(alpha = alpha)
+    var colorWheel by remember { mutableStateOf(false) }
 
     AlertDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -93,7 +99,7 @@ fun ColorDialog(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 ColorCircle(
-                    color = selectedColor.copy(alpha = alpha),
+                    color = renderedColor,
                 )
                 Spacer(modifier = Modifier.size(MaterialTheme.padding.medium))
                 Text(text = title)
@@ -111,50 +117,70 @@ fun ColorDialog(
                     modifier = Modifier.padding(MaterialTheme.padding.extraSmall),
                     style = MaterialTheme.typography.titleMedium
                 )
-                FlowRow {
-                    ColorCircle(
-                        color = Color.White.copy(alpha = alpha),
+                if (colorWheel) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(10.dp)
                     ) {
-                        selectedColor = Color.White
+                        Spacer(modifier = Modifier.weight(1.0f))
+                        DoubleColorPicker(
+                            color = { selectedColor },
+                            onColorChange = { selectedColor = it },
+                            modifier = Modifier.size(200.dp),
+                            ringStrokeWidth = 20.dp,
+                        )
+                        Spacer(modifier = Modifier.weight(1.0f))
                     }
-
-                    val hsl = floatArrayOf(0.0f, 1.0f, 0.5f)
-                    (0..18).forEach { hue ->
-                        hsl[0] = hue.toFloat() * 18f
-                        val color = hslToColor(hsl)
+                } else {
+                    FlowRow {
                         ColorCircle(
-                            color = color.copy(alpha = alpha),
+                            color = Color.White.copy(alpha = alpha),
                         ) {
-                            selectedColor = color
+                            selectedColor = HsvColor(Color.White)
+                        }
+
+                        val hsl = floatArrayOf(0.0f, 1.0f, 0.5f)
+                        (0..18).forEach { hue ->
+                            hsl[0] = hue.toFloat() * 18f
+                            val color = hslToColor(hsl)
+                            ColorCircle(
+                                color = color.copy(alpha = alpha),
+                            ) {
+                                selectedColor = HsvColor(color)
+                            }
+                        }
+                        colors2.forEach { color ->
+                            ColorCircle(
+                                color = color.copy(alpha = alpha),
+                            ) {
+                                selectedColor = HsvColor(color)
+                            }
                         }
                     }
-                    colors2.forEach { color ->
-                        ColorCircle(
-                            color = color.copy(alpha = alpha),
-                        ) {
-                            selectedColor = color
-                        }
-                    }
-                }
+                    Text(
+                        text = stringResource(Res.string.luminance),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(MaterialTheme.padding.extraSmall),
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
-                Text(
-                    text = stringResource(Res.string.luminance),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(MaterialTheme.padding.extraSmall),
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                // https://github.com/mhssn95/compose-color-picker/blob/main/colorPicker/src/main/java/io/mhssn/colorpicker/ext/drawExt.kt
-                Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                    val hsl = floatArrayOf(0.0f, 0.0f, 0.0f)
-                    (0..10).forEach { luminance ->
-                        rbgToHSL(selectedColor.red, selectedColor.green, selectedColor.blue, hsl)
-                        hsl[2] = luminance.toFloat() * 0.1f
-                        val color = hslToColor(hsl)
-                        ColorCircle(
-                            color = color.copy(alpha = alpha),
-                        ) {
-                            selectedColor = color
+                    // https://github.com/mhssn95/compose-color-picker/blob/main/colorPicker/src/main/java/io/mhssn/colorpicker/ext/drawExt.kt
+                    Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                        val hsl = floatArrayOf(0.0f, 0.0f, 0.0f)
+                        (0..10).forEach { luminance ->
+                            rbgToHSL(
+                                selectedColor.red,
+                                selectedColor.green,
+                                selectedColor.blue,
+                                hsl
+                            )
+                            hsl[2] = luminance.toFloat() * 0.1f
+                            val color = hslToColor(hsl)
+                            ColorCircle(
+                                color = color.copy(alpha = alpha),
+                            ) {
+                                selectedColor = HsvColor(color)
+                            }
                         }
                     }
                 }
@@ -180,9 +206,13 @@ fun ColorDialog(
         confirmButton = {
             WhiteButton(
                 text = stringResource(Res.string.ok),
-                onClick = { confirm(selectedColor.copy(alpha = alpha)) })
+                onClick = { confirm(renderedColor) })
         },
         dismissButton = {
+            BlackButton(text = stringResource(Res.string.color_wheel), onClick = {
+                colorWheel = !colorWheel
+            })
+
             BlackButton(text = stringResource(Res.string.cancel), onClick = dismiss)
         })
 }

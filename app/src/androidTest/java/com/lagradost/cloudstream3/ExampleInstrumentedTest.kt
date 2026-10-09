@@ -163,7 +163,7 @@ class ExampleInstrumentedTest {
             TestingUtils.getDeferredProviderTests(
                 this,
                 getAllProviders(),
-            ) { _, _ -> }
+            ) { _, _, _ -> }
         }
     }
 }

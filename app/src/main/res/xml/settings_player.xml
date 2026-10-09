@@ -81,6 +81,12 @@
             app:defaultValue="false"
             app:key="@string/playback_speed_enabled_key" />
         <SwitchPreference
+            android:icon="@drawable/ic_compressor_24"
+            android:summary="@string/compressor_setting_summary"
+            android:title="@string/compressor_setting"
+            app:defaultValue="false"
+            app:key="@string/compressor_enabled_key" />
+        <SwitchPreference
             android:icon="@drawable/speedup"
             android:summary="@string/speedup_summary"
             android:title="@string/speedup_title"
