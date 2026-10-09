@@ -70,8 +70,8 @@ minSdk = "23"
 compileSdk = "37"
 targetSdk = "36"
 
-versionCode = "69"
-versionName = "4.8.0-1609"
+versionCode = "70"
+versionName = "4.8.0-0910"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
