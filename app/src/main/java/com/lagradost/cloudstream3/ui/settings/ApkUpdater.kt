@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
-import android.os.Build
 import androidx.core.content.FileProvider
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity
@@ -65,9 +64,69 @@ object ApkUpdater : AppUpdater {
         }
     }
 
-    fun clearOldFiles(activity: Activity) {
+    fun getCachedUpdateFile(context: Context, versionTag: String): File {
+        return File(context.cacheDir, "${APP_UPDATE_NAME}_$versionTag.$APP_UPDATE_SUFFIX")
+    }
+
+    suspend fun downloadSilently(
+        context: Context,
+        url: String,
+        versionTag: String,
+        digest: DigestPair?
+    ): File? = withContext(Dispatchers.IO) {
+        try {
+            val targetFile = getCachedUpdateFile(context, versionTag)
+            if (targetFile.exists() && targetFile.length() > 0) {
+                return@withContext targetFile
+            }
+
+            clearOldFiles(context)
+            val request = app.get(url)
+            val length = request.size
+            val body = request.body
+            val tempFile = File.createTempFile(APP_UPDATE_NAME, ".$APP_UPDATE_SUFFIX", context.cacheDir)
+            body.use { body ->
+                val readStream = body.byteStream()
+                tempFile.outputStream().use { writeStream ->
+                    transfer(writeStream, readStream, length ?: body.contentLength(), { _, _ -> }, digest)
+                }
+            }
+
+            if (targetFile.exists()) {
+                targetFile.delete()
+            }
+            if (tempFile.renameTo(targetFile)) {
+                targetFile
+            } else {
+                tempFile
+            }
+        } catch (_: Throwable) {
+            null
+        }
+    }
+
+    @Throws
+    suspend fun installFromFile(
+        activity: Activity,
+        file: File,
+        settings: AppSettings,
+        installProgress: (Long, Long?) -> Unit
+    ) = withContext(Dispatchers.IO) {
+        when (settings.updates.apkInstaller.get()) {
+            0 -> installWithPackageInstaller(
+                activity = activity,
+                readStream = file.inputStream(),
+                length = file.length(),
+                digest = null,
+                downloadProgress = installProgress
+            )
+            else -> openApk(activity, file)
+        }
+    }
+
+    fun clearOldFiles(context: Context) {
         // Delete old files
-        activity.cacheDir.listFiles()?.filter {
+        context.cacheDir.listFiles()?.filter {
             it.name.startsWith(APP_UPDATE_NAME) && it.extension == APP_UPDATE_SUFFIX
         }?.forEach {
             deleteFileOnExit(it)
@@ -84,18 +143,29 @@ object ApkUpdater : AppUpdater {
         digest: DigestPair?,
         downloadProgress: (Long, Long?) -> Unit,
     ) = withContext(Dispatchers.IO) {
+        installWithPackageInstaller(activity, readStream, length, digest, downloadProgress)
+    }
+
+    @Throws
+    private suspend fun installWithPackageInstaller(
+        activity: Activity,
+        readStream: InputStream,
+        length: Long?,
+        digest: DigestPair?,
+        downloadProgress: (Long, Long?) -> Unit,
+    ) = withContext(Dispatchers.IO) {
         var sessionId: Int? = null
         val packageInstaller = activity.packageManager.packageInstaller
         try {
             val installParams =
-                PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                installParams.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED)
-            }
-            if (length != null) {
-                installParams.setSize(length)
-            }
+                PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL).apply {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                        setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED)
+                    }
+                    if (length != null) {
+                        setSize(length)
+                    }
+                }
 
             sessionId = packageInstaller.createSession(installParams)
             val session = packageInstaller.openSession(sessionId)
@@ -108,7 +178,7 @@ object ApkUpdater : AppUpdater {
                 }
 
             val receiverIntent = Intent(activity, PackageInstallerStatusReceiver::class.java)
-            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val flags = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
                 PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             } else {
                 PendingIntent.FLAG_UPDATE_CURRENT
@@ -120,8 +190,8 @@ object ApkUpdater : AppUpdater {
             session.commit(receiverPendingIntent.intentSender)
             session.close()
         } catch (t: Throwable) {
-            sessionId?.let { sessionId ->
-                packageInstaller.abandonSession(sessionId)
+            sessionId?.let { id ->
+                packageInstaller.abandonSession(id)
             }
             throw t
         }

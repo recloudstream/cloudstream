@@ -61,9 +61,9 @@ object MainActivityScreen : Screen {
                 buildSha = activity.currentCommitHash(),
                 settings = settings,
                 updater = ApkUpdater
-            )/*.apply {
-                onAction(AutoSearchForUpdate) // Remove this for now
-            }*/
+            ).apply {
+                onAction(AutoSearchForUpdate)
+            }
         }
     }
 
@@ -169,6 +169,42 @@ object MainActivityScreen : Screen {
                         onAction(Dismiss)
                     })
                 }
+            }
+
+            is GithubUpdateDialogState.InstallProgress -> {
+                cancelable = false
+                title = stringResource(R.string.install_update)
+                body = {
+                    val progress = if (state.total != null && state.total > 0L) {
+                        (state.progress.toFloat() / state.total.toFloat()).coerceIn(0.0f, 1.0f)
+                    } else null
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if (progress != null) {
+                            Text(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center,
+                                text = "${(progress * 100.0f).toInt()}%"
+                            )
+                            Spacer(modifier = Modifier.height(MaterialTheme.padding.medium))
+                            LinearProgressIndicator(
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                progress = { progress }
+                            )
+                        } else {
+                            LinearProgressIndicator(
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            )
+                        }
+                    }
+                }
+                confirmButton = {}
+                dismissButton = {}
             }
 
             is GithubUpdateDialogState.DownloadProgress -> {
