@@ -3,19 +3,28 @@ package com.lagradost.cloudstream3.ui.result
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.AbsListView
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
+import com.discord.panels.OverlappingPanelsLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity
@@ -23,11 +32,13 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.FragmentResultTvBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.WatchType
@@ -61,17 +72,20 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
+import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
+import kotlin.math.roundToInt
 
 class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     BindingCreator.Inflate(FragmentResultTvBinding::inflate)
 ) {
 
     private lateinit var viewModel: ResultViewModel2
+    private lateinit var syncModel: SyncViewModel
 
     override fun onDestroyView() {
         updateUIEvent -= ::updateUI
@@ -87,6 +101,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         viewModel =
             ViewModelProvider(this)[ResultViewModel2::class.java]
         viewModel.EPISODE_RANGE_SIZE = 50
+
+        syncModel = ViewModelProvider(this)[SyncViewModel::class.java]
+
         updateUIEvent += ::updateUI
 
         return super.onCreateView(inflater, container, savedInstanceState)
@@ -94,6 +111,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
 
     private fun updateUI(id: Int?) {
         viewModel.reloadEpisodes()
+        syncModel.updateUserData()
     }
 
     private var currentRecommendations: List<SearchResponse> = emptyList()
@@ -250,6 +268,25 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         }
     }
 
+    private fun toggleSync(show: Boolean) {
+        binding?.apply {
+            if (show) {
+                activity?.attachBackPressedCallback(this@ResultFragmentTv.toString()) {
+                    toggleSync(false)
+                }
+            } else {
+                activity?.detachBackPressedCallback(this@ResultFragmentTv.toString())
+            }
+            syncShadow.fade(show)
+            resultSyncUi.root.fade(show)
+            if (syncShadow.isRtl()) {
+                syncShadowBackground.scaleX = -1f
+            } else {
+                syncShadowBackground.scaleX = 1f
+            }
+        }
+    }
+
     override fun fixLayout(view: View) {
         fixSystemBarsPadding(view, padTop = false)
     }
@@ -270,11 +307,14 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 storedData.dubStatus,
                 storedData.start
             )
+
+        //setUrl(storedData.url)
+        syncModel.addFromUrl(storedData.url)
+
         // ===== ===== =====
         var comingSoon = false
 
         binding.apply {
-            //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
 
             // parallax on background
             resultFinishLoading.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { view, _, scrollY, _, oldScrollY ->
@@ -294,7 +334,8 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         resultBookmarkButton,
                         resultFavoriteButton,
                         resultSubscribeButton,
-                        resultSearchButton
+                        resultSearchButton,
+                        resultSyncButton
                     )
                     for (requestView in views) {
                         if (!requestView.isVisible) continue
@@ -321,6 +362,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 }
             }
 
+            // Please add those buttons to [MainActivity.exceptionButtons] list to stop centering the screen of focus them
             mapOf(
                 resultPlayMovieButton to resultPlayMovieText,
                 resultPlaySeriesButton to resultPlaySeriesText,
@@ -330,13 +372,15 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 resultFavoriteButton to resultFavoriteText,
                 resultSubscribeButton to resultSubscribeText,
                 resultSearchButton to resultSearchText,
-                resultEpisodesShowButton to resultEpisodesShowText
+                resultEpisodesShowButton to resultEpisodesShowText,
+                resultSyncButton to resultSyncText
             ).forEach { (button, text) ->
 
                 button.setOnFocusChangeListener { view, hasFocus ->
                     if (!hasFocus) {
                         text.isSelected = false
                         if (view.id == R.id.result_episodes_show_button) toggleEpisodes(false)
+                        //if (view.id == R.id.result_sync_Button) toggleSync(false)
                         return@setOnFocusChangeListener
                     }
 
@@ -344,9 +388,24 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     if (button.tag == context?.getString(R.string.tv_no_focus_tag)) {
                         resultFinishLoading.scrollTo(0, 0)
                     }
+
                     when (button.id) {
                         R.id.result_episodes_show_button -> {
                             toggleEpisodes(true)
+                        }
+
+                        R.id.result_sync_Button -> {
+
+                            toggleSync(false)
+                            toggleEpisodes(false)
+
+                            resultSyncButton.nextFocusRightId =
+                                if (resultEpisodesShow.isVisible)
+                                    R.id.result_episodes_show_button
+                                else if (binding.resultSyncUi.root.isVisible)
+                                    R.id.result_sync_rating
+                                else
+                                    R.id.result_sync_Button
                         }
 
                         else -> {
@@ -360,6 +419,13 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 // toggle, to make it more touch accessible just in case someone thinks that a
                 // tv layout is better but is using a touch device
                 toggleEpisodes(!episodeHolderTv.isVisible)
+            }
+
+            resultSyncButton.setOnClickListener {
+                // toggle, to make it more touch accessible just in case someone thinks that a
+                // tv layout is better but is using a touch device
+                toggleSync(!resultSyncUi.root.isVisible)
+                resultSyncButton.nextFocusRightId = R.id.result_sync_rating
             }
 
             resultEpisodes.setLinearListLayout(
@@ -384,11 +450,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 nextDown = FOCUS_SELF,
             )
 
-            /*.layoutManager =
-                LinearListLayout(resultEpisodes.context, resultEpisodes.isRtl()).apply {
-                    setVertical()
-                }*/
-
             resultReloadConnectionerror.setOnClickListener {
                 viewModel.load(
                     activity,
@@ -412,9 +473,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 // Always escape focus
                 if (hasFocus) binding.resultBookmarkButton.requestFocus()
             }
-            //resultBack.setOnClickListener {
-            //    activity?.popCurrentPage()
-            //}
 
             resultRecommendationsList.spanCount = 8
             resultRecommendationsList.setRecycledViewPool(SearchAdapter.sharedPool)
@@ -509,9 +567,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 }
 
                 focusPlayButton()
-                // Stops last button right focus if it is a movie
-                if (resume.isMovie)
-                    resultSearchButton.nextFocusRightId = R.id.result_search_Button
 
                 resultResumeSeriesText.text =
                     when {
@@ -564,6 +619,155 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     )
                 }
             }
+        }
+
+        observe(syncModel.synced) { list ->
+            binding.resultSyncUi.resultSyncNames.text =
+                list.filter { it.isSynced && it.hasAccount }.joinToString { it.name }
+
+            val newList = list.filter { it.isSynced && it.hasAccount }
+
+            binding.resultSync.isVisible = newList.isNotEmpty()
+        }
+
+        fun setSyncMaxEpisodes(currentEpisodes: Int?, totalEpisodes: Int?) {
+
+            safe {
+
+                binding.resultSyncUi.resultSyncEpisodesText.text = totalEpisodes?.let { episodes ->
+
+                    if (episodes != 0) {
+                        binding.resultSyncUi.resultSyncEpisodesSlider.value = (currentEpisodes ?: 0).toFloat()
+                        binding.resultSyncUi.resultSyncEpisodesSlider.valueTo = episodes.toFloat()
+                    } else {
+                        binding.resultSyncUi.resultSyncEpisodesHolder.isVisible = false
+                    }
+
+                    context?.getString(R.string.sync_total_episodes_format)?.format(currentEpisodes, episodes)
+
+                } ?: run {
+                    binding.resultSyncUi.resultSyncEpisodesHolder.isVisible = false
+                    binding.resultSyncUi.resultSyncSetScore.isClickable = false
+
+                    context?.getString(R.string.sync_total_episodes_format_none)
+                }
+            }
+        }
+
+        observe(syncModel.metadata) { meta ->
+            when (meta) {
+                is Resource.Success -> {
+                    val d = meta.value
+                    setSyncMaxEpisodes(null, d.totalEpisodes)
+
+                    viewModel.setMeta(d, syncModel.getSyncs())
+                }
+
+                is Resource.Loading -> {
+                    binding.resultSyncUi.resultSyncEpisodesText.text =
+                        context?.getString(R.string.sync_total_episodes_all_none)
+                }
+
+                else -> {}
+            }
+        }
+
+        observe(syncModel.userData) { status ->
+            var closed = false
+            binding.resultSyncUi.apply {
+                when (status) {
+                    is Resource.Failure -> {
+                        resultSyncLoadingShimmer.stopShimmer()
+                        resultSyncLoadingShimmer.isVisible = false
+                        resultSyncHolder.isVisible = false
+                        closed = true
+                    }
+
+                    is Resource.Loading -> {
+                        resultSyncLoadingShimmer.startShimmer()
+                        resultSyncLoadingShimmer.isVisible = true
+                        resultSyncHolder.isVisible = false
+                    }
+
+                    is Resource.Success -> {
+                        resultSyncLoadingShimmer.stopShimmer()
+                        resultSyncLoadingShimmer.isVisible = false
+                        resultSyncHolder.isVisible = true
+
+                        val d = status.value
+                        val desiredScore = d.score?.toFloat(1) ?: 0.0f
+                        val totalSteps = resultSyncRating.valueTo / resultSyncRating.stepSize
+                        val desiredStep = (totalSteps * desiredScore).roundToInt()
+                        resultSyncRating.value = desiredStep * resultSyncRating.stepSize
+
+                        resultSyncCheck.setItemChecked(d.status.internalId + 1, true)
+
+                        safe { // format might fail
+                            val text = d.score?.toFloat(10)?.roundToInt()?.let {
+                                context?.getString(R.string.sync_score_format)?.format(it)
+                            } ?: "?"
+                            resultSyncScoreText.text = text
+                        }
+
+                        val watchedEpisodes = d.watchedEpisodes ?: 0
+
+                        d.maxEpisodes?.let {
+                            // don't directly call it because we don't want to override metadata observe
+                            setSyncMaxEpisodes(watchedEpisodes,it)
+                        }
+                    }
+
+                    null -> {
+                        closed = false
+                    }
+                }
+            }
+        }
+
+        context?.let { ctx ->
+            val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+
+            /*
+            -1 -> None
+            0 -> Watching
+            1 -> Completed
+            2 -> OnHold
+            3 -> Dropped
+            4 -> PlanToWatch
+            5 -> ReWatching
+            */
+            val items = listOf(
+                R.string.none,
+                R.string.type_watching,
+                R.string.type_completed,
+                R.string.type_on_hold,
+                R.string.type_dropped,
+                R.string.type_plan_to_watch,
+                R.string.type_re_watching
+            ).map { ctx.getString(it) }
+            arrayAdapter.addAll(items)
+
+            binding.resultSyncUi.apply {
+                resultSyncCheck.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                resultSyncCheck.adapter = arrayAdapter
+                setListViewHeightBasedOnItems(resultSyncCheck)
+
+                resultSyncCheck.setOnItemClickListener { _, _, which, _ ->
+                    syncModel.setStatus(which - 1)
+                }
+
+                resultSyncRating.addOnChangeListener { it, value, fromUser ->
+                    if (fromUser) syncModel.setScore(Score.from(value, it.valueTo.roundToInt()))
+                }
+
+                resultSyncEpisodesSlider.addOnChangeListener { it, value, fromUser ->
+                    if (fromUser) syncModel.setEpisodes(value.roundToInt())
+                }
+            }
+        }
+
+        binding.resultSyncUi.resultSyncSetScore.setOnClickListener {
+            syncModel.publishUserData()
         }
 
         observe(viewModel.watchStatus) { watchType ->
@@ -693,9 +897,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     if (comingSoon) {
                         resultBookmarkButton.requestFocus()
                     } else resultPlayMovieButton.requestFocus()
-
-                    // Stops last button right focus
-                    resultSearchButton.nextFocusRightId = R.id.result_search_Button
                 }
             }
         }
@@ -847,10 +1048,13 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             hasLoadedEpisodesOnce = true
                             resultPlaySeries.isVisible = resultResumeSeries.isGone && !comingSoon
                             resultEpisodesShow.isVisible = true && !comingSoon
+                            resultSyncUi.resultSyncEpisodesCounterHolder.isVisible = true
+                            resultSyncUi.resultSyncEpisodesSlider.isVisible = true
+
+
                             resultPlaySeriesButton.requestFocus()
                         }
                     }
-
 
                     (resultEpisodes.adapter as? EpisodeAdapter)?.submitList(episodes.value)
                 }
@@ -938,6 +1142,13 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         if (d.contentRatingText == null) {
                             // If there is no rating to display, we don't want an empty gap
                             resultMetaContentRating.width = 0
+                        }
+
+                        if (syncModel.addSyncs(d.syncData)) {
+                            syncModel.updateMetaAndUser()
+                            syncModel.updateSynced()
+                        } else {
+                            syncModel.addFromUrl(d.url)
                         }
 
                         resultSearchButton.setOnClickListener {
