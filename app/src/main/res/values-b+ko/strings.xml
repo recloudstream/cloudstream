@@ -746,4 +746,20 @@
     <string name="start_paused_settings_des">소스를 선택할 때의 부하 줄이기</string>
     <string name="background">배경</string>
     <string name="subs_edge">윤곽선</string>
+    <string name="compressor_setting">다이내믹 레인지 컴프레서</string>
+    <string name="compressor">컴프레서</string>
+    <string name="compressor_setting_summary">플레이어에 컴프레서 제어 표시 (시끄러운/조용한 오디오 균형 조정)</string>
+    <string name="compressor_on_format">켬 · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">끔</string>
+    <string name="compressor_preset_light">약하게</string>
+    <string name="compressor_preset_dialog">대화 증폭</string>
+    <string name="compressor_preset_heavy">강하게</string>
+    <string name="compressor_threshold_label">임곗값: %d dB</string>
+    <string name="compressor_makeup_label">메이크업 게인: +%d dB</string>
+    <string name="compressor_threshold_hint">%d dB보다 큰 소리를 줄입니다</string>
+    <string name="compressor_makeup_hint">전체 음량을 %d dB 키웁니다</string>
+    <string name="compressor_on">켬</string>
+    <string name="edit_profile_image_url">URL</string>
+    <string name="edit_profile_image_picker">이미지 선택기</string>
+    <string name="edit_profile_image_default">기본 이미지</string>
 </resources>

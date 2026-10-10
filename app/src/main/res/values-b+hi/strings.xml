@@ -295,7 +295,7 @@
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
-    <string name="resume_time_left" formatted="true">%dm\nबाकी</string>
+    <string name="resume_time_left" formatted="true">%dm\nसमय बाकी</string>
     <string name="documentaries">वृत्तचित्र</string>
     <string name="unexpected_error">कोई नहीं जानता ये प्लेयर एरर क्यों आया</string>
     <string name="episode_action_download_subtitle">उपशीर्षक डाउनलोड करें</string>
@@ -422,6 +422,35 @@
     <string name="search_suggestions">खोज के सुझाव</string>
     <string name="search_suggestions_des">टाइप करते समय खोज सुझाव दिखाएं</string>
     <string name="show_cast_in_details">कास्ट पैनल दिखाएँ</string>
-    <string name="episodes">एपिसोड</string>
+    <string name="episodes">एपिसोड्स</string>
     <string name="video_singular">वीडियो</string>
+    <string name="stop">रुको</string>
+    <string name="safe_mode_crash_info">क्रैश जानकारी देखें</string>
+    <string name="extension_authors">लेखक लोग</string>
+    <string name="extension_description">विवरण</string>
+    <string name="extension_install_first">पहले एक्सटेंशन इंस्टॉल करे</string>
+    <string name="favorites_list_name">पसंदीदा</string>
+    <string name="extension_language">भाषा</string>
+    <string name="error_invalid_data">अमान्य डेटा</string>
+    <string name="error_invalid_url">अमान्य यूआरएल</string>
+    <string name="error">त्रुटि</string>
+    <string name="subtitles_shadow">छाया</string>
+    <string name="subtitles_remove_bloat">सबटाइटल से विज्ञापन हटाएं</string>
+    <string name="subtitles_filter_lang">पसंदीदा मीडिया भाषा से फ़िल्टर करें</string>
+    <string name="extension_version">संस्करण</string>
+    <string name="extension_status">स्थिति</string>
+    <string name="favorite">प्रिय</string>
+    <string name="use">प्रयोग</string>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d डाउनलोड कतार</item>
+        <item quantity="other">%d डाउनलोडस कतार</item>
+    </plurals>
+    <string name="player_is_live">सीधा प्रसारण</string>
+    <string name="subscription_list_name">सदस्यता लिया</string>
+    <string name="subscription_new">%s सदस्यता लिया</string>
+    <string name="subscription_deleted">%s सदस्यता छोड़ दी गई</string>
+    <string name="subscription_episode_released">एपिसोड %d रिलीज़ हुआ!</string>
+    <string name="action_subscribe">सदस्यता ले</string>
+    <string name="action_unsubscribe">सदस्यता रद्द</string>
+    <string name="previous">पिछला</string>
 </resources>

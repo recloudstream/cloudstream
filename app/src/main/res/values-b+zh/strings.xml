@@ -760,4 +760,20 @@
     <string name="start_paused_settings_des">降低选择源时的压力</string>
     <string name="subs_edge">边缘</string>
     <string name="background">后台</string>
+    <string name="compressor">压缩器</string>
+    <string name="compressor_setting">动态范围压缩器</string>
+    <string name="compressor_setting_summary">在播放器中显示压缩器控件（帮助平衡响亮/安静声音）</string>
+    <string name="compressor_on">开</string>
+    <string name="compressor_on_format">开 · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">关</string>
+    <string name="compressor_preset_light">轻度</string>
+    <string name="compressor_preset_dialog">对话增强</string>
+    <string name="compressor_preset_heavy">重度</string>
+    <string name="compressor_threshold_label">阈值：%d dB</string>
+    <string name="compressor_makeup_label">增益补偿：+%d dB</string>
+    <string name="compressor_threshold_hint">会降低比 %d dB 响的声音的音量</string>
+    <string name="compressor_makeup_hint">将总体音量调高 %d dB</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">图片选择器</string>
+    <string name="edit_profile_image_default">默认图片</string>
 </resources>
