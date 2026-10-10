@@ -416,8 +416,8 @@
     <string name="download_all_plugins_from_repo">Attenzione: CloudStream non si assume alcuna responsabilità per l\'utilizzo di estensioni di terze parti e non fornisce alcun supporto per esse!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabilitato)</string>
     <string name="tracks">Tracce</string>
-    <string name="audio_tracks">Traccia audio</string>
-    <string name="video_tracks">Traccia video</string>
+    <string name="audio_tracks">Tracce audio</string>
+    <string name="video_tracks">Tracce video</string>
     <string name="apply_on_restart">Riavvia app per visualizzare le modifiche.</string>
     <string name="safe_mode_title">Safe mode attiva</string>
     <string name="safe_mode_description">Tutte le estensioni sono state disabilitate a causa di un arresto anomalo per aiutarti a trovare l\'estensione che causa il problema.</string>
@@ -774,4 +774,20 @@
     <string name="start_paused_settings_des">Riduci lo stress nella scelta delle fonti</string>
     <string name="background">Sfondo</string>
     <string name="subs_edge">Bordo</string>
+    <string name="compressor">Compressore</string>
+    <string name="compressor_setting_summary">Mostra i controlli del compressore nel player (aiuta a bilanciare l\'audio elevato/debole)</string>
+    <string name="compressor_on">Attivo</string>
+    <string name="compressor_on_format">Attivo · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Disattivato</string>
+    <string name="compressor_preset_light">Chiaro</string>
+    <string name="compressor_preset_dialog">Aumento dialoghi</string>
+    <string name="compressor_preset_heavy">Intenso</string>
+    <string name="compressor_threshold_label">Soglia: %d dB</string>
+    <string name="compressor_setting">Compressore gamma dinamica</string>
+    <string name="compressor_makeup_label">Guadagno compensazione: +%d dB</string>
+    <string name="compressor_threshold_hint">I suoni più forti di %d dB vengono abbassati</string>
+    <string name="compressor_makeup_hint">Aumenta il volume generale di +%d dB</string>
+    <string name="edit_profile_image_url">URL</string>
+    <string name="edit_profile_image_picker">Selettore immagini</string>
+    <string name="edit_profile_image_default">Immagini predefinite</string>
 </resources>

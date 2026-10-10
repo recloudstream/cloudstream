@@ -755,4 +755,17 @@
     <string name="start_paused_settings_des">Зменште стрес під час вибору джерел</string>
     <string name="subs_edge">Край</string>
     <string name="background">Тло</string>
+    <string name="compressor">Стискач</string>
+    <string name="compressor_setting">Стискач динамічного діапазону</string>
+    <string name="compressor_setting_summary">Показувати керування стискача у програвачі (допомагає збалансувати гучні й тихі звуки)</string>
+    <string name="compressor_on">Увімк</string>
+    <string name="compressor_on_format">Увімк · %1$d дБ / +%2$d дБ</string>
+    <string name="compressor_off">Вимк</string>
+    <string name="compressor_preset_light">Легкий</string>
+    <string name="compressor_preset_dialog">Підсилення діалогів</string>
+    <string name="compressor_preset_heavy">Важкий</string>
+    <string name="compressor_threshold_label">Поріг: %d дБ</string>
+    <string name="compressor_makeup_label">Компенсація підсилення: +%d дБ</string>
+    <string name="compressor_threshold_hint">Звуки гучністю понад %d дБ приглушуються</string>
+    <string name="compressor_makeup_hint">Збільшує загальну гучність на +%d дБ</string>
 </resources>

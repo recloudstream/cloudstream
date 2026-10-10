@@ -752,4 +752,17 @@
         <item quantity="one">%d скриена врска</item>
         <item quantity="other">%d скриени врски</item>
     </plurals>
+    <string name="compressor">Компресор</string>
+    <string name="compressor_setting">Компресор со динамички опсег</string>
+    <string name="compressor_setting_summary">Прикажи ги контролите на компресорот во плеерот (помага во балансирање на гласен/тивок звук)</string>
+    <string name="compressor_on">Вклучено</string>
+    <string name="compressor_on_format">Вклучено · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Исклучено</string>
+    <string name="compressor_preset_light">Лесно</string>
+    <string name="compressor_preset_dialog">Засилување на дијалог</string>
+    <string name="compressor_preset_heavy">Тешко</string>
+    <string name="compressor_threshold_label">Праг: %d dB</string>
+    <string name="compressor_makeup_label">Компензациско засилување: +%d dB</string>
+    <string name="compressor_threshold_hint">Звуци погласни од %d dB се стишуваат</string>
+    <string name="compressor_makeup_hint">Ја зголемува вкупната јачина на звукот за +%d dB</string>
 </resources>

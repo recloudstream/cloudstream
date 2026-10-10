@@ -758,4 +758,20 @@
     <string name="start_paused_settings_des">Ogranicz obciążenie podczas wyboru źródeł</string>
     <string name="background">Tło</string>
     <string name="subs_edge">Krawędź</string>
+    <string name="compressor">Kompresor</string>
+    <string name="compressor_setting">Kompresor zakresu dynamicznego</string>
+    <string name="compressor_setting_summary">Wyświetlaj w odtwarzaczu elementy sterujące kompresorem (pomaga wyrównać głośność dźwięku)</string>
+    <string name="compressor_on">Włączony</string>
+    <string name="compressor_on_format">Włączony · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Wyłączony</string>
+    <string name="compressor_preset_light">Lekki</string>
+    <string name="compressor_preset_dialog">Wzmocnienie dialogów</string>
+    <string name="compressor_preset_heavy">Silny</string>
+    <string name="compressor_threshold_label">Próg: %d dB</string>
+    <string name="compressor_makeup_label">Wzmocnienie kompensujące: +%d dB</string>
+    <string name="compressor_threshold_hint">Dźwięki głośniejsze niż %d dB są ściszane</string>
+    <string name="compressor_makeup_hint">Zwiększa ogólną głośność o +%d dB</string>
+    <string name="edit_profile_image_default">Domyślne obrazy</string>
+    <string name="edit_profile_image_url">Adres URL</string>
+    <string name="edit_profile_image_picker">Wybór obrazu</string>
 </resources>
