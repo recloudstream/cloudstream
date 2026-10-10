@@ -196,6 +196,15 @@ import kotlin.math.absoluteValue
 import kotlin.reflect.full.createInstance
 import kotlin.system.exitProcess
 
+internal fun shouldFocusSearchOnReselection(
+    currentDestinationId: Int?,
+    selectedDestinationId: Int,
+    isPhoneLayout: Boolean,
+): Boolean =
+    isPhoneLayout &&
+        currentDestinationId == R.id.navigation_search &&
+        selectedDestinationId == R.id.navigation_search
+
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
         var activityResultLauncher: ActivityResultLauncher<Intent>? = null
@@ -748,7 +757,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         hierarchy.any { it.id == destId }
 
     private var lastNavTime = 0L
-    private fun onNavDestinationSelected(item: MenuItem, navController: NavController): Boolean {
+    private fun onNavDestinationSelected(
+        item: MenuItem,
+        navController: NavController,
+        navHostFragment: NavHostFragment,
+    ): Boolean {
         val currentTime = System.currentTimeMillis()
         // safeDebounce: Check if a previous tap happened within the last 400ms
         if (currentTime - lastNavTime < 400) return false
@@ -757,7 +770,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val destinationId = item.itemId
 
         // Check if we are already at the selected destination
-        if (navController.currentDestination?.id == destinationId) return false
+        val currentDestinationId = navController.currentDestination?.id
+        if (shouldFocusSearchOnReselection(currentDestinationId, destinationId, isLayout(PHONE))) {
+            (navHostFragment.childFragmentManager.primaryNavigationFragment as? SearchFragment)
+                ?.focusSearchInput()
+        }
+        if (currentDestinationId == destinationId) {
+            return false
+        }
 
         // Make all nav buttons focus on this specific view when nextFocusRightId
         val targetView = when (destinationId) {
@@ -1714,7 +1734,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             setOnItemSelectedListener { item ->
                 onNavDestinationSelected(
                     item,
-                    navController
+                    navController,
+                    navHostFragment
                 )
             }
 
@@ -1742,7 +1763,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             setOnItemSelectedListener { item ->
                 onNavDestinationSelected(
                     item,
-                    navController
+                    navController,
+                    navHostFragment
                 )
             }
 
