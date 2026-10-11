@@ -1,13 +1,14 @@
 package com.lagradost.cloudstream3.ui.settings
 
-import androidx.compose.runtime.Immutable
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream4.viewmodels.GithubFile
+import com.lagradost.cloudstream4.viewmodels.GithubRepository
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlin.jvm.Throws
+import java.io.FileNotFoundException
 
-object GithubReleases {
+object GithubReleases : GithubRepository {
     @Serializable
     private data class GithubAsset(
         @JsonProperty("name") @SerialName("name") val name: String,
@@ -41,27 +42,15 @@ object GithubReleases {
         @JsonProperty("object") @SerialName("object") val githubObject: GithubObject,
     )
 
-    /** GitHub file update package */
-    @Immutable
-    data class GithubFile(
-        /** File digest, sha:xxx */
-        val digest: String?,
-        /** File url for download */
-        val downloadUrl: String,
-        /** Filename without the extension */
-        val displayName: String,
-        /** Changelog, aka the commit message */
-        val changeLog: String,
-        /** Name of the tag, aka unique release name like vX.X.X or pre-release */
-        val tagName: String,
-        /** Unique node id */
-        val nodeId: String,
-    )
+    const val APK_USERNAME = "recloudstream"
+    const val APK_REPOSITORY = "cloudstream"
+    const val APK_PRERELEASE = "pre-release"
+    const val APK_CONTENT_TYPE = "application/vnd.android.package-archive"
 
     private val defaultHeaders = mapOf("Accept" to "application/vnd.github.v3+json")
 
     @Throws
-    suspend fun getShaFromTag(
+    override suspend fun getSha(
         userName: String,
         repository: String,
         tag: String,
@@ -73,13 +62,13 @@ object GithubReleases {
     }
 
     @Throws
-    suspend fun getLatestReleaseFile(
+    override suspend fun getRelease(
         userName: String,
         repository: String,
         prerelease: Boolean,
         prereleaseTag: String,
         contentType: String,
-    ): GithubFile? {
+    ): GithubFile {
         val latestReleaseUrl = if (prerelease) {
             // Find the release object
             // https://docs.github.com/en/rest/releases/releases?apiVersion=2026-03-10#get-a-release-by-tag-name
@@ -102,7 +91,7 @@ object GithubReleases {
         }
 
         if (foundAsset == null) {
-            return null
+            throw FileNotFoundException()
         }
 
         return GithubFile(

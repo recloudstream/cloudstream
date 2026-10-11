@@ -16,6 +16,8 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.receivers.PackageInstallerStatusReceiver
 import com.lagradost.cloudstream4.AppSettings
+import com.lagradost.cloudstream4.viewmodels.AppUpdater
+import com.lagradost.cloudstream4.viewmodels.DigestPair
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
