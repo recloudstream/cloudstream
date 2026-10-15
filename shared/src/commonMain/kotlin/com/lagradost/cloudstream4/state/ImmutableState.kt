@@ -35,9 +35,10 @@ data class FilterByQuery<Value>(
     override fun invoke(value: Value): Boolean {
         if (query.isEmpty()) return onEmpty
         val transformed = transform(value)
-        return Levenshtein.ratio(
+        val matchAgainst = if (ignoreCase) transformed.lowercase() else transformed
+        return matchAgainst.startsWith(query) || Levenshtein.ratio(
             query,
-            if (ignoreCase) transformed.lowercase() else transformed
+            matchAgainst
         ) > ratio
     }
 
@@ -122,6 +123,8 @@ fun <K, V> PersistentMap<K, V>.edit(key: K, updater: V.() -> V): PersistentMap<K
  * 2. `updating` calls that need both the old and new value, but to store the derived state we need to
  * store the old and new values outside the `updating` call.
  * 3. `updateState` that might be called twice due to a race
+ *
+ * The derived state is calculated *before* the filtering.
  * */
 interface DerivedState<Self : DerivedState<Self, Value>, Value> {
     /** State = {} */
@@ -137,6 +140,9 @@ interface DerivedState<Self : DerivedState<Self, Value>, Value> {
 /**
  * For state that updated a lot we might need to calculate some accumulation, then
  * this is used to more ergonomically and efficiently do a `.filter {}` or `.count {}`.
+ *
+ * Note that the derived state is calculated *before* the filtering, and as such the filterBy has
+ * no effect on the state.
  */
 @Immutable
 data class SearchableDataState<Key, Value, State : DerivedState<State, Value>>(

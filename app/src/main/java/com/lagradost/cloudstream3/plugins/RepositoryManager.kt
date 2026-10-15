@@ -247,9 +247,9 @@ object RepositoryManager {
     private val repoLock = Mutex()
     suspend fun addRepository(repository: RepositoryData) {
         repoLock.withLock {
-            val currentRepos = getRepositories()
-            // No duplicates
-            setKey(REPOSITORIES_KEY, (currentRepos + repository).distinctBy { it.url })
+            // No duplicates, but we want the new repository instead of the old one
+            val currentRepos = getRepositories().associateBy { it.url } + (repository.url to repository)
+            setKey(REPOSITORIES_KEY, currentRepos.values.toTypedArray())
         }
     }
 

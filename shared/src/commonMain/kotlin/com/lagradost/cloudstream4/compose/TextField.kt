@@ -12,6 +12,7 @@ fun BlackTextField(
     placeHolder : String,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    singleLine: Boolean = false,
     onValueChange: (String) -> Unit,
 ) {
     TextField(
@@ -22,6 +23,7 @@ fun BlackTextField(
         placeholder = {
             Text(text = placeHolder)
         },
+        singleLine = singleLine,
         shape = RoundedShape(),
         colors = Colors.blackTextField,
     )
