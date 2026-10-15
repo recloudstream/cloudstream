@@ -383,7 +383,7 @@
     <string name="apk_installer_settings">Installeur APK</string>
     <string name="go_forward_30">+30</string>
     <string name="quality_cam">Cam</string>
-    <string name="subtitles_remove_bloat">Supprimer les éléments superflus des sous-titres</string>
+    <string name="subtitles_remove_bloat">Supprimer les pubs des sous-titres</string>
     <string name="quality_cam_rip">CamRip</string>
     <string name="trailer">Trailer</string>
     <string name="provider_languages_tip">Regardez les vidéos dans ces langues</string>
@@ -751,4 +751,20 @@
     <string name="log_cat">Logcat 🐈</string>
     <string name="start_paused_settings">Commencer des vidéos en pause</string>
     <string name="start_paused_settings_des">Réduire le stress lors du choix des sources</string>
+    <string name="subs_edge">Bordure</string>
+    <string name="compressor">Compresseur</string>
+    <string name="compressor_setting">Compresseur à portée dynamique</string>
+    <string name="compressor_setting_summary">Montrer les contrôles du compresseur dans le lecteur (aide a équilibrer les audios fort des faibles)</string>
+    <string name="compressor_on">Activé</string>
+    <string name="compressor_on_format">Activé · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Désactivé</string>
+    <string name="compressor_preset_light">Légère</string>
+    <string name="compressor_preset_dialog">Booster les dialogues</string>
+    <string name="compressor_preset_heavy">Lourd</string>
+    <string name="compressor_threshold_label">Décibels max: %d dB</string>
+    <string name="compressor_makeup_hint">Augmente le volume total de +%d dB</string>
+    <string name="background">Arrière plan</string>
+    <string name="edit_profile_image_url">URL</string>
+    <string name="edit_profile_image_picker">Choisir une image</string>
+    <string name="edit_profile_image_default">Images par défaut</string>
 </resources>

@@ -767,4 +767,6 @@
     <string name="start_paused_settings">Iniciar vídeos pausados</string>
     <string name="start_paused_settings_des">Reduza o estresse ao selecionar fontes</string>
     <string name="background">Fundo</string>
+    <string name="compressor">Compressor</string>
+    <string name="compressor_setting">Compressor de faixa dinâmica</string>
 </resources>
