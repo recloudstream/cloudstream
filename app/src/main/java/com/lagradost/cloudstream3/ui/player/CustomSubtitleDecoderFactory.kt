@@ -356,7 +356,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     }
 
     override fun reset() {
-        currentSubtitleCues.clear()
+        // Do not clear currentSubtitleCues here so they remain available for subtitle sync and comparison
         super.reset()
     }
 }
