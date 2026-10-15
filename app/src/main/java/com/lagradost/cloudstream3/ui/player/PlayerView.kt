@@ -135,6 +135,7 @@ class PlayerView @JvmOverloads constructor(
         fun onHoldSpeedUp(show: Boolean) {}
         /** Called during brightness swipe with the current extra-brightness alpha (0–1). */
         fun onBrightnessExtra(alpha: Float) {}
+        fun onJumpSubtitle(next: Boolean) {}
 
         /** Touch event callbacks */
 
