@@ -27,7 +27,10 @@ import kotlinx.coroutines.withContext
 
 
 data class ExpandableSearchList(
-    var list: List<SearchResponse>, var currentPage: Int, var hasNext: Boolean,
+    var list: List<SearchResponse>,
+    var currentPage: Int,
+    var hasNext: Boolean,
+    var isHorizontalImages: Boolean = false,
 )
 
 const val SEARCH_HISTORY_KEY = "search_history"
@@ -163,7 +166,7 @@ class SearchViewModel : ViewModel() {
 
         val item = expandableSearches[name] ?: return null
         return HomeViewModel.ExpandableHomepageList(
-            HomePageList(name, item.list),
+            HomePageList(name, item.list, isHorizontalImages = item.isHorizontalImages),
             item.currentPage,
             item.hasNext
         )
@@ -192,7 +195,8 @@ class SearchViewModel : ViewModel() {
             index++
         }
 
-        return ExpandableSearchList(list, 1, false)
+        val isHorizontal = lists.values.any { it.isHorizontalImages }
+        return ExpandableSearchList(list, 1, false, isHorizontal)
     }
 
     private fun search(
@@ -237,7 +241,12 @@ class SearchViewModel : ViewModel() {
                     if (search is Resource.Success) {
                         val searchValue = search.value
                         expandableSearches[a.name] =
-                            ExpandableSearchList(searchValue.items, 1, searchValue.hasNext)
+                            ExpandableSearchList(
+                                searchValue.items,
+                                1,
+                                searchValue.hasNext,
+                                searchValue.isHorizontalImages
+                            )
                     }
 
                     _currentSearch.postValue(expandableSearches)

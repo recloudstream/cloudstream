@@ -193,6 +193,7 @@ data class ResultData(
     val nextAiringDate: UiText?,
     val nextAiringEpisode: UiText?,
     val plotHeaderText: UiText,
+    val isHorizontalImages: Boolean = false,
     val posterHeaders: Map<String, String>? = null,
 )
 
@@ -305,6 +306,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         backgroundPosterUrl = backgroundPosterUrl,
         logoUrl = logoUrl,
         title = name,
+        isHorizontalImages = this.isHorizontalImages,
         typeText = txt(
             when (type) {
                 TvType.TvSeries -> R.string.tv_series_singular
@@ -491,6 +493,10 @@ class ResultViewModel2 : ViewModel() {
     private val _page: MutableLiveData<Resource<ResultData>?> =
         MutableLiveData(null)
     val page: LiveData<Resource<ResultData>?> = _page
+
+    fun isRecommendationsHorizontal(): Boolean {
+        return (page.value as? Resource.Success)?.value?.isHorizontalImages == true
+    }
 
     private val _episodes: MutableLiveData<Resource<List<ResultEpisode>>?> =
         MutableLiveData(Resource.Loading())
@@ -2501,8 +2507,8 @@ class ResultViewModel2 : ViewModel() {
 
     // this instantly updates the metadata on the page
     private fun postPage(loadResponse: LoadResponse, apiRepository: APIRepository) {
-        _recommendations.postValue(loadResponse.recommendations ?: emptyList())
         _page.postValue(Resource.Success(loadResponse.toResultData(apiRepository)))
+        _recommendations.postValue(loadResponse.recommendations ?: emptyList())
     }
 
     fun hasLoaded() = currentResponse != null
@@ -2559,6 +2565,7 @@ class ResultViewModel2 : ViewModel() {
         override var duration: Int? = null,
         override var trailers: MutableList<TrailerData> = mutableListOf(),
         override var recommendations: List<SearchResponse>? = null,
+        override var isHorizontalImages: Boolean = false,
         override var actors: List<ActorData>? = null,
         override var comingSoon: Boolean = false,
         override var syncData: MutableMap<String, String> = mutableMapOf(),
