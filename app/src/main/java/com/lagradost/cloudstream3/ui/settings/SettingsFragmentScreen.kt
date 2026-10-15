@@ -180,6 +180,7 @@ object SettingsFragmentScreen : Screen {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun Content() {
         val textFieldState = rememberTextFieldState()
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         val outerListState = rememberScrollState()
 
@@ -256,6 +257,7 @@ object SettingsFragmentScreen : Screen {
                     searchKey = textFieldState.text.toString(),
                     deferredItems = ::generateSearchItems,
                     onItemClick = { item ->
+                        keyboardController?.hide()
                         SearchableSettings.highlightKey = item.highlightKey
                         activity?.navigate(item.navigation)
                     }, empty = {
@@ -292,6 +294,7 @@ object SettingsFragmentScreen : Screen {
         var hasFocus by remember { mutableStateOf(false) }
         val focusProgress by animateFloatAsState(targetValue = if (hasFocus) 1.0f else 0.0f)
         val focusManager = LocalFocusManager.current
+        val keyboardController = LocalSoftwareKeyboardController.current
         val focusRequester = remember { FocusRequester() }
         TextField(
             state = textFieldState,
@@ -306,6 +309,9 @@ object SettingsFragmentScreen : Screen {
                 .focusOutline(enabled = isLayout(TV), CircleShape)
                 .onFocusChanged { newFocus ->
                     hasFocus = newFocus.hasFocus
+                    if (!newFocus.hasFocus) {
+                        keyboardController?.hide()
+                    }
                 }.focusRequester(focusRequester),
             placeholder = {
                 Text(text = stringResource(R.string.search_hint))
@@ -332,6 +338,7 @@ object SettingsFragmentScreen : Screen {
                     if (value) {
                         IconButton(onClick = {
                             textFieldState.edit { replace(0, length, "") }
+                            keyboardController?.hide()
                             focusManager.clearFocus()
                         }) {
                             Icon(
@@ -359,6 +366,8 @@ object SettingsFragmentScreen : Screen {
                     if (value) {
                         IconButton(onClick = {
                             textFieldState.edit { replace(0, length, "") }
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
                         }) {
                             Icon(
                                 painter = painterResource(R.drawable.close_24px),
@@ -370,7 +379,6 @@ object SettingsFragmentScreen : Screen {
             },
         )
 
-        val keyboardController = LocalSoftwareKeyboardController.current
         DisposableEffect(Unit) {
             onDispose {
                 keyboardController?.hide()
@@ -380,6 +388,7 @@ object SettingsFragmentScreen : Screen {
 
     @Composable
     fun SettingsTab(settingsTab: SettingsNavigation) {
+        val keyboardController = LocalSoftwareKeyboardController.current
         TextPreferenceWidget(
             title = stringResource(settingsTab.title),
             icon = painterResource(settingsTab.icon),
@@ -389,6 +398,7 @@ object SettingsFragmentScreen : Screen {
                 settingsTab.subtitle.map { stringResource(it) }.joinToString(),
             // Clear it if we have already set it but navigated back instantly
             onPreferenceClick = {
+                keyboardController?.hide()
                 SearchableSettings.highlightKey = null
                 activity?.navigate(settingsTab.navigation)
             })
