@@ -471,7 +471,7 @@
     <string name="error_invalid_data">بيانات مش صالحة</string>
     <string name="use">عوز</string>
     <string name="quality_sdr">SDR</string>
-    <string name="quality_cam_hd">كاميرا</string>
+    <string name="quality_cam_hd">كاميرا HD</string>
     <string name="action_remove_from_favorites">شيلو من المفضل</string>
     <string name="quality_uhd">UHD</string>
     <string name="plugin_loaded">نزادت الإضافة</string>
@@ -650,7 +650,7 @@
     <string name="no_plugins_updated_manually">م تجدد شي.</string>
     <string name="sort_button_rating">رايتينگ %s</string>
     <string name="starting_plugin_update_manually">بلشت عملية تجديد الإضافات!</string>
-    <string name="plugins_updated_manually">نجح تجديد %d إضافات!</string>
+    <string name="plugins_updated_manually">نجح تجديد %d إضافات</string>
     <string name="player_notification_channel_description">نوتيفيكايشن بت خليك تتحكم بال ڤيديو لما م يكون الآپ مفتوح</string>
     <string name="subtitles_from_online">اونلاين</string>
     <string name="subtitles_from_embedded">داخلياً</string>
@@ -735,4 +735,18 @@
     </plurals>
     <string name="player_is_live">لايڤ</string>
     <string name="skip_type_preview">پريڤيو</string>
+    <string name="subs_edge">حفة</string>
+    <string name="log_cat">لوگ كات 🐈</string>
+    <string name="start_paused_settings">بلش الڤيديو مع پوز</string>
+    <string name="start_paused_settings_des">بت قلل السترس وقت تنقاية المصدر</string>
+    <string name="tv_layout_clock_settings">فرجي ساعة وقت</string>
+    <string name="tv_layout_clock_settings_des">بت فرجس الوقت ع أعلى الشاشة بال صفحة الرئيسية و مشغل الڤيديو</string>
+    <string name="profile_settings">ستنگز الپروفيل</string>
+    <string name="profile_hide_negative_sources">خبي المصادر اللي عندها أولوية نيگاتيڤ</string>
+    <string name="profile_hide_error_sources">خبي المصادر اللي عندها أخطاء</string>
+    <plurals name="links_hidden">
+        <item quantity="one">ولا لينك مخبا</item>
+        <item quantity="other">لينك واحد مخبا</item>
+    </plurals>
+    <string name="background">خلفية</string>
 </resources>
