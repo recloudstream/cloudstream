@@ -66,6 +66,8 @@ fun modeToTheme(mode : CloudStreamThemeMode, primaryColor: CloudStreamPrimaryCol
         }
         when {
             mode == CloudStreamThemeMode.Dynamic -> base
+            // "Normal" is the theme's own accent, which is NORMAL's colour on all but the default dark
+            primaryColor == CloudStreamPrimaryColor.NORMAL -> base
             primaryColor == CloudStreamPrimaryColor.DYNAMIC -> base.copy(primary = dynamicPrimary)
             primaryColor == CloudStreamPrimaryColor.DYNAMIC_TWO -> base.copy(primary = dynamicSecondary)
             else -> base.copy(primary = primaryColor.color)
