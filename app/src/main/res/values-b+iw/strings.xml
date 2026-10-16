@@ -752,4 +752,20 @@
     <string name="start_paused_settings_des">הפחתת לחץ בעת בחירת מקורות</string>
     <string name="subs_edge">קצה</string>
     <string name="background">רקע</string>
+    <string name="compressor">מדחס</string>
+    <string name="compressor_setting">מדחס טווח דינמי</string>
+    <string name="compressor_setting_summary">הצגת פקדי המדחס בנגן (מסייע לאזן בין שמע חזק לשקט)</string>
+    <string name="compressor_on">פועל</string>
+    <string name="compressor_on_format">פועל · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">כבוי</string>
+    <string name="compressor_preset_light">קל</string>
+    <string name="compressor_preset_dialog">הגברת דיבור</string>
+    <string name="compressor_preset_heavy">כבד</string>
+    <string name="compressor_threshold_label">סף: %d dB</string>
+    <string name="compressor_makeup_label">הגבר פיצוי: +%d dB</string>
+    <string name="compressor_threshold_hint">צלילים חזקים מ־%d dB מוחלשים</string>
+    <string name="compressor_makeup_hint">מגביר את עוצמת הקול הכוללת ב־%d dB</string>
+    <string name="edit_profile_image_url">כתובת URL</string>
+    <string name="edit_profile_image_picker">בורר תמונות</string>
+    <string name="edit_profile_image_default">תמונות ברירת מחדל</string>
 </resources>
