@@ -175,6 +175,8 @@ class PlayerPreferences(preferences: PreferenceStore) {
     val previewBarEnabled = preferences.getBoolean("preview_seekbar_key", true)
     val softwareDecoding = preferences.getInt("software_decoding_key2", -1)
     val extraBrightnessEnabled = preferences.getBoolean("extra_brightness_key", false)
+    /** Full ASS/SSA rendering with libass, same key as R.string.libass_subtitles_key */
+    val libassEnabled = preferences.getBoolean("libass_subtitles_key", true)
     val swipeHorizontalEnabled = preferences.getBoolean("swipe_enabled_key", true)
     val swipeVerticalEnabled = preferences.getBoolean("swipe_vertical_enabled_key", true)
     val doubleTapToSeekEnabled = preferences.getBoolean("double_tap_enabled_key", false)

@@ -120,6 +120,8 @@
     <string name="player_subtitles_settings_des">Impostazioni sottotitoli lettore</string>
     <string name="chromecast_subtitles_settings">Sottotitoli Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Impostazioni sottotitoli Chromecast</string>
+    <string name="libass_subtitles_settings">Rendering ASS/SSA</string>
+    <string name="libass_subtitles_settings_des">Mostra i sottotitoli stilizzati (comuni negli anime) con libass</string>
     <string name="eigengraumode_settings">Velocità di riproduzione</string>
     <string name="swipe_to_seek_settings">Scorri per mandare avanti/indietro</string>
     <string name="swipe_to_seek_settings_des">Scorri da un lato all\'altro per controllare la tua posizione in un video</string>

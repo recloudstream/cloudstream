@@ -6,6 +6,7 @@ androidGradlePlugin = "9.1.1"
 animeDb = "1.0.2"
 annotation = "1.10.0"
 appcompat = "1.7.1"
+assMedia = "0.5.1" # libass for full ASS/SSA subtitle rendering
 biometric = "1.4.0-alpha07"
 buildkonfigGradlePlugin = "0.21.2"
 coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
@@ -77,6 +78,8 @@ activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activ
 anime-db = { module = "com.github.recloudstream:anime-db", version.ref = "animeDb" }
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+ass-kt = { module = "io.github.peerless2012:ass-kt", version.ref = "assMedia" }
+ass-media = { module = "io.github.peerless2012:ass-media", version.ref = "assMedia" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
@@ -178,4 +181,5 @@ lifecycle = ["lifecycle-livedata-ktx", "lifecycle-viewmodel-ktx"]
 media3 = ["media3-cast", "media3-common", "media3-container", "media3-datasource-cronet", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
 navigation = ["navigation-fragment-ktx", "navigation-ui-ktx"]
 nextlib = ["nextlib-media3ext", "nextlib-mediainfo"]
+libass = ["ass-kt", "ass-media"]
 compose = ["compose-foundation", "compose-material3", "compose-resources", "compose-runtime", "compose-ui", "compose-ui-tooling", "compose-ui-tooling-preview", "lifecycle-viewmodel-compose", "coil-compose"]

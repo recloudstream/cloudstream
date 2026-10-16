@@ -29,6 +29,7 @@ package androidx.media3.extractor.mkv // we cant change the pkg as EbmlReader is
 import android.util.Pair
 import android.util.SparseArray
 import androidx.annotation.CallSuper
+import com.lagradost.cloudstream3.ui.player.LibassSubtitleSupport
 import androidx.annotation.IntDef
 import androidx.media3.common.C
 import androidx.media3.common.C.BufferFlags
@@ -190,6 +191,13 @@ class UpdatedMatroskaExtractor private constructor(
     private var extractorOutput: ExtractorOutput? =
         null
 
+    /** When not null, ASS dialogues and attached fonts are sent to libass for full rendering */
+    var assSupport: LibassSubtitleSupport? = null
+
+    // Attachment (fonts) reading state, only used with assSupport
+    private var currentAttachmentName: String? = null
+    private var currentAttachmentMime: String? = null
+
     @Deprecated("Use {@link #MatroskaExtractor(SubtitleParser.Factory)} instead.")
     constructor() : this(
         DefaultEbmlReader(),
@@ -329,6 +337,9 @@ class UpdatedMatroskaExtractor private constructor(
             ID_SEEK_ID, ID_BLOCK_ADD_ID_EXTRA_DATA, ID_CONTENT_COMPRESSION_SETTINGS, ID_CONTENT_ENCRYPTION_KEY_ID, ID_SIMPLE_BLOCK, ID_BLOCK, ID_CODEC_PRIVATE, ID_PROJECTION_PRIVATE, ID_BLOCK_ADDITIONAL -> EbmlProcessor.ELEMENT_TYPE_BINARY
             ID_DURATION, ID_SAMPLING_FREQUENCY, ID_PRIMARY_R_CHROMATICITY_X, ID_PRIMARY_R_CHROMATICITY_Y, ID_PRIMARY_G_CHROMATICITY_X, ID_PRIMARY_G_CHROMATICITY_Y, ID_PRIMARY_B_CHROMATICITY_X, ID_PRIMARY_B_CHROMATICITY_Y, ID_WHITE_POINT_CHROMATICITY_X, ID_WHITE_POINT_CHROMATICITY_Y, ID_LUMNINANCE_MAX, ID_LUMNINANCE_MIN, ID_PROJECTION_POSE_YAW, ID_PROJECTION_POSE_PITCH, ID_PROJECTION_POSE_ROLL -> EbmlProcessor.ELEMENT_TYPE_FLOAT
 
+            ID_ATTACHMENTS, ID_ATTACHED_FILE -> if (assSupport != null) EbmlProcessor.ELEMENT_TYPE_MASTER else EbmlProcessor.ELEMENT_TYPE_UNKNOWN
+            ID_FILE_NAME, ID_FILE_MIME_TYPE -> if (assSupport != null) EbmlProcessor.ELEMENT_TYPE_STRING else EbmlProcessor.ELEMENT_TYPE_UNKNOWN
+            ID_FILE_DATA -> if (assSupport != null) EbmlProcessor.ELEMENT_TYPE_BINARY else EbmlProcessor.ELEMENT_TYPE_UNKNOWN
             else -> EbmlProcessor.ELEMENT_TYPE_UNKNOWN
         }
     }
@@ -341,6 +352,7 @@ class UpdatedMatroskaExtractor private constructor(
     @CallSuper
     protected fun isLevel1Element(id: Int): Boolean {
         return id == ID_SEGMENT_INFO || id == ID_CLUSTER || id == ID_CUES || id == ID_TRACKS
+                || (assSupport != null && id == ID_ATTACHMENTS)
     }
 
     /**
@@ -419,6 +431,7 @@ class UpdatedMatroskaExtractor private constructor(
                 currentTrack!!.isWebm = isWebm
             }
             ID_MASTERING_METADATA -> getCurrentTrack(id).hasColorInfo = true
+            ID_ATTACHED_FILE -> clearAttachment()
             else -> {}
         }
     }
@@ -698,6 +711,8 @@ class UpdatedMatroskaExtractor private constructor(
                 }
             }
 
+            ID_ATTACHED_FILE -> clearAttachment()
+
             else -> {}
         }
     }
@@ -952,6 +967,8 @@ class UpdatedMatroskaExtractor private constructor(
             ID_NAME -> getCurrentTrack(id).name = value
             ID_CODEC_ID -> getCurrentTrack(id).codecId = value
             ID_LANGUAGE -> getCurrentTrack(id).language = value
+            ID_FILE_NAME -> currentAttachmentName = value
+            ID_FILE_MIME_TYPE -> currentAttachmentMime = value
             else -> {}
         }
     }
@@ -1191,10 +1208,27 @@ class UpdatedMatroskaExtractor private constructor(
                 )
             }
 
+            ID_FILE_DATA -> {
+                val support = assSupport
+                val name = currentAttachmentName
+                if (support != null && name != null && isFontAttachment(name, currentAttachmentMime)) {
+                    val data = ByteArray(contentSize)
+                    input.readFully(data, 0, contentSize)
+                    support.addFont(name, data)
+                } else {
+                    input.skipFully(contentSize)
+                }
+            }
+
             else -> throw ParserException.createForMalformedContainer(
                 "Unexpected id: $id",  /* cause= */null
             )
         }
+    }
+
+    private fun clearAttachment() {
+        currentAttachmentName = null
+        currentAttachmentMime = null
     }
 
     @Throws(IOException::class)
@@ -1284,6 +1318,16 @@ class UpdatedMatroskaExtractor private constructor(
                             subtitleSample.setLimit(i)
                             break
                         }
+                    }
+                    // Send the dialogue to libass with its real timing
+                    if (CODEC_ID_ASS == track.codecId || CODEC_ID_SSA == track.codecId) {
+                        assSupport?.readEmbeddedDialogue(
+                            track.format?.id,
+                            timeUs,
+                            blockDurationUs,
+                            subtitleSample.data,
+                            subtitleSample.limit()
+                        )
                     }
                     // Note: If we ever want to support DRM protected subtitles then we'll need to output the
                     // appropriate encryption data here.
@@ -2647,6 +2691,37 @@ class UpdatedMatroskaExtractor private constructor(
         private const val ID_TIMECODE_SCALE = 0x2AD7B1
         private const val ID_DURATION = 0x4489
         private const val ID_CLUSTER = 0x1F43B675
+
+        // Attachments, used for fonts in ASS subtitles
+        private const val ID_ATTACHMENTS = 0x1941A469
+        private const val ID_ATTACHED_FILE = 0x61A7
+        private const val ID_FILE_NAME = 0x466E
+        private const val ID_FILE_MIME_TYPE = 0x4660
+        private const val ID_FILE_DATA = 0x465C
+
+        private val FONT_MIME_TYPES = setOf(
+            "font/ttf",
+            "font/otf",
+            "font/sfnt",
+            "font/collection",
+            "font/woff",
+            "font/woff2",
+            "application/font-sfnt",
+            "application/font-woff",
+            "application/x-truetype-font",
+            "application/x-font-truetype",
+            "application/x-font-opentype",
+            "application/vnd.ms-opentype",
+            "application/x-font-ttf",
+            "application/x-font-otf",
+        )
+
+        private val FONT_EXTENSIONS = setOf("ttf", "otf", "ttc", "otc", "woff", "woff2")
+
+        private fun isFontAttachment(name: String, mime: String?): Boolean {
+            if (mime != null && mime.lowercase(Locale.ROOT) in FONT_MIME_TYPES) return true
+            return name.substringAfterLast('.', "").lowercase(Locale.ROOT) in FONT_EXTENSIONS
+        }
         private const val ID_TIME_CODE = 0xE7
         private const val ID_SIMPLE_BLOCK = 0xA3
         private const val ID_BLOCK_GROUP = 0xA0
