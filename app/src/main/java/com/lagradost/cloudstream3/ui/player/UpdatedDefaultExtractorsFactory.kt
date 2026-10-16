@@ -107,6 +107,10 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
     private var jpegFlags: @JpegExtractor.Flags Int = 0
     private var heifFlags: @HeifExtractor.Flags Int = 0
 
+    /** When not null, MKV ASS subtitles and attached fonts are rendered with libass */
+    @Volatile
+    var assSupport: LibassSubtitleSupport? = null
+
     init {
         tsMode = TsExtractor.MODE_SINGLE_PMT
         tsTimestampSearchBytes = TsExtractor.DEFAULT_TIMESTAMP_SEARCH_BYTES
@@ -473,7 +477,7 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
                         0
                     else
                         UpdatedMatroskaExtractor.FLAG_EMIT_RAW_SUBTITLE_DATA)
-                )
+                ).also { it.assSupport = assSupport }
             )
 
             FileTypes.MP3 -> extractors.add(

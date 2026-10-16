@@ -208,6 +208,8 @@ android {
             // Enables legacy JNI packaging to reduce APK size (similar to builds before minSdk 23).
             // Note: This may increase app startup time slightly.
             useLegacyPackaging = true
+            // libass and other native libraries may all bundle the C++ runtime
+            pickFirsts += "lib/**/libc++_shared.so"
         }
     }
 
@@ -250,6 +252,9 @@ dependencies {
 
     // FFmpeg Decoding
     implementation(libs.bundles.nextlib)
+
+    // libass, full ASS/SSA subtitle rendering
+    implementation(libs.bundles.libass)
 
     // Anime-db for filler
     implementation(libs.anime.db)
