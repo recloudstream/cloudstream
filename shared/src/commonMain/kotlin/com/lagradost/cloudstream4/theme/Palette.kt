@@ -52,14 +52,16 @@ internal object CloudStreamPalette {
     /** amoledModeLight in colors.xml */
     val AmoledNearBlack = Color(0xFF121213)
 
-    // Light
-    val LightPrimaryGrayBg = Color(0xFFF1F1F1)
+    // Light, the Prime Video dark turned over: a white page, cool blue-gray surfaces, the dark
+    // theme's blue-black for text and a deeper sky blue that reads on white
+    val LightPrimary = Color(0xFF0B7AD6)
+    val LightPrimaryGrayBg = Color(0xFFEEF2F5)
     val LightBlackBg = Color(0xFFFFFFFF)
-    val LightIconGrayBg = Color(0xFFEEEEEE)
-    val LightBoxItemBg = Color(0xFFEEEEEE)
-    val LightText = Color(0xFF202125)
-    val LightGrayText = Color(0xFF5F6267)
-    val LightIcon = Color(0xFF5F6267)
+    val LightIconGrayBg = Color(0xFFE3E9EE)
+    val LightBoxItemBg = Color(0xFFF3F6F8)
+    val LightText = Color(0xFF0F171E)
+    val LightGrayText = Color(0xFF5A6B78)
+    val LightIcon = Color(0xFF3E4F5C)
 
     // Dracula
     val DraculaPrimaryGrayBg = Color(0xFF414450)

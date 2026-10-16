@@ -2,6 +2,11 @@ package com.mihon.presentation.settings
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,28 +27,35 @@ fun PreferenceScaffold(
 ) {
     val (top, bottom) = remember { FocusRequester.createRefs() }
 
-    Scaffold(
-        // TODO @WindowInsets remove this when we have converted everything to compose
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        topBar = {
-            AppBar(
-                modifier = Modifier.focusRequester(top).focusProperties {
-                    down = bottom
-                },
-                title = title,
-                navigateUp = onBackPressed,
-                actions = actions,
-                scrollBehavior = it,
-            )
-        },
-        content = { contentPadding ->
-            PreferenceScreen(
-                modifier = Modifier.focusRequester(bottom).focusProperties {
-                    up = top
-                },
-                items = itemsProvider(),
-                contentPadding = contentPadding,
-            )
-        },
-    )
+    // A readable width, centred, rather than rows across a whole wide window
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        Scaffold(
+            modifier = Modifier.widthIn(max = PreferenceMaxWidth),
+            // TODO @WindowInsets remove this when we have converted everything to compose
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            topBar = {
+                AppBar(
+                    modifier = Modifier.focusRequester(top).focusProperties {
+                        down = bottom
+                    },
+                    title = title,
+                    navigateUp = onBackPressed,
+                    actions = actions,
+                    scrollBehavior = it,
+                )
+            },
+            content = { contentPadding ->
+                PreferenceScreen(
+                    modifier = Modifier.focusRequester(bottom).focusProperties {
+                        up = top
+                    },
+                    items = itemsProvider(),
+                    contentPadding = contentPadding,
+                )
+            },
+        )
+    }
 }
+
+/** How wide a settings page grows */
+val PreferenceMaxWidth = 880.dp

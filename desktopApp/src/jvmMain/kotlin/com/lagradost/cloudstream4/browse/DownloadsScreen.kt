@@ -1,5 +1,13 @@
 package com.lagradost.cloudstream4.browse
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.text.font.FontWeight
+import org.jetbrains.compose.resources.DrawableResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +25,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -71,10 +78,14 @@ fun DownloadsScreen(
     val titles = remember(ids) { downloads.titles().map { it to downloads.episodes(it.id) } }
     val folder = downloads.folder
 
-    Column(Modifier.fillMaxSize()) {
-        Row(Modifier.fillMaxWidth().padding(start = 24.dp, top = 24.dp, end = 24.dp), verticalAlignment = Alignment.CenterVertically) {
+    // A readable width, centred, as on the settings pages
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(
+            Modifier.widthIn(max = DownloadsMaxWidth).fillMaxWidth().padding(start = 24.dp, top = 24.dp, end = 24.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Column(Modifier.weight(1f)) {
-                Text("Downloads", style = MaterialTheme.typography.headlineSmall)
+                Text("Downloads", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
                 val used = states.values.sumOf { it.bytes }
                 Text(
                     listOfNotNull(folder.absolutePath, used.takeIf { it > 0 }?.let { "${formatBytes(it)} used" }).joinToString(" · "),
@@ -91,89 +102,168 @@ fun DownloadsScreen(
             Message(stringResource(Res.string.downloads_empty), "Use the download button on a movie or an episode to watch it offline.")
             return@Column
         }
-        LazyColumn(contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 16.dp, bottom = DockClearance), modifier = Modifier.fillMaxSize()) {
-            titles.forEach { (title, episodes) ->
-                item(key = "title-${title.id}") {
-                    TitleRow(title, episodes.size, episodes.sumOf { states[it.id]?.bytes ?: 0 }) { openDetails(title.apiName, title.url) }
-                }
-                items(episodes, key = { "episode-${it.id}" }) { episode ->
-                    val state = states[episode.id] ?: return@items
-                    EpisodeDownloadRow(
-                        label = downloadLabel(title, episode),
-                        state = state,
-                        onPlay = { downloadedPlayRequest(downloads, title, episode)?.let(onPlay) },
-                        onPause = { downloads.pause(episode.id) },
-                        onResume = when {
-                            // Another source is picked on the title's page
-                            state.pickAgain -> ({ openDetails(title.apiName, title.url) })
-                            downloads.canResume(title.id, episode.id) -> ({ downloads.resume(title.id, episode.id) })
-                            else -> null
-                        },
-                        onDelete = { downloads.delete(title.id, episode.id) },
-                    )
-                }
-                item(key = "divider-${title.id}") { HorizontalDivider(Modifier.padding(vertical = 8.dp)) }
+        LazyColumn(
+            contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 16.dp, bottom = DockClearance),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            items(titles, key = { (title, _) -> "title-${title.id}" }) { (title, episodes) ->
+                fun actions(episode: DownloadedEpisode, state: DownloadState) = DownloadActions(
+                    state = state,
+                    onPlay = { downloadedPlayRequest(downloads, title, episode)?.let(onPlay) },
+                    onPause = { downloads.pause(episode.id) },
+                    onResume = when {
+                        // Another source is picked on the title's page
+                        state.pickAgain -> ({ openDetails(title.apiName, title.url) })
+                        downloads.canResume(title.id, episode.id) -> ({ downloads.resume(title.id, episode.id) })
+                        else -> null
+                    },
+                    onDelete = { downloads.delete(title.id, episode.id) },
+                )
+                DownloadCard(
+                    title = title,
+                    episodes = episodes.mapNotNull { episode -> states[episode.id]?.let { episode to it } },
+                    label = { downloadLabel(title, it) },
+                    actions = ::actions,
+                    onOpen = { openDetails(title.apiName, title.url) },
+                )
             }
         }
     }
 }
 
-@Composable
-private fun TitleRow(title: DownloadedTitle, count: Int, bytes: Long, onClick: () -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RemoteImage(title.poster, null, contentDescription = title.name, modifier = Modifier.width(60.dp).height(90.dp))
-        Column(Modifier.weight(1f)) {
-            Text(title.name, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            val files = if (count == 1) "1 file" else "$count files"
-            Text(
-                listOf(title.type.name, title.apiName, files, formatBytes(bytes)).joinToString(" · "),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
+/** How wide the list of downloads grows */
+private val DownloadsMaxWidth = 960.dp
 
+/** What can be done with one file, its buttons and the click on its line */
+private class DownloadActions(
+    val state: DownloadState,
+    val onPlay: () -> Unit,
+    val onPause: () -> Unit,
+    val onResume: (() -> Unit)?,
+    val onDelete: () -> Unit,
+)
+
+/**
+ * One title as a compact card. A movie is a single line: its poster, name, status and buttons. A
+ * series has a short line for each episode under its name.
+ */
 @Composable
-private fun EpisodeDownloadRow(
-    label: String,
-    state: DownloadState,
-    onPlay: () -> Unit,
-    onPause: () -> Unit,
-    onResume: (() -> Unit)?,
-    onDelete: () -> Unit,
+private fun DownloadCard(
+    title: DownloadedTitle,
+    episodes: List<Pair<DownloadedEpisode, DownloadState>>,
+    label: (DownloadedEpisode) -> String,
+    actions: (DownloadedEpisode, DownloadState) -> DownloadActions,
+    onOpen: () -> Unit,
 ) {
-    val done = state.status == DownloadStatus.Done
-    Row(
-        Modifier.fillMaxWidth().clickable(enabled = done, onClick = onPlay).padding(start = 76.dp, top = 6.dp, bottom = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    val movie = episodes.singleOrNull()?.takeIf { it.first.episode == null }
+    Column(
+        Modifier
+            .widthIn(max = DownloadsMaxWidth - 48.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainer),
     ) {
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(label, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(
-                statusText(state),
-                style = MaterialTheme.typography.bodySmall,
-                color = if (state.status == DownloadStatus.Failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (state.active || state.status == DownloadStatus.Paused) {
-                val fraction = state.fraction
-                if (fraction != null) LinearProgressIndicator(progress = { fraction }, modifier = Modifier.fillMaxWidth(0.6f))
-                else if (state.active) LinearProgressIndicator(modifier = Modifier.fillMaxWidth(0.6f))
+        Row(
+            Modifier.fillMaxWidth().clickable(onClick = onOpen).padding(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RemoteImage(title.poster, null, contentDescription = title.name, modifier = Modifier.width(44.dp).height(66.dp), corner = 6.dp)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(
+                    title.name,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                val bytes = episodes.sumOf { it.second.bytes }
+                val files = if (episodes.size == 1) null else "${episodes.size} files"
+                Text(
+                    listOfNotNull(title.type.name, title.apiName, files, formatBytes(bytes)).joinToString(" · "),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (movie != null) DownloadStatusLine(movie.second)
+            }
+            if (movie != null) DownloadButtons(actions(movie.first, movie.second))
+        }
+        if (movie == null) episodes.forEach { (episode, state) ->
+            val action = actions(episode, state)
+            val done = state.status == DownloadStatus.Done
+            // Lined up with the title's name, under the poster's column
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = done, onClick = action.onPlay)
+                    .padding(start = 68.dp, end = 10.dp, top = 4.dp, bottom = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(label(episode), style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    DownloadStatusLine(state)
+                }
+                DownloadButtons(action)
             }
         }
-        when {
-            done -> IconButton(onClick = onPlay) { Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = "Play") }
-            state.active -> IconButton(onClick = onPause) { Icon(painterResource(Res.drawable.pause_24px), contentDescription = "Pause") }
-            onResume != null -> IconButton(onClick = onResume) { Icon(painterResource(Res.drawable.downloading_24px), contentDescription = "Resume") }
+        if (movie == null) Spacer(Modifier.height(6.dp))
+    }
+}
+
+/** The status in a line of small text, and a thin bar under it while the file downloads or is paused */
+@Composable
+private fun DownloadStatusLine(state: DownloadState) {
+    Text(
+        statusText(state),
+        style = MaterialTheme.typography.bodySmall,
+        color = if (state.status == DownloadStatus.Failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
+    if (state.active || state.status == DownloadStatus.Paused) {
+        val color = MaterialTheme.colorScheme.primary
+        val track = MaterialTheme.colorScheme.surface
+        val bar = Modifier.padding(top = 3.dp).fillMaxWidth(0.6f).height(3.dp)
+        val fraction = state.fraction
+        if (fraction != null) {
+            LinearProgressIndicator(
+                progress = { fraction },
+                modifier = bar,
+                color = color,
+                trackColor = track,
+                strokeCap = StrokeCap.Round,
+                gapSize = 0.dp,
+                drawStopIndicator = {},
+            )
+        } else if (state.active) {
+            LinearProgressIndicator(modifier = bar, color = color, trackColor = track, strokeCap = StrokeCap.Round, gapSize = 0.dp)
         }
-        IconButton(onClick = onDelete) { Icon(painterResource(Res.drawable.delete_24px), contentDescription = "Delete") }
+    }
+}
+
+/** Play, pause or resume, then delete, small enough to sit on a line of text */
+@Composable
+private fun DownloadButtons(actions: DownloadActions) {
+    val state = actions.state
+    val resume = actions.onResume
+    Row {
+        when {
+            state.status == DownloadStatus.Done -> SmallIconButton(Res.drawable.play_arrow_24px, "Play", actions.onPlay)
+            state.active -> SmallIconButton(Res.drawable.pause_24px, "Pause", actions.onPause)
+            resume != null -> SmallIconButton(Res.drawable.downloading_24px, "Resume", resume)
+        }
+        SmallIconButton(Res.drawable.delete_24px, "Delete", actions.onDelete)
+    }
+}
+
+@Composable
+private fun SmallIconButton(icon: DrawableResource, description: String, onClick: () -> Unit) {
+    IconButton(onClick = onClick, modifier = Modifier.size(36.dp)) {
+        Icon(painterResource(icon), contentDescription = description, modifier = Modifier.size(20.dp))
     }
 }
 

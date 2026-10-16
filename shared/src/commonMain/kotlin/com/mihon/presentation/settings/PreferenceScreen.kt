@@ -5,7 +5,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,30 +62,65 @@ fun PreferenceScreen(
                             PreferenceGroupHeader(title = preference.title)
                         }
                     }
-                    items(preference.preferenceItems) { item ->
-                        PreferenceItem(
-                            item = item,
-                            highlightKey = highlightKey,
-                        )
+                    val last = preference.preferenceItems.lastIndex
+                    itemsIndexed(preference.preferenceItems) { j, item ->
+                        PreferenceCard(first = j == 0, last = j == last) {
+                            PreferenceItem(
+                                item = item,
+                                highlightKey = highlightKey,
+                            )
+                        }
                     }
                     item {
                         if (i < items.lastIndex) {
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(20.dp))
                         }
                     }
                 }
 
-                // Create Preference Item
+                // Create Preference Item, in one stack of cards with the items around it outside groups
                 is Preference.PreferenceItem<*, *> -> item {
-                    PreferenceItem(
-                        item = preference,
-                        highlightKey = highlightKey,
-                    )
+                    if (i == 0) Spacer(modifier = Modifier.height(8.dp))
+                    PreferenceCard(
+                        first = items.getOrNull(i - 1) !is Preference.PreferenceItem<*, *>,
+                        last = items.getOrNull(i + 1) !is Preference.PreferenceItem<*, *>,
+                    ) {
+                        PreferenceItem(
+                            item = preference,
+                            highlightKey = highlightKey,
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+/**
+ * A group's items as a stack of cards in the theme's box colour, a hair apart, rounded at the top of
+ * the first and the bottom of the last, so the group reads as one block
+ */
+@Composable
+private fun PreferenceCard(first: Boolean, last: Boolean, content: @Composable () -> Unit) {
+    val outer = 12.dp
+    val inner = 4.dp
+    val shape = RoundedCornerShape(
+        topStart = if (first) outer else inner,
+        topEnd = if (first) outer else inner,
+        bottomStart = if (last) outer else inner,
+        bottomEnd = if (last) outer else inner,
+    )
+    Box(
+        Modifier
+            .padding(horizontal = PreferenceCardGutter)
+            .padding(bottom = if (last) 0.dp else 2.dp)
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceContainer),
+    ) { content() }
+}
+
+/** The space at the sides of the cards; the group titles line up with what is inside them */
+internal val PreferenceCardGutter = 16.dp
 
 private fun List<Preference>.findHighlightedIndex(highlightKey: String): Int {
     return flatMap {

@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.lagradost.cloudstream4.theme.AppControls
 import kotlin.math.roundToInt
 
 @Composable
@@ -23,22 +24,26 @@ fun Slider(
     valueRange: IntProgression = 0..1,
     @IntRange(from = 0) steps: Int = with(valueRange) { (last - first) - 1 },
     onValueChangeFinished: (() -> Unit)? = null,
-    colors: SliderColors = SliderDefaults.colors(),
+    colors: SliderColors = AppControls.sliderColors(),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     thumb: @Composable (SliderState) -> Unit = {
         SliderDefaults.Thumb(
             interactionSource = interactionSource,
             colors = colors,
             enabled = enabled,
-            thumbSize = DpSize(4.0.dp, 34.0.dp)
+            // A round knob on a thin track
+            thumbSize = DpSize(18.dp, 18.dp)
         )
     },
     track: @Composable (SliderState) -> Unit = { sliderState ->
         SliderDefaults.Track(
-            modifier = Modifier.height(10.dp),
+            modifier = Modifier.height(6.dp),
             colors = colors,
             enabled = enabled,
-            sliderState = sliderState
+            sliderState = sliderState,
+            drawStopIndicator = null,
+            drawTick = { _, _ -> },
+            thumbTrackGapSize = 0.dp,
         )
     },
 ) {

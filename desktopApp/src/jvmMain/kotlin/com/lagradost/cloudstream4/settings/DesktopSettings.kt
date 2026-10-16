@@ -197,10 +197,13 @@ object SettingsLayoutScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(Res.string.category_ui)
 
-    /** Same values and names as R.array.themes_names_values, without Material You which needs Android 12 */
+    /**
+     * The values of R.array.themes_names_values, without Material You which needs Android 12. The
+     * names are the desktop's: "Black" is its Prime Video dark, the default, and "Light" the same in white
+     */
     private val themes = listOf(
-        "AmoledLight" to "Dark", "Black" to "Gray", "Amoled" to "Amoled", "Light" to "Flashbang",
-        "System" to "System", "Dracula" to "Dracula", "Lavender" to "Lavender Dreams", "SilentBlue" to "Silent Blue",
+        "Black" to "Dark", "Light" to "Light", "System" to "System", "AmoledLight" to "Black", "Amoled" to "Amoled",
+        "Dracula" to "Dracula", "Lavender" to "Lavender Dreams", "SilentBlue" to "Silent Blue",
     )
 
     /** Same values as R.array.themes_overlay_names_values, without the Material You colors */
@@ -248,6 +251,7 @@ object SettingsLayoutScreen : SearchableSettings {
     @Composable
     override fun getPreferences(): List<Preference> {
         val settings = rememberAppSettings()
+        val theme by settings.ui.theme.changes().collectAsState(settings.ui.theme.get())
 
         return persistentListOf(
             Preference.PreferenceGroup(
@@ -259,7 +263,8 @@ object SettingsLayoutScreen : SearchableSettings {
                         icon = painterResource(Res.drawable.colors_24px),
                         title = stringResource(Res.string.primary_color_settings),
                         entries = primaryColors.toMap(),
-                        iconProvider = { key, _ -> RoundColor(desktopPrimaryColor(key).color) },
+                        // "Normal" is the theme's own accent
+                        iconProvider = { key, _ -> RoundColor(modeToTheme(desktopThemeMode(theme), desktopPrimaryColor(key)).primary) },
                     ),
                     Preference.PreferenceItem.ListPreference(
                         preference = settings.ui.theme,
