@@ -55,6 +55,7 @@ import com.lagradost.cloudstream4.detail.PlayRequest
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.arrow_back
 import com.lagradost.cloudstream4.generated.resources.play_arrow_24px
+import com.lagradost.cloudstream4.generated.resources.search_icon
 import com.lagradost.cloudstream4.library.PlaybackPosition
 import com.lagradost.cloudstream4.library.WatchType
 import com.lagradost.cloudstream4.theme.AppFilterChip
@@ -69,6 +70,8 @@ fun DetailScreen(
     onBack: () -> Unit,
     onPlay: (PlayRequest) -> Unit,
     onOpen: (apiName: String, url: String) -> Unit,
+    /** Looks for the title in every extension, from the Search page */
+    onSearch: (query: String) -> Unit,
     downloads: Downloads = Downloads.instance,
 ) {
     val state by viewModel.state.collectAsState()
@@ -82,7 +85,7 @@ fun DetailScreen(
                 WhiteButton(onClick = { viewModel.onAction(DetailAction.Retry) }) { Text("Try again") }
             }
 
-            DetailStatus.Done -> Details(state, viewModel, onPlay, onOpen, downloads)
+            DetailStatus.Done -> Details(state, viewModel, onPlay, onOpen, onSearch, downloads)
         }
     }
 }
@@ -93,6 +96,7 @@ private fun Details(
     viewModel: DetailViewModel,
     onPlay: (PlayRequest) -> Unit,
     onOpen: (apiName: String, url: String) -> Unit,
+    onSearch: (query: String) -> Unit,
     downloads: Downloads,
 ) {
     val response = state.response ?: return
@@ -137,6 +141,7 @@ private fun Details(
                 onPlay = { fromStart -> play(viewModel.playRequest(fromStart = fromStart), null) },
                 onResume = { episode -> play(viewModel.playRequest(episode), episode) },
                 onBookmark = { viewModel.onAction(DetailAction.SetBookmark(it)) },
+                onSearch = { onSearch(response.name) },
                 download = if (state.movieData != null && response.type != TvType.Live) downloadButton(null) else null,
             )
         }
@@ -186,6 +191,7 @@ private fun Header(
     onPlay: (fromStart: Boolean) -> Unit,
     onResume: (com.lagradost.cloudstream3.Episode) -> Unit,
     onBookmark: (WatchType) -> Unit,
+    onSearch: () -> Unit,
     /** The movie's download button, null for a series or a live stream */
     download: (@Composable () -> Unit)?,
 ) {
@@ -239,6 +245,11 @@ private fun Header(
                     }
                 }
                 LibraryButton(state.bookmark, onBookmark)
+                // The same title from other extensions, when this one's links do not play
+                BlackButton(onClick = onSearch) {
+                    Icon(painterResource(Res.drawable.search_icon), contentDescription = null)
+                    Text("Search", modifier = Modifier.padding(start = 8.dp))
+                }
                 download?.invoke()
             }
         }

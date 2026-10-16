@@ -63,6 +63,7 @@ import com.lagradost.cloudstream4.home.HomeAction
 import com.lagradost.cloudstream4.home.HomeViewModel
 import com.lagradost.cloudstream4.plugins.DesktopPluginManager
 import com.lagradost.cloudstream4.search.DataStoreSearchHistory
+import com.lagradost.cloudstream4.search.SearchAction
 import com.lagradost.cloudstream4.search.SearchViewModel
 import com.lagradost.cloudstream4.settings.ExtensionsScreen
 import com.lagradost.cloudstream4.settings.SettingsHomeScreen
@@ -287,7 +288,10 @@ fun AppShell(navigator: AppNavigator) {
             Box(Modifier.weight(1f).fillMaxHeight()) {
                 if (page != null) {
                     CompositionLocalProvider(LocalViewModelStoreOwner provides page) {
-                        PageContent(page, navigator)
+                        PageContent(page, navigator) { query ->
+                            navigator.select(Destination.Search)
+                            search.onAction(SearchAction.SearchFor(query))
+                        }
                     }
                 } else when (navigator.destination) {
                     Destination.Settings -> {
@@ -326,7 +330,7 @@ private fun ExtensionToasts(host: SnackbarHostState) {
 }
 
 @Composable
-private fun PageContent(page: Page, navigator: AppNavigator) {
+private fun PageContent(page: Page, navigator: AppNavigator, onSearch: (query: String) -> Unit) {
     val apiName = when (page) {
         is Page.Details -> page.apiName
         is Page.Player -> page.request.apiName
@@ -353,6 +357,7 @@ private fun PageContent(page: Page, navigator: AppNavigator) {
             onBack = { navigator.back() },
             onPlay = navigator::play,
             onOpen = navigator::openDetails,
+            onSearch = onSearch,
         )
 
         is Page.Player -> PlayerScreen(
