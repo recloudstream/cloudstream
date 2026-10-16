@@ -22,6 +22,7 @@ import javax.swing.JLayeredPane
 import javax.swing.SwingUtilities
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.CountDownLatch
+import kotlin.math.log2
 
 /** The libmpv functions the player uses, see mpv/client.h */
 @Suppress("FunctionName")
@@ -162,9 +163,16 @@ data class MpvStatus(
 /** A subtitle file to show with a link, added again whenever the link changes */
 data class MpvSubtitle(val file: File, val title: String, val select: Boolean)
 
-enum class AspectMode(val label: String) {
+/**
+ * How the picture fits the video's area. A 16:9 video on a 16:9 screen looks the same fitted, filled
+ * or stretched: the zooms crop into it, also past black bars that are part of the video itself
+ */
+enum class AspectMode(val label: String, val zoom: Double = 1.0) {
     Fit("Fit"),
     Fill("Crop to Fill"),
+    Zoom110("Zoom 110%", 1.10),
+    Zoom125("Zoom 125%", 1.25),
+    Zoom150("Zoom 150%", 1.50),
     SixteenNine("16:9"),
     FourThree("4:3"),
     Stretch("Stretch"),
@@ -437,6 +445,8 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
     fun setAspectMode(mode: AspectMode) = whenStarted {
         command("set", "keepaspect", if (mode == AspectMode.Stretch) "no" else "yes")
         command("set", "panscan", if (mode == AspectMode.Fill) "1.0" else "0.0")
+        // mpv's zoom is in powers of 2
+        command("set", "video-zoom", log2(mode.zoom).toString())
         command("set", "video-aspect-override", when (mode) {
             AspectMode.SixteenNine -> "16:9"
             AspectMode.FourThree -> "4:3"

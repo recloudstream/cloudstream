@@ -558,6 +558,8 @@ fun PlayerScreen(
                     onAspectMode = { mode ->
                         aspectMode = mode
                         player.setAspectMode(mode)
+                        // The panel covers part of the picture: closed, the change shows
+                        panel = null
                     },
                 )
             }
