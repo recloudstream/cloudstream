@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,11 +46,14 @@ import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
@@ -97,8 +101,12 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream4.torrent.TorrServer
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import java.awt.Rectangle
 import java.io.File
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 /** Which subtitle the user picked, so it is shown again when the source changes */
 private sealed interface SubtitleChoice {
@@ -444,7 +452,7 @@ fun PlayerScreen(
     // The picture keeps its size and place whatever opens around it. In a window the bars sit above and
     // below the video and stay. In full screen the video fills the screen, and the bars that come and
     // go cover its edges, as do the panels in both. The video is a native window that nothing can be
-    // drawn over, so it gives way to them, and mpv keeps the picture where it was: see keepPicture
+    // drawn over: it keeps its size, and the part they cover is cut out of it, see MpvPlayer.anchor
     var area by remember { mutableStateOf(IntSize.Zero) }
     var topBarHeight by remember { mutableStateOf(0) }
     var controlBarHeight by remember { mutableStateOf(0) }
@@ -459,11 +467,27 @@ fun PlayerScreen(
         right = area.width - if (side) sideWidth else 0,
         bottom = area.height - if (overlaid) controlBarHeight else 0,
     )
-    LaunchedEffect(area, visible, status.videoWidth, status.videoHeight) {
-        player.keepPicture(area, visible, status.videoWidth, status.videoHeight)
-    }
     val density = LocalDensity.current
     fun Int.dp() = with(density) { toDp() }
+    // Where the video's area is in the window, in pixels, from the last layout
+    val placed = remember { arrayOfNulls<Rect>(1) }
+    fun placeVideo() {
+        val at = placed[0] ?: return
+        // The window's units are 1.25 pixels at 125 % scaling: the video's window is rounded outward,
+        // and the part to show is in its own pixels
+        val scale = density.density
+        val left = floor(at.left / scale).toInt()
+        val top = floor(at.top / scale).toInt()
+        val right = ceil(at.right / scale).toInt()
+        val bottom = ceil(at.bottom / scale).toInt()
+        val dx = at.left - left * scale
+        val dy = at.top - top * scale
+        val part = visible.takeIf { it != IntRect(0, 0, area.width, area.height) }?.let {
+            Rectangle((it.left + dx).roundToInt(), (it.top + dy).roundToInt(), it.width, it.height)
+        }
+        player.place(Rectangle(left, top, right - left, bottom - top), part)
+    }
+    SideEffect { placeVideo() }
     Column(
         Modifier
             .fillMaxSize()
@@ -471,14 +495,13 @@ fun PlayerScreen(
             .then(barMoves),
     ) {
         if (!fullscreen) topBar(Modifier)
-        Box(Modifier.fillMaxWidth().weight(1f).onSizeChanged { area = it }) {
-            SwingPanel(
-                factory = { player.canvas },
-                modifier = Modifier
-                    .padding(top = visible.top.dp(), end = (area.width - visible.right).dp(), bottom = (area.height - visible.bottom).dp())
-                    .fillMaxSize(),
-                background = Color.Black,
-            )
+        Box(
+            Modifier.fillMaxWidth().weight(1f).onSizeChanged { area = it }.onGloballyPositioned {
+                placed[0] = it.boundsInWindow()
+                placeVideo()
+            },
+        ) {
+            SwingPanel(factory = { player.anchor }, modifier = Modifier.size(0.dp))
             if (overlaid) topBar(Modifier.align(Alignment.TopCenter).onSizeChanged { topBarHeight = it.height })
             if (overlaid) controlBar(Modifier.align(Alignment.BottomCenter).onSizeChanged { controlBarHeight = it.height })
             if (side) Row(

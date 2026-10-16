@@ -1,26 +1,27 @@
 package com.lagradost.cloudstream4.player
 
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntRect
-import androidx.compose.ui.unit.IntSize
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.sun.jna.Library
 import com.sun.jna.Native
 import com.sun.jna.Pointer
+import com.sun.jna.win32.StdCallLibrary
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import java.awt.Canvas
 import java.awt.Color
+import java.awt.Rectangle
 import java.awt.Toolkit
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.MouseWheelEvent
 import java.io.File
+import javax.swing.JComponent
+import javax.swing.JLayeredPane
+import javax.swing.SwingUtilities
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.CountDownLatch
-import kotlin.math.ln
 
 /** The libmpv functions the player uses, see mpv/client.h */
 @Suppress("FunctionName")
@@ -34,6 +35,27 @@ internal interface MpvLibrary : Library {
     fun mpv_error_string(error: Int): String
     fun mpv_wait_event(ctx: Pointer, timeout: Double): Pointer
     fun mpv_terminate_destroy(ctx: Pointer)
+}
+
+/** The Windows functions that show only part of the video, see MpvPlayer.place */
+@Suppress("FunctionName")
+private class Win32(val user: User, val gdi: Gdi) {
+    interface User : StdCallLibrary {
+        fun SetWindowRgn(hwnd: Pointer, region: Pointer?, redraw: Boolean): Int
+    }
+
+    interface Gdi : StdCallLibrary {
+        fun CreateRectRgn(left: Int, top: Int, right: Int, bottom: Int): Pointer?
+    }
+
+    companion object {
+        val instance: Win32? by lazy {
+            if (!System.getProperty("os.name").startsWith("Windows")) return@lazy null
+            runCatching { Win32(Native.load("user32", User::class.java), Native.load("gdi32", Gdi::class.java)) }
+                .onFailure { println("ERROR Mpv: user32 or gdi32 could not be loaded: $it") }
+                .getOrNull()
+        }
+    }
 }
 
 /** Finds and loads libmpv-2.dll once */
@@ -135,9 +157,6 @@ data class MpvStatus(
     val speed: Double = 1.0,
     /** Seconds the subtitles are shown later, negative for earlier */
     val subDelay: Double = 0.0,
-    /** The video's size as shown, its aspect ratio applied, 0 before it is known */
-    val videoWidth: Int = 0,
-    val videoHeight: Int = 0,
 )
 
 /** A subtitle file to show with a link, added again whenever the link changes */
@@ -402,29 +421,68 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
     fun setSpeed(speed: Double) = whenStarted { command("set", "speed", speed.toString()) }
 
     /**
-     * Keeps the picture where it would be in [full] while only [visible], a part of it, shows the
-     * video: what the app puts beside the video then covers the picture's edge instead of shrinking it.
-     * Both in pixels, [visible] relative to [full]. The video's size is needed, from [status].
+     * Placed in the app's layout, where it takes no room: while it is there, [canvas] is in the
+     * window, over the app, where [place] puts it. The video is a native window that nothing can be
+     * drawn over. Inside the app's layout it would be the size of the part it shows, and change size
+     * whenever the bars came or went, and mpv drew the picture again at each new size, which flashed.
+     * Over the app it keeps its size, and only the part of it to show is cut out of it, at once.
      */
-    fun keepPicture(full: IntSize, visible: IntRect, videoWidth: Int, videoHeight: Int) = whenStarted {
-        if (videoWidth <= 0 || videoHeight <= 0 || visible.width <= 0 || visible.height <= 0 ||
-            full.width <= 0 || full.height <= 0 || visible == IntRect(IntOffset.Zero, full)
-        ) {
-            command("set", "video-zoom", "0")
-            command("set", "video-pan-x", "0")
-            command("set", "video-pan-y", "0")
-            return@whenStarted
+    val anchor: JComponent = object : JComponent() {
+        private var layers: JLayeredPane? = null
+
+        override fun addNotify() {
+            super.addNotify()
+            val pane = SwingUtilities.getRootPane(this)?.layeredPane ?: return
+            layers = pane
+            pane.add(canvas, JLayeredPane.PALETTE_LAYER as Any)
+            placeCanvas()
         }
-        // The scale mpv would fit the video to in each, and the zoom from the visible part's to the full one's
-        val fullScale = minOf(full.width.toDouble() / videoWidth, full.height.toDouble() / videoHeight)
-        val visibleScale = minOf(visible.width.toDouble() / videoWidth, visible.height.toDouble() / videoHeight)
-        // The pan moves the centre of the visible part back to the centre of the full area, in parts
-        // of the scaled video's size
-        val dx = full.width / 2.0 - visible.center.x
-        val dy = full.height / 2.0 - visible.center.y
-        command("set", "video-zoom", (ln(fullScale / visibleScale) / ln(2.0)).toString())
-        command("set", "video-pan-x", (dx / (videoWidth * fullScale)).toString())
-        command("set", "video-pan-y", (dy / (videoHeight * fullScale)).toString())
+
+        override fun removeNotify() {
+            layers?.remove(canvas)
+            layers = null
+            super.removeNotify()
+        }
+    }
+
+    /** Where the whole video goes, in the window's content coordinates */
+    private var whole: Rectangle? = null
+    /** The part of it to show, in pixels from its corner, null for all of it */
+    private var shown: Rectangle? = null
+    /** Whether [shown] was set on the canvas's window */
+    private var shownSet = false
+
+    /**
+     * Puts the video at [area], in the window's content coordinates, and shows only [visible] of it,
+     * in pixels from the corner of [area], null for all of it: what the app draws there shows instead.
+     */
+    fun place(area: Rectangle, visible: Rectangle?) {
+        if (area != whole) {
+            whole = area
+            shownSet = false
+            placeCanvas()
+        }
+        if (visible != shown || !shownSet) {
+            shown = visible
+            showPart()
+        }
+    }
+
+    private fun placeCanvas() {
+        val area = whole ?: return
+        if (canvas.parent == null) return
+        canvas.setBounds(area)
+        showPart()
+    }
+
+    private fun showPart() {
+        val windows = Win32.instance ?: return
+        if (!canvas.isDisplayable) return
+        val hwnd = Native.getComponentPointer(canvas) ?: return
+        val region = shown?.let { windows.gdi.CreateRectRgn(it.x, it.y, it.x + it.width, it.y + it.height) }
+        // Windows owns the region from then on, and frees it
+        windows.user.SetWindowRgn(hwnd, region, true)
+        shownSet = true
     }
 
     /** How subtitles look, from SubtitleStyle.mpvOptions. The one shown changes at once */
@@ -485,8 +543,6 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
             muted = property("mute") == "yes",
             speed = property("speed")?.toDoubleOrNull() ?: 1.0,
             subDelay = property("sub-delay")?.toDoubleOrNull() ?: 0.0,
-            videoWidth = property("dwidth")?.toIntOrNull() ?: 0,
-            videoHeight = property("dheight")?.toIntOrNull() ?: 0,
         )
     }
 
