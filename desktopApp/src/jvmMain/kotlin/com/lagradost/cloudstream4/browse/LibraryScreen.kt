@@ -1,17 +1,20 @@
 package com.lagradost.cloudstream4.browse
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,10 +22,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,10 +38,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.lagradost.cloudstream4.generated.resources.Res
+import com.lagradost.cloudstream4.generated.resources.close
+import com.lagradost.cloudstream4.library.PlaybackPosition
+import com.lagradost.cloudstream4.library.ResumeEntry
 import com.lagradost.cloudstream4.library.TitleHeader
 import com.lagradost.cloudstream4.library.WatchStore
 import com.lagradost.cloudstream4.library.WatchType
 import com.lagradost.cloudstream4.theme.AppFilterChip
+import org.jetbrains.compose.resources.painterResource
 
 /** The titles the user put in a library list, one list at a time, most recently changed first */
 @OptIn(ExperimentalLayoutApi::class)
@@ -97,8 +106,9 @@ private fun TitleCard(header: TitleHeader, modifier: Modifier = Modifier, onClic
 }
 
 /**
- * The titles the user started, newest first, like the Android app's Continue watching row. Each
- * shows how far its episode got; opening one goes to its page, where Resume picks it up.
+ * The titles the user started, newest first, like the Android app's Continue watching row. Each is
+ * a small card: the poster, the title, how far its episode got, and a button to drop it from the
+ * row. Opening one goes to its page, where Resume picks it up.
  */
 @Composable
 fun ContinueWatchingRow(store: WatchStore, openDetails: (apiName: String, url: String) -> Unit, modifier: Modifier = Modifier) {
@@ -110,21 +120,47 @@ fun ContinueWatchingRow(store: WatchStore, openDetails: (apiName: String, url: S
         LazyRow(contentPadding = PaddingValues(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             items(entries, key = { it.header.id }) { entry ->
                 val position = remember(version, entry) { store.position(entry.episodeId ?: entry.header.id) }
-                Column(Modifier.width(150.dp)) {
-                    Box {
-                        TitleCard(entry.header, onClick = { openDetails(entry.header.apiName, entry.header.url) })
-                    }
-                    if (position != null && !position.watched) {
-                        LinearProgressIndicator(progress = { position.fraction }, modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
-                    }
-                    Row {
-                        val episode = listOfNotNull(entry.season?.let { "S$it" }, entry.episode?.let { "E$it" }).joinToString(" ")
-                        if (episode.isNotEmpty()) Text(episode, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f).padding(top = 12.dp))
-                        else Box(Modifier.weight(1f))
-                        TextButton(onClick = { store.removeResume(entry.header.id) }) { Text("Remove") }
-                    }
-                }
+                ContinueCard(
+                    entry = entry,
+                    position = position,
+                    onClick = { openDetails(entry.header.apiName, entry.header.url) },
+                    onRemove = { store.removeResume(entry.header.id) },
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun ContinueCard(entry: ResumeEntry, position: PlaybackPosition?, onClick: () -> Unit, onRemove: () -> Unit) {
+    val header = entry.header
+    Row(
+        Modifier
+            .width(280.dp)
+            .height(84.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .clickable(onClick = onClick),
+    ) {
+        RemoteImage(header.posterUrl, header.posterHeaders, contentDescription = header.name, modifier = Modifier.width(56.dp).fillMaxHeight())
+        Column(Modifier.weight(1f).fillMaxHeight().padding(start = 10.dp, top = 8.dp, bottom = 8.dp), verticalArrangement = Arrangement.SpaceBetween) {
+            Text(header.name, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            val episode = listOfNotNull(entry.season?.let { "S$it" }, entry.episode?.let { "E$it" }).joinToString(" ")
+            val left = position?.takeIf { !it.watched && it.durationMs > 0 }?.let { "${(it.durationMs - it.positionMs) / 60_000} min left" }
+            Text(
+                listOfNotNull(episode.ifEmpty { null }, left).joinToString(" · ").ifEmpty { header.apiName },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            LinearProgressIndicator(
+                progress = { if (position == null || position.watched) 0f else position.fraction },
+                modifier = Modifier.fillMaxWidth().height(3.dp),
+            )
+        }
+        IconButton(onClick = onRemove, modifier = Modifier.size(32.dp)) {
+            Icon(painterResource(Res.drawable.close), contentDescription = "Remove from Continue watching", modifier = Modifier.size(16.dp))
         }
     }
 }

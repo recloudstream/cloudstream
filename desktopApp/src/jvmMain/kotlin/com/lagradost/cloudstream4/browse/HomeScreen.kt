@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -45,27 +46,34 @@ fun HomeScreen(viewModel: HomeViewModel, openExtensions: () -> Unit, openDetails
 
     Column(Modifier.fillMaxSize()) {
         if (state.providers.isNotEmpty()) TopBar(state, viewModel::onAction)
-        // Above the provider's rows, so it is there even when the provider fails to load
-        ContinueWatchingRow(DataStoreWatchStore.instance, openDetails, Modifier.padding(top = 8.dp))
+        // One list, so Continue watching scrolls away with the rows below it
+        LazyColumn(contentPadding = PaddingValues(bottom = 24.dp), modifier = Modifier.fillMaxSize()) {
+            // Above the provider's rows, so it is there even when the provider fails to load
+            item { ContinueWatchingRow(DataStoreWatchStore.instance, openDetails, Modifier.padding(top = 8.dp)) }
 
-        when (val status = state.status) {
-            HomeStatus.NoProviders -> Message(
-                "No extensions with a home page",
-                "Install an extension to browse it here. If you already have, check the extension languages and media types under Settings > Providers.",
-            ) { WhiteButton(onClick = openExtensions) { Text("Open Extensions") } }
-
-            HomeStatus.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+            // What fills the rest of the page while there are no rows
+            fun LazyListScope.whole(content: @Composable () -> Unit) = item {
+                Box(Modifier.fillParentMaxWidth().fillParentMaxHeight(0.8f), contentAlignment = Alignment.Center) { content() }
             }
+            when (val status = state.status) {
+                HomeStatus.NoProviders -> whole {
+                    Message(
+                        "No extensions with a home page",
+                        "Install an extension to browse it here. If you already have, check the extension languages and media types under Settings > Providers.",
+                    ) { WhiteButton(onClick = openExtensions) { Text("Open Extensions") } }
+                }
 
-            is HomeStatus.Failed -> Message("${state.selected} could not be loaded", status.message) {
-                WhiteButton(onClick = { viewModel.onAction(HomeAction.Reload) }) { Text("Try again") }
-            }
+                HomeStatus.Loading -> whole { CircularProgressIndicator() }
 
-            HomeStatus.Done -> if (state.rows.isEmpty()) {
-                Message("${state.selected} returned an empty home page")
-            } else {
-                LazyColumn(contentPadding = PaddingValues(bottom = 24.dp), modifier = Modifier.fillMaxSize()) {
+                is HomeStatus.Failed -> whole {
+                    Message("${state.selected} could not be loaded", status.message) {
+                        WhiteButton(onClick = { viewModel.onAction(HomeAction.Reload) }) { Text("Try again") }
+                    }
+                }
+
+                HomeStatus.Done -> if (state.rows.isEmpty()) {
+                    whole { Message("${state.selected} returned an empty home page") }
+                } else {
                     items(state.rows) { row ->
                         PosterRow(
                             title = row.name,
