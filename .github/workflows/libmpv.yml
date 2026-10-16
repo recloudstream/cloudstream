@@ -23,9 +23,6 @@ on:
         description: Publish the build and its source as a release of this repository
         type: boolean
         default: false
-  pull_request:
-    paths:
-      - .github/workflows/libmpv.yml
 
 permissions:
   contents: read

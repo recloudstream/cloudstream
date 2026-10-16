@@ -21,8 +21,7 @@ https://github.com/harsh-pockt/cloudstream/releases/tag/libmpv-20261004-git-413f
 The complete corresponding source code of libmpv-2.dll, with the build
 scripts and the exact version of every library in
 mpv-dev-x86_64-20261004-git-413ff0b1cd-sources.txt, is published in that
-release and with each CloudStream desktop release on GitHub, next to the
-installer.
+release, which each CloudStream desktop release on GitHub links to.
 
 Source code:
   mpv                 https://github.com/mpv-player/mpv

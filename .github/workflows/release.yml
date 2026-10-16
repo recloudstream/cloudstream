@@ -1,30 +1,28 @@
 name: Release
 
-# Publishes the Windows app.
+# Publishes the Windows app, only when asked: merges into master publish nothing, so they cost no
+# build of their own.
 #
-# - Every merge into master publishes a pre-release, v<version>-beta.<n>, where <version> is
-#   versionName in gradle/libs.versions.toml and <n> follows the last beta of that version.
-#   Installed apps find it through the update check in Settings.
-# - Pushing a tag v<version> by hand publishes that version as a full release. A tag with a suffix,
-#   such as v4.8.0-rc.1, makes a pre-release. After a full release, raise versionName before the next
-#   merge: its betas would otherwise come before the release itself.
+# - "Run workflow" in the Actions tab, on master, publishes a pre-release, v<version>-beta.<n>,
+#   where <version> is versionName in gradle/libs.versions.toml and <n> follows the last beta of
+#   that version. Installed apps find it through the update check in Settings.
+# - Pushing a tag v<version> publishes that version as a full release. A tag with a suffix, such as
+#   v4.8.0-rc.1, makes a pre-release. After a full release, raise versionName before the next beta:
+#   it would otherwise come before the release itself.
 #
-# The release holds the installer and, as THIRD-PARTY-NOTICES.txt promises, the complete source of the
-# libmpv-2.dll inside it, copied from the libmpv release the build downloads it from.
+# The release holds the installer, and its notes link to the libmpv release the build downloads
+# libmpv-2.dll from, which holds the dll's complete source, as THIRD-PARTY-NOTICES.txt says. The
+# source is not copied into every release: it is 462 MB, the same each time.
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ master ]
     tags: [ 'v*' ]
-    # Path filters only apply to the branch: a tag always releases
-    paths-ignore:
-      - '*.md'
-      - '.github/workflows/libmpv.yml'
 
 permissions:
   contents: write
 
-# One release at a time, so two merges close together never pick the same beta number
+# One release at a time, so two runs close together never pick the same beta number
 concurrency:
   group: release
   cancel-in-progress: false
@@ -32,11 +30,18 @@ concurrency:
 jobs:
   windows:
     runs-on: windows-latest
+    timeout-minutes: 45
     defaults:
       run:
         shell: bash
     steps:
     - uses: actions/checkout@v6
+
+    - name: Only master or a tag
+      if: github.ref_type != 'tag' && github.ref != 'refs/heads/master'
+      run: |
+        echo "::error::Run the release on master, or push a v tag. $GITHUB_REF would publish a branch that was not merged"
+        exit 1
 
     - name: Choose the version
       env:
@@ -63,20 +68,21 @@ jobs:
         echo "TAG=$tag" >> "$GITHUB_ENV"
         echo "PREVIOUS=$previous" >> "$GITHUB_ENV"
 
-    # Before the build, so a release never goes out without the source it promises
-    - name: Get the source of the bundled libmpv
+    # Before the build, so a release never goes out without the source it links to. Only the list of
+    # files is read, the source itself stays where it is
+    - name: Find the source of the bundled libmpv
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
         libmpv=$(grep -o 'releases/download/[^/"]*' desktopApp/build.gradle.kts | head -1 | cut -d/ -f3)
         echo "libmpv comes from release $libmpv"
-        mkdir libmpv-source
-        gh release download "$libmpv" --repo "$GITHUB_REPOSITORY" --dir libmpv-source --pattern '*-source.7z.*' --pattern '*-sources.txt'
-        if ! ls libmpv-source/*-source.7z.001 > /dev/null 2>&1; then
+        assets=$(gh release view "$libmpv" --repo "$GITHUB_REPOSITORY" --json assets -q '.assets[].name')
+        echo "$assets"
+        if ! grep -q -- '-source.7z.001$' <<< "$assets"; then
           echo "::error::Release $libmpv has no libmpv source. Build libmpv with the libmpv workflow (publish) and point desktopApp/build.gradle.kts at it"
           exit 1
         fi
-        ls -la libmpv-source
+        echo "LIBMPV=$libmpv" >> "$GITHUB_ENV"
 
     - name: Set up JDK 17
       uses: actions/setup-java@v5
@@ -88,7 +94,8 @@ jobs:
       uses: gradle/actions/setup-gradle@v5
       with:
         cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-        cache-read-only: true
+        # Releases run on master or a tag: their cache serves the pull requests' checks
+        cache-read-only: false
 
     - name: Run tests
       run: ./gradlew :library:jvmTest :shared:jvmTest
@@ -116,8 +123,8 @@ jobs:
           echo
           echo "SHA-256 of the installer: \`$(sha256sum "$msi" | cut -d' ' -f1)\`"
           echo
-          echo "The \`*-source.7z.*\` files are the complete source of the libmpv-2.dll the app plays video with (GPL, see THIRD-PARTY-NOTICES.txt), with the list of every library's version in \`*-sources.txt\`."
+          echo "The complete source of the libmpv-2.dll the app plays video with (GPL, see THIRD-PARTY-NOTICES.txt) is in the [$LIBMPV](https://github.com/$GITHUB_REPOSITORY/releases/tag/$LIBMPV) release: the \`*-source.7z.*\` files, with the list of every library's version in \`*-sources.txt\`."
         } > notes.md
-        gh release create "$TAG" "$msi" libmpv-source/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+        gh release create "$TAG" "$msi" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
           --title "CloudStream ${TAG#v}" --notes-file notes.md --generate-notes \
           ${PREVIOUS:+--notes-start-tag "$PREVIOUS"} $prerelease

@@ -1,19 +1,29 @@
 name: Desktop Build
 
+# Checks a pull request: the tests, and that the desktop app compiles. Nothing runs on the merge
+# itself, the pull request was checked already. The installer is only built when the workflow is
+# run by hand ("Run workflow" in the Actions tab), to try a build before releasing it.
+
 on:
   pull_request:
-  push:
-    branches: [ master ]
     paths-ignore:
-      - '*.md'
+      - '**.md'
+      - '.github/workflows/libmpv.yml'
+      - '.github/workflows/release.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# A new push to a pull request stops the check of the commit before it
+concurrency:
+  group: desktop-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   windows:
     runs-on: windows-latest
+    timeout-minutes: 40
     defaults:
       run:
         shell: bash
@@ -33,12 +43,14 @@ jobs:
         cache-read-only: ${{ github.event_name == 'pull_request' }}
 
     - name: Run tests
-      run: ./gradlew :library:jvmTest :shared:jvmTest
+      run: ./gradlew :library:jvmTest :shared:jvmTest :desktopApp:jvmTest
 
     - name: Build MSI
+      if: github.event_name == 'workflow_dispatch'
       run: ./gradlew :desktopApp:packageMsi
 
     - name: Upload MSI
+      if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v7
       with:
         name: desktop-windows-msi
@@ -53,3 +65,4 @@ jobs:
         path: |
           library/build/reports/tests/jvmTest/
           shared/build/reports/tests/jvmTest/
+          desktopApp/build/reports/tests/jvmTest/
