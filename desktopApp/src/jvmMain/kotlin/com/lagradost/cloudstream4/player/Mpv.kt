@@ -214,6 +214,8 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
     /** From loadfile until the first frame plays */
     @Volatile private var opening = false
     private val afterLoad = mutableListOf<() -> Unit>()
+    /** Where the file opening should start, in seconds, until it has started there */
+    @Volatile private var resumeAt: Double? = null
 
     private val _events = Channel<MpvEvent>(Channel.UNLIMITED)
     val events: Flow<MpvEvent> = _events.receiveAsFlow()
@@ -340,7 +342,10 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
                 val event = lib.mpv_wait_event(ctx, -1.0)
                 when (event.getInt(0)) {
                     MPV_EVENT_SHUTDOWN -> return
-                    MPV_EVENT_PLAYBACK_RESTART -> opening = false
+                    MPV_EVENT_PLAYBACK_RESTART -> {
+                        opening = false
+                        resumeAt?.let(::checkResumed)
+                    }
                     MPV_EVENT_FILE_LOADED -> synchronized(this) {
                         fileLoaded = true
                         afterLoad.forEach { it() }
@@ -396,6 +401,7 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
         command("change-list", "http-header-fields", "clr", "")
         headers.forEach { (key, value) -> command("change-list", "http-header-fields", "append", "$key: $value") }
         command("set", "start", startSeconds?.let { "+$it" } ?: "none")
+        resumeAt = startSeconds?.takeIf { it > 0 }
         // keep-open pauses at the end of a file, which would carry over to the next one
         command("set", "pause", "no")
         fileLoaded = false
@@ -405,6 +411,22 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
         link.audioTracks.forEach { command("audio-add", it.url, "auto") }
         // A new file drops the subtitles added to the last one
         subtitles.forEach { addSubtitle(it.file, it.title, it.select) }
+    }
+
+    /**
+     * Once the file plays, checks it started where it was asked to. Some servers do not let mpv jump
+     * into the file as it opens, and it then starts from the beginning: it is asked to seek once more
+     */
+    private fun checkResumed(wanted: Double) {
+        resumeAt = null
+        val at = property("time-pos")?.toDoubleOrNull() ?: return
+        val seekable = property("seekable")
+        if (at >= wanted - 5) {
+            println("INFO MpvPlayer: resumed at ${at.toInt()} s of ${wanted.toInt()} s")
+            return
+        }
+        println("WARNING MpvPlayer: started at ${at.toInt()} s, not ${wanted.toInt()} s (seekable: $seekable), seeking there")
+        command("seek", wanted.toString(), "absolute")
     }
 
     /** Runs once the current file is loaded */
