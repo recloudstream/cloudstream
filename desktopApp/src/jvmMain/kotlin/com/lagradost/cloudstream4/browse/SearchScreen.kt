@@ -72,7 +72,7 @@ fun SearchScreen(viewModel: SearchViewModel, openExtensions: () -> Unit, openDet
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .padding(horizontal = PageGutter, vertical = 16.dp)
                 .focusRequester(focus)
                 .onPreviewKeyEvent {
                     // Enter searches; handled here because desktop keyboards have no IME search action
@@ -82,7 +82,7 @@ fun SearchScreen(viewModel: SearchViewModel, openExtensions: () -> Unit, openDet
                     } else false
                 },
         )
-        if (state.isSearching) LinearProgressIndicator(Modifier.fillMaxWidth().padding(horizontal = 24.dp))
+        if (state.isSearching) LinearProgressIndicator(Modifier.fillMaxWidth().padding(horizontal = PageGutter))
 
         val found = state.results.filter { it.items.isNotEmpty() }
         val failed = state.results.filter { it.status is ProviderStatus.Failed && it.items.isEmpty() }

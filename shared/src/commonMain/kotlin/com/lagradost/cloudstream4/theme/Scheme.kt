@@ -132,7 +132,7 @@ internal fun draculaScheme() = CloudStreamColorScheme(
     surfaceContainer = CloudStreamPalette.DraculaBoxItemBg,
     onBackground = CloudStreamPalette.DraculaText,
     // The Android theme keeps the standard grayTextColor
-    onSurfaceVariant = CloudStreamPalette.DarkGrayText,
+    onSurfaceVariant = CloudStreamPalette.AndroidGrayText,
     icon = CloudStreamPalette.DraculaIcon,
     primary = CloudStreamPalette.Primary,
     ongoing = CloudStreamPalette.Ongoing,
@@ -146,7 +146,7 @@ internal fun lavenderScheme() = CloudStreamColorScheme(
     surfaceContainer = CloudStreamPalette.LavenderBoxItemBg,
     onBackground = CloudStreamPalette.LavenderText,
     // The Android theme keeps the standard grayTextColor
-    onSurfaceVariant = CloudStreamPalette.DarkGrayText,
+    onSurfaceVariant = CloudStreamPalette.AndroidGrayText,
     icon = CloudStreamPalette.LavenderIcon,
     primary = CloudStreamPalette.Primary,
     ongoing = CloudStreamPalette.Ongoing,
@@ -160,7 +160,7 @@ internal fun silentBlueScheme() = CloudStreamColorScheme(
     surfaceContainer = CloudStreamPalette.SilentBlueBoxItemBg,
     onBackground = CloudStreamPalette.SilentBlueText,
     // The Android theme keeps the standard grayTextColor
-    onSurfaceVariant = CloudStreamPalette.DarkGrayText,
+    onSurfaceVariant = CloudStreamPalette.AndroidGrayText,
     icon = CloudStreamPalette.SilentBlueIcon,
     primary = CloudStreamPalette.Primary,
     ongoing = CloudStreamPalette.Ongoing,
