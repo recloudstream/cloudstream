@@ -1,6 +1,9 @@
 package com.lagradost.cloudstream4.browse
 
 import androidx.compose.foundation.background
+import coil3.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -152,7 +155,9 @@ private fun TopBar(state: HomeState, onAction: (HomeAction) -> Unit) {
 /**
  * The provider's first title across the top of the page: its backdrop, faded into the page, with
  * its name, a few facts and the start of its story. The rows only have its poster, so the rest
- * loads from its page; the poster stands in until then.
+ * loads from its page; the poster stands in until then. What the extension gives for it is used as
+ * the Android app's home preview does: the wide background picture, and the title's logo in place
+ * of its name, which comes back if the logo does not load.
  */
 @Composable
 private fun LazyItemScope.FeaturedBanner(item: SearchResponse, openDetails: (apiName: String, url: String) -> Unit) {
@@ -182,13 +187,25 @@ private fun LazyItemScope.FeaturedBanner(item: SearchResponse, openDetails: (api
             Modifier.align(Alignment.BottomStart).fillMaxWidth(0.5f).padding(start = PageGutter, bottom = 28.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Text(
-                details?.name ?: item.name,
+            val name = details?.name ?: item.name
+            var logoFailed by remember(details?.logoUrl) { mutableStateOf(false) }
+            val logo = details?.logoUrl?.takeIf { it.isNotBlank() && !logoFailed }
+            if (logo != null) AsyncImage(
+                model = logo,
+                contentDescription = name,
+                contentScale = ContentScale.Fit,
+                alignment = Alignment.BottomStart,
+                onError = { logoFailed = true },
+                modifier = Modifier.fillMaxWidth(0.8f).height(120.dp),
+            ) else Text(
+                name,
                 style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
             val facts = listOfNotNull(
+                details?.score?.let { "★ ${"%.1f".format(it.toFloat(10))}" },
+                details?.contentRating?.takeIf { it.isNotBlank() },
                 details?.year?.toString(),
                 details?.duration?.let { "$it min" },
                 details?.tags?.take(3)?.joinToString(", ")?.ifEmpty { null },
