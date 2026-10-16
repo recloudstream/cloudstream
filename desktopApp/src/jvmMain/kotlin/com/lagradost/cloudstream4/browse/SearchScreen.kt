@@ -107,7 +107,7 @@ fun SearchScreen(viewModel: SearchViewModel, openExtensions: () -> Unit, openDet
             )
 
             else -> LazyColumn(
-                contentPadding = PaddingValues(bottom = 24.dp),
+                contentPadding = PaddingValues(bottom = DockClearance),
                 modifier = Modifier.fillMaxSize(),
             ) {
                 items(found) { row ->
@@ -145,7 +145,7 @@ private fun SearchHistory(
     onRemove: (SearchHistoryEntry) -> Unit,
     onClear: () -> Unit,
 ) {
-    LazyColumn(contentPadding = PaddingValues(bottom = 24.dp), modifier = Modifier.fillMaxSize()) {
+    LazyColumn(contentPadding = PaddingValues(bottom = DockClearance), modifier = Modifier.fillMaxSize()) {
         item {
             Row(Modifier.fillMaxWidth().padding(start = 24.dp, end = 16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("Recent searches", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))

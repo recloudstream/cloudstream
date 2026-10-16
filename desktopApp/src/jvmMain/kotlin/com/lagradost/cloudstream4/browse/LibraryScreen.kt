@@ -78,7 +78,7 @@ fun LibraryScreen(store: WatchStore, openDetails: (apiName: String, url: String)
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(150.dp),
-                contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 24.dp),
+                contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = DockClearance),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
@@ -108,10 +108,10 @@ private fun TitleCard(header: TitleHeader, modifier: Modifier = Modifier, onClic
 /**
  * The titles the user started, newest first, like the Android app's Continue watching row. Each is
  * a small card: the poster, the title, how far its episode got, and a button to drop it from the
- * row. Opening one goes to its page, where Resume picks it up.
+ * row. Clicking one plays it where it was left, from the source it was last watched on.
  */
 @Composable
-fun ContinueWatchingRow(store: WatchStore, openDetails: (apiName: String, url: String) -> Unit, modifier: Modifier = Modifier) {
+fun ContinueWatchingRow(store: WatchStore, resume: (apiName: String, url: String) -> Unit, modifier: Modifier = Modifier) {
     val version by store.version.collectAsState()
     val entries = remember(version) { store.resumeEntries().sortedByDescending { it.updateTime } }
     if (entries.isEmpty()) return
@@ -123,7 +123,7 @@ fun ContinueWatchingRow(store: WatchStore, openDetails: (apiName: String, url: S
                 ContinueCard(
                     entry = entry,
                     position = position,
-                    onClick = { openDetails(entry.header.apiName, entry.header.url) },
+                    onClick = { resume(entry.header.apiName, entry.header.url) },
                     onRemove = { store.removeResume(entry.header.id) },
                 )
             }

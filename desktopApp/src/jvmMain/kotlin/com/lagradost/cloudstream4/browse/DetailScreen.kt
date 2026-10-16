@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,6 +73,9 @@ fun DetailScreen(
     onOpen: (apiName: String, url: String) -> Unit,
     /** Looks for the title in every extension, from the Search page */
     onSearch: (query: String) -> Unit,
+    /** Play where the title was left as soon as it loads, from Continue watching */
+    autoPlay: Boolean = false,
+    onAutoPlayed: () -> Unit = {},
     downloads: Downloads = Downloads.instance,
 ) {
     val state by viewModel.state.collectAsState()
@@ -85,7 +89,7 @@ fun DetailScreen(
                 WhiteButton(onClick = { viewModel.onAction(DetailAction.Retry) }) { Text("Try again") }
             }
 
-            DetailStatus.Done -> Details(state, viewModel, onPlay, onOpen, onSearch, downloads)
+            DetailStatus.Done -> Details(state, viewModel, onPlay, onOpen, onSearch, downloads, autoPlay, onAutoPlayed)
         }
     }
 }
@@ -98,6 +102,8 @@ private fun Details(
     onOpen: (apiName: String, url: String) -> Unit,
     onSearch: (query: String) -> Unit,
     downloads: Downloads,
+    autoPlay: Boolean,
+    onAutoPlayed: () -> Unit,
 ) {
     val response = state.response ?: return
     val season = state.seasons.getOrNull(state.selectedSeason)
@@ -108,6 +114,13 @@ private fun Details(
         val id = downloadId(state, episode)
         val file = id?.let(downloads::file)
         onPlay(if (file == null) request else request.copy(localFile = file.absolutePath, localSubtitles = localSubtitles(downloads, id)))
+    }
+    // Once only, so coming back from the player leaves the page as it is
+    LaunchedEffect(Unit) {
+        if (!autoPlay) return@LaunchedEffect
+        onAutoPlayed()
+        val request = viewModel.resumeRequest() ?: return@LaunchedEffect
+        play(request, state.resume?.episode)
     }
     fun downloadButton(episode: Episode?): @Composable () -> Unit = {
         val id = downloadId(state, episode)
@@ -133,7 +146,7 @@ private fun Details(
             )
         }
     }
-    LazyColumn(contentPadding = PaddingValues(bottom = 32.dp), modifier = Modifier.fillMaxSize()) {
+    LazyColumn(contentPadding = PaddingValues(bottom = DockClearance), modifier = Modifier.fillMaxSize()) {
         item {
             Header(
                 response = response,

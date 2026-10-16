@@ -1,6 +1,17 @@
 package com.lagradost.cloudstream4
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.border
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import com.lagradost.cloudstream4.browse.DockClearance
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.TooltipPlacement
 import androidx.compose.foundation.background
@@ -10,7 +21,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -19,7 +29,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -109,12 +118,15 @@ enum class Destination(
 sealed class Page : ViewModelStoreOwner {
     override val viewModelStore = ViewModelStore()
 
-    class Details(val apiName: String, val url: String) : Page()
+    class Details(val apiName: String, val url: String) : Page() {
+        /** Play where the title was left as soon as it loads, once: Continue watching does */
+        var autoPlay = false
+    }
     class Player(val request: PlayRequest) : Page()
 }
 
 /**
- * Navigation for the desktop app: a rail on the left and the selected destination on the right,
+ * Navigation for the desktop app: the selected destination, with a dock floating at the bottom to switch,
  * with pages such as details and the player opened on top.
  * Ctrl+1 to Ctrl+5 switch destination, Ctrl+F opens Search, Escape, Alt+Left or the mouse's back
  * button goes back. M pauses the player and hides the app, see [hidden].
@@ -129,7 +141,7 @@ class AppNavigator {
     /** Details and player pages, last is shown */
     val pages = mutableStateListOf<Page>()
 
-    /** The player fills the screen, without the rail or the window frame */
+    /** The player fills the screen, without the window frame */
     var fullscreen by mutableStateOf(false)
 
     /**
@@ -147,6 +159,11 @@ class AppNavigator {
 
     fun openDetails(apiName: String, url: String) {
         pages.add(Page.Details(apiName, url))
+    }
+
+    /** Continue watching: plays the title where it was left, its page under the player to come back to */
+    fun resume(apiName: String, url: String) {
+        pages.add(Page.Details(apiName, url).apply { autoPlay = true })
     }
 
     fun play(request: PlayRequest) {
@@ -257,16 +274,18 @@ fun AppShell(navigator: AppNavigator) {
     ExtensionToasts(toasts)
 
     val page = navigator.pages.lastOrNull()
-    val hideRail = page is Page.Player && navigator.fullscreen
+    // The player has its own controls along the bottom, which the dock would cover
+    val showDock = page !is Page.Player
+    // What the dock blurs behind its glass
+    val glass = rememberHazeState()
     navigator.typing.Provide {
-        Row(
+        Box(
             Modifier
                 .fillMaxSize()
                 // The mouse's back button goes back, as in a browser
                 .onPointerEvent(PointerEventType.Press) { if (it.button == PointerButton.Back) navigator.back() },
         ) {
-            if (!hideRail) SlimRail(navigator)
-            Box(Modifier.weight(1f).fillMaxHeight()) {
+            Box(Modifier.fillMaxSize().hazeSource(glass)) {
                 if (page != null) {
                     CompositionLocalProvider(LocalViewModelStoreOwner provides page) {
                         PageContent(page, navigator) { query ->
@@ -280,18 +299,19 @@ fun AppShell(navigator: AppNavigator) {
                             ?: remember(navigator) { SettingsHomeScreen(navigator::open) }
                         val back: (() -> Unit)? = if (navigator.settingsStack.isEmpty()) null else ({ navigator.back() })
                         CompositionLocalProvider(LocalBackPress provides back) {
-                            settingsPage.Content()
+                            Box(Modifier.padding(bottom = DockClearance)) { settingsPage.Content() }
                         }
                     }
 
-                    Destination.Home -> HomeScreen(home, navigator::openExtensions, navigator::openDetails)
+                    Destination.Home -> HomeScreen(home, navigator::openExtensions, navigator::openDetails, navigator::resume)
                     Destination.Search -> SearchScreen(search, navigator::openExtensions, navigator::openDetails)
                     Destination.Library -> LibraryScreen(DataStoreWatchStore.instance, navigator::openDetails)
                     Destination.Downloads -> DownloadsScreen(Downloads.instance, navigator::play, navigator::openDetails)
                     else -> ComingSoon(navigator.destination)
                 }
-                SnackbarHost(toasts, Modifier.align(Alignment.BottomCenter).padding(16.dp))
             }
+            if (showDock) FloatingDock(navigator, glass, Modifier.align(Alignment.BottomCenter).padding(bottom = 20.dp))
+            SnackbarHost(toasts, Modifier.align(Alignment.BottomCenter).padding(start = 16.dp, end = 16.dp, bottom = if (showDock) DockClearance else 16.dp))
         }
     }
 }
@@ -339,6 +359,8 @@ private fun PageContent(page: Page, navigator: AppNavigator, onSearch: (query: S
             onPlay = navigator::play,
             onOpen = navigator::openDetails,
             onSearch = onSearch,
+            autoPlay = page.autoPlay,
+            onAutoPlayed = { page.autoPlay = false },
         )
 
         is Page.Player -> PlayerScreen(
@@ -369,66 +391,89 @@ private fun ComingSoon(destination: Destination) {
 }
 
 /**
- * The destinations down the left, slim and in the page's own colour, as streaming apps have it:
- * icons only, their names on hover. The current one is lit and marked with a bar.
+ * The destinations in a pill of frosted glass floating over the bottom of the page, as streaming
+ * apps have it: the page shows blurred through it. The current one is lit and named, the others
+ * are icons with their names on hover.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun SlimRail(navigator: AppNavigator) {
-    Column(
-        Modifier.fillMaxHeight().width(72.dp).background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
+private fun FloatingDock(navigator: AppNavigator, glass: HazeState, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(percent = 50)
+    val background = MaterialTheme.colorScheme.background
+    Row(
+        modifier
+            .shadow(24.dp, shape, ambientColor = Color.Black, spotColor = Color.Black)
+            .clip(shape)
+            .hazeEffect(
+                glass,
+                HazeStyle(
+                    backgroundColor = background,
+                    tint = HazeTint(background.copy(alpha = 0.55f)),
+                    blurRadius = 28.dp,
+                    noiseFactor = 0.06f,
+                ),
+            )
+            // A light edge along the top, where light would catch the glass
+            .border(
+                1.dp,
+                Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.22f), Color.White.copy(alpha = 0.04f))),
+                shape,
+            )
+            .padding(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Destination.entries.forEach { destination ->
             val selected = navigator.destination == destination
             val title = stringResource(destination.title)
             TooltipArea(
                 tooltip = {
-                    Surface(shape = RoundedCornerShape(6.dp), color = MaterialTheme.colorScheme.surface, shadowElevation = 4.dp) {
+                    if (!selected) Surface(shape = RoundedCornerShape(6.dp), color = MaterialTheme.colorScheme.surface, shadowElevation = 4.dp) {
                         Text(title, style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
                     }
                 },
                 delayMillis = 300,
-                tooltipPlacement = TooltipPlacement.ComponentRect(anchor = Alignment.CenterEnd, alignment = Alignment.CenterEnd, offset = DpOffset(8.dp, 0.dp)),
+                tooltipPlacement = TooltipPlacement.ComponentRect(anchor = Alignment.TopCenter, alignment = Alignment.TopCenter, offset = DpOffset(0.dp, (-8).dp)),
             ) {
-                RailItem(destination, title, selected) { navigator.select(destination) }
+                DockItem(destination, title, selected) { navigator.select(destination) }
             }
         }
     }
 }
 
 @Composable
-private fun RailItem(destination: Destination, title: String, selected: Boolean, onClick: () -> Unit) {
+private fun DockItem(destination: Destination, title: String, selected: Boolean, onClick: () -> Unit) {
     val interaction = remember { MutableInteractionSource() }
     val hovered by interaction.collectIsHoveredAsState()
     val primary = MaterialTheme.colorScheme.primary
-    Box(Modifier.width(72.dp).height(48.dp), contentAlignment = Alignment.Center) {
-        if (selected) Box(
-            Modifier.align(Alignment.CenterStart).width(3.dp).height(24.dp)
-                .background(primary, RoundedCornerShape(topEnd = 3.dp, bottomEnd = 3.dp)),
-        )
-        Box(
-            Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(
-                    when {
-                        selected -> primary.copy(alpha = 0.16f)
-                        hovered -> MaterialTheme.colorScheme.surfaceVariant
-                        else -> Color.Transparent
-                    },
-                )
-                .hoverable(interaction)
-                .clickable(onClick = onClick),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painterResource(if (selected) destination.selectedIcon else destination.icon),
-                contentDescription = title,
-                tint = if (selected) primary else MaterialTheme.colorScheme.onBackground,
+    Row(
+        Modifier
+            .height(48.dp)
+            .clip(RoundedCornerShape(percent = 50))
+            .background(
+                when {
+                    selected -> primary.copy(alpha = 0.22f)
+                    hovered -> Color.White.copy(alpha = 0.08f)
+                    else -> Color.Transparent
+                },
             )
-        }
+            .hoverable(interaction)
+            .clickable(onClick = onClick)
+            .animateContentSize()
+            .padding(horizontal = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painterResource(if (selected) destination.selectedIcon else destination.icon),
+            contentDescription = title,
+            tint = if (selected) primary else MaterialTheme.colorScheme.onBackground,
+        )
+        if (selected) Text(
+            title,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            maxLines = 1,
+            modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+        )
     }
 }
-

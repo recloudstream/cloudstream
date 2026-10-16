@@ -20,6 +20,7 @@ import com.lagradost.cloudstream4.compose.StateContainer
 import com.lagradost.cloudstream4.library.InMemoryWatchStore
 import com.lagradost.cloudstream4.library.PlaybackPosition
 import com.lagradost.cloudstream4.library.PlaybackTracking
+import com.lagradost.cloudstream4.library.SavedSource
 import com.lagradost.cloudstream4.library.TitleHeader
 import com.lagradost.cloudstream4.library.WatchIds
 import com.lagradost.cloudstream4.library.WatchStore
@@ -42,6 +43,8 @@ data class PlayRequest(
     val localFile: String? = null,
     /** Subtitles saved beside [localFile], their url a file path */
     val localSubtitles: List<SubtitleFile> = emptyList(),
+    /** The source the title was last watched from, played as soon as it is found */
+    val preferredSource: SavedSource? = null,
 )
 
 /** Where Continue watching left off: an episode, or the movie when [episode] is null */
@@ -227,7 +230,22 @@ class DetailViewModel(
                 startPositionMs = if (fromStart) 0 else current.progress[id]?.takeUnless { it.watched }?.positionMs ?: 0,
             )
         } else null
-        return PlayRequest(api.name, response.name, episode?.let(::episodeLabel), data, tracking)
+        val source = current.titleId?.let(store::lastSource)
+        return PlayRequest(api.name, response.name, episode?.let(::episodeLabel), data, tracking, preferredSource = source)
+    }
+
+    /**
+     * What Continue watching plays: the episode the title was left at, or the movie, from where it
+     * stopped. Null when there is nothing to pick up, for example an episode the provider dropped.
+     */
+    fun resumeRequest(): PlayRequest? {
+        val current = state.value
+        val resume = current.resume
+        return when {
+            resume?.episode != null -> playRequest(resume.episode)
+            current.movieData != null -> playRequest()
+            else -> null
+        }
     }
 
     companion object {
