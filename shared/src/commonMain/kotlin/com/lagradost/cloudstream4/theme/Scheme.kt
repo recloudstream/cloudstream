@@ -92,7 +92,7 @@ internal fun darkScheme() = CloudStreamColorScheme(
     onBackground = CloudStreamPalette.DarkText,
     onSurfaceVariant = CloudStreamPalette.DarkGrayText,
     icon = CloudStreamPalette.DarkIcon,
-    primary = CloudStreamPalette.Primary,
+    primary = CloudStreamPalette.DarkPrimary,
     ongoing = CloudStreamPalette.Ongoing,
     isLight = false,
 )
@@ -100,6 +100,7 @@ internal fun darkScheme() = CloudStreamColorScheme(
 
 /** AmoledMode in styles.xml: black, with iconGrayBackground left at primaryBlackBackground */
 internal fun amoledScheme() = darkScheme().copy(
+    primary = CloudStreamPalette.Primary,
     background = CloudStreamPalette.AmoledBlack,
     surface = CloudStreamPalette.DarkBlackBg,
     surfaceVariant = CloudStreamPalette.AmoledBlack,
