@@ -52,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -98,7 +99,7 @@ private val horizontalWidth = 240.dp
 
 /** An image from a provider, which may need its own headers to serve it */
 @Composable
-fun RemoteImage(url: String?, headers: Map<String, String>?, contentDescription: String?, modifier: Modifier = Modifier) {
+fun RemoteImage(url: String?, headers: Map<String, String>?, contentDescription: String?, modifier: Modifier = Modifier, corner: Dp = 8.dp) {
     val context = LocalPlatformContext.current
     val request = remember(url, headers) {
         ImageRequest.Builder(context)
@@ -109,7 +110,7 @@ fun RemoteImage(url: String?, headers: Map<String, String>?, contentDescription:
             }.build())
             .build()
     }
-    Box(modifier.clip(RoundedCornerShape(8.dp)).background(MaterialTheme.colorScheme.surfaceVariant)) {
+    Box(modifier.clip(RoundedCornerShape(corner)).background(MaterialTheme.colorScheme.surfaceVariant)) {
         AsyncImage(
             model = request,
             contentDescription = contentDescription,

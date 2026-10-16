@@ -1,5 +1,20 @@
 package com.lagradost.cloudstream4
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
+import androidx.compose.foundation.TooltipPlacement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,9 +24,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.NavigationRailItemDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -252,39 +265,7 @@ fun AppShell(navigator: AppNavigator) {
                 // The mouse's back button goes back, as in a browser
                 .onPointerEvent(PointerEventType.Press) { if (it.button == PointerButton.Back) navigator.back() },
         ) {
-            // As the Android app's nav_rail_view: on primaryGrayBackground, the selected item in the
-            // primary colour (item_select_color.xml). Labels stay, there is room for them on a desktop
-            if (!hideRail) NavigationRail(
-                modifier = Modifier.fillMaxHeight(),
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ) {
-                val itemColors = NavigationRailItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                    unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                )
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                ) {
-                    Destination.entries.forEach { destination ->
-                        val selected = navigator.destination == destination
-                        NavigationRailItem(
-                            selected = selected,
-                            onClick = { navigator.select(destination) },
-                            icon = {
-                                Icon(
-                                    painterResource(if (selected) destination.selectedIcon else destination.icon),
-                                    contentDescription = null,
-                                )
-                            },
-                            label = { Text(stringResource(destination.title)) },
-                            colors = itemColors,
-                        )
-                    }
-                }
-            }
+            if (!hideRail) SlimRail(navigator)
             Box(Modifier.weight(1f).fillMaxHeight()) {
                 if (page != null) {
                     CompositionLocalProvider(LocalViewModelStoreOwner provides page) {
@@ -386,3 +367,68 @@ private fun ComingSoon(destination: Destination) {
         )
     }
 }
+
+/**
+ * The destinations down the left, slim and in the page's own colour, as streaming apps have it:
+ * icons only, their names on hover. The current one is lit and marked with a bar.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun SlimRail(navigator: AppNavigator) {
+    Column(
+        Modifier.fillMaxHeight().width(72.dp).background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Destination.entries.forEach { destination ->
+            val selected = navigator.destination == destination
+            val title = stringResource(destination.title)
+            TooltipArea(
+                tooltip = {
+                    Surface(shape = RoundedCornerShape(6.dp), color = MaterialTheme.colorScheme.surface, shadowElevation = 4.dp) {
+                        Text(title, style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                    }
+                },
+                delayMillis = 300,
+                tooltipPlacement = TooltipPlacement.ComponentRect(anchor = Alignment.CenterEnd, alignment = Alignment.CenterEnd, offset = DpOffset(8.dp, 0.dp)),
+            ) {
+                RailItem(destination, title, selected) { navigator.select(destination) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RailItem(destination: Destination, title: String, selected: Boolean, onClick: () -> Unit) {
+    val interaction = remember { MutableInteractionSource() }
+    val hovered by interaction.collectIsHoveredAsState()
+    val primary = MaterialTheme.colorScheme.primary
+    Box(Modifier.width(72.dp).height(48.dp), contentAlignment = Alignment.Center) {
+        if (selected) Box(
+            Modifier.align(Alignment.CenterStart).width(3.dp).height(24.dp)
+                .background(primary, RoundedCornerShape(topEnd = 3.dp, bottomEnd = 3.dp)),
+        )
+        Box(
+            Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    when {
+                        selected -> primary.copy(alpha = 0.16f)
+                        hovered -> MaterialTheme.colorScheme.surfaceVariant
+                        else -> Color.Transparent
+                    },
+                )
+                .hoverable(interaction)
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painterResource(if (selected) destination.selectedIcon else destination.icon),
+                contentDescription = title,
+                tint = if (selected) primary else MaterialTheme.colorScheme.onBackground,
+            )
+        }
+    }
+}
+
