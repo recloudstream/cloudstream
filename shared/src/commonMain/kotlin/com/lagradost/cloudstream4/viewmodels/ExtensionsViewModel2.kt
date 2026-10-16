@@ -322,7 +322,7 @@ sealed class ExtensionsAction {
     //data class DownloadRepository(val repository: RepositoryInfo) : ExtensionsAction()
     data class DownloadRepositoryWithDialog(val url: String) : ExtensionsAction()
     data class SelectRepository(val uuid: Uuid?) : ExtensionsAction()
-    data class SelectPlugin(val uuid: Uuid?) : ExtensionsAction()
+    data class SelectPlugin(val uuid: Uuid) : ExtensionsAction()
     data class ReloadRepository(val uuid: Uuid) : ExtensionsAction()
     data class Search(val query: String) : ExtensionsAction()
     data class FilterByTypes(val types: PersistentSet<TvType>) : ExtensionsAction()
@@ -474,6 +474,7 @@ class ExtensionsViewModel2(
                     updateState {
                         copy(
                             addDialog = AddRepositoryDialog(
+                                /** Not a bug, the dialog should not get trimmed */
                                 url = action.url,
                                 loading = true,
                                 error = null
@@ -500,6 +501,7 @@ class ExtensionsViewModel2(
                             updateState {
                                 copy(
                                     addDialog = AddRepositoryDialog(
+                                        /** Not a bug, the dialog should not get trimmed */
                                         url = action.url,
                                         loading = false,
                                         error = t
@@ -582,8 +584,30 @@ class ExtensionsViewModel2(
         pluginsFetched: List<Plugin>
     ) {
         manager.updateRepositoryInfo(newRepositoryInfo)
-        val newPlugins = pluginsFetched.associateBy { it.uuid }
         updateState {
+            /**
+             * The unique id of a plugin is the repository + source,
+             * if source does not exist because it is an internal plugin,
+             * then use the download location
+             * */
+            fun uniqueId(plugin: Plugin) =
+                plugin.repository to (plugin.source?.pluginUrl ?: plugin.downloadLocation)
+
+            val oldPlugins = plugins.data.values.associate { plugin ->
+                uniqueId(plugin) to plugin.uuid
+            }
+
+            /** If we refresh plugins that already exist by assigning them the old uuid */
+            val newPlugins = pluginsFetched.associate { plugin ->
+                val newUuid = oldPlugins[uniqueId(plugin)]
+                    ?: plugin.uuid
+                newUuid to if (newUuid != plugin.uuid) {
+                    plugin.copy(uuid = newUuid)
+                } else {
+                    plugin
+                }
+            }
+
             copy(
                 plugins = plugins.setTo(plugins.data.puttingAll(newPlugins)),
                 repositories = repositories.adding(
@@ -712,13 +736,18 @@ class ExtensionsViewModel2(
 
     private suspend fun init() {
         val repos = manager.getRepositories()
-        val reposMap = repos.associate { info ->
-            val uuid = Uuid.random()
-            uuid to Repository(info = info, status = RepositoryStatus.Loading, uuid = uuid)
-        }.toPersistentMap()
 
         updateState {
-            copy(repositories = repositories.setTo(newData = reposMap))
+            val oldRepositories = repositories.data.values.associate { repository ->
+                repository.info.url to repository.uuid
+            }
+
+            val newRepositories = repos.associate { info ->
+                val uuid = oldRepositories[info.url] ?: Uuid.random()
+                uuid to Repository(info = info, status = RepositoryStatus.Loading, uuid = uuid)
+            }.toPersistentMap()
+
+            copy(repositories = repositories.setTo(newData = newRepositories))
         }
 
         repositoryDispatcher.launch(localUuid) {
@@ -729,7 +758,8 @@ class ExtensionsViewModel2(
             }
         }
 
-        for ((uuid, repository) in reposMap) {
+        val repositories = state.value.repositories.data
+        for ((uuid, repository) in repositories) {
             loadRepository(uuid, repository.info)
         }
     }

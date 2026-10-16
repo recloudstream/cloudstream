@@ -200,7 +200,7 @@ object ExtensionsScreen : Screen {
     override fun Content() {
         val viewModel =
             viewModel<ExtensionsViewModel2> { ExtensionsViewModel2(manager = AndroidRepositoryManager) }
-        LaunchedEffect(Unit) {
+        LaunchedEffect(Unit) { // TODO fix this to only do if necessary
             viewModel.onAction(ExtensionsAction.Init)
         }
         val state by viewModel.state.collectAsState()
