@@ -79,6 +79,7 @@ import com.lagradost.cloudstream4.browse.Message
 import com.lagradost.cloudstream4.browse.formatTime
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.arrow_back
+import com.lagradost.cloudstream4.generated.resources.aspect_ratio_24px
 import com.lagradost.cloudstream4.generated.resources.baseline_fullscreen_24
 import com.lagradost.cloudstream4.generated.resources.baseline_fullscreen_exit_24
 import com.lagradost.cloudstream4.generated.resources.ic_baseline_audiotrack_24
@@ -147,6 +148,7 @@ fun PlayerScreen(
     val scope = rememberCoroutineScope()
     var subtitleMessage by remember { mutableStateOf<String?>(null) }
     var panel by remember { mutableStateOf<Panel?>(null) }
+    var aspectMode by remember { mutableStateOf(AspectMode.Fit) }
     val currentFullscreen by rememberUpdatedState(onToggleFullscreen)
     val currentBack by rememberUpdatedState(onBack)
 
@@ -230,9 +232,16 @@ fun PlayerScreen(
         lastPointer[0] = at
         activity = System.nanoTime()
     }
+    val blankCursor = remember {
+        val img = java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+        java.awt.Toolkit.getDefaultToolkit().createCustomCursor(img, java.awt.Point(0, 0), "blank")
+    }
     DisposableEffect(player) {
         player.onMouseMove = ::pointerMoved
-        onDispose { player.onMouseMove = null }
+        onDispose {
+            player.onMouseMove = null
+            player.canvas.cursor = java.awt.Cursor.getDefaultCursor()
+        }
     }
     LaunchedEffect(fullscreen, activity, panel) {
         barsShown = true
@@ -242,6 +251,9 @@ fun PlayerScreen(
         }
     }
     val showBars = !fullscreen || barsShown
+    LaunchedEffect(fullscreen, showBars) {
+        player.canvas.cursor = if (fullscreen && !showBars) blankCursor else java.awt.Cursor.getDefaultCursor()
+    }
     // The mouse wheel over the video works as swipes do in the Android player: on the right half it
     // sets the volume, on the left half the brightness, each shown by a level on the other side
     var level by remember { mutableStateOf<Level?>(null) }
@@ -249,8 +261,9 @@ fun PlayerScreen(
     val wheelRest = remember { doubleArrayOf(0.0) }
     fun changeLevel(kind: LevelKind, delta: Int) {
         // The level shown is newer than the status, which is read twice a second
+        val max = if (kind == LevelKind.Volume) 130 else 100
         val now = level?.takeIf { it.kind == kind }?.percent ?: if (kind == LevelKind.Volume) status.volume else brightness
-        val next = (now + delta).coerceIn(0, 100)
+        val next = (now + delta).coerceIn(0, max)
         when (kind) {
             LevelKind.Volume -> {
                 if (status.muted && delta > 0) player.toggleMute()
@@ -442,6 +455,7 @@ fun PlayerScreen(
             status = status,
             state = state,
             panel = panel,
+            aspectMode = aspectMode,
             subtitleOn = status.tracks.any { it.type == "sub" && it.selected },
             fullscreen = fullscreen,
             onPanel = { panel = it },
@@ -527,6 +541,7 @@ fun PlayerScreen(
                     panel = open,
                     state = state,
                     status = status,
+                    aspectMode = aspectMode,
                     downloaded = downloaded,
                     loadingSubtitle = loadingSubtitle,
                     onSelect = { viewModel.onAction(LinksAction.Select(it)) },
@@ -540,6 +555,10 @@ fun PlayerScreen(
                     onTextSize = { size -> subtitleSettings.setStyle(subtitleSettings.style.value.copy(fixedTextSize = size)) },
                     onAudioTrack = player::selectAudio,
                     onSpeed = player::setSpeed,
+                    onAspectMode = { mode ->
+                        aspectMode = mode
+                        player.setAspectMode(mode)
+                    },
                 )
             }
         }
@@ -620,7 +639,7 @@ private fun host(url: String): String? = runCatching { java.net.URI(url).host?.r
 
 private fun MpvTrack.isFile(file: File) = external && externalFilename?.let { File(it).absolutePath.equals(file.absolutePath, ignoreCase = true) } == true
 
-private enum class Panel(val title: String) { Source("Source"), Subtitles("Subtitles"), Audio("Audio"), Speed("Speed") }
+private enum class Panel(val title: String) { Source("Source"), Subtitles("Subtitles"), Audio("Audio"), Speed("Speed"), Aspect("Aspect Ratio") }
 
 private val speeds = listOf(0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0)
 
@@ -632,8 +651,8 @@ private object PlayerColors {
     val panel = Color(0xFF18181C)
     val content = Color.White
     val secondary = Color.White.copy(alpha = 0.68f)
-    val track = Color.White.copy(alpha = 0.22f)
-    val buffered = Color.White.copy(alpha = 0.42f)
+    val track = Color(0x28FFFFFF)
+    val buffered = Color(0x38FFFFFF)
     val selected = Color.White.copy(alpha = 0.10f)
 }
 
@@ -685,6 +704,7 @@ private fun levelAss(level: Level): String {
     fun n(v: Double) = "%.1f".format(java.util.Locale.ROOT, v)
     fun rect(w: Double, h: Double) = "m 0 0 l ${n(w)} 0 ${n(w)} ${n(h)} 0 ${n(h)}"
     val volume = level.kind == LevelKind.Volume
+    val maxPercent = if (volume) 130 else 100
     val cx = if (volume) 110.0 else 1170.0
     val top = 260.0
     val height = 200.0
@@ -693,7 +713,7 @@ private fun levelAss(level: Level): String {
     val lines = mutableListOf<String>()
     // The track, then the level from the bottom up
     lines += "{\\an7\\pos(${n(cx - width / 2)},${n(top)})$edge\\1c&HFFFFFF&\\1a&HB0&\\p1}${rect(width, height)}{\\p0}"
-    val filled = height * level.percent / 100
+    val filled = (height * level.percent / maxPercent).coerceIn(0.0, height)
     if (filled > 0) lines += "{\\an7\\pos(${n(cx - width / 2)},${n(top + height - filled)})\\bord0\\shad0\\1c&HFFFFFF&\\p1}${rect(width, filled)}{\\p0}"
     // The icon, drawn on a 24 by 24 grid as Material's icons are
     val icon = if (volume) {
@@ -774,6 +794,7 @@ private fun ControlBar(
     status: MpvStatus,
     state: LinksState,
     panel: Panel?,
+    aspectMode: AspectMode = AspectMode.Fit,
     subtitleOn: Boolean,
     fullscreen: Boolean,
     onPanel: (Panel?) -> Unit,
@@ -796,7 +817,7 @@ private fun ControlBar(
     Column(modifier.fillMaxWidth().background(PlayerColors.bar).padding(start = 12.dp, end = 12.dp, top = 6.dp, bottom = 4.dp)) {
         SeekBar(
             value = if (duration > 0) position / duration else 0f,
-            buffered = if (duration > 0) (status.bufferedTo.toFloat() / duration).coerceIn(0f, 1f) else 0f,
+            buffered = 0f,
             enabled = duration > 0,
             accent = accent,
             onChange = { dragging = it * duration },
@@ -826,11 +847,11 @@ private fun ControlBar(
                 onClick = player::toggleMute,
             )
             SeekBar(
-                value = (volume ?: status.volume.toFloat()) / 100f,
-                accent = PlayerColors.content,
+                value = (volume ?: status.volume.toFloat()) / 130f,
+                accent = accent,
                 onChange = {
-                    volume = it * 100
-                    player.setVolume((it * 100).toInt())
+                    volume = it * 130
+                    player.setVolume((it * 130).toInt())
                 },
                 onDone = { volume = null },
                 modifier = Modifier.width(96.dp),
@@ -864,6 +885,11 @@ private fun ControlBar(
                 label = state.selectedLink?.let { Qualities.getStringByInt(it.quality).ifBlank { null } } ?: "Source",
                 enabled = state.links.isNotEmpty(),
             ) { onPanel(if (panel == Panel.Source) null else Panel.Source) }
+            PanelButton(
+                Res.drawable.aspect_ratio_24px, "Aspect Ratio", panel == Panel.Aspect,
+                label = if (aspectMode != AspectMode.Fit) aspectMode.label else null,
+                active = aspectMode != AspectMode.Fit,
+            ) { onPanel(if (panel == Panel.Aspect) null else Panel.Aspect) }
             PlayerIcon(
                 if (fullscreen) Res.drawable.baseline_fullscreen_exit_24 else Res.drawable.baseline_fullscreen_24,
                 if (fullscreen) "Leave full screen" else "Full screen",
@@ -986,7 +1012,6 @@ private fun SeekBar(
         Canvas(Modifier.fillMaxWidth().height(if (thick) 6.dp else 3.dp)) {
             val r = CornerRadius(size.height / 2)
             drawRoundRect(PlayerColors.track, cornerRadius = r)
-            if (buffered > 0) drawRoundRect(PlayerColors.buffered, size = Size(size.width * buffered, size.height), cornerRadius = r)
             drawRoundRect(accent, size = Size(size.width * value.coerceIn(0f, 1f), size.height), cornerRadius = r)
         }
         if (thick) Canvas(Modifier.fillMaxWidth().height(14.dp)) {
@@ -1000,6 +1025,7 @@ private fun SidePanel(
     panel: Panel,
     state: LinksState,
     status: MpvStatus,
+    aspectMode: AspectMode = AspectMode.Fit,
     downloaded: Map<String, File>,
     loadingSubtitle: String?,
     onSelect: (String) -> Unit,
@@ -1011,6 +1037,7 @@ private fun SidePanel(
     onTextSize: (Float?) -> Unit,
     onAudioTrack: (Int) -> Unit,
     onSpeed: (Double) -> Unit,
+    onAspectMode: (AspectMode) -> Unit = {},
 ) {
     LazyColumn(Modifier.width(380.dp).fillMaxHeight().background(PlayerColors.panel)) {
         item { Text(panel.title, style = MaterialTheme.typography.titleMedium, color = PlayerColors.content, modifier = Modifier.padding(16.dp)) }
@@ -1078,6 +1105,10 @@ private fun SidePanel(
 
             Panel.Speed -> items(speeds) { speed ->
                 Choice(speedLabel(speed) + if (speed == 1.0) " (normal)" else "", selected = abs(status.speed - speed) < 0.01) { onSpeed(speed) }
+            }
+
+            Panel.Aspect -> items(AspectMode.entries) { mode ->
+                Choice(mode.label, selected = aspectMode == mode) { onAspectMode(mode) }
             }
         }
     }

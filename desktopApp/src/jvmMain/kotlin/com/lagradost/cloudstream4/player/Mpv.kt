@@ -162,6 +162,14 @@ data class MpvStatus(
 /** A subtitle file to show with a link, added again whenever the link changes */
 data class MpvSubtitle(val file: File, val title: String, val select: Boolean)
 
+enum class AspectMode(val label: String) {
+    Fit("Fit"),
+    Fill("Crop to Fill"),
+    SixteenNine("16:9"),
+    FourThree("4:3"),
+    Stretch("Stretch"),
+}
+
 sealed interface MpvEvent {
     /** F or a double click inside the video */
     data object ToggleFullscreen : MpvEvent
@@ -261,8 +269,8 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
         addMouseWheelListener(mouse)
     }
 
-    private fun start(windowId: Long) = synchronized(this) {
-        if (started || closed) return
+    private fun start(windowId: Long): Unit = synchronized(this) {
+        if (started || closed) return@synchronized
         started = true
         option("wid", windowId.toString())
         // The app draws its own controls. mpv's would not work anyway: embedded, it gets no mouse input
@@ -274,10 +282,15 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
         option("force-window", "yes")
         option("sub-auto", "no")
         option("drag-and-drop", "no")
-        // Memory: mpv reads up to 150 MB ahead and keeps 50 MB behind by default. This is still about a
-        // minute ahead of a 1080p stream, and enough behind to skip back without loading again
-        option("demuxer-max-bytes", "96MiB")
-        option("demuxer-max-back-bytes", "24MiB")
+        // VLC-parity buffer & network resilience
+        option("cache", "yes")
+        option("demuxer-readahead-secs", "30")
+        option("demuxer-max-bytes", "150MiB")
+        option("demuxer-max-back-bytes", "50MiB")
+        option("demuxer-lavf-probesize", "32768")
+        option("hr-seek", "default")
+        option("hr-seek-framedrop", "yes")
+        option("volume-max", "130")
         // Network: a stream that stops answering fails after 30 s instead of 60, so the next source can
         // play, and a dropped connection is opened again where it stopped
         option("network-timeout", "30")
@@ -414,11 +427,22 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
 
     fun changeVolume(delta: Int) = whenStarted { command("add", "volume", delta.toString()) }
 
-    fun setVolume(volume: Int) = whenStarted { command("set", "volume", volume.coerceIn(0, 100).toString()) }
+    fun setVolume(volume: Int) = whenStarted { command("set", "volume", volume.coerceIn(0, 130).toString()) }
 
     fun toggleMute() = whenStarted { command("cycle", "mute") }
 
     fun setSpeed(speed: Double) = whenStarted { command("set", "speed", speed.toString()) }
+
+    /** How the picture fits the video's area: [AspectMode.Fill] crops it, [AspectMode.Stretch] distorts it */
+    fun setAspectMode(mode: AspectMode) = whenStarted {
+        command("set", "keepaspect", if (mode == AspectMode.Stretch) "no" else "yes")
+        command("set", "panscan", if (mode == AspectMode.Fill) "1.0" else "0.0")
+        command("set", "video-aspect-override", when (mode) {
+            AspectMode.SixteenNine -> "16:9"
+            AspectMode.FourThree -> "4:3"
+            else -> "-1"
+        })
+    }
 
     /**
      * Placed in the app's layout, where it takes no room: while it is there, [canvas] is in the
