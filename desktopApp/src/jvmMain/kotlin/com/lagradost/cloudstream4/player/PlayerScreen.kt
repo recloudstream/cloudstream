@@ -25,6 +25,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -655,12 +656,20 @@ private val speeds = listOf(0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0)
 
 private fun speedLabel(speed: Double) = "%s×".format(if (speed % 1.0 == 0.0) speed.toInt().toString() else speed.toString())
 
-/** The player is always dark, whatever the app's theme, like most video players */
+/**
+ * The player is always dark, like most video players: in the colours of a dark theme, the same as
+ * the rest of the app, and in neutral greys under a light theme.
+ */
 private object PlayerColors {
-    val bar = Color(0xFF111114)
-    val panel = Color(0xFF18181C)
+    private val themeDark: Boolean
+        @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val bar: Color
+        @Composable @ReadOnlyComposable get() = if (themeDark) MaterialTheme.colorScheme.background else Color(0xFF111114)
+    val panel: Color
+        @Composable @ReadOnlyComposable get() = if (themeDark) MaterialTheme.colorScheme.surfaceContainer else Color(0xFF18181C)
     val content = Color.White
-    val secondary = Color.White.copy(alpha = 0.68f)
+    val secondary: Color
+        @Composable @ReadOnlyComposable get() = if (themeDark) MaterialTheme.colorScheme.onSurfaceVariant else Color.White.copy(alpha = 0.68f)
     val track = Color(0x28FFFFFF)
     val buffered = Color(0x38FFFFFF)
     val selected = Color.White.copy(alpha = 0.10f)

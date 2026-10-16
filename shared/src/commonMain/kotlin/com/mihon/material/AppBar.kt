@@ -121,9 +121,12 @@ fun AppBar(
             title = titleContent,
             actions = actions,
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = backgroundColor ?: MaterialTheme.colorScheme.surfaceColorAtElevation(
-                    elevation = if (isActionMode) 3.dp else 0.dp,
-                ),
+                // The page's own colour, so the bar is one with it, as in the rest of the app
+                containerColor = backgroundColor ?: if (isActionMode) {
+                    MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+                } else {
+                    MaterialTheme.colorScheme.background
+                },
             ),
             scrollBehavior = scrollBehavior,
         )

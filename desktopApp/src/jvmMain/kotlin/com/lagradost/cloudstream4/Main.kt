@@ -103,7 +103,7 @@ fun main() {
             onKeyEvent = navigator::onUnhandledKeyEvent,
         ) {
             appWindow = window
-            MainContent(navigator)
+            MainContent(navigator, window)
             FullscreenEffect(navigator, windowState, window)
             LaunchedEffect(navigator.hidden) {
                 if (WindowsHide.supported) {
@@ -144,6 +144,7 @@ private fun askToStartFresh(): Boolean {
             resizable = false,
         ) {
             CloudStreamTheme {
+                ThemedFrame(window)
                 Surface(color = MaterialTheme.colorScheme.background, contentColor = MaterialTheme.colorScheme.onBackground) {
                     Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text("Welcome back", style = MaterialTheme.typography.titleLarge)
@@ -193,13 +194,14 @@ private fun FullscreenEffect(navigator: AppNavigator, windowState: WindowState, 
 }
 
 @Composable
-private fun MainContent(navigator: AppNavigator) {
+private fun MainContent(navigator: AppNavigator, window: java.awt.Window) {
     val ui = rememberAppSettings().ui
     // Changing the theme or color in settings applies right away
     val theme by ui.theme.changes().collectAsState(ui.theme.get())
     val primaryColor by ui.primaryColor.changes().collectAsState(ui.primaryColor.get())
 
     CloudStreamTheme(mode = desktopThemeMode(theme), primaryColor = desktopPrimaryColor(primaryColor)) {
+        ThemedFrame(window)
         CompositionLocalProvider(LocalFocusOutlineDefault provides false) {
             Surface(
                 color = MaterialTheme.colorScheme.background,
@@ -210,4 +212,12 @@ private fun MainContent(navigator: AppNavigator) {
             }
         }
     }
+}
+
+/** The window's title bar and border in the theme's colours, again whenever the theme changes */
+@Composable
+private fun ThemedFrame(window: java.awt.Window) {
+    val background = MaterialTheme.colorScheme.background
+    val text = MaterialTheme.colorScheme.onBackground
+    LaunchedEffect(window, background, text) { WindowsTitleBar.paint(window, background, text) }
 }
