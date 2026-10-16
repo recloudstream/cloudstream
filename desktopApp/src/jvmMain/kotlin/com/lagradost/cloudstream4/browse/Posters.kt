@@ -2,6 +2,10 @@ package com.lagradost.cloudstream4.browse
 
 import androidx.compose.foundation.background
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.hoverable
@@ -126,17 +130,23 @@ val PageGutter = 32.dp
 /** Room left under a page's last row, so the floating dock at the bottom does not cover it */
 val DockClearance = 104.dp
 
-/** Grows a little under the mouse, as cards do in streaming apps, over its neighbours */
+/**
+ * Grows a little under the mouse, as cards do in streaming apps, over its neighbours. With [shadow]
+ * the whole card casts one; a poster with its title under it casts it from the picture alone, see
+ * [PosterCard], or the text would sit in a grey box on a light theme.
+ */
 @Composable
-fun Modifier.hoverZoom(interaction: MutableInteractionSource, enabled: Boolean = true): Modifier {
+fun Modifier.hoverZoom(interaction: MutableInteractionSource, enabled: Boolean = true, shadow: Boolean = true): Modifier {
     val hovered by interaction.collectIsHoveredAsState()
     val scale by animateFloatAsState(if (hovered && enabled) 1.06f else 1f, tween(150))
     return zIndex(if (hovered) 1f else 0f)
         .graphicsLayer {
             scaleX = scale
             scaleY = scale
-            shadowElevation = (scale - 1f) * 200f
-            shape = RoundedCornerShape(8.dp)
+            if (shadow) {
+                shadowElevation = (scale - 1f) * 200f
+                shape = RoundedCornerShape(8.dp)
+            }
         }
         .hoverable(interaction)
 }
@@ -145,17 +155,19 @@ fun Modifier.hoverZoom(interaction: MutableInteractionSource, enabled: Boolean =
 @Composable
 fun PosterCard(item: SearchResponse, horizontal: Boolean, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
     val interaction = remember { MutableInteractionSource() }
+    val hovered by interaction.collectIsHoveredAsState()
+    val lift by animateDpAsState(if (hovered && onClick != null) 14.dp else 0.dp, tween(150))
     Column(
         modifier
             .width(if (horizontal) horizontalWidth else verticalWidth)
-            .hoverZoom(interaction, enabled = onClick != null)
-            .then(if (onClick != null) Modifier.clip(RoundedCornerShape(8.dp)).clickable(onClick = onClick) else Modifier)
+            .hoverZoom(interaction, enabled = onClick != null, shadow = false)
+            .then(if (onClick != null) Modifier.clickable(interactionSource = null, indication = null, onClick = onClick) else Modifier)
     ) {
         RemoteImage(
             item.posterUrl,
             item.posterHeaders,
             contentDescription = item.name,
-            modifier = Modifier.fillMaxWidth().aspectRatio(if (horizontal) 16f / 9f else 2f / 3f),
+            modifier = Modifier.fillMaxWidth().aspectRatio(if (horizontal) 16f / 9f else 2f / 3f).shadow(lift, RoundedCornerShape(8.dp)),
         )
         Text(
             item.name,
@@ -226,28 +238,42 @@ fun ScrollingRow(content: LazyListScope.() -> Unit) {
             content = content,
         )
         Row(Modifier.matchParentSize()) {
-            if (hovered && state.canScrollBackward) RowArrow(Res.drawable.chevron_left, "Scroll back") {
+            if (hovered && state.canScrollBackward) RowArrow(Res.drawable.chevron_left, "Scroll back", start = true) {
                 scope.launch { state.animateScrollBy(-width * 0.8f) }
             }
             Spacer(Modifier.weight(1f))
-            if (hovered && state.canScrollForward) RowArrow(Res.drawable.chevron_right, "Scroll on") {
+            if (hovered && state.canScrollForward) RowArrow(Res.drawable.chevron_right, "Scroll on", start = false) {
                 scope.launch { state.animateScrollBy(width * 0.8f) }
             }
         }
     }
 }
 
+/**
+ * A round button in the theme's colours at an end of a row, over the posters faded into the page,
+ * so it shows on any picture and on light themes alike
+ */
 @Composable
-private fun RowArrow(icon: DrawableResource, description: String, onClick: () -> Unit) {
+private fun RowArrow(icon: DrawableResource, description: String, start: Boolean, onClick: () -> Unit) {
+    val background = MaterialTheme.colorScheme.background
+    val fade = listOf(background.copy(alpha = 0.85f), Color.Transparent)
     Box(
         Modifier
-            .width(48.dp)
+            .width(72.dp)
             .fillMaxHeight()
-            .background(Color.Black.copy(alpha = 0.55f))
-            .clickable(onClick = onClick),
+            .background(Brush.horizontalGradient(if (start) fade else fade.reversed())),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(painterResource(icon), contentDescription = description, tint = Color.White, modifier = Modifier.size(36.dp))
+        Box(
+            Modifier
+                .size(44.dp)
+                .shadow(10.dp, CircleShape)
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(painterResource(icon), contentDescription = description, tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(28.dp))
+        }
     }
 }
 
