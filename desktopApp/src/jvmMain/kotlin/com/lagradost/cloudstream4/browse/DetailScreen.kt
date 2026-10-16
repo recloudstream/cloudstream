@@ -1,4 +1,10 @@
 package com.lagradost.cloudstream4.browse
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -79,10 +84,7 @@ fun DetailScreen(
     downloads: Downloads = Downloads.instance,
 ) {
     val state by viewModel.state.collectAsState()
-    Column(Modifier.fillMaxSize()) {
-        IconButton(onClick = onBack, modifier = Modifier.padding(8.dp)) {
-            Icon(painterResource(Res.drawable.arrow_back), contentDescription = "Back")
-        }
+    Box(Modifier.fillMaxSize()) {
         when (val status = state.status) {
             DetailStatus.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
             is DetailStatus.Failed -> Message("Could not load this title", status.message) {
@@ -90,6 +92,16 @@ fun DetailScreen(
             }
 
             DetailStatus.Done -> Details(state, viewModel, onPlay, onOpen, onSearch, downloads, autoPlay, onAutoPlayed)
+        }
+        // Over the backdrop, in a disc of the page's colour so it shows on any picture
+        IconButton(
+            onClick = onBack,
+            modifier = Modifier
+                .padding(12.dp)
+                .shadow(8.dp, CircleShape)
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.7f), CircleShape),
+        ) {
+            Icon(painterResource(Res.drawable.arrow_back), contentDescription = "Back")
         }
     }
 }
@@ -168,12 +180,11 @@ private fun Details(
                 Text(
                     "${season.label} · ${season.episodes.size} episodes",
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 8.dp),
+                    modifier = Modifier.padding(start = PageGutter, end = PageGutter, top = 16.dp, bottom = 8.dp),
                 )
             }
             items(season.episodes) { episode ->
                 EpisodeRow(episode, state.progressOf(episode), downloadButton(episode)) { play(viewModel.playRequest(episode), episode) }
-                HorizontalDivider(Modifier.padding(horizontal = 24.dp))
             }
         }
 
@@ -208,62 +219,79 @@ private fun Header(
     /** The movie's download button, null for a series or a live stream */
     download: (@Composable () -> Unit)?,
 ) {
-    Row(Modifier.padding(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+    val background = MaterialTheme.colorScheme.background
+    // The title's wide picture behind it, faded into the page below and on the side of the text, as on Home
+    Box(Modifier.fillMaxWidth()) {
         RemoteImage(
-            response.posterUrl,
+            response.backgroundPosterUrl?.takeIf { it.isNotBlank() } ?: response.posterUrl,
             response.posterHeaders,
-            contentDescription = response.name,
-            modifier = Modifier.width(200.dp).height(300.dp),
+            contentDescription = null,
+            modifier = Modifier.matchParentSize(),
+            corner = 0.dp,
         )
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(response.name, style = MaterialTheme.typography.headlineMedium)
-            val facts = listOfNotNull(
-                response.year?.toString(),
-                response.type.name,
-                response.duration?.let { "$it min" },
-                response.contentRating,
-                response.apiName,
+        Box(Modifier.matchParentSize().background(Brush.verticalGradient(0f to background.copy(alpha = 0.35f), 1f to background)))
+        Box(Modifier.matchParentSize().background(Brush.horizontalGradient(0f to background.copy(alpha = 0.6f), 0.7f to background.copy(alpha = 0.2f))))
+        Row(
+            Modifier.padding(start = PageGutter, end = PageGutter, top = 72.dp, bottom = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(28.dp),
+        ) {
+            RemoteImage(
+                response.posterUrl,
+                response.posterHeaders,
+                contentDescription = response.name,
+                modifier = Modifier.width(200.dp).height(300.dp).shadow(20.dp, RoundedCornerShape(8.dp)),
             )
-            Text(facts.joinToString(" · "), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            response.tags?.takeIf { it.isNotEmpty() }?.let {
-                Text(it.joinToString(", "), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            response.plot?.let {
-                Text(it, style = MaterialTheme.typography.bodyMedium, maxLines = 8, overflow = TextOverflow.Ellipsis)
-            }
-            state.unsupported?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-            if (state.unsupported == null && state.movieData == null && state.seasons.isEmpty()) {
-                Text("No episodes yet", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            Row(
-                Modifier.padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                val resume = state.resume
-                if (state.unsupported == null) when {
-                    // Continue watching left off in an episode
-                    resume?.episode != null -> WhiteButton(onClick = { onResume(resume.episode!!) }) {
-                        Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null)
-                        val at = if (resume.positionMs > 0) " at ${formatTime(resume.positionMs)}" else ""
-                        Text("${if (resume.positionMs > 0) "Resume" else "Play"} ${resume.label}$at", modifier = Modifier.padding(start = 8.dp))
-                    }
-
-                    state.movieData != null -> {
-                        WhiteButton(onClick = { onPlay(false) }) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(response.name, style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold))
+                val facts = listOfNotNull(
+                    response.score?.let { "★ ${"%.1f".format(it.toFloat(10))}" },
+                    response.year?.toString(),
+                    response.type.name,
+                    response.duration?.let { "$it min" },
+                    response.contentRating,
+                    response.apiName,
+                )
+                Text(facts.joinToString(" · "), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                response.tags?.takeIf { it.isNotEmpty() }?.let {
+                    Text(it.joinToString(", "), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                response.plot?.let {
+                    Text(it, style = MaterialTheme.typography.bodyMedium, maxLines = 8, overflow = TextOverflow.Ellipsis)
+                }
+                state.unsupported?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                if (state.unsupported == null && state.movieData == null && state.seasons.isEmpty()) {
+                    Text("No episodes yet", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                Row(
+                    Modifier.padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val resume = state.resume
+                    if (state.unsupported == null) when {
+                        // Continue watching left off in an episode
+                        resume?.episode != null -> WhiteButton(onClick = { onResume(resume.episode!!) }) {
                             Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null)
-                            Text(resume?.let { "Resume at ${formatTime(it.positionMs)}" } ?: "Play", modifier = Modifier.padding(start = 8.dp))
+                            val at = if (resume.positionMs > 0) " at ${formatTime(resume.positionMs)}" else ""
+                            Text("${if (resume.positionMs > 0) "Resume" else "Play"} ${resume.label}$at", modifier = Modifier.padding(start = 8.dp))
                         }
-                        if (resume != null) TextButton(onClick = { onPlay(true) }) { Text("Start over") }
+
+                        state.movieData != null -> {
+                            WhiteButton(onClick = { onPlay(false) }) {
+                                Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null)
+                                Text(resume?.let { "Resume at ${formatTime(it.positionMs)}" } ?: "Play", modifier = Modifier.padding(start = 8.dp))
+                            }
+                            if (resume != null) TextButton(onClick = { onPlay(true) }) { Text("Start over") }
+                        }
                     }
+                    LibraryButton(state.bookmark, onBookmark)
+                    // The same title from other extensions, when this one's links do not play
+                    BlackButton(onClick = onSearch) {
+                        Icon(painterResource(Res.drawable.search_icon), contentDescription = null)
+                        Text("Search", modifier = Modifier.padding(start = 8.dp))
+                    }
+                    download?.invoke()
                 }
-                LibraryButton(state.bookmark, onBookmark)
-                // The same title from other extensions, when this one's links do not play
-                BlackButton(onClick = onSearch) {
-                    Icon(painterResource(Res.drawable.search_icon), contentDescription = null)
-                    Text("Search", modifier = Modifier.padding(start = 8.dp))
-                }
-                download?.invoke()
             }
         }
     }
@@ -325,16 +353,22 @@ private fun LibraryButton(current: WatchType, onSelect: (WatchType) -> Unit) {
 
 @Composable
 private fun EpisodeRow(episode: Episode, progress: PlaybackPosition?, download: @Composable () -> Unit, onClick: () -> Unit) {
+    // A rounded line that lights under the mouse, the pages' gutter on both sides
     Row(
-        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 24.dp, vertical = 12.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = PageGutter - 8.dp, vertical = 2.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .clickable(onClick = onClick)
+            .padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (episode.posterUrl != null) {
-            RemoteImage(episode.posterUrl, null, contentDescription = null, modifier = Modifier.width(160.dp).height(90.dp))
+            RemoteImage(episode.posterUrl, null, contentDescription = null, modifier = Modifier.width(160.dp).height(90.dp), corner = 6.dp)
         } else {
             Box(
-                Modifier.size(48.dp).clip(RoundedCornerShape(8.dp)),
+                Modifier.size(48.dp).clip(RoundedCornerShape(8.dp)).background(MaterialTheme.colorScheme.surfaceContainer),
                 contentAlignment = Alignment.Center,
             ) { Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null) }
         }
@@ -344,7 +378,14 @@ private fun EpisodeRow(episode: Episode, progress: PlaybackPosition?, download: 
                 Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             if (progress != null && !progress.watched && progress.positionMs > 0) {
-                LinearProgressIndicator(progress = { progress.fraction }, modifier = Modifier.fillMaxWidth(0.5f).padding(top = 4.dp))
+                LinearProgressIndicator(
+                    progress = { progress.fraction },
+                    modifier = Modifier.fillMaxWidth(0.5f).padding(top = 4.dp).height(3.dp),
+                    trackColor = MaterialTheme.colorScheme.surface,
+                    strokeCap = StrokeCap.Round,
+                    gapSize = 0.dp,
+                    drawStopIndicator = {},
+                )
             }
         }
         when {

@@ -13,6 +13,7 @@ fun desktopThemeMode(value: String?): CloudStreamThemeMode = when (value) {
     "Dracula" -> CloudStreamThemeMode.Dracula
     "Lavender" -> CloudStreamThemeMode.Lavender
     "SilentBlue" -> CloudStreamThemeMode.SilentBlue
+    // "Black" and the default: the Prime Video dark
     else -> CloudStreamThemeMode.Dark
 }
 

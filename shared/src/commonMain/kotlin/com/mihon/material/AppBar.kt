@@ -96,6 +96,11 @@ fun AppBar(
 
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
+    val barColor = backgroundColor ?: if (isActionMode) {
+        MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+    } else {
+        MaterialTheme.colorScheme.background
+    }
     Column(
         modifier = modifier,
     ) {
@@ -121,12 +126,10 @@ fun AppBar(
             title = titleContent,
             actions = actions,
             colors = TopAppBarDefaults.topAppBarColors(
-                // The page's own colour, so the bar is one with it, as in the rest of the app
-                containerColor = backgroundColor ?: if (isActionMode) {
-                    MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
-                } else {
-                    MaterialTheme.colorScheme.background
-                },
+                // The page's own colour, so the bar is one with it, as in the rest of the app, also
+                // when the list scrolls under it
+                containerColor = barColor,
+                scrolledContainerColor = barColor,
             ),
             scrollBehavior = scrollBehavior,
         )

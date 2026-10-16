@@ -1,6 +1,28 @@
 package com.lagradost.cloudstream4.browse
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
+import androidx.compose.foundation.TooltipPlacement
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.unit.DpOffset
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import coil3.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.height
@@ -36,7 +58,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,12 +69,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lagradost.cloudstream4.library.DataStoreWatchStore
 import com.lagradost.cloudstream4.generated.resources.Res
-import com.lagradost.cloudstream4.generated.resources.arrow_downward
+import com.lagradost.cloudstream4.generated.resources.autorenew_24px
+import com.lagradost.cloudstream4.generated.resources.check
+import com.lagradost.cloudstream4.generated.resources.chevron_right
+import com.lagradost.cloudstream4.generated.resources.search_icon
 import com.lagradost.cloudstream4.home.HomeAction
 import com.lagradost.cloudstream4.home.HomeState
 import com.lagradost.cloudstream4.home.HomeStatus
 import com.lagradost.cloudstream4.home.HomeViewModel
-import com.lagradost.cloudstream4.theme.BlackButton
 import com.lagradost.cloudstream4.theme.WhiteButton
 import org.jetbrains.compose.resources.painterResource
 
@@ -67,13 +90,19 @@ fun HomeScreen(
     resume: (apiName: String, url: String) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
+    // What the bar at the top blurs behind its glass
+    val glass = rememberHazeState()
+    // The provider's first title, large, as streaming apps open on one
+    val featured = (state.status as? HomeStatus.Done)?.let { state.rows.firstOrNull()?.items?.firstOrNull() }
+    val showBar = state.providers.isNotEmpty()
 
-    Column(Modifier.fillMaxSize()) {
-        if (state.providers.isNotEmpty()) TopBar(state, viewModel::onAction)
-        // One list, so Continue watching scrolls away with the rows below it
-        LazyColumn(contentPadding = PaddingValues(bottom = DockClearance), modifier = Modifier.fillMaxSize()) {
-            // The provider's first title, large, as streaming apps open on one
-            val featured = (state.status as? HomeStatus.Done)?.let { state.rows.firstOrNull()?.items?.firstOrNull() }
+    Box(Modifier.fillMaxSize()) {
+        // One list, so Continue watching scrolls away with the rows below it. The bar floats over the
+        // banner; without one, the list starts below the bar
+        LazyColumn(
+            contentPadding = PaddingValues(top = if (showBar && featured == null) HomeBarClearance else 0.dp, bottom = DockClearance),
+            modifier = Modifier.fillMaxSize().hazeSource(glass),
+        ) {
             if (featured != null) item(key = "featured") { FeaturedBanner(featured, openDetails) }
             // Above the provider's rows, so it is there even when the provider fails to load
             item { ContinueWatchingRow(DataStoreWatchStore.instance, resume, Modifier.padding(top = 8.dp)) }
@@ -113,41 +142,148 @@ fun HomeScreen(
                 }
             }
         }
+        if (showBar) HomeBar(state, viewModel::onAction, glass, Modifier.align(Alignment.TopCenter).padding(top = 16.dp))
     }
 }
 
+/** The room the bar takes at the top of the page, with the space around it */
+private val HomeBarClearance = 84.dp
+
+/**
+ * A pill of frosted glass floating at the top, as the dock does at the bottom: the provider, which
+ * opens the list of the others, and Reload, which turns while the page loads.
+ */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun TopBar(state: HomeState, onAction: (HomeAction) -> Unit) {
+private fun HomeBar(state: HomeState, onAction: (HomeAction) -> Unit, glass: HazeState, modifier: Modifier = Modifier) {
     var menuOpen by remember { mutableStateOf(false) }
+    val loading = state.status == HomeStatus.Loading
     Row(
-        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier.glass(glass, RoundedCornerShape(percent = 50)).padding(6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Box {
-            TextButton(onClick = { menuOpen = true }) {
-                Text(state.selected ?: "", style = MaterialTheme.typography.titleLarge)
+            GlassButton(onClick = { menuOpen = true }, active = menuOpen, modifier = Modifier.widthIn(max = 360.dp)) {
+                Text(
+                    state.selected ?: "",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
                 Icon(
-                    painterResource(Res.drawable.arrow_downward),
+                    painterResource(Res.drawable.chevron_right),
                     contentDescription = "Choose provider",
-                    modifier = Modifier.padding(start = 4.dp).size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 6.dp).size(20.dp).rotate(if (menuOpen) 270f else 90f),
                 )
             }
-            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                state.providers.forEach { name ->
-                    DropdownMenuItem(
-                        text = { Text(name) },
-                        onClick = {
-                            menuOpen = false
-                            onAction(HomeAction.SelectProvider(name))
-                        },
-                    )
-                }
+            ProviderMenu(
+                expanded = menuOpen,
+                providers = state.providers,
+                selected = state.selected,
+                onDismiss = { menuOpen = false },
+                onSelect = {
+                    menuOpen = false
+                    onAction(HomeAction.SelectProvider(it))
+                },
+            )
+        }
+        // A hairline between the two
+        Box(Modifier.size(1.dp, 22.dp).background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.14f)))
+        TooltipArea(
+            tooltip = { GlassTooltip("Reload") },
+            delayMillis = 300,
+            tooltipPlacement = TooltipPlacement.ComponentRect(anchor = Alignment.BottomCenter, alignment = Alignment.BottomCenter, offset = DpOffset(0.dp, 8.dp)),
+        ) {
+            val turn = rememberInfiniteTransition()
+            val angle by turn.animateFloat(0f, 360f, infiniteRepeatable(tween(900, easing = LinearEasing)))
+            GlassButton(onClick = { onAction(HomeAction.Reload) }, enabled = !loading, round = true) {
+                Icon(
+                    painterResource(Res.drawable.autorenew_24px),
+                    contentDescription = "Reload",
+                    modifier = Modifier.size(20.dp).rotate(if (loading) angle else 0f),
+                )
             }
         }
-        Box(Modifier.weight(1f))
-        BlackButton(onClick = { onAction(HomeAction.Reload) }, enabled = state.status != HomeStatus.Loading) {
-            Text("Reload")
+    }
+}
+
+/**
+ * The providers to pick from, in a rounded card of the theme's colours, the current one ticked. With
+ * many, a box at the top narrows them down as you type.
+ */
+@Composable
+private fun ProviderMenu(
+    expanded: Boolean,
+    providers: List<String>,
+    selected: String?,
+    onDismiss: () -> Unit,
+    onSelect: (String) -> Unit,
+) {
+    var query by remember(expanded) { mutableStateOf("") }
+    val colors = MaterialTheme.colorScheme
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismiss,
+        offset = DpOffset(0.dp, 10.dp),
+        shape = RoundedCornerShape(16.dp),
+        containerColor = colors.surfaceContainer,
+        tonalElevation = 0.dp,
+        shadowElevation = 16.dp,
+        border = BorderStroke(1.dp, colors.onBackground.copy(alpha = 0.08f)),
+        modifier = Modifier.widthIn(min = 260.dp).heightIn(max = 480.dp),
+    ) {
+        if (providers.size > 8) {
+            val focus = remember { FocusRequester() }
+            LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }
+            BasicTextField(
+                value = query,
+                onValueChange = { query = it },
+                singleLine = true,
+                textStyle = MaterialTheme.typography.bodyMedium.copy(color = colors.onBackground),
+                cursorBrush = SolidColor(colors.primary),
+                modifier = Modifier
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(colors.surface)
+                    .focusRequester(focus),
+                decorationBox = { field ->
+                    Row(Modifier.padding(horizontal = 12.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(painterResource(Res.drawable.search_icon), contentDescription = null, tint = colors.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                        Box(Modifier.padding(start = 10.dp)) {
+                            if (query.isEmpty()) Text("Find a provider", style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
+                            field()
+                        }
+                    }
+                },
+            )
+        }
+        val shown = providers.filter { it.contains(query.trim(), ignoreCase = true) }
+        if (shown.isEmpty()) Text(
+            "No provider called \"${query.trim()}\"",
+            style = MaterialTheme.typography.bodyMedium,
+            color = colors.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        )
+        shown.forEach { name ->
+            val current = name == selected
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        name,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = if (current) FontWeight.SemiBold else FontWeight.Normal),
+                        color = if (current) colors.primary else colors.onBackground,
+                    )
+                },
+                trailingIcon = if (current) {
+                    { Icon(painterResource(Res.drawable.check), contentDescription = "Current", tint = colors.primary, modifier = Modifier.size(18.dp)) }
+                } else null,
+                onClick = { onSelect(name) },
+                modifier = Modifier.padding(horizontal = 6.dp).clip(RoundedCornerShape(10.dp)),
+            )
         }
     }
 }

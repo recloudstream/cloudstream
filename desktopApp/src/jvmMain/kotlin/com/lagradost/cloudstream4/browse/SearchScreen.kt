@@ -1,4 +1,7 @@
 package com.lagradost.cloudstream4.browse
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.ui.graphics.Color
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -70,6 +73,14 @@ fun SearchScreen(viewModel: SearchViewModel, openExtensions: () -> Unit, openDet
                 }
             },
             singleLine = true,
+            // A rounded box filled with the theme's box colour, outlined in the accent only while typing
+            shape = RoundedCornerShape(percent = 50),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = PageGutter, vertical = 16.dp)

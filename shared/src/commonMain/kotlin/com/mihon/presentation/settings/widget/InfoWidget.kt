@@ -2,6 +2,8 @@ package com.mihon.presentation.settings.widget
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,14 +24,16 @@ import com.mihon.material.padding
 
 @Composable
 internal fun InfoWidget(text: String) {
-    Column(
+    // The icon beside the text, not on a line of its own
+    Row(
         modifier = Modifier
             .padding(
                 horizontal = PrefsHorizontalPadding,
                 vertical = MaterialTheme.padding.medium,
             )
             .secondaryItemAlpha(),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.medium),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.medium),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             painter = painterResource(Res.drawable.info),

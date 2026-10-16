@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun PreferenceGroupHeader(title: String) {
@@ -18,11 +19,12 @@ fun PreferenceGroupHeader(title: String) {
             .fillMaxWidth()
             .padding(bottom = 8.dp, top = 14.dp),
     ) {
+        // Grey and lined up with the text in the cards below it
         Text(
             text = title,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(horizontal = PrefsHorizontalPadding),
-            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = PrefsHorizontalPadding * 2),
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
         )
     }
 }

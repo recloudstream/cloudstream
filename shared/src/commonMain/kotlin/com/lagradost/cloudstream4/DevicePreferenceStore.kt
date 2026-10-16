@@ -63,7 +63,8 @@ class UIPreferences(preferences: PreferenceStore) {
         "primary_color_key", "Normal"
     )
     val theme = preferences.getString(
-        "app_theme_key", "AmoledLight"
+        // The desktop's Prime Video dark, see desktopThemeMode
+        "app_theme_key", "Black"
     )
     val layout = preferences.getInt(
         "app_layout_key", -1

@@ -10,6 +10,10 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.SliderColors
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SwitchColors
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -118,4 +122,37 @@ fun AppFilterChip(
             selectedTrailingIconColor = colors.onPrimary,
         ),
     )
+}
+
+/**
+ * Switches and sliders in the theme's colours, flat as in streaming apps: Material's own have an
+ * outline round an off switch, and dots along a slider for every step.
+ */
+object AppControls {
+    @Composable
+    fun switchColors(): SwitchColors {
+        val colors = MaterialTheme.colorScheme
+        return SwitchDefaults.colors(
+            checkedThumbColor = Color.White,
+            checkedTrackColor = colors.primary,
+            checkedBorderColor = Color.Transparent,
+            checkedIconColor = colors.primary,
+            // iconGrayBackground, a step off the page
+            uncheckedThumbColor = colors.onSurfaceVariant,
+            uncheckedTrackColor = colors.surface,
+            uncheckedBorderColor = Color.Transparent,
+        )
+    }
+
+    @Composable
+    fun sliderColors(): SliderColors {
+        val colors = MaterialTheme.colorScheme
+        return SliderDefaults.colors(
+            thumbColor = colors.primary,
+            activeTrackColor = colors.primary,
+            inactiveTrackColor = colors.surface,
+            activeTickColor = Color.Transparent,
+            inactiveTickColor = Color.Transparent,
+        )
+    }
 }

@@ -2,14 +2,9 @@ package com.lagradost.cloudstream4
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.border
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import com.lagradost.cloudstream4.browse.DockClearance
+import com.lagradost.cloudstream4.browse.glass
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import androidx.compose.foundation.TooltipArea
@@ -398,27 +393,9 @@ private fun ComingSoon(destination: Destination) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FloatingDock(navigator: AppNavigator, glass: HazeState, modifier: Modifier = Modifier) {
-    val shape = RoundedCornerShape(percent = 50)
-    val background = MaterialTheme.colorScheme.background
     Row(
         modifier
-            .shadow(24.dp, shape, ambientColor = Color.Black, spotColor = Color.Black)
-            .clip(shape)
-            .hazeEffect(
-                glass,
-                HazeStyle(
-                    backgroundColor = background,
-                    tint = HazeTint(background.copy(alpha = 0.55f)),
-                    blurRadius = 28.dp,
-                    noiseFactor = 0.06f,
-                ),
-            )
-            // A light edge along the top, where light would catch the glass
-            .border(
-                1.dp,
-                Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.22f), Color.White.copy(alpha = 0.04f))),
-                shape,
-            )
+            .glass(glass, RoundedCornerShape(percent = 50))
             .padding(6.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -453,7 +430,7 @@ private fun DockItem(destination: Destination, title: String, selected: Boolean,
             .background(
                 when {
                     selected -> primary.copy(alpha = 0.22f)
-                    hovered -> Color.White.copy(alpha = 0.08f)
+                    hovered -> MaterialTheme.colorScheme.onBackground.copy(alpha = 0.08f)
                     else -> Color.Transparent
                 },
             )

@@ -121,7 +121,7 @@ internal fun lightScheme() = CloudStreamColorScheme(
     onBackground = CloudStreamPalette.LightText,
     onSurfaceVariant = CloudStreamPalette.LightGrayText,
     icon = CloudStreamPalette.LightIcon,
-    primary = CloudStreamPalette.Primary,
+    primary = CloudStreamPalette.LightPrimary,
     ongoing = CloudStreamPalette.Ongoing,
     isLight = true,
 )
