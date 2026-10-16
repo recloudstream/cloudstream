@@ -71,6 +71,8 @@ class SystemBrowser(
     private val sessions = ConcurrentHashMap<String, Channel<JsonNode>>()
     private val loads = AtomicInteger(0)
     private var idleJob: Job? = null
+    /** The hidden tab that keeps the browser's session, see [start] */
+    @Volatile private var keeper: String? = null
     /** A check per site at a time in a window: the cookies once passed, else null */
     private val checks = ConcurrentHashMap<String, Deferred<List<JsonNode>?>>()
     /** Sites whose check wants a person, with the page that asked and the user agent it had */
@@ -96,7 +98,7 @@ class SystemBrowser(
         idleJob?.cancel()
         try {
             start()
-            val target = call("Target.createTarget", mapOf("url" to "about:blank")).path("targetId").asText()
+            val target = newTab()
             try {
                 val session = call("Target.attachToTarget", mapOf("targetId" to target, "flatten" to true)).path("sessionId").asText()
                 val events = Channel<JsonNode>(Channel.UNLIMITED)
@@ -232,7 +234,7 @@ class SystemBrowser(
      */
     private suspend fun passInWindow(url: HttpUrl, agent: String?): List<JsonNode>? = try {
         start()
-        val target = call("Target.createTarget", mapOf("url" to "about:blank")).path("targetId").asText()
+        val target = newTab()
         val session = call("Target.attachToTarget", mapOf("targetId" to target, "flatten" to true)).path("sessionId").asText()
         // The cookie only counts for the user agent that passed
         useAgent(agent, session)
@@ -295,7 +297,7 @@ class SystemBrowser(
         idleJob?.cancel()
         try {
             start()
-            val target = call("Target.createTarget", mapOf("url" to "about:blank")).path("targetId").asText()
+            val target = newTab()
             try {
                 val session = call("Target.attachToTarget", mapOf("targetId" to target, "flatten" to true)).path("sessionId").asText()
                 val events = Channel<JsonNode>(Channel.UNLIMITED)
@@ -513,6 +515,8 @@ class SystemBrowser(
                     val id = message.path("id")
                     if (!id.isMissingNode) {
                         pending[id.asInt()]?.complete(message)
+                    } else if (message.path("method").asText() == "Target.targetCreated") {
+                        closePopup(message.path("params").path("targetInfo"))
                     } else {
                         message.path("sessionId").asText(null)?.let { sessions[it]?.trySend(message) }
                     }
@@ -535,7 +539,36 @@ class SystemBrowser(
             call("SystemInfo.getProcessInfo").path("processInfo").firstOrNull { it.path("type").asText() == "browser" }?.path("id")?.asLong()
         }.getOrNull()?.let(ProcessHandle::of)?.orElse(null)?.let { connection = Connection(it, socket) }
         userAgent = runCatching { call("Browser.getVersion").path("userAgent").asText().replace("Headless", "") }.getOrNull()
+        // Windows lists Edge's windows in Alt+Tab, also those of a browser without a window, which can be
+        // neither seen nor closed there. Its tabs are hidden ones, which have no window, and the blank
+        // tab it starts with is closed. One hidden tab stays open: without any, Edge ends the session
+        // and forgets its session cookies. Popups that pages open get a window, so they are closed
+        runCatching { call("Target.setDiscoverTargets", mapOf("discover" to true)) }
+        if (headless) runCatching {
+            val keeper = newTab()
+            call("Target.getTargets").path("targetInfos")
+                .filter { it.path("type").asText() == "page" && it.path("targetId").asText() != keeper }
+                .forEach { call("Target.closeTarget", mapOf("targetId" to it.path("targetId").asText())) }
+            this.keeper = keeper
+        }
         println("INFO SystemBrowser: started ${executable.name}, $userAgent")
+    }
+
+    /** Opens a blank tab, without a window when headless, and returns its target */
+    private suspend fun newTab(): String {
+        val hidden = if (headless) mapOf("hidden" to true, "background" to true) else emptyMap()
+        return call("Target.createTarget", mapOf("url" to "about:blank") + hidden).path("targetId").asText()
+    }
+
+    /** The addresses of the open tabs, but for the one kept open */
+    internal suspend fun tabs(): List<String> = call("Target.getTargets").path("targetInfos")
+        .filter { it.path("type").asText() == "page" && it.path("targetId").asText() != keeper }
+        .map { it.path("url").asText() }
+
+    /** Closes a tab a page opened, an ad most often: links are only looked for in the page itself */
+    private fun closePopup(target: JsonNode) {
+        if (target.path("type").asText() != "page" || target.path("openerId").asText().isEmpty()) return
+        scope.launch { runCatching { call("Target.closeTarget", mapOf("targetId" to target.path("targetId").asText())) } }
     }
 
     private suspend fun devToolsAddress(portFile: File): List<String> {
