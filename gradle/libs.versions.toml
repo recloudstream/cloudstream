@@ -1,6 +1,7 @@
 # https://docs.gradle.org/current/userguide/plugins.html#sec:version_catalog_plugin_application
 # https://docs.gradle.org/current/userguide/dependency_versions.html#sec:strict-version
 [versions]
+haze = "1.7.3"
 activity = "1.13.0"
 androidGradlePlugin = "9.1.1"
 animeDb = "1.0.2"
@@ -77,6 +78,7 @@ versionCode = "68"
 versionName = "4.8.0"
 
 [libraries]
+haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 anime-db = { module = "com.github.recloudstream:anime-db", version.ref = "animeDb" }

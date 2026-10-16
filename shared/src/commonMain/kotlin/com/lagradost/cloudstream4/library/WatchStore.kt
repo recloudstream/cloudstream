@@ -65,6 +65,9 @@ data class ResumeEntry(
     val updateTime: Long,
 )
 
+/** The source a title was last watched from, picked first when it plays again: its name and quality */
+data class SavedSource(val name: String, val quality: Int)
+
 /** The library, playback positions and Continue watching, stored the way the Android app stores them */
 interface WatchStore {
     /** Changes whenever anything is saved, so screens know to read again */
@@ -81,6 +84,10 @@ interface WatchStore {
     fun resumeEntries(): List<ResumeEntry>
     fun setResume(entry: ResumeEntry)
     fun removeResume(parentId: Int)
+
+    /** The source the title, by its id, last played from */
+    fun lastSource(parentId: Int): SavedSource?
+    fun setLastSource(parentId: Int, source: SavedSource)
 }
 
 /** Kept in memory only, for tests and previews */
@@ -90,6 +97,7 @@ class InMemoryWatchStore(private val clock: () -> Long = { System.currentTimeMil
     private val bookmarks = LinkedHashMap<Int, Bookmark>()
     private val positions = HashMap<Int, PlaybackPosition>()
     private val resumes = LinkedHashMap<Int, ResumeEntry>()
+    private val sources = HashMap<Int, SavedSource>()
 
     private fun changed() = _version.update { it + 1 }
 
@@ -119,6 +127,11 @@ class InMemoryWatchStore(private val clock: () -> Long = { System.currentTimeMil
     override fun removeResume(parentId: Int) {
         resumes.remove(parentId)
         changed()
+    }
+
+    override fun lastSource(parentId: Int) = sources[parentId]
+    override fun setLastSource(parentId: Int, source: SavedSource) {
+        sources[parentId] = source
     }
 }
 

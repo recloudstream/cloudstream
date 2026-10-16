@@ -19,6 +19,7 @@ kotlin {
             implementation(libs.kotlinx.collections.immutable)
             implementation(libs.coil.network.okhttp)
             implementation(libs.jna)
+            implementation(libs.haze)
             implementation(libs.okhttp)
             implementation(compose.desktop.currentOs) {
                 // compose.desktop.currentOs imports the wrong material 2, so we exclude it

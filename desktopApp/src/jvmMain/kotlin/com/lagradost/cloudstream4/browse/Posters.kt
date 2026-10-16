@@ -123,6 +123,9 @@ fun RemoteImage(url: String?, headers: Map<String, String>?, contentDescription:
 /** The space at the sides of the pages' rows */
 val PageGutter = 32.dp
 
+/** Room left under a page's last row, so the floating dock at the bottom does not cover it */
+val DockClearance = 104.dp
+
 /** Grows a little under the mouse, as cards do in streaming apps, over its neighbours */
 @Composable
 fun Modifier.hoverZoom(interaction: MutableInteractionSource, enabled: Boolean = true): Modifier {

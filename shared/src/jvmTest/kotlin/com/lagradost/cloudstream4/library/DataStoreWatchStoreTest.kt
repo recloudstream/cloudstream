@@ -46,6 +46,11 @@ class DataStoreWatchStoreTest {
         while (System.currentTimeMillis() < deadline && !(Files.exists(file) && keys.all { it in file.readText() })) Thread.sleep(50)
         keys.forEach { assertTrue(it in file.readText(), "$it is saved under the Android app's key") }
 
+        // The source last watched, desktop's own key
+        assertNull(again.lastSource(42))
+        again.setLastSource(42, SavedSource("Vidplay", 1080))
+        assertEquals(SavedSource("Vidplay", 1080), DataStoreWatchStore().lastSource(42))
+
         again.setBookmark(header, WatchType.NONE)
         again.removeResume(42)
         assertNull(again.bookmark(42))

@@ -92,6 +92,7 @@ import com.lagradost.cloudstream4.generated.resources.ic_baseline_volume_up_24
 import com.lagradost.cloudstream4.generated.resources.pause_24px
 import com.lagradost.cloudstream4.generated.resources.play_arrow_24px
 import com.lagradost.cloudstream4.library.DataStoreWatchStore
+import com.lagradost.cloudstream4.library.SavedSource
 import com.lagradost.cloudstream4.library.saveProgress
 import com.lagradost.cloudstream4.theme.BlackButton
 import com.lagradost.cloudstream4.theme.WhiteButton
@@ -315,6 +316,8 @@ fun PlayerScreen(
     }
     LaunchedEffect(player) {
         var ticks = 0
+        // The link whose source was saved as the title's last, once it played a few seconds
+        var sourceSaved: String? = null
         while (true) {
             status = player.status()
             val last = playedOnLink[1]
@@ -324,6 +327,11 @@ fun PlayerScreen(
             if (status.duration > 0 && status.position > 0 && playedOnLink[0] >= 3) {
                 playedTo[0] = (status.position * 1000).toLong()
                 playedTo[1] = (status.duration * 1000).toLong()
+                val link = currentState.selectedLink
+                if (tracking != null && viewModel.request.localFile == null && link != null && link.url != sourceSaved) {
+                    sourceSaved = link.url
+                    runCatching { DataStoreWatchStore.instance.setLastSource(tracking.header.id, SavedSource(link.name, link.quality)) }
+                }
                 // Every 10 seconds
                 if (++ticks % 20 == 0) saveProgress()
             }

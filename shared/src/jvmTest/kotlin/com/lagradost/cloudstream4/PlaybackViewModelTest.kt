@@ -23,6 +23,7 @@ import com.lagradost.cloudstream4.detail.DetailStatus
 import com.lagradost.cloudstream4.detail.DetailViewModel
 import com.lagradost.cloudstream4.detail.PlayRequest
 import com.lagradost.cloudstream4.library.InMemoryWatchStore
+import com.lagradost.cloudstream4.library.SavedSource
 import com.lagradost.cloudstream4.library.WatchType
 import com.lagradost.cloudstream4.library.saveProgress
 import com.lagradost.cloudstream4.player.HumanChecks
@@ -46,6 +47,7 @@ import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /** Serves a movie, a series, an anime and a torrent, and links for each, from memory */
 private class FakeCatalog : MainAPI() {
@@ -231,6 +233,36 @@ class PlaybackViewModelTest {
         assertEquals("a", vm.state.value.selectedLink?.name)
     }
 
+    private fun preferring(source: SavedSource, vararg links: Pair<String, Int>): LinksViewModel {
+        api.links = links.toList()
+        // Long enough that only the saved source can be picked before loading ends
+        return LinksViewModel(api, PlayRequest("Catalog", "A movie", null, "movie-data", preferredSource = source), 10.seconds)
+    }
+
+    @Test
+    fun theSourceLastWatchedPlaysAsSoonAsItComes() {
+        api.gate = CompletableDeferred()
+        api.slowAfter = 2
+        val vm = preferring(SavedSource("sd", 720), "hd" to 1080, "sd" to 720, "late" to 2160)
+
+        // Picked while links are still coming, over a better one
+        val early = await(vm.state) { it.selected != null }
+        assertTrue(early.loading)
+        assertEquals("sd", early.selectedLink?.name)
+        api.gate!!.complete(Unit)
+        assertEquals("sd", await(vm.state) { !it.loading }.selectedLink?.name)
+
+        // When it fails, the best of the rest plays
+        vm.onAction(LinksAction.Failed("https://example.invalid/sd.m3u8", "403"))
+        assertEquals("late", vm.state.value.selectedLink?.name)
+    }
+
+    @Test
+    fun theSourceLastWatchedComesFirstInAnotherQuality() {
+        val vm = preferring(SavedSource("sd", 480), "hd" to 1080, "sd" to 720)
+        assertEquals("sd", await(vm.state) { !it.loading }.selectedLink?.name)
+    }
+
     @Test
     fun aSlowExtractorDoesNotHoldBackPlayback() {
         api.gate = CompletableDeferred()
@@ -337,6 +369,10 @@ class PlaybackViewModelTest {
         assertEquals(600_000, vm.state.value.resume!!.positionMs)
         assertEquals(0.5f, vm.state.value.progressOf(pilot)!!.fraction)
         assertEquals(600_000, vm.playRequest(pilot)!!.tracking!!.startPositionMs)
+        // Continue watching plays the same, from the source last watched
+        store.setLastSource(state.titleId!!, SavedSource("hd", 1080))
+        assertEquals(vm.playRequest(pilot), vm.resumeRequest())
+        assertEquals(SavedSource("hd", 1080), vm.resumeRequest()!!.preferredSource)
 
         // Nearly finished: Continue watching moves on to the next episode, which starts at the beginning
         store.saveProgress(tracking, positionMs = 1_150_000, durationMs = 1_200_000)

@@ -61,7 +61,8 @@ sealed interface LinksAction {
 /**
  * Finds the links of one movie or episode and picks which to play: the best one once all links are
  * in, or the best so far when links keep coming after [autoPickAfter]. A link that fails to play
- * moves on to the next best one.
+ * moves on to the next best one. The source the title was last watched from plays as soon as it
+ * comes, and is tried before the others.
  */
 class LinksViewModel(
     /** Null when only a downloaded file plays and its extension is not loaded */
@@ -173,10 +174,17 @@ class LinksViewModel(
                 else -> {
                     // Torrents last: they take a while to start and share the user's connection
                     val links = (links + link).sortedWith(compareBy<ExtractorLink> { isTorrent(it) }.thenByDescending { rank(it.quality) })
-                    copy(links = links, selected = selected ?: if (autoPicking) nextLink(links, failed) else null)
+                    val preferred = request.preferredSource?.takeIf { it.name == link.name && it.quality == link.quality && link.url !in failed }
+                    copy(links = links, selected = selected ?: preferred?.let { link.url } ?: if (autoPicking) nextLink(links, failed) else null)
                 }
             }
         }
+    }
+
+    /** The best link not failed yet, one from the source last watched first */
+    private fun nextLink(links: List<ExtractorLink>, failed: Map<String, String>): String? {
+        val left = links.filter { it.url !in failed }
+        return (left.firstOrNull { it.name == request.preferredSource?.name } ?: left.firstOrNull())?.url
     }
 
     private fun pickIfNone() {
@@ -188,8 +196,6 @@ class LinksViewModel(
         /** The source name of a downloaded file */
         const val LOCAL_SOURCE = "Downloaded"
 
-        private fun nextLink(links: List<ExtractorLink>, failed: Map<String, String>) =
-            links.firstOrNull { it.url !in failed }?.url
 
         fun isTorrent(link: ExtractorLink) = link.type == ExtractorLinkType.TORRENT || link.type == ExtractorLinkType.MAGNET
 

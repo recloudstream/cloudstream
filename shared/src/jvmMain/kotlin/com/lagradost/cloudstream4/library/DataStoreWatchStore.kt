@@ -73,6 +73,13 @@ class DataStoreWatchStore(
         @JsonProperty("id") val id: Int,
     )
 
+    /** Desktop's own, the Android app has no such key */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    internal data class LastSource(
+        @JsonProperty("name") val name: String,
+        @JsonProperty("quality") val quality: Int,
+    )
+
     private fun BookmarkedData.toHeader(id: Int) = TitleHeader(id, apiName, url, name, type, posterUrl, posterHeaders, year, plot)
 
     override fun bookmark(id: Int): Bookmark? = synchronized(this) {
@@ -144,6 +151,14 @@ class DataStoreWatchStore(
         changed()
     }
 
+    override fun lastSource(parentId: Int): SavedSource? =
+        context.getKey("$ACCOUNT/$LAST_SOURCE/$parentId", LastSource::class.java)?.let { SavedSource(it.name, it.quality) }
+
+    // Not a change screens show, so no new version
+    override fun setLastSource(parentId: Int, source: SavedSource) {
+        context.setKey("$ACCOUNT/$LAST_SOURCE/$parentId", LastSource(source.name, source.quality))
+    }
+
     companion object {
         /** The Android app's first account, DataStoreHelper.currentAccount */
         private const val ACCOUNT = "0"
@@ -152,6 +167,7 @@ class DataStoreWatchStore(
         private const val POS_DUR = "video_pos_dur"
         private const val RESUME_WATCHING = "result_resume_watching_2"
         private const val HEADER_CACHE = "download_header_cache"
+        private const val LAST_SOURCE = "desktop_last_source"
 
         val instance: DataStoreWatchStore by lazy { DataStoreWatchStore() }
     }

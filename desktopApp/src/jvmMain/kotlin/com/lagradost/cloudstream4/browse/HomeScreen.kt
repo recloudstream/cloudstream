@@ -56,18 +56,24 @@ import org.jetbrains.compose.resources.painterResource
 
 /** The home page of one provider, picked from a menu at the top */
 @Composable
-fun HomeScreen(viewModel: HomeViewModel, openExtensions: () -> Unit, openDetails: (apiName: String, url: String) -> Unit) {
+fun HomeScreen(
+    viewModel: HomeViewModel,
+    openExtensions: () -> Unit,
+    openDetails: (apiName: String, url: String) -> Unit,
+    /** Plays a Continue watching title where it was left */
+    resume: (apiName: String, url: String) -> Unit,
+) {
     val state by viewModel.state.collectAsState()
 
     Column(Modifier.fillMaxSize()) {
         if (state.providers.isNotEmpty()) TopBar(state, viewModel::onAction)
         // One list, so Continue watching scrolls away with the rows below it
-        LazyColumn(contentPadding = PaddingValues(bottom = 24.dp), modifier = Modifier.fillMaxSize()) {
+        LazyColumn(contentPadding = PaddingValues(bottom = DockClearance), modifier = Modifier.fillMaxSize()) {
             // The provider's first title, large, as streaming apps open on one
             val featured = (state.status as? HomeStatus.Done)?.let { state.rows.firstOrNull()?.items?.firstOrNull() }
             if (featured != null) item(key = "featured") { FeaturedBanner(featured, openDetails) }
             // Above the provider's rows, so it is there even when the provider fails to load
-            item { ContinueWatchingRow(DataStoreWatchStore.instance, openDetails, Modifier.padding(top = 8.dp)) }
+            item { ContinueWatchingRow(DataStoreWatchStore.instance, resume, Modifier.padding(top = 8.dp)) }
 
             // What fills the rest of the page while there are no rows
             fun LazyListScope.whole(content: @Composable () -> Unit) = item {

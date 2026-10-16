@@ -91,7 +91,7 @@ fun DownloadsScreen(
             Message(stringResource(Res.string.downloads_empty), "Use the download button on a movie or an episode to watch it offline.")
             return@Column
         }
-        LazyColumn(contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 24.dp), modifier = Modifier.fillMaxSize()) {
+        LazyColumn(contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 16.dp, bottom = DockClearance), modifier = Modifier.fillMaxSize()) {
             titles.forEach { (title, episodes) ->
                 item(key = "title-${title.id}") {
                     TitleRow(title, episodes.size, episodes.sumOf { states[it.id]?.bytes ?: 0 }) { openDetails(title.apiName, title.url) }
