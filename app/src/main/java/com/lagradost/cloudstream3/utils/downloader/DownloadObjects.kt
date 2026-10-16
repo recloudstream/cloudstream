@@ -215,7 +215,9 @@ object DownloadObjects {
         }
 
         fun delete(): Boolean {
-            return file.delete() == true
+            return runCatching {
+               file.delete()
+            }.getOrNull() == true
         }
 
         val resume: Boolean get() = fileLength > 0L

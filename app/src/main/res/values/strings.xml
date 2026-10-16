@@ -83,6 +83,9 @@
     <string name="stream">Network stream</string>
     <string name="open_local_video">Open local video</string>
     <string name="error_loading_links_toast">Error Loading Links</string>
+    <string name="error_file_io_toast">Error occurred when writing to the file. Try setting a new download directory.</string>
+    <string name="error_file_unknown_toast">Error occurred when downloading the file. Try again.</string>
+    <string name="error_file_invalid_toast">Download source is invalid. Try another source.</string>
     <string name="links_reloaded_toast">Links Reloaded</string>
     <string name="download_storage_text">Internal Storage</string>
     <string name="app_dubbed_text">Dub</string>
