@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -187,14 +188,32 @@ class Downloads(
     /** Stops the download and deletes its file and subtitles */
     fun delete(parentId: Int, id: Int) {
         val job = jobs.remove(id)
-        val files = listOfNotNull(store.file(id)?.file) + subtitlesOf(id)
+        val saved = store.file(id)
+        val files = listOfNotNull(saved?.file) + subtitlesOf(id)
         set(id, null)
         store.remove(parentId, id)
         scope.launch {
             // The file is open until the download stops, and Windows cannot delete an open file
             job?.cancelAndJoin()
-            withContext(Dispatchers.IO) { files.forEach { it.delete() } }
+            withContext(Dispatchers.IO) {
+                files.forEach { deleteFile(it) }
+                saved?.let { removeEmptyFolders(it.folder, it.root) }
+            }
         }
+    }
+
+    /**
+     * Deletes a file, trying again for a few seconds while something holds it open, as the player or
+     * a virus scan can on Windows. Its record is gone already, so a file left now would stay on the
+     * disk for good: one that still cannot go is deleted when the app closes.
+     */
+    private suspend fun deleteFile(file: File) {
+        repeat(DELETE_TRIES) {
+            if (!file.exists() || file.delete()) return
+            delay(DELETE_RETRY_MS)
+        }
+        println("WARN Downloads: could not delete $file, it goes when the app closes")
+        file.deleteOnExit()
     }
 
     private fun subtitlesOf(id: Int): List<File> = store.file(id)?.file?.let(::subtitleFiles).orEmpty()
@@ -329,6 +348,21 @@ class Downloads(
     companion object {
         private val SUBTITLE_EXTENSIONS = setOf("vtt", "srt", "txt", "ass", "ttml", "sbv", "dfxp")
         private const val SAVE_EVERY_NS = 2_000_000_000L
+        private const val DELETE_TRIES = 10
+        private const val DELETE_RETRY_MS = 500L
+
+        /**
+         * Removes [folder] and the folders above it that a deleted download left empty, such as a
+         * series' folder after its last episode, up to [root], the downloads folder, which stays
+         */
+        internal fun removeEmptyFolders(folder: File, root: File) {
+            val stop = root.canonicalFile
+            var current: File? = folder.canonicalFile
+            while (current != null && current != stop && current.startsWith(stop) && current.list()?.isEmpty() == true) {
+                if (!current.delete()) return
+                current = current.parentFile
+            }
+        }
 
         /** Links that can be saved to a file: not DRM, not torrents or web pages */
         fun downloadable(link: ExtractorLink) = link !is DrmExtractorLink && Downloader.canDownload(link)

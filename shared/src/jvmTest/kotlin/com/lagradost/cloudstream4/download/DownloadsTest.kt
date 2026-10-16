@@ -157,6 +157,38 @@ class DownloadsTest {
         withTimeout(5_000) { while (file.exists() || subtitle.exists()) kotlinx.coroutines.delay(50) }
         assertNull(again.state(70))
         assertTrue(again.titles().isEmpty())
+        // The series' folders it left empty go too, the downloads folder stays
+        withTimeout(5_000) { while (File(root, "TVSeries").exists()) kotlinx.coroutines.delay(50) }
+        assertTrue(root.isDirectory)
+        scope.cancel()
+    }
+
+    @Test
+    fun aHalfDownloadHeldOpenIsStillDeletedOnceItIsLetGo() = runBlocking {
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        val root = File(dir, "Downloads")
+        val store = DownloadStore()
+        val title = DownloadedTitle(11, "Test", "$base/film3", "Held film", TvType.Movie, null)
+        val movie = DownloadedEpisode(11, 11, null, null, null, null, null)
+        store.saveTitle(title)
+        store.saveEpisode(movie, DownloadSource("Test", "data"))
+        val partial = DownloadFile(video.size.toLong(), root, "Movies", "Held film.mp4")
+        partial.folder.mkdirs()
+        partial.file.writeBytes(video.copyOf(100_000))
+        File(root, "Movies/Other film.mp4").writeBytes(ByteArray(10))
+        store.saveFile(11, partial)
+        val downloads = Downloads(store, scope, LinkFinder { _, _, _ -> }, root = { root })
+        assertEquals(DownloadStatus.Paused, downloads.state(11)?.status)
+
+        // Something else has it open, as the player or a virus scan can: Windows refuses to delete it
+        val held = java.io.FileInputStream(partial.file)
+        downloads.delete(11, 11)
+        assertNull(downloads.state(11))
+        kotlinx.coroutines.delay(800)
+        held.close()
+        withTimeout(8_000) { while (partial.file.exists()) kotlinx.coroutines.delay(50) }
+        // Another film is still in the folder, so it stays
+        assertTrue(File(root, "Movies").isDirectory)
         scope.cancel()
     }
 
@@ -222,6 +254,8 @@ class DownloadsTest {
         withTimeout(5_000) { while (partial.file.exists()) kotlinx.coroutines.delay(50) }
         store.saveTitle(title)
         store.saveEpisode(movie, request.source)
+        // Deleting took the folder it left empty with it
+        partial.folder.mkdirs()
         partial.file.writeBytes(video.copyOf(100_000))
         store.saveFile(9, partial)
         mirror = false
