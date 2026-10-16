@@ -22,18 +22,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * The Android app's buttons and chips, from styles.xml. Material's own buttons are pills in the
- * primary colour; the app's are square-cornered, white for the main action and dark for the others.
+ * The app's buttons and chips: pills, as the dock and the bars are, the main action in the theme's
+ * accent and the others in its tonal surface colour.
  */
 object AppShapes {
-    /** rounded_button_radius in dimens.xml */
-    val button = RoundedCornerShape(4.dp)
+    val button = RoundedCornerShape(percent = 50)
 
     /** dialog__window_background.xml */
     val dialog = RoundedCornerShape(10.dp)
 }
 
-/** WhiteButton in styles.xml: the main action, such as Play */
+/** The main action, such as Play: the theme's accent. Named after WhiteButton in the Android app's styles.xml */
 @Composable
 fun WhiteButton(
     onClick: () -> Unit,
@@ -43,13 +42,12 @@ fun WhiteButton(
     content: @Composable RowScope.() -> Unit,
 ) = NiceButton(
     onClick, modifier, enabled, contentPadding,
-    container = MaterialTheme.colorScheme.onBackground,
-    // iconGrayBackground
-    contentColor = MaterialTheme.colorScheme.surface,
+    container = MaterialTheme.colorScheme.primary,
+    contentColor = MaterialTheme.colorScheme.onPrimary,
     content = content,
 )
 
-/** BlackButton in styles.xml: every other action, such as Download */
+/** Every other action, such as Download: the theme's tonal surface. After BlackButton in styles.xml */
 @Composable
 fun BlackButton(
     onClick: () -> Unit,
@@ -65,7 +63,7 @@ fun BlackButton(
     content = content,
 )
 
-/** NiceButton in styles.xml: 40 dp high, no shadow, bold 15 sp text */
+/** After NiceButton in styles.xml: 44 dp high, no shadow, bold 15 sp text */
 @Composable
 private fun NiceButton(
     onClick: () -> Unit,
@@ -77,7 +75,7 @@ private fun NiceButton(
     content: @Composable RowScope.() -> Unit,
 ) = Button(
     onClick = onClick,
-    modifier = modifier.defaultMinSize(minHeight = 40.dp),
+    modifier = modifier.defaultMinSize(minHeight = 44.dp),
     enabled = enabled,
     shape = AppShapes.button,
     colors = ButtonDefaults.buttonColors(

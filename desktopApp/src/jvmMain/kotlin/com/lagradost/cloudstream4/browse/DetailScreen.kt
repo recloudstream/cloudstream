@@ -1,4 +1,41 @@
 package com.lagradost.cloudstream4.browse
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
+import androidx.compose.foundation.TooltipPlacement
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
+import coil3.compose.AsyncImage
+import com.lagradost.cloudstream3.ActorData
+import com.lagradost.cloudstream3.EpisodeResponse
+import com.lagradost.cloudstream4.generated.resources.baseline_theaters_24
+import com.lagradost.cloudstream4.generated.resources.check
+import com.lagradost.cloudstream4.generated.resources.content_copy_24px
+import com.lagradost.cloudstream4.generated.resources.ic_baseline_add_24
+import com.lagradost.cloudstream4.generated.resources.ic_baseline_replay_24
+import com.lagradost.cloudstream4.generated.resources.open_in_new_24px
+import com.lagradost.cloudstream4.generated.resources.person_24px
+import java.awt.Desktop
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
+import java.net.URI
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.shadow
@@ -31,14 +68,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -158,45 +194,60 @@ private fun Details(
             )
         }
     }
-    LazyColumn(contentPadding = PaddingValues(bottom = DockClearance), modifier = Modifier.fillMaxSize()) {
-        item {
-            Header(
-                response = response,
-                state = state,
-                onPlay = { fromStart -> play(viewModel.playRequest(fromStart = fromStart), null) },
-                onResume = { episode -> play(viewModel.playRequest(episode), episode) },
-                onBookmark = { viewModel.onAction(DetailAction.SetBookmark(it)) },
-                onSearch = { onSearch(response.name) },
-                download = if (state.movieData != null && response.type != TvType.Live) downloadButton(null) else null,
-            )
-        }
-
-        if (state.dubs.size > 1 || state.seasons.size > 1) item {
-            Choices(state, viewModel::onAction)
-        }
-
-        if (season != null) {
-            item {
-                Text(
-                    "${season.label} · ${season.episodes.size} episodes",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(start = PageGutter, end = PageGutter, top = 16.dp, bottom = 8.dp),
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        // Episode cards fill the width, about 440 dp each
+        val columns = ((maxWidth - PageGutter * 2) / 440.dp).toInt().coerceIn(1, 4)
+        LazyColumn(contentPadding = PaddingValues(bottom = DockClearance), modifier = Modifier.fillMaxSize()) {
+            item(key = "hero") {
+                Hero(
+                    response = response,
+                    state = state,
+                    onPlay = { fromStart -> play(viewModel.playRequest(fromStart = fromStart), null) },
+                    onResume = { episode -> play(viewModel.playRequest(episode), episode) },
+                    onBookmark = { viewModel.onAction(DetailAction.SetBookmark(it)) },
+                    onSearch = { onSearch(response.name) },
+                    download = if (state.movieData != null && response.type != TvType.Live) downloadButton(null) else null,
                 )
             }
-            items(season.episodes) { episode ->
-                EpisodeRow(episode, state.progressOf(episode), downloadButton(episode)) { play(viewModel.playRequest(episode), episode) }
-            }
-        }
 
-        val recommendations = response.recommendations.orEmpty()
-        if (recommendations.isNotEmpty()) item {
-            PosterRow(
-                title = "More like this",
-                items = recommendations,
-                horizontal = false,
-                modifier = Modifier.padding(top = 24.dp),
-                onItemClick = { onOpen(it.apiName, it.url) },
-            )
+            if (season != null || state.dubs.size > 1 || state.seasons.size > 1) item(key = "episodes") {
+                Column(Modifier.padding(horizontal = PageGutter).padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    SectionTitle("Episodes", season?.let { "${it.label} · ${it.episodes.size} episodes" })
+                    Choices(state, viewModel::onAction)
+                }
+            }
+            if (season != null) {
+                items(season.episodes.chunked(columns)) { row ->
+                    Row(
+                        Modifier.padding(horizontal = PageGutter, vertical = 6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        row.forEach { episode ->
+                            EpisodeCard(episode, state.progressOf(episode), downloadButton(episode), Modifier.weight(1f)) {
+                                play(viewModel.playRequest(episode), episode)
+                            }
+                        }
+                        // The last row's cards keep the others' width
+                        repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
+                    }
+                }
+            }
+
+            val actors = response.actors.orEmpty()
+            if (actors.isNotEmpty()) item(key = "cast") { CastRow(actors) }
+
+            val recommendations = response.recommendations.orEmpty()
+            if (recommendations.isNotEmpty()) item(key = "more") {
+                PosterRow(
+                    title = "More like this",
+                    items = recommendations,
+                    horizontal = false,
+                    modifier = Modifier.padding(top = 24.dp),
+                    onItemClick = { onOpen(it.apiName, it.url) },
+                )
+            }
+
+            item(key = "about") { About(response) }
         }
     }
 }
@@ -208,91 +259,282 @@ fun formatTime(ms: Long): String {
     return if (h > 0) "%d:%02d:%02d".format(h, m, s) else "%d:%02d".format(m, s)
 }
 
+/** A section's title, with a line of grey after it */
 @Composable
-private fun Header(
+private fun SectionTitle(title: String, detail: String? = null) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        RowTitle(title)
+        detail?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+    }
+}
+
+/**
+ * The top of the page, as on Home: the title's wide picture across most of the window, faded into
+ * the page, with its poster, name or logo, facts, genres and story, then what can be done with it.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun LazyItemScope.Hero(
     response: LoadResponse,
     state: DetailState,
     onPlay: (fromStart: Boolean) -> Unit,
-    onResume: (com.lagradost.cloudstream3.Episode) -> Unit,
+    onResume: (Episode) -> Unit,
     onBookmark: (WatchType) -> Unit,
     onSearch: () -> Unit,
     /** The movie's download button, null for a series or a live stream */
     download: (@Composable () -> Unit)?,
 ) {
     val background = MaterialTheme.colorScheme.background
-    // The title's wide picture behind it, faded into the page below and on the side of the text, as on Home
-    Box(Modifier.fillMaxWidth()) {
+    Box(Modifier.fillParentMaxWidth().heightIn(min = 460.dp).fillParentMaxHeight(0.74f)) {
         RemoteImage(
             response.backgroundPosterUrl?.takeIf { it.isNotBlank() } ?: response.posterUrl,
             response.posterHeaders,
             contentDescription = null,
-            modifier = Modifier.matchParentSize(),
+            modifier = Modifier.fillMaxSize(),
             corner = 0.dp,
         )
-        Box(Modifier.matchParentSize().background(Brush.verticalGradient(0f to background.copy(alpha = 0.35f), 1f to background)))
-        Box(Modifier.matchParentSize().background(Brush.horizontalGradient(0f to background.copy(alpha = 0.6f), 0.7f to background.copy(alpha = 0.2f))))
+        Box(Modifier.matchParentSize().background(Brush.verticalGradient(0f to background.copy(alpha = 0.25f), 0.5f to Color.Transparent, 1f to background)))
+        // Strong on the side of the text, so it reads on a bright picture
+        Box(Modifier.matchParentSize().background(Brush.horizontalGradient(0f to background.copy(alpha = 0.95f), 0.45f to background.copy(alpha = 0.75f), 0.8f to background.copy(alpha = 0.1f), 1f to Color.Transparent)))
         Row(
-            Modifier.padding(start = PageGutter, end = PageGutter, top = 72.dp, bottom = 24.dp),
+            Modifier.align(Alignment.BottomStart).padding(start = PageGutter, end = PageGutter, bottom = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(28.dp),
+            verticalAlignment = Alignment.Bottom,
         ) {
             RemoteImage(
                 response.posterUrl,
                 response.posterHeaders,
                 contentDescription = response.name,
-                modifier = Modifier.width(200.dp).height(300.dp).shadow(20.dp, RoundedCornerShape(8.dp)),
+                modifier = Modifier.width(180.dp).height(270.dp).shadow(24.dp, RoundedCornerShape(8.dp)),
             )
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(response.name, style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold))
-                val facts = listOfNotNull(
-                    response.score?.let { "★ ${"%.1f".format(it.toFloat(10))}" },
-                    response.year?.toString(),
-                    response.type.name,
-                    response.duration?.let { "$it min" },
-                    response.contentRating,
-                    response.apiName,
-                )
-                Text(facts.joinToString(" · "), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                response.tags?.takeIf { it.isNotEmpty() }?.let {
-                    Text(it.joinToString(", "), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Column(Modifier.widthIn(max = 760.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                TitleOrLogo(response)
+                Facts(response, state)
+                response.tags?.takeIf { it.isNotEmpty() }?.let { tags ->
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        tags.take(6).forEach { Tag(it) }
+                    }
                 }
-                response.plot?.let {
-                    Text(it, style = MaterialTheme.typography.bodyMedium, maxLines = 8, overflow = TextOverflow.Ellipsis)
-                }
+                response.plot?.takeIf { it.isNotBlank() }?.let { Plot(it) }
                 state.unsupported?.let { Text(it, color = MaterialTheme.colorScheme.error) }
                 if (state.unsupported == null && state.movieData == null && state.seasons.isEmpty()) {
                     Text("No episodes yet", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                Row(
-                    Modifier.padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    val resume = state.resume
-                    if (state.unsupported == null) when {
-                        // Continue watching left off in an episode
-                        resume?.episode != null -> WhiteButton(onClick = { onResume(resume.episode!!) }) {
-                            Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null)
-                            val at = if (resume.positionMs > 0) " at ${formatTime(resume.positionMs)}" else ""
-                            Text("${if (resume.positionMs > 0) "Resume" else "Play"} ${resume.label}$at", modifier = Modifier.padding(start = 8.dp))
-                        }
+                Actions(response, state, onPlay, onResume, onBookmark, onSearch, download)
+                WatchedSoFar(state)
+            }
+        }
+    }
+}
 
-                        state.movieData != null -> {
-                            WhiteButton(onClick = { onPlay(false) }) {
-                                Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null)
-                                Text(resume?.let { "Resume at ${formatTime(it.positionMs)}" } ?: "Play", modifier = Modifier.padding(start = 8.dp))
-                            }
-                            if (resume != null) TextButton(onClick = { onPlay(true) }) { Text("Start over") }
-                        }
-                    }
-                    LibraryButton(state.bookmark, onBookmark)
-                    // The same title from other extensions, when this one's links do not play
-                    BlackButton(onClick = onSearch) {
-                        Icon(painterResource(Res.drawable.search_icon), contentDescription = null)
-                        Text("Search", modifier = Modifier.padding(start = 8.dp))
-                    }
-                    download?.invoke()
+/** The title's logo when the extension gives one, its name otherwise or when the logo does not load */
+@Composable
+private fun TitleOrLogo(response: LoadResponse) {
+    var logoFailed by remember(response.logoUrl) { mutableStateOf(false) }
+    val logo = response.logoUrl?.takeIf { it.isNotBlank() && !logoFailed }
+    if (logo != null) AsyncImage(
+        model = logo,
+        contentDescription = response.name,
+        contentScale = ContentScale.Fit,
+        alignment = Alignment.BottomStart,
+        onError = { logoFailed = true },
+        modifier = Modifier.fillMaxWidth(0.7f).height(110.dp),
+    ) else Text(
+        response.name,
+        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+    )
+}
+
+/** "★ 7.8 · 2024 · Movie · 112 min · PG-13 · Ongoing · Provider", the score in the accent */
+@Composable
+private fun Facts(response: LoadResponse, state: DetailState) {
+    val grey = MaterialTheme.colorScheme.onSurfaceVariant
+    val facts = listOfNotNull(
+        response.year?.toString(),
+        typeName(response.type),
+        response.duration?.let { "$it min" },
+        state.seasons.size.takeIf { it > 1 }?.let { "$it seasons" },
+        response.contentRating?.takeIf { it.isNotBlank() },
+        (response as? EpisodeResponse)?.showStatus?.name,
+        response.apiName,
+    )
+    Text(
+        buildAnnotatedString {
+            response.score?.let {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                    append("★ ${"%.1f".format(it.toFloat(10))}")
+                }
+                if (facts.isNotEmpty()) append("  ·  ")
+            }
+            append(facts.joinToString("  ·  "))
+        },
+        style = MaterialTheme.typography.bodyMedium,
+        color = grey,
+    )
+}
+
+/** A genre, as a small pill */
+@Composable
+private fun Tag(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelMedium,
+        modifier = Modifier
+            .clip(RoundedCornerShape(percent = 50))
+            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.10f))
+            .padding(horizontal = 10.dp, vertical = 4.dp),
+    )
+}
+
+/** The story, three lines, all of it on a click */
+@Composable
+private fun Plot(plot: String) {
+    var expanded by remember(plot) { mutableStateOf(false) }
+    var overflows by remember(plot) { mutableStateOf(false) }
+    Column {
+        Text(
+            plot,
+            style = MaterialTheme.typography.bodyLarge,
+            maxLines = if (expanded) Int.MAX_VALUE else 3,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = { if (!expanded) overflows = it.hasVisualOverflow },
+        )
+        if (overflows || expanded) Text(
+            if (expanded) "Less" else "More",
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(top = 4.dp).clip(RoundedCornerShape(4.dp)).clickable { expanded = !expanded }.padding(2.dp),
+        )
+    }
+}
+
+/**
+ * Play or resume, large in the accent; the library and download; then small round tools: other
+ * sources, the trailer, the title on the provider's site and copying its link
+ */
+@Composable
+private fun Actions(
+    response: LoadResponse,
+    state: DetailState,
+    onPlay: (fromStart: Boolean) -> Unit,
+    onResume: (Episode) -> Unit,
+    onBookmark: (WatchType) -> Unit,
+    onSearch: () -> Unit,
+    download: (@Composable () -> Unit)?,
+) {
+    val big = PaddingValues(horizontal = 28.dp, vertical = 12.dp)
+    Row(
+        Modifier.padding(top = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val resume = state.resume
+        if (state.unsupported == null) when {
+            // Continue watching left off in an episode
+            resume?.episode != null -> WhiteButton(onClick = { onResume(resume.episode!!) }, contentPadding = big) {
+                Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null)
+                val verb = if (resume.positionMs > 0) "Resume" else "Play"
+                Text("$verb ${resume.label}", modifier = Modifier.padding(start = 8.dp))
+            }
+
+            state.movieData != null -> {
+                WhiteButton(onClick = { onPlay(false) }, contentPadding = big) {
+                    Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null)
+                    Text(if (resume != null) "Resume" else "Play", modifier = Modifier.padding(start = 8.dp))
+                }
+                if (resume != null) BlackButton(onClick = { onPlay(true) }) {
+                    Icon(painterResource(Res.drawable.ic_baseline_replay_24), contentDescription = null, modifier = Modifier.size(20.dp))
+                    Text("Start over", modifier = Modifier.padding(start = 8.dp))
                 }
             }
+
+            // A series not started yet begins at its first episode
+            else -> state.seasons.firstOrNull()?.episodes?.firstOrNull()?.let { first ->
+                WhiteButton(onClick = { onResume(first) }, contentPadding = big) {
+                    Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null)
+                    val label = listOfNotNull(first.season?.let { "S$it" }, first.episode?.let { "E$it" }).joinToString(" ")
+                    Text(if (label.isEmpty()) "Play" else "Play $label", modifier = Modifier.padding(start = 8.dp))
+                }
+            }
+        }
+        LibraryButton(state.bookmark, onBookmark)
+        download?.let { RoundTool("Download") { it() } }
+        RoundTool("Find in other sources", onClick = onSearch) {
+            Icon(painterResource(Res.drawable.search_icon), contentDescription = null, modifier = Modifier.size(20.dp))
+        }
+        response.trailers.firstOrNull()?.let { trailer ->
+            RoundTool("Watch the trailer", onClick = { openInBrowser(trailer.extractorUrl) }) {
+                Icon(painterResource(Res.drawable.baseline_theaters_24), contentDescription = null, modifier = Modifier.size(20.dp))
+            }
+        }
+        RoundTool("Open on ${response.apiName}'s site", onClick = { openInBrowser(response.url) }) {
+            Icon(painterResource(Res.drawable.open_in_new_24px), contentDescription = null, modifier = Modifier.size(20.dp))
+        }
+        var copied by remember { mutableStateOf(false) }
+        LaunchedEffect(copied) {
+            if (copied) {
+                delay(2000)
+                copied = false
+            }
+        }
+        RoundTool(if (copied) "Link copied" else "Copy the link", onClick = {
+            copyText(response.url)
+            copied = true
+        }) {
+            Icon(
+                painterResource(if (copied) Res.drawable.check else Res.drawable.content_copy_24px),
+                contentDescription = null,
+                tint = if (copied) MaterialTheme.colorScheme.primary else LocalContentColor.current,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+    }
+}
+
+/** How far the movie, or the episode to resume, was watched: a thin bar and the time left */
+@Composable
+private fun WatchedSoFar(state: DetailState) {
+    val resume = state.resume ?: return
+    val progress = resume.episode?.let(state::progressOf) ?: state.titleId?.let(state.progress::get) ?: return
+    if (progress.watched || progress.positionMs <= 0 || progress.durationMs <= 0) return
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        LinearProgressIndicator(
+            progress = { progress.fraction },
+            modifier = Modifier.width(220.dp).height(4.dp),
+            trackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.15f),
+            strokeCap = StrokeCap.Round,
+            gapSize = 0.dp,
+            drawStopIndicator = {},
+        )
+        val left = (progress.durationMs - progress.positionMs) / 60_000
+        Text(
+            if (left > 0) "$left min left" else "Almost done",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+/** A round button of the theme's tonal colour, its name on hover */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun RoundTool(name: String, onClick: (() -> Unit)? = null, content: @Composable () -> Unit) {
+    TooltipArea(
+        tooltip = { GlassTooltip(name) },
+        delayMillis = 300,
+        tooltipPlacement = TooltipPlacement.ComponentRect(anchor = Alignment.BottomCenter, alignment = Alignment.BottomCenter, offset = DpOffset(0.dp, 8.dp)),
+    ) {
+        Box(
+            Modifier
+                .size(44.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surface)
+                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+            contentAlignment = Alignment.Center,
+        ) {
+            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) { content() }
         }
     }
 }
@@ -300,7 +542,7 @@ private fun Header(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Choices(state: DetailState, onAction: (DetailAction) -> Unit) {
-    Column(Modifier.padding(horizontal = 24.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         if (state.dubs.size > 1) FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             state.dubs.forEach { dub ->
                 AppFilterChip(
@@ -326,75 +568,197 @@ private fun Choices(state: DetailState, onAction: (DetailAction) -> Unit) {
 @Composable
 private fun LibraryButton(current: WatchType, onSelect: (WatchType) -> Unit) {
     var open by remember { mutableStateOf(false) }
+    val colors = MaterialTheme.colorScheme
     Box {
         BlackButton(onClick = { open = true }) {
-            Text(if (current == WatchType.NONE) "Add to library" else current.label)
+            Icon(
+                painterResource(if (current == WatchType.NONE) Res.drawable.ic_baseline_add_24 else Res.drawable.check),
+                contentDescription = null,
+                tint = if (current == WatchType.NONE) LocalContentColor.current else colors.primary,
+                modifier = Modifier.size(20.dp),
+            )
+            Text(if (current == WatchType.NONE) "My library" else current.label, modifier = Modifier.padding(start = 8.dp))
         }
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+        DropdownMenu(
+            expanded = open,
+            onDismissRequest = { open = false },
+            offset = DpOffset(0.dp, 8.dp),
+            shape = RoundedCornerShape(16.dp),
+            containerColor = colors.surfaceContainer,
+            tonalElevation = 0.dp,
+            shadowElevation = 16.dp,
+            border = BorderStroke(1.dp, colors.onBackground.copy(alpha = 0.08f)),
+        ) {
             WatchType.lists.forEach { type ->
+                val selected = type == current
                 DropdownMenuItem(
-                    text = { Text(if (type == current) "${type.label} ✓" else type.label) },
+                    text = { Text(type.label, color = if (selected) colors.primary else colors.onBackground, fontWeight = if (selected) FontWeight.SemiBold else null) },
+                    trailingIcon = if (selected) {
+                        { Icon(painterResource(Res.drawable.check), contentDescription = null, tint = colors.primary, modifier = Modifier.size(18.dp)) }
+                    } else null,
                     onClick = {
                         open = false
                         onSelect(type)
                     },
+                    modifier = Modifier.padding(horizontal = 6.dp).clip(RoundedCornerShape(10.dp)),
                 )
             }
             if (current != WatchType.NONE) DropdownMenuItem(
-                text = { Text("Remove from library") },
+                text = { Text("Remove from library", color = colors.error) },
                 onClick = {
                     open = false
                     onSelect(WatchType.NONE)
                 },
+                modifier = Modifier.padding(horizontal = 6.dp).clip(RoundedCornerShape(10.dp)),
             )
         }
     }
 }
 
+/**
+ * An episode as a card in the grid: its picture with how far it was watched along the bottom and a
+ * play sign on hover, its name, story and length, and its download button
+ */
 @Composable
-private fun EpisodeRow(episode: Episode, progress: PlaybackPosition?, download: @Composable () -> Unit, onClick: () -> Unit) {
-    // A rounded line that lights under the mouse, the pages' gutter on both sides
+private fun EpisodeCard(
+    episode: Episode,
+    progress: PlaybackPosition?,
+    download: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val hovered by interaction.collectIsHoveredAsState()
+    val colors = MaterialTheme.colorScheme
     Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = PageGutter - 8.dp, vertical = 2.dp)
-            .clip(RoundedCornerShape(10.dp))
+        modifier
+            .height(104.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (hovered) colors.surfaceVariant else colors.surfaceContainer)
+            .hoverable(interaction)
             .clickable(onClick = onClick)
             .padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (episode.posterUrl != null) {
-            RemoteImage(episode.posterUrl, null, contentDescription = null, modifier = Modifier.width(160.dp).height(90.dp), corner = 6.dp)
-        } else {
-            Box(
-                Modifier.size(48.dp).clip(RoundedCornerShape(8.dp)).background(MaterialTheme.colorScheme.surfaceContainer),
+        Box(Modifier.width(156.dp).fillMaxHeight().clip(RoundedCornerShape(8.dp)).background(colors.surface)) {
+            if (episode.posterUrl != null) RemoteImage(episode.posterUrl, null, contentDescription = null, modifier = Modifier.fillMaxSize(), corner = 0.dp)
+            if (hovered || episode.posterUrl == null) Box(
+                Modifier.align(Alignment.Center).size(36.dp).background(Color.Black.copy(alpha = 0.55f), CircleShape),
                 contentAlignment = Alignment.Center,
-            ) { Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null) }
+            ) { Icon(painterResource(Res.drawable.play_arrow_24px), contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp)) }
+            if (progress != null && progress.positionMs > 0) {
+                val fraction = if (progress.watched) 1f else progress.fraction
+                Box(Modifier.align(Alignment.BottomStart).fillMaxWidth().height(3.dp).background(Color.Black.copy(alpha = 0.4f)))
+                Box(Modifier.align(Alignment.BottomStart).fillMaxWidth(fraction).height(3.dp).background(colors.primary))
+            }
         }
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(DetailViewModel.episodeLabel(episode), style = MaterialTheme.typography.titleSmall)
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            Text(
+                DetailViewModel.episodeLabel(episode),
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
             episode.description?.takeIf { it.isNotBlank() }?.let {
-                Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(it, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
-            if (progress != null && !progress.watched && progress.positionMs > 0) {
-                LinearProgressIndicator(
-                    progress = { progress.fraction },
-                    modifier = Modifier.fillMaxWidth(0.5f).padding(top = 4.dp).height(3.dp),
-                    trackColor = MaterialTheme.colorScheme.surface,
-                    strokeCap = StrokeCap.Round,
-                    gapSize = 0.dp,
-                    drawStopIndicator = {},
-                )
+            val meta = when {
+                progress?.watched == true -> "Watched ✓"
+                progress != null && progress.positionMs > 0 -> "${formatTime(progress.positionMs)} / ${formatTime(progress.durationMs)}"
+                else -> episode.runTime?.let { "$it min" }
             }
-        }
-        when {
-            progress?.watched == true -> Text("Watched ✓", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
-            progress != null && progress.positionMs > 0 -> Text("${formatTime(progress.positionMs)} / ${formatTime(progress.durationMs)}", style = MaterialTheme.typography.bodySmall)
-            else -> episode.runTime?.let { Text("$it min", style = MaterialTheme.typography.bodySmall) }
+            meta?.let {
+                Text(it, style = MaterialTheme.typography.labelSmall, color = if (progress?.watched == true) colors.primary else colors.onSurfaceVariant)
+            }
         }
         download()
     }
+}
+
+/** The people in it, as round pictures with their names and parts */
+@Composable
+private fun CastRow(actors: List<ActorData>) {
+    Column(Modifier.padding(top = 24.dp)) {
+        RowTitle("Cast", Modifier.padding(horizontal = PageGutter, vertical = 4.dp))
+        ScrollingRow {
+            items(actors) { data ->
+                Column(Modifier.width(96.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Box(Modifier.size(80.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surface), contentAlignment = Alignment.Center) {
+                        Icon(painterResource(Res.drawable.person_24px), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(36.dp))
+                        data.actor.image?.takeIf { it.isNotBlank() }?.let {
+                            RemoteImage(it, null, contentDescription = data.actor.name, modifier = Modifier.fillMaxSize(), corner = 40.dp)
+                        }
+                    }
+                    Text(data.actor.name, style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold), maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+                    data.roleString?.takeIf { it.isNotBlank() }?.let {
+                        Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Everything known about the title, in a card at the bottom of the page */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun About(response: LoadResponse) {
+    val facts = listOfNotNull(
+        "Provider" to response.apiName,
+        "Type" to typeName(response.type),
+        response.year?.let { "Year" to it.toString() },
+        response.duration?.let { "Runtime" to "$it min" },
+        response.contentRating?.takeIf { it.isNotBlank() }?.let { "Age rating" to it },
+        (response as? EpisodeResponse)?.showStatus?.let { "Status" to it.name },
+        response.score?.let { "Score" to "%.1f / 10".format(it.toFloat(10)) },
+        response.tags?.takeIf { it.isNotEmpty() }?.let { "Genres" to it.joinToString(", ") },
+    )
+    Column(Modifier.padding(start = PageGutter, end = PageGutter, top = 28.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        RowTitle("About")
+        Column(
+            Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceContainer).padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(32.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                facts.forEach { (label, value) ->
+                    Column(Modifier.widthIn(min = 120.dp, max = 360.dp)) {
+                        Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(value, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+            Column {
+                Text("Link", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    response.url,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.clip(RoundedCornerShape(4.dp)).clickable { openInBrowser(response.url) },
+                )
+            }
+        }
+    }
+}
+
+/** "Movie", "Series", "Anime"... */
+private fun typeName(type: TvType): String = when (type) {
+    TvType.TvSeries -> "Series"
+    TvType.AsianDrama -> "Asian drama"
+    TvType.AnimeMovie -> "Anime movie"
+    TvType.OVA -> "OVA"
+    else -> type.name.replace(Regex("(?<=[a-z])(?=[A-Z])"), " ").lowercase().replaceFirstChar { it.uppercase() }
+}
+
+private fun openInBrowser(url: String) {
+    runCatching { Desktop.getDesktop().browse(URI(url)) }
+        .onFailure { println("WARN DetailScreen: could not open $url: $it") }
+}
+
+private fun copyText(text: String) {
+    runCatching { Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(text), null) }
 }
 
 /** The id a download is saved under: the episode's, or the title's for a movie */

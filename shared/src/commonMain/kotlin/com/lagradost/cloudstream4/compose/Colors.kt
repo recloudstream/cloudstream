@@ -14,11 +14,12 @@ object Colors {
             disabledContentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f)
         )
 
+    // The main action in the theme's accent, as theme.WhiteButton
     internal val whiteButton
         @Composable @ReadOnlyComposable get() = ButtonColors(
-            containerColor = MaterialTheme.colorScheme.onBackground,
-            contentColor = MaterialTheme.colorScheme.surfaceVariant,
-            disabledContainerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
-            disabledContentColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
         )
 }
