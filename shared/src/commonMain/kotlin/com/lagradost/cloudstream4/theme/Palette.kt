@@ -34,13 +34,17 @@ internal object CloudStreamPalette {
     val PrimaryDark = Color(0xFF3700B3)
     val Ongoing = Color(0xFFF53B66)
 
-    val DarkPrimaryGrayBg = Color(0xFF2B2C30)
-    val DarkBlackBg = Color(0xFF111111)
-    val DarkIconGrayBg = Color(0xFF1C1C20)
-    val DarkBoxItemBg = Color(0xFF161616)
-    val DarkText = Color(0xFFE9EAEE)
-    val DarkGrayText = Color(0xFF9BA0A4)
-    val DarkIcon = Color(0xFF9BA0A6)
+    // The desktop's default dark, after Netflix: neutral grays, the background #141414, raised
+    // surfaces a step lighter, and gray text #B3B3B3 that reads better than the Android app's
+    val DarkPrimaryGrayBg = Color(0xFF1F1F1F)
+    val DarkBlackBg = Color(0xFF141414)
+    val DarkIconGrayBg = Color(0xFF2A2A2A)
+    val DarkBoxItemBg = Color(0xFF181818)
+    val DarkText = Color(0xFFF2F2F2)
+    val DarkGrayText = Color(0xFFB3B3B3)
+    val DarkIcon = Color(0xFFB3B3B3)
+    /** The Android app's grayTextColor, which the other themes keep */
+    val AndroidGrayText = Color(0xFF9BA0A4)
 
     // Amoled
     val AmoledBlack = Color(0xFF000000)

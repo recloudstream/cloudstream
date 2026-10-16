@@ -1,6 +1,31 @@
 package com.lagradost.cloudstream4.browse
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.zIndex
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.text.font.FontWeight
+import com.lagradost.cloudstream4.generated.resources.Res
+import com.lagradost.cloudstream4.generated.resources.chevron_left
+import com.lagradost.cloudstream4.generated.resources.chevron_right
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -94,12 +119,32 @@ fun RemoteImage(url: String?, headers: Map<String, String>?, contentDescription:
     }
 }
 
+/** The space at the sides of the pages' rows */
+val PageGutter = 32.dp
+
+/** Grows a little under the mouse, as cards do in streaming apps, over its neighbours */
+@Composable
+fun Modifier.hoverZoom(interaction: MutableInteractionSource, enabled: Boolean = true): Modifier {
+    val hovered by interaction.collectIsHoveredAsState()
+    val scale by animateFloatAsState(if (hovered && enabled) 1.06f else 1f, tween(150))
+    return zIndex(if (hovered) 1f else 0f)
+        .graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+            shadowElevation = (scale - 1f) * 200f
+            shape = RoundedCornerShape(8.dp)
+        }
+        .hoverable(interaction)
+}
+
 /** A poster with its title underneath */
 @Composable
 fun PosterCard(item: SearchResponse, horizontal: Boolean, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
+    val interaction = remember { MutableInteractionSource() }
     Column(
         modifier
             .width(if (horizontal) horizontalWidth else verticalWidth)
+            .hoverZoom(interaction, enabled = onClick != null)
             .then(if (onClick != null) Modifier.clip(RoundedCornerShape(8.dp)).clickable(onClick = onClick) else Modifier)
     ) {
         RemoteImage(
@@ -118,8 +163,15 @@ fun PosterCard(item: SearchResponse, horizontal: Boolean, modifier: Modifier = M
     }
 }
 
+/** A row's title, the same on every page */
+@Composable
+fun RowTitle(title: String, modifier: Modifier = Modifier) {
+    Text(title, style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold), modifier = modifier)
+}
+
 /**
- * A titled, sideways-scrolling row of posters.
+ * A titled, sideways-scrolling row of posters. Under the mouse, arrows at its ends scroll it by
+ * most of its width, as the mouse cannot swipe.
  *
  * @param trailing shown after the last poster, for example a "More" button
  */
@@ -136,24 +188,62 @@ fun PosterRow(
 ) {
     Column(modifier.fillMaxWidth()) {
         Row(
-            Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+            Modifier.padding(horizontal = PageGutter, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
+            RowTitle(title)
             subtitle?.let {
                 Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             if (loading) CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
         }
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        ScrollingRow {
             // No keys, providers sometimes list the same item twice and duplicate keys crash the row
             items(items) { item -> PosterCard(item, horizontal, onClick = onItemClick?.let { { it(item) } }) }
             if (trailing != null) item { trailing() }
         }
+    }
+}
+
+/** A sideways row with the arrows of [PosterRow], room around its cards to grow under the mouse */
+@Composable
+fun ScrollingRow(content: LazyListScope.() -> Unit) {
+    val state = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+    val hover = remember { MutableInteractionSource() }
+    val hovered by hover.collectIsHoveredAsState()
+    var width by remember { mutableStateOf(0) }
+    Box(Modifier.fillMaxWidth().hoverable(hover).onSizeChanged { width = it.width }) {
+        LazyRow(
+            state = state,
+            contentPadding = PaddingValues(horizontal = PageGutter, vertical = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            content = content,
+        )
+        Row(Modifier.matchParentSize()) {
+            if (hovered && state.canScrollBackward) RowArrow(Res.drawable.chevron_left, "Scroll back") {
+                scope.launch { state.animateScrollBy(-width * 0.8f) }
+            }
+            Spacer(Modifier.weight(1f))
+            if (hovered && state.canScrollForward) RowArrow(Res.drawable.chevron_right, "Scroll on") {
+                scope.launch { state.animateScrollBy(width * 0.8f) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RowArrow(icon: DrawableResource, description: String, onClick: () -> Unit) {
+    Box(
+        Modifier
+            .width(48.dp)
+            .fillMaxHeight()
+            .background(Color.Black.copy(alpha = 0.55f))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(painterResource(icon), contentDescription = description, tint = Color.White, modifier = Modifier.size(36.dp))
     }
 }
 

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream4.browse
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -16,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -116,8 +116,8 @@ fun ContinueWatchingRow(store: WatchStore, openDetails: (apiName: String, url: S
     val entries = remember(version) { store.resumeEntries().sortedByDescending { it.updateTime } }
     if (entries.isEmpty()) return
     Column(modifier.fillMaxWidth()) {
-        Text("Continue watching", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp))
-        LazyRow(contentPadding = PaddingValues(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        RowTitle("Continue watching", Modifier.padding(horizontal = PageGutter, vertical = 4.dp))
+        ScrollingRow {
             items(entries, key = { it.header.id }) { entry ->
                 val position = remember(version, entry) { store.position(entry.episodeId ?: entry.header.id) }
                 ContinueCard(
@@ -134,9 +134,11 @@ fun ContinueWatchingRow(store: WatchStore, openDetails: (apiName: String, url: S
 @Composable
 private fun ContinueCard(entry: ResumeEntry, position: PlaybackPosition?, onClick: () -> Unit, onRemove: () -> Unit) {
     val header = entry.header
+    val interaction = remember { MutableInteractionSource() }
     Row(
         Modifier
             .width(280.dp)
+            .hoverZoom(interaction)
             .height(84.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant)
