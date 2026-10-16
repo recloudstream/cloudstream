@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.network.WebViewResolver
 import com.sun.net.httpserver.HttpServer
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.net.InetSocketAddress
@@ -53,6 +54,22 @@ class SystemBrowserTest {
             exchange.sendResponseHeaders(200, page.size.toLong())
             exchange.responseBody.use { it.write(page) }
         }
+        // Like an ad: opens more tabs, which Windows would list in Alt+Tab
+        createContext("/ads") { exchange ->
+            val page = """
+                <html><head><title>Ads</title></head><body>
+                <a id="ad" href="/stream/ad" target="_blank">ad</a>
+                <script>
+                  window.open("/stream/popup");
+                  document.getElementById("ad").click();
+                  setTimeout(() => fetch("/stream/ads.m3u8"), 1000);
+                </script>
+                </body></html>
+            """.trimIndent().toByteArray()
+            exchange.responseHeaders.add("Content-Type", "text/html")
+            exchange.sendResponseHeaders(200, page.size.toLong())
+            exchange.responseBody.use { it.write(page) }
+        }
         createContext("/stream") { exchange ->
             exchange.sendResponseHeaders(200, 0)
             exchange.responseBody.close()
@@ -85,6 +102,17 @@ class SystemBrowserTest {
         // Sites refuse a headless browser, which says so in its user agent
         assertFalse(WebViewResolver.webViewUserAgent.orEmpty().contains("Headless"))
         assertFalse(found.header("User-Agent").orEmpty().contains("Headless"))
+    }
+
+    @Test
+    fun keepsNoTabOnceAPageIsLoaded() = runBlocking {
+        if (browser == null) return@runBlocking
+        DesktopWebView.engine = browser
+        val (found, _) = WebViewResolver(Regex("""ads\.m3u8"""), timeout = 30_000).resolveUsingWebView("$base/ads")
+        assertNotNull(found, "the page's request for the stream")
+        // Neither the tab the browser starts with nor the page's popups are left behind
+        delay(1_000)
+        assertEquals(emptyList(), browser.tabs())
     }
 
     /** A test page behind Cloudflare's check (it answers 403 to plain clients), so only with -PcloudflareTest as well */
