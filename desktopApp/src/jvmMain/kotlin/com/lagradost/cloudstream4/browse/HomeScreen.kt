@@ -1,5 +1,20 @@
 package com.lagradost.cloudstream4.browse
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import com.lagradost.cloudstream3.APIHolder
+import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream4.generated.resources.info
+import com.lagradost.cloudstream4.providers.loadSafely
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +63,9 @@ fun HomeScreen(viewModel: HomeViewModel, openExtensions: () -> Unit, openDetails
         if (state.providers.isNotEmpty()) TopBar(state, viewModel::onAction)
         // One list, so Continue watching scrolls away with the rows below it
         LazyColumn(contentPadding = PaddingValues(bottom = 24.dp), modifier = Modifier.fillMaxSize()) {
+            // The provider's first title, large, as streaming apps open on one
+            val featured = (state.status as? HomeStatus.Done)?.let { state.rows.firstOrNull()?.items?.firstOrNull() }
+            if (featured != null) item(key = "featured") { FeaturedBanner(featured, openDetails) }
             // Above the provider's rows, so it is there even when the provider fails to load
             item { ContinueWatchingRow(DataStoreWatchStore.instance, openDetails, Modifier.padding(top = 8.dp)) }
 
@@ -124,3 +142,60 @@ private fun TopBar(state: HomeState, onAction: (HomeAction) -> Unit) {
         }
     }
 }
+
+/**
+ * The provider's first title across the top of the page: its backdrop, faded into the page, with
+ * its name, a few facts and the start of its story. The rows only have its poster, so the rest
+ * loads from its page; the poster stands in until then.
+ */
+@Composable
+private fun LazyItemScope.FeaturedBanner(item: SearchResponse, openDetails: (apiName: String, url: String) -> Unit) {
+    val details by produceState<LoadResponse?>(null, item.apiName, item.url) {
+        val api = APIHolder.getApiFromNameNull(item.apiName) ?: return@produceState
+        value = (api.loadSafely(item.url) as? Resource.Success)?.value
+    }
+    val background = MaterialTheme.colorScheme.background
+    Box(
+        Modifier
+            .fillParentMaxWidth()
+            .heightIn(min = 340.dp, max = 600.dp)
+            .fillParentMaxHeight(0.62f)
+            .padding(bottom = 8.dp),
+    ) {
+        RemoteImage(
+            details?.backgroundPosterUrl ?: details?.posterUrl ?: item.posterUrl,
+            details?.posterHeaders ?: item.posterHeaders,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            corner = 0.dp,
+        )
+        // Faded into the page below and to the left, where the text is
+        Box(Modifier.matchParentSize().background(Brush.verticalGradient(0.45f to Color.Transparent, 1f to background)))
+        Box(Modifier.matchParentSize().background(Brush.horizontalGradient(0f to background.copy(alpha = 0.92f), 0.55f to Color.Transparent)))
+        Column(
+            Modifier.align(Alignment.BottomStart).fillMaxWidth(0.5f).padding(start = PageGutter, bottom = 28.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text(
+                details?.name ?: item.name,
+                style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            val facts = listOfNotNull(
+                details?.year?.toString(),
+                details?.duration?.let { "$it min" },
+                details?.tags?.take(3)?.joinToString(", ")?.ifEmpty { null },
+            )
+            if (facts.isNotEmpty()) Text(facts.joinToString(" · "), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            details?.plot?.let { Text(it, style = MaterialTheme.typography.bodyLarge, maxLines = 3, overflow = TextOverflow.Ellipsis) }
+            Row(Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                WhiteButton(onClick = { openDetails(item.apiName, item.url) }) {
+                    Icon(painterResource(Res.drawable.info), contentDescription = null)
+                    Text("More info", modifier = Modifier.padding(start = 8.dp))
+                }
+            }
+        }
+    }
+}
+
