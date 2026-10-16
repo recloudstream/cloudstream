@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
 import android.annotation.SuppressLint
+import android.text.format.Formatter.formatShortFileSize
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -11,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -62,21 +65,28 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.fasterxml.jackson.core.JacksonException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter.Companion.SHAREABLE_REPO_SEPARATOR
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream4.compose.ActionDialog
 import com.lagradost.cloudstream4.compose.BlackButton
 import com.lagradost.cloudstream4.compose.BlackTextField
@@ -116,10 +126,13 @@ import kotlinx.serialization.SerializationException
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 import com.lagradost.cloudstream4.compose.IsScrolling
+import com.lagradost.cloudstream4.compose.MultiSelectDialog
 import com.lagradost.cloudstream4.compose.WhiteFilterChip
 import com.lagradost.cloudstream4.compose.rounded
 import com.lagradost.cloudstream4.generated.resources.Res
+import com.lagradost.cloudstream4.generated.resources.cancel
 import com.lagradost.cloudstream4.generated.resources.no_results_found
+import com.lagradost.cloudstream4.generated.resources.ok
 import com.lagradost.cloudstream4.viewmodels.DerivedRepositoryState
 import com.lagradost.cloudstream4.viewmodels.FilterPlugin
 import com.lagradost.cloudstream4.viewmodels.Plugin
@@ -127,6 +140,7 @@ import com.lagradost.cloudstream4.viewmodels.PluginStatus
 import com.mihon.presentation.settings.widget.TextPreferenceWidget
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentSet
 import kotlin.math.roundToInt
 import kotlin.stackTraceToString
 import kotlin.text.replace
@@ -232,7 +246,63 @@ object ExtensionsScreen : Screen {
                         stringResource(R.string.extensions)
                     },
                     navigateUp = LocalBackPress.current,
-                    actions = { },
+                    actions = {
+                        var languageDialog by remember { mutableStateOf(false) }
+                        val derivedRepositoryState = state.derivedRepositoryState
+
+                        /** We only show the langauge filter button if we are searching plugins and there is languages to pick from*/
+                        if (state.searchPlugins && derivedRepositoryState.languageCount.isNotEmpty()) {
+                            IconButton(onClick = {
+                                languageDialog = true
+                            }) {
+                                Icon(
+                                    tint = MaterialTheme.colorScheme.onBackground,
+                                    painter = painterResource(R.drawable.language_korean_latin_24px),
+                                    contentDescription = stringResource(R.string.extension_language)
+                                )
+                            }
+                        }
+                        if (languageDialog) {
+                            val entries =
+                                derivedRepositoryState.languageCount.keys.sortedBy { lang ->
+                                    fromTagToLanguageName(lang) ?: lang
+                                }
+
+                            MultiSelectDialog(
+                                title = stringResource(R.string.extension_language),
+                                entries = entries.associateWith { lang ->
+                                    if (lang == "") {
+                                        stringResource(R.string.no_data)
+                                    } else {
+                                        (getNameNextToFlagEmoji(
+                                            lang
+                                        ) ?: lang)
+                                    }
+                                },
+                                properties = DialogProperties(
+                                    usePlatformDefaultWidth = true,
+                                ),
+                                confirmText = stringResource(R.string.ok),
+                                confirm = { selection ->
+                                    val removed =
+                                        derivedRepositoryState.languageCount.keys.subtract(selection)
+                                    onAction(
+                                        ExtensionsAction.FilterByInverseLanguages(
+                                            removed.toPersistentSet()
+                                        )
+                                    )
+                                    languageDialog = false
+                                },
+                                dismissText = stringResource(R.string.cancel),
+                                dismiss = {
+                                    languageDialog = false
+                                },
+                                selectedKeys = derivedRepositoryState.languageCount.keys.subtract(
+                                    state.pluginFilter.removeLanguages
+                                ),
+                            )
+                        }
+                    },
                     scrollBehavior = it,
                 )
             },
@@ -256,12 +326,6 @@ object ExtensionsScreen : Screen {
         )
     }
 
-    val otherTypes: Pair<Int, PersistentList<TvType>> = R.string.others to persistentListOf(
-        TvType.CustomMedia,
-        TvType.Video,
-        TvType.Others
-    )
-
     /** To make the UI even remotely usable, we batch the types */
     val contentTypes: PersistentList<Pair<Int, PersistentList<TvType>>> = persistentListOf(
         R.string.movies_singular to persistentListOf(TvType.Movie),
@@ -279,7 +343,11 @@ object ExtensionsScreen : Screen {
             TvType.Music
         ),
         R.string.nsfw_singular to persistentListOf(TvType.NSFW),
-        otherTypes,
+        R.string.others to persistentListOf(
+            TvType.CustomMedia,
+            TvType.Video,
+            TvType.Others
+        ),
     )
 
     @SuppressLint("UnrememberedMutableState")
@@ -321,9 +389,18 @@ object ExtensionsScreen : Screen {
         var highLight by highLightState
         LaunchedEffect(highLight) {
             if (highLight == null) return@LaunchedEffect
-            val index = state.repositories.sorted.indexOfFirst { uuid -> uuid == highLight }
+            val list = if (state.searchPlugins) {
+                state.plugins.sorted
+            } else {
+                state.repositories.sorted
+            }
+            val index = list.indexOfFirst { uuid -> uuid == highLight }
             if (index != -1) {
-                lazyRepoState.animateScrollToItem(index)
+                lazyRepoState.animateScrollToItem(
+                    index +
+                            /** We have some extra items here */
+                            if (state.searchPlugins) 2 else 1
+                )
             }
             delay(5.0.seconds)
             highLight = null
@@ -374,26 +451,76 @@ object ExtensionsScreen : Screen {
                         onAction = onAction
                     )
                 }
+
                 items(items = state.plugins.sorted, key = { uuid -> uuid }) { uuid ->
                     val plugin = state.plugins.data[uuid]!!
-                    Plugin(
-                        plugin = plugin,
-                        onAction = onAction,
-                        modifier = Modifier
-                            .animateItem()
-                            .graphicsLayer { alpha = itemAlpha.value }
-                    )
-                }
-                if (state.plugins.sorted.isEmpty()) {
-                    item {
-                        Text(
-                            text = org.jetbrains.compose.resources.stringResource(Res.string.no_results_found),
+                    val isHighlighted = uuid == highLight
+                    CompositionLocalProvider(
+                        LocalPreferenceHighlighted provides isHighlighted,
+                    ) {
+                        Plugin(
+                            plugin = plugin,
+                            onAction = onAction,
                             modifier = Modifier
-                                .secondaryItemAlpha()
-                                .fillMaxWidth()
-                                .padding(20.dp),
-                            textAlign = TextAlign.Center
+                                .animateItem()
+                                .graphicsLayer { alpha = itemAlpha.value },
+                            onClick = {
+                                if (state.pluginFilter.repository == null) {
+                                    onAction(ExtensionsAction.SelectPlugin(plugin.uuid))
+                                    highLightState.value = plugin.uuid
+                                }
+                            }
                         )
+                    }
+                }
+
+                val repository = state.pluginFilter.repository
+                val status = repository?.let(state.repositories.data::get)?.status
+                if (state.plugins.sorted.isEmpty()) {
+                    when (status) {
+                        is RepositoryStatus.Failure -> {
+                            item {
+                                ErrorButton(status.cause)
+                            }
+                        }
+
+                        RepositoryStatus.Loading -> {
+                            item {
+                                LinearProgressIndicator(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                )
+                            }
+                        }
+
+                        RepositoryStatus.Success, null -> {
+                            val derivedState =
+                                repository?.let(state.plugins.state.repositories::get)
+
+                            item {
+                                Text(
+                                    text =
+                                        if (repository != null && (derivedState == null || derivedState.total == 0)) {
+                                            /**
+                                             * If we have a repository filter on,
+                                             * but it does not contain anything then show this
+                                             * instead as we do not really filter it but
+                                             * the repo is simply empty. This should mostly be used
+                                             * for plugin authors
+                                             * */
+                                            stringResource(R.string.no_plugins_found_error)
+                                        } else {
+                                            org.jetbrains.compose.resources.stringResource(Res.string.no_results_found)
+                                        },
+                                    modifier = Modifier
+                                        .secondaryItemAlpha()
+                                        .fillMaxWidth()
+                                        .padding(20.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
                     }
                 }
             } else {
@@ -438,25 +565,10 @@ object ExtensionsScreen : Screen {
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
             contentPadding = PaddingValues(horizontal = MaterialTheme.padding.small)
         ) {
-            var any = false
             for ((text, types) in contentTypes) {
                 if (types.none(derivedState::containsType)) {
                     continue
                 }
-                any = true
-                item(key = text) {
-                    FilterSelection(
-                        filter = filter,
-                        text = text,
-                        types = types,
-                        onAction = onAction
-                    )
-                }
-            }
-
-            /** If none TV types exists we always show the "other" filter */
-            if (!any) {
-                val (text, types) = otherTypes
                 item(key = text) {
                     FilterSelection(
                         filter = filter,
@@ -547,32 +659,71 @@ object ExtensionsScreen : Screen {
         plugin: Plugin,
         onAction: (ExtensionsAction) -> Unit,
         modifier: Modifier,
+        onClick: () -> Unit,
     ) {
         val description = plugin.info.description
 
         BasePreferenceWidget(
             modifier = modifier,
             title = plugin.info.name,
-            subcomponent = if (!description.isNullOrBlank()) {
+            subcomponent =
                 {
-                    Text(
-                        text = description,
-                        modifier = Modifier
-                            .padding(horizontal = PrefsHorizontalPadding)
-                            .secondaryItemAlpha(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 3,
-                    )
-                }
-            } else null,
+                    Column(modifier = Modifier.padding(horizontal = PrefsHorizontalPadding)) {
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+                            verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small)
+                        ) {
+                            val language = plugin.info.language
+                            if (!language.isNullOrBlank()) {
+                                Text(
+                                    text = getNameNextToFlagEmoji(language) ?: language,
+                                    modifier = Modifier
+                                        .secondaryItemAlpha(),
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
+                            Text(
+                                text = "v${plugin.info.version}",
+                                modifier = Modifier
+                                    .secondaryItemAlpha(),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                            val sizeBytes = plugin.source?.size
+                            if (sizeBytes != null) {
+                                Text(
+                                    text = formatShortFileSize(LocalContext.current, sizeBytes),
+                                    modifier = Modifier
+                                        .secondaryItemAlpha(),
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
+                            if (plugin.info.tvTypes.contains(TvType.NSFW)) {
+                                Text(
+                                    text = "18+",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = colorResource(R.color.adultColor)
+                                )
+                            }
+                        }
+                        if (!description.isNullOrBlank()) {
+                            Text(
+                                text = description,
+                                modifier = Modifier
+                                    .secondaryItemAlpha(),
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 3,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                },
             icon = {
                 RepositoryIcon(
                     iconUrl = plugin.info.iconUrl,
                     defaultIcon = painterResource(R.drawable.extension_24px)
                 )
             },
-            onClick = {
-            },
+            onClick = onClick,
             onLongClick = {
             },
             widget = {
@@ -633,13 +784,40 @@ object ExtensionsScreen : Screen {
 
                     PluginStatus.Idle -> {
                         if (plugin.downloadLocation != null) {
-                            IconButton(onClick = {
-                                onAction(ExtensionsAction.DeletePlugin(plugin.uuid))
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.delete_24px),
-                                    contentDescription = null
-                                )
+                            val cs3Plugin =
+                                (plugin.source?.pluginUrl?.let(PluginManager.urlPlugins::get)
+                                    ?: (PluginManager.plugins[plugin.downloadLocation])) as? com.lagradost.cloudstream3.plugins.Plugin
+
+                            Row {
+                                val settings = cs3Plugin?.openSettings
+                                if (settings != null) {
+                                    val context = LocalContext.current
+                                    IconButton(onClick = {
+                                        try {
+                                            settings.invoke(context)
+                                        } catch (e: Throwable) {
+                                            Log.e(
+                                                "PluginAdapter",
+                                                "Failed to open ${plugin.info.name} settings: ${
+                                                    Log.getStackTraceString(e)
+                                                }"
+                                            )
+                                        }
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_baseline_tune_24),
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
+                                IconButton(onClick = {
+                                    onAction(ExtensionsAction.DeletePlugin(plugin.uuid))
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.delete_24px),
+                                        contentDescription = null
+                                    )
+                                }
                             }
                         } else {
                             IconButton(onClick = {
@@ -1019,8 +1197,11 @@ object ExtensionsScreen : Screen {
                         if (errorDialog) {
                             ErrorDialog(
                                 error = reason.cause,
-                                tag = stringResource(R.string.download_failed),
+                                tag = stringResource(R.string.error_invalid_data),
                                 confirmButton = {
+                                    WhiteButton(text = stringResource(R.string.reload_error)) {
+                                        onAction(ExtensionsAction.ReloadRepository(repository.uuid))
+                                    }
                                     WhiteButton(text = stringResource(R.string.delete_repository)) {
                                         deleteDialog = true
                                     }

@@ -14,6 +14,7 @@ import com.lagradost.cloudstream4.state.MultiActiveQuery
 import com.lagradost.cloudstream4.state.SearchableData
 import com.lagradost.cloudstream4.state.SearchableDataState
 import com.lagradost.cloudstream4.state.SingleActiveQuery
+import com.lagradost.cloudstream4.state.SortByMatching
 import com.lagradost.cloudstream4.state.SortByName
 import com.lagradost.cloudstream4.state.StateContainer
 import com.lagradost.cloudstream4.state.UniqueItem
@@ -22,6 +23,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Dispatchers
@@ -95,6 +97,8 @@ data class FilterPlugin(
     val tvTypes: PersistentSet<TvType> = TvType.entries.toSet().toPersistentSet(),
     val repository: Uuid? = null,
     val query: FilterByQuery<Plugin> = FilterByQuery(query = "") { it.info.name },
+    /** We filter by the inverse, as that makes is easy to initalize it as all = {} */
+    val removeLanguages: PersistentSet<String> = persistentSetOf(),
 ) : Function1<Plugin, Boolean> {
     override fun invoke(plugin: Plugin): Boolean =
         /** Filter by repository */
@@ -110,7 +114,9 @@ data class FilterPlugin(
                     tvTypes.contains(TvType.Others)
                 } else {
                     plugin.info.tvTypes.any(tvTypes::contains)
-                })
+                }) &&
+                /** Filter by language */
+                (plugin.info.language?.let(removeLanguages::contains)?.not() ?: true)
 }
 
 @Immutable
@@ -127,8 +133,17 @@ data class DerivedRepositoryState(
     val downloadedAndEnabled: Int = 0,
     val downloadedAndDisabled: Int = 0,
     val notDownloaded: Int = 0,
+    /**
+     * Map of strictly positive values corresponding with the count of each language
+     * where null/blank -> ""
+     *
+     * This is for the language filter, to only showcase relevant languages
+     * */
+    val languageCount: PersistentMap<String, Int> = persistentMapOf()
 ) : DerivedState<DerivedRepositoryState, Plugin> {
-    fun containsType(type : TvType) : Boolean = countOfTypes[type.ordinal] > 0
+    val total get() = downloadedAndDisabled + downloadedAndEnabled + notDownloaded
+
+    fun containsType(type: TvType): Boolean = countOfTypes[type.ordinal] > 0
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -160,7 +175,14 @@ data class DerivedRepositoryState(
         for (type in value.info.tvTypes) {
             newCountOfTypes[type.ordinal] = newCountOfTypes[type.ordinal] + 1
         }
+        if (value.info.tvTypes.isEmpty()) {
+            newCountOfTypes[TvType.Others.ordinal] += 1
+        }
+        val language = if (value.info.language.isNullOrBlank()) "" else value.info.language
+        val count = languageCount[language]?.plus(1) ?: 1
+        val newLanguageCount = languageCount.putting(language, count)
         return copy(
+            languageCount = newLanguageCount,
             downloadedAndEnabled = downloadedAndEnabled + if (isDownloaded && isEnabled) 1 else 0,
             downloadedAndDisabled = downloadedAndDisabled + if (isDownloaded && isDisabled) 1 else 0,
             notDownloaded = notDownloaded + if (isNotDownloaded) 1 else 0,
@@ -178,7 +200,15 @@ data class DerivedRepositoryState(
         for (type in value.info.tvTypes) {
             newCountOfTypes[type.ordinal] = newCountOfTypes[type.ordinal] + 1
         }
+        val language = if (value.info.language.isNullOrBlank()) "" else value.info.language
+        val count = languageCount[language]?.minus(1) ?: 0
+        val newLanguageCount = if (count <= 0) {
+            languageCount.removing(language)
+        } else {
+            languageCount.putting(language, count)
+        }
         return copy(
+            languageCount = newLanguageCount,
             downloadedAndEnabled = downloadedAndEnabled - if (isDownloaded && isEnabled) 1 else 0,
             downloadedAndDisabled = downloadedAndDisabled - if (isDownloaded && isDisabled) 1 else 0,
             notDownloaded = notDownloaded - if (isNotDownloaded) 1 else 0,
@@ -239,7 +269,11 @@ data class ExtensionsState(
     //val repoFilter: FilterByQuery<Repository> = FilterByQuery(query = "") { it.info.name },
     val addDialog: AddRepositoryDialog? = null,
     val searchPlugins: Boolean = false
-)
+) {
+    val derivedRepositoryState: DerivedRepositoryState =
+        pluginFilter.repository?.let(plugins.state.repositories::get)
+            ?: plugins.state.sumOfRepositories
+}
 
 @Immutable
 data class AddRepositoryDialog(
@@ -288,8 +322,13 @@ sealed class ExtensionsAction {
     //data class DownloadRepository(val repository: RepositoryInfo) : ExtensionsAction()
     data class DownloadRepositoryWithDialog(val url: String) : ExtensionsAction()
     data class SelectRepository(val uuid: Uuid?) : ExtensionsAction()
+    data class SelectPlugin(val uuid: Uuid?) : ExtensionsAction()
+    data class ReloadRepository(val uuid: Uuid) : ExtensionsAction()
     data class Search(val query: String) : ExtensionsAction()
     data class FilterByTypes(val types: PersistentSet<TvType>) : ExtensionsAction()
+    data class FilterByInverseLanguages(val removeLanguages: PersistentSet<String>) :
+        ExtensionsAction()
+
     data class SetRepositoryDialog(val dialog: AddRepositoryDialog?) : ExtensionsAction()
     object ClearPluginSearch : ExtensionsAction()
 }
@@ -323,6 +362,17 @@ class ExtensionsViewModel2(
                 }
             }
 
+            is ExtensionsAction.ReloadRepository -> {
+                val uuid = action.uuid
+                val current = state.value.repositories.data[uuid] ?: return
+                viewModelScope.launch {
+                    updateState {
+                        copy(repositories = repositories.updating(uuid) { copy(status = RepositoryStatus.Loading) })
+                    }
+                    loadRepository(uuid = uuid, repository = current.info)
+                }
+            }
+
             is ExtensionsAction.SetRepositoryDialog -> {
                 updateState {
                     copy(addDialog = action.dialog)
@@ -347,16 +397,47 @@ class ExtensionsViewModel2(
                 }
             }
 
+            is ExtensionsAction.SelectPlugin -> {
+                updateState {
+                    val plugin = plugins.data[action.uuid] ?: return@updateState this
+                    val newPluginFilter = pluginFilter.copy(repository = plugin.repository)
+                    copy(
+                        plugins = plugins.filteringBy(newPluginFilter),
+                        pluginFilter = newPluginFilter,
+                        searchPlugins = true,
+                    )
+                }
+            }
+
+            is ExtensionsAction.FilterByInverseLanguages -> {
+                updateState {
+                    val newPluginFilter =
+                        pluginFilter.copy(removeLanguages = action.removeLanguages)
+                    copy(
+                        plugins = plugins.filteringBy(newPluginFilter),
+                        pluginFilter = newPluginFilter
+                    )
+                }
+            }
+
             is ExtensionsAction.Search -> {
                 updateState {
                     val newPluginFilter =
                         pluginFilter.copy(query = pluginFilter.query.update(action.query))
+                    val activeQuery = action.query.isNotEmpty()
                     //val newRepoFilter = repoFilter.update(action.query)
                     copy(
-                        plugins = plugins.filteringBy(newPluginFilter),
+                        plugins = plugins.searchBy(
+                            newSorting = if (activeQuery) {
+                                SortByMatching(query = action.query.lowercase()) { it.info.name }
+                            } else {
+                                SortByName { it.info.name }
+                            },
+                            newFilter = newPluginFilter
+                        ),
                         //repositories = repositories.filteringBy(newRepoFilter),
                         pluginFilter = newPluginFilter,
-                        searchPlugins = pluginFilter.repository != null || action.query.isNotEmpty(),
+                        searchPlugins = pluginFilter.repository != null || activeQuery,
                         //repoFilter = newRepoFilter,
                     )
                 }

@@ -69,6 +69,30 @@ data class FilterByQuery<Value>(
     }
 }
 
+/** Sorting by closest match first */
+@Immutable
+data class SortByMatching<Value>(
+    val query: String,
+    val ignoreCase: Boolean = true,
+    val transform: (Value) -> String,
+) : Comparator<Value> {
+    override fun compare(p0: Value?, p1: Value?): Int {
+        if (p0 == p1) return 0
+        if (p0 == null) return -1
+        if (p1 == null) return 1
+        return score(p1).compareTo(score(p0))
+    }
+
+    fun score(p0: Value) : Int {
+        val transformed = transform(p0)
+        val matchAgainst = if (ignoreCase) transformed.lowercase() else transformed
+        return Levenshtein.ratio(
+            query,
+            matchAgainst
+        )
+    }
+}
+
 /** Default sorting by name (Ascending A->Z), use `rev()` if Z->A is desired */
 @Immutable
 data class SortByName<Value>(
@@ -162,6 +186,13 @@ data class SearchableDataState<Key, Value, State : DerivedState<State, Value>>(
     @CheckResult
     fun filteringBy(newFilter: ((Value) -> Boolean)?): SearchableDataState<Key, Value, State> =
         copy(internalData = internalData.filteringBy(newFilter))
+
+    @CheckResult
+    fun searchBy(
+        newSorting: Comparator<Value>,
+        newFilter: ((Value) -> Boolean)?
+    ): SearchableDataState<Key, Value, State> =
+        copy(internalData = internalData.searchBy(newSorting = newSorting, newFilter = newFilter))
 
     @CheckResult
     fun updating(
@@ -301,6 +332,28 @@ data class SearchableData<Key, Value>(
     }
 
     @CheckResult
+    fun searchBy(
+        newSorting: Comparator<Value>,
+        newFilter: ((Value) -> Boolean)?
+    ): SearchableData<Key, Value> {
+        if (newFilter == filteredBy && newSorting == sortedBy) {
+            return this
+        }
+        val newFiltered = if (newFilter == filteredBy) {
+            filtered
+        } else {
+            filter(data = data, filteredBy = newFilter)
+        }
+        val newSorted = sort(data = data, filtered = newFiltered, sortedBy = newSorting)
+        return copy(
+            filteredBy = newFilter,
+            sortedBy = newSorting,
+            filtered = newFiltered,
+            sorted = newSorted
+        )
+    }
+
+    @CheckResult
     fun updating(
         key: Key,
         /** Does not guarantee that updater is called if key does not exist */
@@ -347,8 +400,7 @@ data class SearchableData<Key, Value>(
         } else if (newFiltered.size < filtered.size) {
             /** Shown -> Hidden, If the update filtered out the item then just remove it from the list */
             return copy(data = newData, filtered = newFiltered, sorted = sorted.removing(key))
-        } else
-        {
+        } else {
             /** Hidden -> Shown, we only need to insert it to the sorted list */
             return copy(
                 data = newData, filtered = newFiltered, sorted = addItemAt(
