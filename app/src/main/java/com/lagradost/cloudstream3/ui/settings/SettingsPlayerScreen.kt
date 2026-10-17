@@ -155,9 +155,9 @@ object SettingsPlayerScreen : SearchableSettings {
                         icon = painterResource(R.drawable.pause_24px),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
-                        preference = settings.player.sourceAutoSwitchEnabled,
-                        title = stringResource(R.string.auto_switch_stalled_source),
-                        subtitle = stringResource(R.string.auto_switch_stalled_source_des),
+                        preference = settings.player.stuckSourceButtonEnabled,
+                        title = stringResource(R.string.stuck_source_button),
+                        subtitle = stringResource(R.string.stuck_source_button_des),
                         icon = painterResource(R.drawable.baseline_sync_24),
                     ),
                     Preference.PreferenceItem.SwitchPreference(

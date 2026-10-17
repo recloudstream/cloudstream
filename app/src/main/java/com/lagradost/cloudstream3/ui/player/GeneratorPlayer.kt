@@ -190,7 +190,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private val stuckBufferingWatcher = StuckBufferingWatcher(
         isBuffering = { currentPlayerStatus == CSPlayerLoading.IsBuffering },
         currentPosition = { player.getPosition() ?: 0L },
-        onSwitchSource = ::autoSwitchFromStall,
+        onStuckChanged = ::showStuckSourceButton,
     )
 
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
@@ -1727,16 +1727,23 @@ class GeneratorPlayer : FullScreenPlayer() {
         loadLink(nextLink.link, true)
     }
 
-    /** Called by [StuckBufferingWatcher] when the current source is stuck buffering. */
-    private fun autoSwitchFromStall() {
+    /** Called by [StuckBufferingWatcher]; shows the stuck-source button while stalled. */
+    private fun showStuckSourceButton(stuck: Boolean) {
+        val show = stuck && hasNextMirror() &&
+            // Live streams: mirror-switching fights the live-edge logic.
+            (currentMeta as? ResultEpisode)?.tvType?.isLiveStream() != true &&
+            // Torrents buffer by nature; switching mirrors cannot help.
+            currentSelectedLink?.first?.type != ExtractorLinkType.MAGNET &&
+            currentSelectedLink?.first?.type != ExtractorLinkType.TORRENT
+        binding?.playerStuckSourceButton?.isVisible = show
+        if (show) {
+            binding?.playerStuckSourceButton?.requestFocus()
+        }
+    }
+
+    private fun switchFromStuckButton() {
         if (!hasNextMirror()) return
-        // Live streams: mirror-switching fights the live-edge logic.
-        if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
-        // Torrents buffer by nature; switching mirrors cannot help.
-        val type = currentSelectedLink?.first?.type
-        if (type == ExtractorLinkType.MAGNET || type == ExtractorLinkType.TORRENT) return
         StuckBufferingWatcher.recordHostFailure(currentSelectedLink?.first?.url)
-        showToast(activity?.getString(R.string.auto_switch_source_toast))
         nextMirror()
     }
 
@@ -2335,6 +2342,19 @@ class GeneratorPlayer : FullScreenPlayer() {
             // Mark as "success" early
             viewModel.modifyState {
                 copy(loading = Resource.Success(Unit))
+            }
+        }
+
+        binding.playerStuckSourceButton.setOnClickListener {
+            switchFromStuckButton()
+        }
+
+        // opt-in manual "next source" button in the controls row, kept next to the source
+        // picker; the stuck watcher read the same setting at its last tick
+        playerBinding?.playerNextSourceBtt?.apply {
+            isVisible = StuckBufferingWatcher.isEnabled()
+            setOnClickListener {
+                switchFromStuckButton()
             }
         }
 
