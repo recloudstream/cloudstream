@@ -23,6 +23,7 @@ import com.lagradost.cloudstream4.viewmodels.ExtensionsEffect.RepositoryAdded
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentMap
@@ -354,12 +355,29 @@ sealed class ExtensionsAction {
     object CancelPluginsUpdate : ExtensionsAction()
 }
 
+/**
+ * Here viewmodel acts as a view state holder that keeps everything up to date,
+ * and RepositoryManager is invoked to handle the platform specific features
+ *
+ * UI -(onAction)-> Viewmodel -(invokes)-> RepositoryManager
+ *   <---(state)---/        <--(callback)--/
+ * */
 class ExtensionsViewModel2(
     private val manager: RepositoryManager,
     private val localUuid: Uuid = Uuid.random(),
 ) : ViewModel(), StateContainer<ExtensionsState> by DefaultStateContainer(ExtensionsState()),
     EffectContainer<ExtensionsEffect> by DefaultEffectContainer(),
     ActionHandler<ExtensionsAction> {
+    private val localRepository = Repository(
+        info = RepositoryInfo(
+            iconUrl = null,
+            name = "Local plugins",
+            url = "https://github.com/recloudstream/cloudstream",
+            description = "Locally installed plugins"
+        ),
+        status = RepositoryStatus.Success,
+        uuid = localUuid
+    )
     private val repositoryDispatcher = MultiActiveQuery<Uuid>(dispatcher = Dispatchers.IO)
     private val downloadDispatcher = MultiActiveQuery<Uuid>(dispatcher = Dispatchers.IO)
     private val addRepositoryDispatcher = SingleActiveQuery(dispatcher = Dispatchers.IO)
@@ -833,9 +851,51 @@ class ExtensionsViewModel2(
 
         repositoryDispatcher.launch(localUuid) {
             val pluginsFetched = manager.getLocalPlugins(localUuid)
-            val newPlugins = pluginsFetched.associateBy { it.uuid }
             updateState {
-                copy(plugins = plugins.setTo(plugins.data.puttingAll(newPlugins)))
+                val oldPlugins = plugins.data.values.associate { it.downloadLocation to it.uuid }
+
+                /** Reuse the uuid if possible, to avoid duplicates and avoid clearing UI */
+                val newPluginsFetched = pluginsFetched.associate { plugin ->
+                    require(plugin.downloadLocation != null) {
+                        "All local plugins must have a download path"
+                    }
+
+                    val newUuid = oldPlugins[plugin.downloadLocation] ?: Uuid.random()
+                    newUuid to if (newUuid != plugin.uuid) {
+                        plugin.copy(uuid = newUuid)
+                    } else {
+                        plugin
+                    }
+                }
+
+                /**
+                 * Remove ALL the old ones instead of putting as something might have been removed
+                 * (this is *very* *very* unlikely, but more correct
+                 * */
+                val newPlugins = plugins.data.mutate { edit ->
+                    for ((uuid, plugin) in plugins.data) {
+                        if (plugin.repository == localUuid) {
+                            edit.remove(uuid)
+                        }
+                    }
+                    edit.putAll(newPluginsFetched)
+                }
+
+                copy(
+                    plugins =
+                        if (newPlugins != plugins) {
+                            plugins.setTo(newPlugins)
+                        } else {
+                            plugins
+                        },
+                    repositories =
+                        /** Only show local plugins if those are actually used */
+                        if (newPluginsFetched.isEmpty()) {
+                            repositories.removing(localUuid)
+                        } else {
+                            repositories.adding(localUuid, localRepository)
+                        }
+                )
             }
         }
 

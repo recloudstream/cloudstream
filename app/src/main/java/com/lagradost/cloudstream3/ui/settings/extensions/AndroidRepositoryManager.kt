@@ -223,7 +223,27 @@ object AndroidRepositoryManager : RepositoryManager {
     }
 
     override fun getLocalPlugins(localUuid: Uuid): List<Plugin> {
-        return listOf() // TODO
+        val plugins = PluginManager.getPluginsLocal()
+        return plugins.map { plugin ->
+            Plugin(
+                info = PluginInfo(
+                    name = plugin.internalName,
+                    internalName = plugin.internalName,
+                    version = plugin.version,
+                    tvTypes = persistentListOf(),
+                    authors = persistentListOf(),
+                    status = 1,
+                    iconUrl = null,
+                    language = null,
+                    description = null,
+                    repositoryUrl = null
+                ),
+                source = null,
+                status = PluginStatus.Idle,
+                downloadLocation = plugin.filePath,
+                repository = localUuid,
+            )
+        }
     }
 
     override suspend fun deletePlugin(location: String) {

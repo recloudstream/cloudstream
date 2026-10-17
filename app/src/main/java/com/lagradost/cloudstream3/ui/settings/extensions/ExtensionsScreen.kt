@@ -948,6 +948,7 @@ object ExtensionsScreen : Screen {
                             )
                         }
                         if (errorDialog) {
+                            val isDownloaded = plugin.downloadLocation != null
                             ErrorDialog(
                                 error = status.cause,
                                 tag = stringResource(
@@ -955,12 +956,21 @@ object ExtensionsScreen : Screen {
                                     plugin.info.name
                                 ),
                                 confirmButton = {
-                                    WhiteButton(
-                                        text = stringResource(R.string.reload_error),
-                                        onClick = {
-                                            errorDialog = false
-                                            onAction(ExtensionsAction.DownloadPlugin(plugin.uuid))
-                                        })
+                                    if (isDownloaded) {
+                                        WhiteButton(
+                                            text = stringResource(R.string.delete_plugin),
+                                            onClick = {
+                                                errorDialog = false
+                                                onAction(ExtensionsAction.DeletePlugin(plugin.uuid))
+                                            })
+                                    } else {
+                                        WhiteButton(
+                                            text = stringResource(R.string.reload_error),
+                                            onClick = {
+                                                errorDialog = false
+                                                onAction(ExtensionsAction.DownloadPlugin(plugin.uuid))
+                                            })
+                                    }
                                 },
                                 onDismissRequest = {
                                     errorDialog = false
