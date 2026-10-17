@@ -353,6 +353,7 @@ sealed class ExtensionsAction {
     object ClearPluginSearch : ExtensionsAction()
     object UpdateAllPlugins : ExtensionsAction()
     object CancelPluginsUpdate : ExtensionsAction()
+    data class CancelPluginDownloader(val uuid: Uuid) : ExtensionsAction()
 }
 
 /**
@@ -416,6 +417,12 @@ class ExtensionsViewModel2(
                             copy(updateAllPluginsDialog = null)
                         }
                     }
+                }
+            }
+
+            is ExtensionsAction.CancelPluginDownloader -> {
+                viewModelScope.launch {
+                    downloadDispatcher.cancelOne(action.uuid)
                 }
             }
 
@@ -600,10 +607,6 @@ class ExtensionsViewModel2(
                 }
             }
         }
-    }
-
-    private suspend fun cancelPlugin(uuid: Uuid) {
-        downloadDispatcher.cancelOne(uuid)
     }
 
     private suspend fun deletePlugin(plugin: Plugin) {

@@ -10,6 +10,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,6 +67,8 @@ import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
+import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.Clipboard
@@ -125,6 +128,7 @@ import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.lagradost.cloudstream4.viewmodels.AddRepositoryDialog
 import com.lagradost.cloudstream4.viewmodels.DerivedRepositoryState
 import com.lagradost.cloudstream4.viewmodels.ExtensionsAction
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.*
 import com.lagradost.cloudstream4.viewmodels.ExtensionsEffect
 import com.lagradost.cloudstream4.viewmodels.ExtensionsState
 import com.lagradost.cloudstream4.viewmodels.ExtensionsViewModel2
@@ -150,6 +154,7 @@ import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
+import kotlin.collections.get
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
@@ -164,11 +169,11 @@ fun Preview() {
         ExtensionsScreen.Content(
             state = ExtensionsState(
                 //addDialog = AddRepositoryDialog(error = Throwable()),
-                updateAllPluginsDialog = PluginsUpdatingDialog(
+                /*updateAllPluginsDialog = PluginsUpdatingDialog(
                     total = 5,
                     downloaded = 4,
                     failed = 0
-                ),
+                ),*/
                 repositories = SearchableData.from(
                     data = persistentMapOf(
                         uuid1 to Repository(
@@ -235,7 +240,7 @@ object ExtensionsScreen : Screen {
         onAction: (ExtensionsAction) -> Unit,
         highLightState: MutableState<Uuid?> = remember { mutableStateOf(null) },
     ) {
-        val (top, bottom) = remember { FocusRequester.createRefs() }
+        val (topFocusRequester, bottomFocusRequester) = remember { FocusRequester.createRefs() }
         val fabExpanded = remember { mutableStateOf(true) }
 
         com.mihon.material.Scaffold(
@@ -244,9 +249,9 @@ object ExtensionsScreen : Screen {
             topBar = {
                 AppBar(
                     modifier = Modifier
-                        .focusRequester(top)
+                        .focusRequester(topFocusRequester)
                         .focusProperties {
-                            down = bottom
+                            down = bottomFocusRequester
                         },
                     title = if (state.pluginFilter.repository != null) {
                         state.repositories[state.pluginFilter.repository]?.info?.name
@@ -278,7 +283,9 @@ object ExtensionsScreen : Screen {
                     state = state,
                     onAction = onAction,
                     highLightState = highLightState,
-                    fabExpanded = fabExpanded
+                    fabExpanded = fabExpanded,
+                    focusRequester = bottomFocusRequester,
+                    topBarFocusRequester = topFocusRequester
                 )
             },
         )
@@ -428,6 +435,8 @@ object ExtensionsScreen : Screen {
         onAction: (ExtensionsAction) -> Unit,
         highLightState: MutableState<Uuid?>,
         fabExpanded: MutableState<Boolean>,
+        topBarFocusRequester: FocusRequester,
+        focusRequester: FocusRequester,
     ) {
         AddDialog(dialog = state.addDialog, onAction = onAction)
         UpdateDialog(dialog = state.updateAllPluginsDialog, onAction = onAction)
@@ -497,7 +506,13 @@ object ExtensionsScreen : Screen {
         LazyColumn(
             state = lazyState,
             contentPadding = contentPadding,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .focusGroup()
+                .focusRequester(focusRequester)
+                .focusProperties {
+                    up = topBarFocusRequester
+                },
         ) {
             item(key = "header") {
                 Spacer(modifier = Modifier.height(MaterialTheme.padding.medium))
@@ -634,16 +649,30 @@ object ExtensionsScreen : Screen {
         derivedState: DerivedRepositoryState,
         onAction: (ExtensionsAction) -> Unit,
     ) {
+        val defaultFocusRequester = remember { FocusRequester() }
+
         LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusGroup()
+                .focusRestorer(defaultFocusRequester),
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
             contentPadding = PaddingValues(horizontal = MaterialTheme.padding.small)
         ) {
+            var first = true
             for ((text, types) in contentTypes) {
                 if (types.none(derivedState::containsType)) {
                     continue
                 }
+                val modifier = if (first) {
+                    first = false
+                    Modifier.focusRequester(defaultFocusRequester)
+                } else {
+                    Modifier
+                }
                 item(key = text) {
                     FilterSelection(
+                        modifier = modifier,
                         filter = filter,
                         text = text,
                         types = types,
@@ -660,11 +689,13 @@ object ExtensionsScreen : Screen {
         text: Int,
         types: PersistentList<TvType>,
         onAction: (ExtensionsAction) -> Unit,
+        modifier: Modifier = Modifier,
     ) {
         val selected =
             filter.tvTypes.contains(types[0])
 
         WhiteFilterChip(
+            modifier = modifier,
             selected = selected,
             label = stringResource(text),
         ) {
@@ -697,12 +728,20 @@ object ExtensionsScreen : Screen {
                     ?.replace(":", " ")
             }
             .joinToString("\n")
+
+        val (logFocusRequester, dismissFocusRequester) = remember { FocusRequester.createRefs() }
+
         AlertDialog(
             containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = onDismissRequest,
             confirmButton = confirmButton,
             dismissButton = {
-                BlackButton(text = stringResource(R.string.dismiss), onClick = onDismissRequest)
+                BlackButton(
+                    text = stringResource(R.string.dismiss),
+                    onClick = onDismissRequest,
+                    modifier = Modifier
+                        .focusRequester(dismissFocusRequester)
+                )
             },
             text = {
                 val clipboard = LocalClipboard.current
@@ -719,7 +758,13 @@ object ExtensionsScreen : Screen {
                             scope.launch {
                                 clipboard.setPlainText("Logcat", message)
                             }
-                        })
+                        },
+                        modifier = Modifier
+                            .focusRequester(logFocusRequester)
+                            .focusProperties {
+                                down = dismissFocusRequester
+                            }
+                    )
                 }
             },
             title = {
@@ -847,8 +892,15 @@ object ExtensionsScreen : Screen {
                 })
         }
 
+        val (backgroundFocusRequester, buttonsFocusRequester) =
+            remember { FocusRequester.createRefs() }
+
         BasePreferenceWidget(
-            modifier = modifier,
+            modifier = modifier
+                .focusRequester(backgroundFocusRequester)
+                .focusProperties {
+                    end = buttonsFocusRequester
+                },
             title = plugin.info.name,
             subcomponent =
                 {
@@ -914,6 +966,132 @@ object ExtensionsScreen : Screen {
                 extendedDialog = true
             },
             widget = {
+                PluginWidget(
+                    plugin = plugin,
+                    onAction = onAction,
+                    returnFocusRequester = backgroundFocusRequester,
+                    modifier = Modifier
+                        .focusRequester(buttonsFocusRequester)
+                        .focusProperties {
+                            start = backgroundFocusRequester
+                        }
+                        .focusGroup()
+                )
+            },
+        )
+    }
+
+    @Composable
+    fun PluginWidget(
+        plugin: Plugin,
+        onAction: (ExtensionsAction) -> Unit,
+        modifier: Modifier,
+        returnFocusRequester: FocusRequester,
+    ) {
+        var errorDialog by remember { mutableStateOf<Throwable?>(null) }
+        val errorCause = errorDialog
+        if (errorCause != null) {
+            val isDownloaded = plugin.downloadLocation != null
+            ErrorDialog(
+                error = errorCause,
+                tag = stringResource(
+                    R.string.plugin_load_fail,
+                    plugin.info.name
+                ),
+                confirmButton = {
+                    if (isDownloaded) {
+                        WhiteButton(
+                            text = stringResource(R.string.delete_plugin),
+                            onClick = {
+                                errorDialog = null
+                                onAction(DeletePlugin(plugin.uuid))
+                            })
+                    } else {
+                        WhiteButton(
+                            text = stringResource(R.string.reload_error),
+                            onClick = {
+                                errorDialog = null
+                                onAction(DownloadPlugin(plugin.uuid))
+                            })
+                    }
+                },
+                onDismissRequest = {
+                    errorDialog = null
+                }
+            )
+        }
+
+        Row(
+            modifier = modifier
+        ) {
+            val cs3Plugin = plugin.downloadLocation?.let { location ->
+                (plugin.source?.pluginUrl?.let(PluginManager.urlPlugins::get)
+                    ?: (PluginManager.plugins[location])) as? com.lagradost.cloudstream3.plugins.Plugin
+            }
+            val settings = cs3Plugin?.openSettings
+
+            val (button1FocusRequester, button2FocusRequester) = remember {
+                FocusRequester.createRefs()
+            }
+
+            if (settings != null) {
+                val context = LocalContext.current
+                IconButton(
+                    modifier = Modifier
+                        .focusRequester(button1FocusRequester)
+                        .focusProperties {
+                            start = returnFocusRequester
+                            end = button2FocusRequester
+                        },
+                    onClick = {
+                        try {
+                            settings.invoke(context)
+                        } catch (e: Throwable) {
+                            Log.e(
+                                "PluginAdapter",
+                                "Failed to open ${plugin.info.name} settings: ${
+                                    Log.getStackTraceString(e)
+                                }"
+                            )
+                        }
+                    }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_baseline_tune_24),
+                        contentDescription = null
+                    )
+                }
+            }
+
+            IconButton(
+                modifier = Modifier
+                    .focusRequester(button2FocusRequester)
+                    .focusProperties {
+                        start = if (settings == null) {
+                            returnFocusRequester
+                        } else {
+                            button1FocusRequester
+                        }
+                    },
+                onClick = {
+                    when (val status = plugin.status) {
+                        is PluginStatus.Downloading -> {
+                            onAction(CancelPluginDownloader(plugin.uuid))
+                        }
+
+                        is PluginStatus.Failed -> {
+                            errorDialog = status.cause
+                        }
+
+                        PluginStatus.Idle -> {
+                            if (plugin.downloadLocation != null) {
+                                onAction(DeletePlugin(plugin.uuid))
+                            } else {
+                                onAction(DownloadPlugin(plugin.uuid))
+                            }
+                        }
+                    }
+                },
+            ) {
                 when (val status = plugin.status) {
                     is PluginStatus.Downloading -> {
                         val total = status.total
@@ -938,98 +1116,28 @@ object ExtensionsScreen : Screen {
                     }
 
                     is PluginStatus.Failed -> {
-                        var errorDialog by remember { mutableStateOf(false) }
-                        IconButton(onClick = {
-                            errorDialog = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.warning_24px),
-                                contentDescription = null
-                            )
-                        }
-                        if (errorDialog) {
-                            val isDownloaded = plugin.downloadLocation != null
-                            ErrorDialog(
-                                error = status.cause,
-                                tag = stringResource(
-                                    R.string.plugin_load_fail,
-                                    plugin.info.name
-                                ),
-                                confirmButton = {
-                                    if (isDownloaded) {
-                                        WhiteButton(
-                                            text = stringResource(R.string.delete_plugin),
-                                            onClick = {
-                                                errorDialog = false
-                                                onAction(ExtensionsAction.DeletePlugin(plugin.uuid))
-                                            })
-                                    } else {
-                                        WhiteButton(
-                                            text = stringResource(R.string.reload_error),
-                                            onClick = {
-                                                errorDialog = false
-                                                onAction(ExtensionsAction.DownloadPlugin(plugin.uuid))
-                                            })
-                                    }
-                                },
-                                onDismissRequest = {
-                                    errorDialog = false
-                                }
-                            )
-                        }
+                        Icon(
+                            painter = painterResource(R.drawable.warning_24px),
+                            contentDescription = stringResource(R.string.error)
+                        )
                     }
 
                     PluginStatus.Idle -> {
                         if (plugin.downloadLocation != null) {
-                            val cs3Plugin =
-                                (plugin.source?.pluginUrl?.let(PluginManager.urlPlugins::get)
-                                    ?: (PluginManager.plugins[plugin.downloadLocation])) as? com.lagradost.cloudstream3.plugins.Plugin
-
-                            Row {
-                                val settings = cs3Plugin?.openSettings
-                                if (settings != null) {
-                                    val context = LocalContext.current
-                                    IconButton(onClick = {
-                                        try {
-                                            settings.invoke(context)
-                                        } catch (e: Throwable) {
-                                            Log.e(
-                                                "PluginAdapter",
-                                                "Failed to open ${plugin.info.name} settings: ${
-                                                    Log.getStackTraceString(e)
-                                                }"
-                                            )
-                                        }
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_baseline_tune_24),
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                                IconButton(onClick = {
-                                    onAction(ExtensionsAction.DeletePlugin(plugin.uuid))
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.delete_24px),
-                                        contentDescription = null
-                                    )
-                                }
-                            }
+                            Icon(
+                                painter = painterResource(R.drawable.delete_24px),
+                                contentDescription = stringResource(R.string.delete_plugin)
+                            )
                         } else {
-                            IconButton(onClick = {
-                                onAction(ExtensionsAction.DownloadPlugin(plugin.uuid))
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.netflix_download),
-                                    contentDescription = null
-                                )
-                            }
+                            Icon(
+                                painter = painterResource(R.drawable.netflix_download),
+                                contentDescription = stringResource(R.string.download)
+                            )
                         }
                     }
                 }
-            },
-        )
+            }
+        }
     }
 
     @Composable
@@ -1418,8 +1526,14 @@ object ExtensionsScreen : Screen {
         val scope = rememberCoroutineScope()
         val copyTextLabel = stringResource(R.string.repo_copy_label)
 
+        val (backgroundFocusRequester, buttonFocusRequester) = remember { FocusRequester.createRefs() }
+
         BasePreferenceWidget(
-            modifier = modifier,
+            modifier = modifier
+                .focusRequester(backgroundFocusRequester)
+                .focusProperties {
+                    end = buttonFocusRequester
+                },
             title = repository.info.name,
             subcomponent = {
                 Text(
@@ -1461,9 +1575,16 @@ object ExtensionsScreen : Screen {
                 when (val reason = repository.status) {
                     is RepositoryStatus.Failure -> {
                         var errorDialog by remember { mutableStateOf(false) }
-                        IconButton(onClick = {
-                            errorDialog = true
-                        }) {
+                        IconButton(
+                            onClick = {
+                                errorDialog = true
+                            },
+                            modifier = Modifier
+                                .focusRequester(buttonFocusRequester)
+                                .focusProperties {
+                                    start = backgroundFocusRequester
+                                })
+                        {
                             Icon(
                                 painter = painterResource(R.drawable.warning_24px),
                                 contentDescription = null
@@ -1488,9 +1609,16 @@ object ExtensionsScreen : Screen {
                     }
 
                     RepositoryStatus.Loading, RepositoryStatus.Success -> {
-                        IconButton(onClick = {
-                            deleteDialog = true
-                        }) {
+                        IconButton(
+                            onClick = {
+                                deleteDialog = true
+                            },
+                            modifier = Modifier
+                                .focusRequester(buttonFocusRequester)
+                                .focusProperties {
+                                    start = backgroundFocusRequester
+                                }
+                        ) {
                             Icon(
                                 painter = painterResource(R.drawable.delete_24px),
                                 contentDescription = null
