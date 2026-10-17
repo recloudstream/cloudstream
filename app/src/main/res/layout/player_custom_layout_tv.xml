@@ -1109,17 +1109,27 @@
                             android:id="@+id/player_sources_btt"
                             style="@style/VideoButtonTV"
                             android:nextFocusLeft="@id/player_subtitle_offset_btt"
-                            android:nextFocusRight="@id/player_tracks_btt"
+                            android:nextFocusRight="@id/player_next_source_btt"
                             android:nextFocusUp="@id/player_pause_play"
-                            android:nextFocusDown="@id/player_tracks_btt"
+                            android:nextFocusDown="@id/player_next_source_btt"
 
                             android:text="@string/video_source"
                             app:icon="@drawable/ic_baseline_playlist_play_24" />
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/player_tracks_btt"
+                            android:id="@+id/player_next_source_btt"
                             style="@style/VideoButtonTV"
                             android:nextFocusLeft="@id/player_sources_btt"
+                            android:nextFocusRight="@id/player_tracks_btt"
+                            android:nextFocusUp="@id/player_pause_play"
+                            android:nextFocusDown="@id/player_tracks_btt"
+                            android:text="@string/next_source"
+                            app:icon="@drawable/baseline_sync_24" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/player_tracks_btt"
+                            style="@style/VideoButtonTV"
+                            android:nextFocusLeft="@id/player_next_source_btt"
                             android:nextFocusRight="@id/player_compressor_btt"
                             android:nextFocusUp="@id/player_pause_play"
                             android:nextFocusDown="@id/player_compressor_btt"

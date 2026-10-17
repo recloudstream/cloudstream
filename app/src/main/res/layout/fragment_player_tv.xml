@@ -93,6 +93,23 @@
         </FrameLayout>
     </FrameLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/player_stuck_source_button"
+        style="@style/VideoButtonTV"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginTop="70dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:text="@string/next_source"
+        android:visibility="gone"
+        app:icon="@drawable/baseline_sync_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
     <!--<FrameLayout
         android:id="@+id/player_torrent_info"
         android:layout_width="match_parent"

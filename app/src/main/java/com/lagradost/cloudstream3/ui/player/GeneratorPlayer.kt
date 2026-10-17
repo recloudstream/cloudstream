@@ -187,6 +187,12 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var isPlayerActive: AtomicBoolean = AtomicBoolean(false)
     private var isNextEpisode: Boolean = false // this is used to reset the watch time
 
+    private val stuckBufferingWatcher = StuckBufferingWatcher(
+        isBuffering = { currentPlayerStatus == CSPlayerLoading.IsBuffering },
+        currentPosition = { player.getPosition() ?: 0L },
+        onStuckChanged = ::showStuckSourceButton,
+    )
+
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
     private val allMeta: List<ResultEpisode>?
         get() = viewModel.state.generatorState?.allMeta?.filterIsInstance<ResultEpisode>()
@@ -547,6 +553,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             player.addTimeStamps(emptyList()) // clear stamps
             // Resets subtitle delay, as we watch some other content
             player.setSubtitleOffset(0)
+            stuckBufferingWatcher.reset() // new episode/link: restart the stall counters
+        } else {
+            // Any same-episode mirror switch (user pick, error failover, auto-switch)
+            // must not inherit the previous source's armed stall clock.
+            stuckBufferingWatcher.resetStallTracking()
         }
     }
 
@@ -1564,6 +1575,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun playerError(exception: Throwable) {
         currentSelectedLink?.let { link ->
+            StuckBufferingWatcher.recordHostFailure(link.first?.url)
             viewModel.modifyState { this.addError(link) }
         }
 
@@ -1627,6 +1639,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
         loadLink(firstAvailableLink, false)
         showPlayerMetadata()
+        stuckBufferingWatcher.start()
     }
 
     private fun showPlayerMetadata() {
@@ -1714,9 +1727,37 @@ class GeneratorPlayer : FullScreenPlayer() {
         loadLink(nextLink.link, true)
     }
 
+    /** Called by [StuckBufferingWatcher]; shows the stuck-source button while stalled. */
+    private fun showStuckSourceButton(stuck: Boolean) {
+        val show = stuck && hasNextMirror() &&
+            // Live streams: mirror-switching fights the live-edge logic.
+            (currentMeta as? ResultEpisode)?.tvType?.isLiveStream() != true &&
+            // Torrents buffer by nature; switching mirrors cannot help.
+            currentSelectedLink?.first?.type != ExtractorLinkType.MAGNET &&
+            currentSelectedLink?.first?.type != ExtractorLinkType.TORRENT
+        binding?.playerStuckSourceButton?.isVisible = show
+        if (show) {
+            binding?.playerStuckSourceButton?.requestFocus()
+        }
+    }
+
+    private fun switchFromStuckButton() {
+        if (!hasNextMirror()) return
+        StuckBufferingWatcher.recordHostFailure(currentSelectedLink?.first?.url)
+        nextMirror()
+    }
+
+    override fun onDestroyView() {
+        // The host view (and with it the status/position we poll) may be torn down
+        // before onDestroy; stop watching so a dying fragment cannot fire a switch.
+        stuckBufferingWatcher.stop()
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         ResultFragment.updateUI()
         currentVerifyLink?.cancel()
+        stuckBufferingWatcher.stop()
         super.onDestroy()
     }
 
@@ -2301,6 +2342,19 @@ class GeneratorPlayer : FullScreenPlayer() {
             // Mark as "success" early
             viewModel.modifyState {
                 copy(loading = Resource.Success(Unit))
+            }
+        }
+
+        binding.playerStuckSourceButton.setOnClickListener {
+            switchFromStuckButton()
+        }
+
+        // opt-in manual "next source" button in the controls row, kept next to the source
+        // picker; the stuck watcher read the same setting at its last tick
+        playerBinding?.playerNextSourceBtt?.apply {
+            isVisible = StuckBufferingWatcher.isEnabled()
+            setOnClickListener {
+                switchFromStuckButton()
             }
         }
 

@@ -92,6 +92,28 @@
         </FrameLayout>
     </FrameLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/player_stuck_source_button"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginTop="70dp"
+        android:backgroundTint="@color/transparent"
+
+        android:focusable="true"
+        android:text="@string/next_source"
+        android:textAllCaps="false"
+        android:textColor="@color/textColor"
+        android:visibility="gone"
+        app:cornerRadius="4dp"
+        app:icon="@drawable/baseline_sync_24"
+        app:iconTint="@color/textColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rippleColor="?attr/colorPrimary"
+        tools:visibility="visible" />
+
    <!-- <FrameLayout
         android:id="@+id/player_torrent_info"
         android:layout_width="match_parent"
