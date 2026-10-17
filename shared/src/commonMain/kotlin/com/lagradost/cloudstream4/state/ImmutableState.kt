@@ -180,6 +180,9 @@ data class SearchableDataState<Key, Value, State : DerivedState<State, Value>>(
     val sortedBy get() = internalData.sortedBy
 
     @CheckResult
+    operator fun get(key : Key?) : Value? = internalData[key]
+
+    @CheckResult
     fun sortingBy(newSorting: Comparator<Value>): SearchableDataState<Key, Value, State> =
         copy(internalData = internalData.sortingBy(newSorting))
 
@@ -310,6 +313,9 @@ data class SearchableData<Key, Value>(
      * */
     val sortedBy: Comparator<Value>,
 ) {
+    @CheckResult
+    operator fun get(key : Key?) : Value? = key?.let(data::get)
+
     @CheckResult
     fun sortingBy(newSorting: Comparator<Value>): SearchableData<Key, Value> {
         if (newSorting == sortedBy) {

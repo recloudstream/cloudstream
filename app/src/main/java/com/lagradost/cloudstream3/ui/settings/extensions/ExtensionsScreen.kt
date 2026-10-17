@@ -35,6 +35,8 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -42,7 +44,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -64,11 +68,13 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -78,25 +84,37 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.findNavController
 import coil3.compose.AsyncImage
 import com.fasterxml.jackson.core.JacksonException
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.openBrowser
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen
+import com.lagradost.cloudstream3.ui.settings.SettingsProvidersScreen.toStringRes
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter.Companion.SHAREABLE_REPO_SEPARATOR
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream4.compose.ActionDialog
 import com.lagradost.cloudstream4.compose.BlackButton
 import com.lagradost.cloudstream4.compose.BlackTextField
+import com.lagradost.cloudstream4.compose.IsScrolling
 import com.lagradost.cloudstream4.compose.LogBoxBlack
 import com.lagradost.cloudstream4.compose.LogBoxWhite
 import com.lagradost.cloudstream4.compose.LogText
+import com.lagradost.cloudstream4.compose.MultiSelectDialog
 import com.lagradost.cloudstream4.compose.PHONE
+import com.lagradost.cloudstream4.compose.RoundedShape
 import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.WhiteButton
+import com.lagradost.cloudstream4.compose.WhiteFilterChip
 import com.lagradost.cloudstream4.compose.isLayout
+import com.lagradost.cloudstream4.compose.rounded
+import com.lagradost.cloudstream4.generated.resources.Res
+import com.lagradost.cloudstream4.generated.resources.no_results_found
 import com.lagradost.cloudstream4.getPlainText
 import com.lagradost.cloudstream4.setPlainText
 import com.lagradost.cloudstream4.state.LogLevel
@@ -105,10 +123,15 @@ import com.lagradost.cloudstream4.state.SearchableData
 import com.lagradost.cloudstream4.state.SortByName
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.lagradost.cloudstream4.viewmodels.AddRepositoryDialog
+import com.lagradost.cloudstream4.viewmodels.DerivedRepositoryState
 import com.lagradost.cloudstream4.viewmodels.ExtensionsAction
 import com.lagradost.cloudstream4.viewmodels.ExtensionsEffect
 import com.lagradost.cloudstream4.viewmodels.ExtensionsState
 import com.lagradost.cloudstream4.viewmodels.ExtensionsViewModel2
+import com.lagradost.cloudstream4.viewmodels.FilterPlugin
+import com.lagradost.cloudstream4.viewmodels.Plugin
+import com.lagradost.cloudstream4.viewmodels.PluginStatus
+import com.lagradost.cloudstream4.viewmodels.PluginsUpdatingDialog
 import com.lagradost.cloudstream4.viewmodels.Repository
 import com.lagradost.cloudstream4.viewmodels.RepositoryInfo
 import com.lagradost.cloudstream4.viewmodels.RepositoryStatus
@@ -119,31 +142,17 @@ import com.mihon.presentation.secondaryItemAlpha
 import com.mihon.presentation.settings.LocalPreferenceHighlighted
 import com.mihon.presentation.settings.widget.BasePreferenceWidget
 import com.mihon.presentation.settings.widget.PrefsHorizontalPadding
-import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.serialization.SerializationException
-import kotlin.time.Duration.Companion.seconds
-import kotlin.uuid.Uuid
-import com.lagradost.cloudstream4.compose.IsScrolling
-import com.lagradost.cloudstream4.compose.MultiSelectDialog
-import com.lagradost.cloudstream4.compose.WhiteFilterChip
-import com.lagradost.cloudstream4.compose.rounded
-import com.lagradost.cloudstream4.generated.resources.Res
-import com.lagradost.cloudstream4.generated.resources.cancel
-import com.lagradost.cloudstream4.generated.resources.no_results_found
-import com.lagradost.cloudstream4.generated.resources.ok
-import com.lagradost.cloudstream4.viewmodels.DerivedRepositoryState
-import com.lagradost.cloudstream4.viewmodels.FilterPlugin
-import com.lagradost.cloudstream4.viewmodels.Plugin
-import com.lagradost.cloudstream4.viewmodels.PluginStatus
 import com.mihon.presentation.settings.widget.TextPreferenceWidget
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
 import kotlin.math.roundToInt
-import kotlin.stackTraceToString
-import kotlin.text.replace
+import kotlin.time.Duration.Companion.seconds
+import kotlin.uuid.Uuid
 
 @Composable
 @PreviewLightDark
@@ -154,7 +163,12 @@ fun Preview() {
         val uuid3 = Uuid.random()
         ExtensionsScreen.Content(
             state = ExtensionsState(
-                addDialog = AddRepositoryDialog(error = Throwable()),
+                //addDialog = AddRepositoryDialog(error = Throwable()),
+                updateAllPluginsDialog = PluginsUpdatingDialog(
+                    total = 5,
+                    downloaded = 4,
+                    failed = 0
+                ),
                 repositories = SearchableData.from(
                     data = persistentMapOf(
                         uuid1 to Repository(
@@ -224,8 +238,6 @@ object ExtensionsScreen : Screen {
         val (top, bottom) = remember { FocusRequester.createRefs() }
         val fabExpanded = remember { mutableStateOf(true) }
 
-
-
         com.mihon.material.Scaffold(
             // TODO @WindowInsets remove this when we have converted everything to compose
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -237,7 +249,7 @@ object ExtensionsScreen : Screen {
                             down = bottom
                         },
                     title = if (state.pluginFilter.repository != null) {
-                        state.repositories.data[state.pluginFilter.repository]?.info?.name
+                        state.repositories[state.pluginFilter.repository]?.info?.name
                         /** Should never happen */
                             ?: stringResource(R.string.extensions)
                     } else if (state.searchPlugins) {
@@ -247,61 +259,7 @@ object ExtensionsScreen : Screen {
                     },
                     navigateUp = LocalBackPress.current,
                     actions = {
-                        var languageDialog by remember { mutableStateOf(false) }
-                        val derivedRepositoryState = state.derivedRepositoryState
-
-                        /** We only show the langauge filter button if we are searching plugins and there is languages to pick from*/
-                        if (state.searchPlugins && derivedRepositoryState.languageCount.isNotEmpty()) {
-                            IconButton(onClick = {
-                                languageDialog = true
-                            }) {
-                                Icon(
-                                    tint = MaterialTheme.colorScheme.onBackground,
-                                    painter = painterResource(R.drawable.language_korean_latin_24px),
-                                    contentDescription = stringResource(R.string.extension_language)
-                                )
-                            }
-                        }
-                        if (languageDialog) {
-                            val entries =
-                                derivedRepositoryState.languageCount.keys.sortedBy { lang ->
-                                    fromTagToLanguageName(lang) ?: lang
-                                }
-
-                            MultiSelectDialog(
-                                title = stringResource(R.string.extension_language),
-                                entries = entries.associateWith { lang ->
-                                    if (lang == "") {
-                                        stringResource(R.string.no_data)
-                                    } else {
-                                        (getNameNextToFlagEmoji(
-                                            lang
-                                        ) ?: lang)
-                                    }
-                                },
-                                properties = DialogProperties(
-                                    usePlatformDefaultWidth = true,
-                                ),
-                                confirmText = stringResource(R.string.ok),
-                                confirm = { selection ->
-                                    val removed =
-                                        derivedRepositoryState.languageCount.keys.subtract(selection)
-                                    onAction(
-                                        ExtensionsAction.FilterByInverseLanguages(
-                                            removed.toPersistentSet()
-                                        )
-                                    )
-                                    languageDialog = false
-                                },
-                                dismissText = stringResource(R.string.cancel),
-                                dismiss = {
-                                    languageDialog = false
-                                },
-                                selectedKeys = derivedRepositoryState.languageCount.keys.subtract(
-                                    state.pluginFilter.removeLanguages
-                                ),
-                            )
-                        }
+                        ActionRow(state = state, onAction = onAction)
                     },
                     scrollBehavior = it,
                 )
@@ -324,6 +282,118 @@ object ExtensionsScreen : Screen {
                 )
             },
         )
+    }
+
+    @Composable
+    fun ActionRow(state: ExtensionsState, onAction: (ExtensionsAction) -> Unit) {
+        val scope = rememberCoroutineScope()
+        val clipboard = LocalClipboard.current
+
+        var extraDialog by remember { mutableStateOf(false) }
+        if (!state.searchPlugins) {
+            IconButton(onClick = {
+                extraDialog = true
+            }) {
+                Icon(
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    painter = painterResource(R.drawable.ic_baseline_more_vert_24),
+                    contentDescription = stringResource(R.string.extensions)
+                )
+            }
+        }
+
+        DropdownMenu(expanded = extraDialog, onDismissRequest = {
+            extraDialog = false
+        }, shape = RoundedShape()) {
+            DropdownMenuItem(text = {
+                Text(text = stringResource(R.string.add_repository))
+            }, onClick = {
+                scope.launch {
+                    openRepositoryDialog(clipboard = clipboard, onAction = onAction)
+                    extraDialog = false
+                }
+            })
+            DropdownMenuItem(text = {
+                Text(text = stringResource(R.string.category_provider_test))
+            }, onClick = {
+                extraDialog = false
+                activity?.navigate(R.id.navigation_test_providers)
+            })
+            DropdownMenuItem(text = {
+                Text(text = stringResource(R.string.installed_plugins))
+            }, onClick = {
+                extraDialog = false
+                val activity = activity ?: return@DropdownMenuItem
+                activity.findNavController(R.id.nav_host_fragment).navigate(
+                    R.id.navigation_settings_extensions_to_navigation_settings_plugins,
+                    PluginsFragment.newLocalInstance(
+                        activity.getString(R.string.extensions),
+                    )
+                )
+            })
+            DropdownMenuItem(text = {
+                Text(text = stringResource(R.string.update_plugins_manually))
+            }, onClick = {
+                extraDialog = false
+                onAction(ExtensionsAction.UpdateAllPlugins)
+            })
+        }
+
+        var languageDialog by remember { mutableStateOf(false) }
+        val derivedRepositoryState = state.derivedRepositoryState
+
+        /** We only show the langauge filter button if we are searching plugins and there is languages to pick from*/
+        if (state.searchPlugins && derivedRepositoryState.languageCount.isNotEmpty()) {
+            IconButton(onClick = {
+                languageDialog = true
+            }) {
+                Icon(
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    painter = painterResource(R.drawable.plugin_lang),
+                    contentDescription = stringResource(R.string.extension_language)
+                )
+            }
+        }
+        if (languageDialog) {
+            val entries =
+                derivedRepositoryState.languageCount.keys.sortedBy { lang ->
+                    fromTagToLanguageName(lang) ?: lang
+                }
+
+            MultiSelectDialog(
+                title = stringResource(R.string.extension_language),
+                entries = entries.associateWith { lang ->
+                    if (lang == "") {
+                        stringResource(R.string.no_data)
+                    } else {
+                        (getNameNextToFlagEmoji(
+                            lang
+                        ) ?: lang)
+                    }
+                },
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = true,
+                ),
+                confirmText = stringResource(R.string.ok),
+                confirm = { selection ->
+                    val removed =
+                        derivedRepositoryState.languageCount.keys.subtract(selection)
+                    onAction(
+                        ExtensionsAction.FilterByInverseLanguages(
+                            removed.toPersistentSet()
+                        )
+                    )
+                    languageDialog = false
+                },
+                dismissText = stringResource(R.string.cancel),
+                dismiss = {
+                    languageDialog = false
+                },
+                selectedKeys = derivedRepositoryState.languageCount.keys.subtract(
+                    state.pluginFilter.removeLanguages
+                ),
+            )
+        }
     }
 
     /** To make the UI even remotely usable, we batch the types */
@@ -360,6 +430,7 @@ object ExtensionsScreen : Screen {
         fabExpanded: MutableState<Boolean>,
     ) {
         AddDialog(dialog = state.addDialog, onAction = onAction)
+        UpdateDialog(dialog = state.updateAllPluginsDialog, onAction = onAction)
 
         val lazyRepoState = rememberLazyListState()
         val textState = rememberTextFieldState()
@@ -453,7 +524,7 @@ object ExtensionsScreen : Screen {
                 }
 
                 items(items = state.plugins.sorted, key = { uuid -> uuid }) { uuid ->
-                    val plugin = state.plugins.data[uuid]!!
+                    val plugin = state.plugins[uuid]!!
                     val isHighlighted = uuid == highLight
                     CompositionLocalProvider(
                         LocalPreferenceHighlighted provides isHighlighted,
@@ -464,8 +535,10 @@ object ExtensionsScreen : Screen {
                             modifier = Modifier
                                 .animateItem()
                                 .graphicsLayer { alpha = itemAlpha.value },
-                            onClick = {
-                                if (state.pluginFilter.repository == null) {
+                            onClick = if (state.pluginFilter.repository != null) {
+                                null
+                            } else {
+                                {
                                     onAction(ExtensionsAction.SelectPlugin(plugin.uuid))
                                     highLightState.value = plugin.uuid
                                 }
@@ -475,7 +548,7 @@ object ExtensionsScreen : Screen {
                 }
 
                 val repository = state.pluginFilter.repository
-                val status = repository?.let(state.repositories.data::get)?.status
+                val status = state.repositories[repository]?.status
                 if (state.plugins.sorted.isEmpty()) {
                     when (status) {
                         is RepositoryStatus.Failure -> {
@@ -525,7 +598,7 @@ object ExtensionsScreen : Screen {
                 }
             } else {
                 items(items = state.repositories.sorted, key = { uuid -> uuid }) { uuid ->
-                    val repository = state.repositories.data[uuid]!!
+                    val repository = state.repositories[uuid]!!
                     val isHighlighted = uuid == highLight
                     CompositionLocalProvider(
                         LocalPreferenceHighlighted provides isHighlighted,
@@ -659,9 +732,120 @@ object ExtensionsScreen : Screen {
         plugin: Plugin,
         onAction: (ExtensionsAction) -> Unit,
         modifier: Modifier,
-        onClick: () -> Unit,
+        onClick: (() -> Unit)?,
     ) {
         val description = plugin.info.description
+
+        var extendedDialog by remember { mutableStateOf(false) }
+
+        if (extendedDialog) {
+            AlertDialog(
+                containerColor = MaterialTheme.colorScheme.background,
+                onDismissRequest = {
+                    extendedDialog = false
+                },
+                confirmButton = {
+                    val repository = plugin.info.repositoryUrl
+                    if (repository != null) {
+                        /** TODO filter this based on trusted urls? */
+                        WhiteButton(text = stringResource(R.string.result_open_in_browser)) {
+                            openBrowser(repository)
+                        }
+                    }
+                },
+                dismissButton = {
+                    BlackButton(
+                        text = stringResource(R.string.dismiss),
+                        onClick = { extendedDialog = false })
+                },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small)) {
+                        ProvideTextStyle(
+                            LocalTextStyle.current.copy(
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                        ) {
+                            val roundedBackground =
+                                Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceVariant,
+                                        shape = RoundedShape()
+                                    )
+                                    .padding(MaterialTheme.padding.extraSmall)
+
+                            val description = plugin.info.description
+                            if (description.isNullOrBlank()) {
+                                InfoRow(
+                                    modifier = roundedBackground,
+                                    text = R.string.extension_description,
+                                    content = stringResource(R.string.no_data)
+                                )
+                            } else {
+                                Text(
+                                    text = stringResource(R.string.extension_description),
+                                    modifier = roundedBackground
+                                )
+                                Text(text = description)
+                            }
+
+                            if (plugin.info.authors.isNotEmpty()) {
+                                InfoRow(
+                                    modifier = roundedBackground,
+                                    text = R.string.extension_authors,
+                                    content = plugin.info.authors.joinToString()
+                                )
+                            }
+                            InfoRow(
+                                modifier = roundedBackground,
+                                text = R.string.extension_version,
+                                content = plugin.info.version.toString()
+                            )
+                            InfoRow(
+                                modifier = roundedBackground,
+                                text = R.string.extension_status,
+                                content = stringArrayResource(R.array.extension_statuses).getOrNull(
+                                    plugin.info.status
+                                ) ?: stringResource(R.string.no_data)
+                            )
+                            val size = plugin.source?.size
+                            if (size != null) {
+                                InfoRow(
+                                    modifier = roundedBackground,
+                                    text = R.string.extension_size,
+                                    content = formatShortFileSize(LocalContext.current, size)
+                                )
+                            }
+                            if (plugin.info.tvTypes.isNotEmpty()) {
+                                InfoRow(
+                                    modifier = roundedBackground,
+                                    text = R.string.extension_types,
+                                    content =
+                                        @Suppress("SimplifiableCallChain")
+                                        plugin.info.tvTypes.map { stringResource(it.toStringRes()) }
+                                            .joinToString())
+                            }
+                            InfoRow(
+                                modifier = roundedBackground,
+                                text = R.string.extension_language,
+                                content = plugin.info.language?.let { language ->
+                                    getNameNextToFlagEmoji(language) ?: language
+                                } ?: stringResource(R.string.no_data))
+                        }
+                    }
+                },
+                title = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RepositoryIcon(
+                            iconUrl = plugin.info.iconUrl,
+                            defaultIcon = painterResource(R.drawable.extension_24px)
+                        )
+                        Text(text = plugin.info.name)
+                    }
+                })
+        }
 
         BasePreferenceWidget(
             modifier = modifier,
@@ -723,8 +907,11 @@ object ExtensionsScreen : Screen {
                     defaultIcon = painterResource(R.drawable.extension_24px)
                 )
             },
-            onClick = onClick,
+            onClick = onClick ?: {
+                extendedDialog = true
+            },
             onLongClick = {
+                extendedDialog = true
             },
             widget = {
                 when (val status = plugin.status) {
@@ -833,6 +1020,77 @@ object ExtensionsScreen : Screen {
                 }
             },
         )
+    }
+
+    @Composable
+    fun InfoRow(
+        modifier: Modifier,
+        text: Int,
+        content: String,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(text),
+                modifier = modifier
+            )
+            Text(text = content)
+        }
+    }
+
+    @Composable
+    fun UpdateDialog(dialog: PluginsUpdatingDialog?, onAction: (ExtensionsAction) -> Unit) {
+        if (dialog == null) {
+            return
+        }
+        val finished = dialog.progress >= dialog.total
+
+        AlertDialog(
+            containerColor = MaterialTheme.colorScheme.background,
+            onDismissRequest = {
+                onAction(ExtensionsAction.CancelPluginsUpdate)
+            },
+            confirmButton = {
+            },
+            dismissButton = {
+                BlackButton(
+                    text = if (finished) {
+                        stringResource(R.string.dismiss)
+                    } else {
+                        stringResource(R.string.cancel)
+                    }, onClick = {
+                        onAction(ExtensionsAction.CancelPluginsUpdate)
+                    })
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small)) {
+                    if (dialog.failed > 0) {
+                        Text(
+                            text =
+                                stringResource(R.string.plugins_not_downloaded, dialog.failed)
+                        )
+                    }
+                    if (!finished) {
+                        LinearProgressIndicator(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            progress = {
+                                if (dialog.total == 0) {
+                                    1.0f
+                                } else {
+                                    dialog.progress.toFloat() / dialog.total.toFloat()
+                                }
+                            }
+                        )
+                    }
+                }
+            },
+            title = {
+                Text(text = stringResource(R.string.plugins_updated, dialog.downloaded))
+            })
     }
 
     @Composable
@@ -988,31 +1246,38 @@ object ExtensionsScreen : Screen {
             },
             onClick = {
                 scope.launch {
-                    val copiedText = clipboard.getPlainText()?.trim() ?: ""
-
-                    /** text is of format <repository name> : <repository url> */
-                    val url = if (copiedText.contains(SHAREABLE_REPO_SEPARATOR)) {
-                        val (_, url) = copiedText.split(
-                            SHAREABLE_REPO_SEPARATOR,
-                            limit = 2
-                        )
-                        url.trim()
-                    }
-                    /** Can this realistically be an url? */
-                    else if (copiedText.length < 200 && !copiedText.contains("\n")) {
-                        copiedText
-                    }
-                    /** Otherwise we just do a clear */
-                    else {
-                        ""
-                    }
-                    onAction(
-                        ExtensionsAction.SetRepositoryDialog(
-                            AddRepositoryDialog(url = url)
-                        )
-                    )
+                    openRepositoryDialog(clipboard, onAction)
                 }
             })
+    }
+
+    suspend fun openRepositoryDialog(
+        clipboard: Clipboard,
+        onAction: (ExtensionsAction) -> Unit
+    ) {
+        val copiedText = clipboard.getPlainText()?.trim() ?: ""
+
+        /** text is of format <repository name> : <repository url> */
+        val url = if (copiedText.contains(SHAREABLE_REPO_SEPARATOR)) {
+            val (_, url) = copiedText.split(
+                SHAREABLE_REPO_SEPARATOR,
+                limit = 2
+            )
+            url.trim()
+        }
+        /** Can this realistically be an url? */
+        else if (copiedText.length < 200 && !copiedText.contains("\n")) {
+            copiedText
+        }
+        /** Otherwise we just do a clear */
+        else {
+            ""
+        }
+        onAction(
+            ExtensionsAction.SetRepositoryDialog(
+                AddRepositoryDialog(url = url)
+            )
+        )
     }
 
     @Composable
@@ -1038,7 +1303,7 @@ object ExtensionsScreen : Screen {
                         .weight(
                             maxOf(
                                 state.plugins.state.downloadedAndEnabled.toFloat(),
-                                0.1f
+                                0.01f
                             )
                         )
                 )
@@ -1049,7 +1314,7 @@ object ExtensionsScreen : Screen {
                         .weight(
                             maxOf(
                                 state.plugins.state.downloadedAndDisabled.toFloat(),
-                                0.1f
+                                0.01f
                             )
                         )
                 )
@@ -1057,7 +1322,7 @@ object ExtensionsScreen : Screen {
                     modifier = Modifier
                         .height(size)
                         .background(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        .weight(maxOf(state.plugins.state.notDownloaded.toFloat(), 0.1f))
+                        .weight(maxOf(state.plugins.state.notDownloaded.toFloat(), 0.2f))
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.padding.small))

@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings.extensions
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.InternalAPI
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
@@ -30,16 +31,15 @@ import com.lagradost.cloudstream4.viewmodels.RepositoryManager
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.Uuid
 
+@InternalAPI
 object AndroidRepositoryManager : RepositoryManager {
     fun RepositoryInfo.toData() =
         RepositoryData(
@@ -127,7 +127,8 @@ object AndroidRepositoryManager : RepositoryManager {
                             authors = plugin.authors.toPersistentList(),
                             iconUrl = plugin.iconUrl,
                             language = plugin.language,
-                            description = plugin.description
+                            description = plugin.description,
+                            repositoryUrl = plugin.repositoryUrl
                         ),
                         source = PluginDownloadSource(
                             size = plugin.fileSize,

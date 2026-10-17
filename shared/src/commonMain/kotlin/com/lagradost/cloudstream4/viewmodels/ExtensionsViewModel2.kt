@@ -3,6 +3,7 @@ package com.lagradost.cloudstream4.viewmodels
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.InternalAPI
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream4.state.ActionHandler
 import com.lagradost.cloudstream4.state.DefaultEffectContainer
@@ -29,6 +30,9 @@ import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.uuid.Uuid
 
 @Immutable
@@ -74,6 +78,10 @@ data class PluginInfo(
     val iconUrl: String?,
     val language: String?,
     val description: String?,
+    /**
+     * This is different from source.repositoryUrl,
+     * as this may be a different url than the repo we got this from */
+    val repositoryUrl: String?,
 )
 
 @Immutable
@@ -268,11 +276,21 @@ data class ExtensionsState(
     val pluginFilter: FilterPlugin = FilterPlugin(),
     //val repoFilter: FilterByQuery<Repository> = FilterByQuery(query = "") { it.info.name },
     val addDialog: AddRepositoryDialog? = null,
-    val searchPlugins: Boolean = false
+    val searchPlugins: Boolean = false,
+    val updateAllPluginsDialog: PluginsUpdatingDialog? = null,
 ) {
     val derivedRepositoryState: DerivedRepositoryState =
         pluginFilter.repository?.let(plugins.state.repositories::get)
             ?: plugins.state.sumOfRepositories
+}
+
+@Immutable
+data class PluginsUpdatingDialog(
+    val total: Int,
+    val downloaded: Int,
+    val failed: Int,
+) {
+    val progress get() = downloaded + failed
 }
 
 @Immutable
@@ -286,6 +304,7 @@ sealed class ExtensionsEffect {
     data class RepositoryAdded(val repository: RepositoryInfo, val uuid: Uuid) : ExtensionsEffect()
 }
 
+@InternalAPI
 interface RepositoryManager {
     fun getRepositories(): List<RepositoryInfo>
 
@@ -331,6 +350,8 @@ sealed class ExtensionsAction {
 
     data class SetRepositoryDialog(val dialog: AddRepositoryDialog?) : ExtensionsAction()
     object ClearPluginSearch : ExtensionsAction()
+    object UpdateAllPlugins : ExtensionsAction()
+    object CancelPluginsUpdate : ExtensionsAction()
 }
 
 class ExtensionsViewModel2(
@@ -342,9 +363,17 @@ class ExtensionsViewModel2(
     private val repositoryDispatcher = MultiActiveQuery<Uuid>(dispatcher = Dispatchers.IO)
     private val downloadDispatcher = MultiActiveQuery<Uuid>(dispatcher = Dispatchers.IO)
     private val addRepositoryDispatcher = SingleActiveQuery(dispatcher = Dispatchers.IO)
+    private val updatePluginsDispatcher = SingleActiveQuery(dispatcher = Dispatchers.IO)
 
+    @OptIn(ExperimentalAtomicApi::class)
     override fun onAction(action: ExtensionsAction) {
         when (action) {
+            ExtensionsAction.UpdateAllPlugins -> {
+                viewModelScope.launch {
+                    updateAllPlugins()
+                }
+            }
+
             ExtensionsAction.ClearPluginSearch -> {
                 updateState {
                     val newPluginFilter = pluginFilter.copy(repository = null)
@@ -362,9 +391,19 @@ class ExtensionsViewModel2(
                 }
             }
 
+            ExtensionsAction.CancelPluginsUpdate -> {
+                viewModelScope.launch {
+                    updatePluginsDispatcher.launch {
+                        updateState {
+                            copy(updateAllPluginsDialog = null)
+                        }
+                    }
+                }
+            }
+
             is ExtensionsAction.ReloadRepository -> {
                 val uuid = action.uuid
-                val current = state.value.repositories.data[uuid] ?: return
+                val current = state.value.repositories[uuid] ?: return
                 viewModelScope.launch {
                     updateState {
                         copy(repositories = repositories.updating(uuid) { copy(status = RepositoryStatus.Loading) })
@@ -380,7 +419,7 @@ class ExtensionsViewModel2(
             }
 
             is ExtensionsAction.DeleteRepository -> {
-                val repository = state.value.repositories.data[action.uuid] ?: return
+                val repository = state.value.repositories[action.uuid] ?: return
                 viewModelScope.launch {
                     deleteRepository(repository)
                 }
@@ -399,7 +438,7 @@ class ExtensionsViewModel2(
 
             is ExtensionsAction.SelectPlugin -> {
                 updateState {
-                    val plugin = plugins.data[action.uuid] ?: return@updateState this
+                    val plugin = plugins[action.uuid] ?: return@updateState this
                     val newPluginFilter = pluginFilter.copy(repository = plugin.repository)
                     copy(
                         plugins = plugins.filteringBy(newPluginFilter),
@@ -425,7 +464,6 @@ class ExtensionsViewModel2(
                     val newPluginFilter =
                         pluginFilter.copy(query = pluginFilter.query.update(action.query))
                     val activeQuery = action.query.isNotEmpty()
-                    //val newRepoFilter = repoFilter.update(action.query)
                     copy(
                         plugins = plugins.searchBy(
                             newSorting = if (activeQuery) {
@@ -435,118 +473,34 @@ class ExtensionsViewModel2(
                             },
                             newFilter = newPluginFilter
                         ),
-                        //repositories = repositories.filteringBy(newRepoFilter),
                         pluginFilter = newPluginFilter,
                         searchPlugins = pluginFilter.repository != null || activeQuery,
-                        //repoFilter = newRepoFilter,
                     )
                 }
             }
 
             is ExtensionsAction.DeletePlugin -> {
-                val plugin = state.value.plugins.data[action.uuid] ?: return
+                val plugin = state.value.plugins[action.uuid] ?: return
                 viewModelScope.launch {
                     deletePlugin(plugin)
                 }
             }
 
             is ExtensionsAction.DownloadPlugin -> {
-                val plugin = state.value.plugins.data[action.uuid] ?: return
+                val plugin = state.value.plugins[action.uuid] ?: return
                 viewModelScope.launch {
-                    downloadPlugin(plugin)
+                    downloadDispatcher.launch(plugin.uuid) {
+                        downloadPlugin(plugin)
+                    }
                 }
             }
 
             is ExtensionsAction.DownloadRepositoryWithDialog -> {
-                val uuid = Uuid.random()
-                val url = action.url.trim()
-
                 viewModelScope.launch {
-                    val found =
-                        state.value.repositories.data.values.firstOrNull { it.info.url == url }
-                    if (found != null) {
-                        postEffect { RepositoryAdded(found.info, found.uuid) }
-                        updateState {
-                            copy(addDialog = null)
-                        }
-                        return@launch
-                    }
-                    updateState {
-                        copy(
-                            addDialog = AddRepositoryDialog(
-                                /** Not a bug, the dialog should not get trimmed */
-                                url = action.url,
-                                loading = true,
-                                error = null
-                            )
-                        )
-                    }
-                    val repository = RepositoryInfo(
-                        iconUrl = null,
-                        name = "Pending",
-                        url = url,
-                        description = null
-                    )
-                    addRepositoryDispatcher.launch {
-                        runCatching {
-                            manager.getPlugins(
-                                repository,
-                                uuid
-                            )
-                        }.onFailure { t ->
-                            /** Cancellation means that we restarted this, so the caller updates the status */
-                            if (!isActive) {
-                                return@launch
-                            }
-                            updateState {
-                                copy(
-                                    addDialog = AddRepositoryDialog(
-                                        /** Not a bug, the dialog should not get trimmed */
-                                        url = action.url,
-                                        loading = false,
-                                        error = t
-                                    )
-                                )
-                            }
-                        }.onSuccess { (newRepositoryInfo, pluginsFetched) ->
-                            val found =
-                                state.value.repositories.data.values.firstOrNull { it.info.url == newRepositoryInfo.url }
-                            if (found != null) {
-                                // Shortcodes can have a different url from the input
-                                updateState {
-                                    copy(addDialog = null)
-                                }
-                                postEffect {
-                                    RepositoryAdded(
-                                        found.info,
-                                        found.uuid
-                                    )
-                                }
-                                return@launch
-                            }
-                            onRepositoryAdded(
-                                uuid = uuid,
-                                newRepositoryInfo = newRepositoryInfo,
-                                pluginsFetched = pluginsFetched
-                            )
-                            updateState {
-                                copy(addDialog = null)
-                            }
-                            postEffect { RepositoryAdded(newRepositoryInfo, uuid) }
-                        }
-                    }
+                    downloadRepositoryWithDialog(action)
                 }
             }
 
-            /*is ExtensionsAction.DownloadRepository -> {
-                viewModelScope.launch {
-                    if (state.value.repositories.data.any { it.value.info.url == action.repository.url }) {
-                        return@launch
-                    }
-                    val uuid = Uuid.random()
-                    downloadRepository(uuid = uuid, repository = action.repository)
-                }
-            }*/
             is ExtensionsAction.FilterByTypes -> {
                 updateState {
                     val newPluginFilter = pluginFilter.copy(tvTypes = action.types)
@@ -558,25 +512,6 @@ class ExtensionsViewModel2(
             }
         }
     }
-
-    /*private suspend fun downloadRepository(
-        uuid: Uuid,
-        repository: RepositoryInfo
-    ) {
-        updateState {
-            copy(
-                repositories = repositories.adding(
-                    uuid,
-                    Repository(
-                        info = repository,
-                        status = RepositoryStatus.Loading,
-                        uuid = uuid
-                    )
-                )
-            )
-        }
-        loadRepository(uuid, repository)
-    }*/
 
     private suspend fun onRepositoryAdded(
         uuid: Uuid,
@@ -672,39 +607,179 @@ class ExtensionsViewModel2(
         }
     }
 
-    private suspend fun downloadPlugin(plugin: Plugin) {
-        val source = plugin.source ?: return
-        downloadDispatcher.launch(plugin.uuid) {
+    private suspend fun downloadRepositoryWithDialog(action: ExtensionsAction.DownloadRepositoryWithDialog) {
+        val trimmedUrl = action.url.trim()
+        val uuid = Uuid.random()
+
+        val found =
+            state.value.repositories.data.values.firstOrNull { it.info.url == trimmedUrl }
+        if (found != null) {
+            postEffect { RepositoryAdded(found.info, found.uuid) }
+            updateState {
+                copy(addDialog = null)
+            }
+            return
+        }
+        updateState {
+            copy(
+                addDialog = AddRepositoryDialog(
+                    /** Not a bug, the dialog should not get trimmed */
+                    url = action.url,
+                    loading = true,
+                    error = null
+                )
+            )
+        }
+        val repository = RepositoryInfo(
+            iconUrl = null,
+            name = "Pending",
+            url = trimmedUrl,
+            description = null
+        )
+        addRepositoryDispatcher.launch {
             runCatching {
-                manager.downloadPlugin(
-                    source = source,
-                    downloadProgress = { downloadedBytes, totalBytes ->
-                        updateState {
-                            copy(plugins = plugins.updating(plugin.uuid) {
-                                copy(
-                                    status = PluginStatus.Downloading(
-                                        total = totalBytes,
-                                        progress = downloadedBytes
-                                    )
-                                )
-                            })
-                        }
-                    }
+                manager.getPlugins(
+                    repository,
+                    uuid
                 )
             }.onFailure { t ->
-                updateState {
-                    copy(plugins = plugins.updating(plugin.uuid) {
-                        copy(status = PluginStatus.Failed(t))
-                    })
+                /** Cancellation means that we restarted this, so the caller updates the status */
+                if (!isActive) {
+                    return@launch
                 }
-            }.onSuccess { downloadLocation ->
                 updateState {
-                    copy(plugins = plugins.updating(plugin.uuid) {
-                        copy(status = PluginStatus.Idle, downloadLocation = downloadLocation)
-                    })
+                    copy(
+                        addDialog = AddRepositoryDialog(
+                            /** Not a bug, the dialog should not get trimmed */
+                            url = action.url,
+                            loading = false,
+                            error = t
+                        )
+                    )
+                }
+            }.onSuccess { (newRepositoryInfo, pluginsFetched) ->
+                val found =
+                    state.value.repositories.data.values.firstOrNull { it.info.url == newRepositoryInfo.url }
+                if (found != null) {
+                    // Shortcodes can have a different url from the input
+                    updateState {
+                        copy(addDialog = null)
+                    }
+                    postEffect {
+                        RepositoryAdded(
+                            found.info,
+                            found.uuid
+                        )
+                    }
+                    return@launch
+                }
+                onRepositoryAdded(
+                    uuid = uuid,
+                    newRepositoryInfo = newRepositoryInfo,
+                    pluginsFetched = pluginsFetched
+                )
+                updateState {
+                    copy(addDialog = null)
+                }
+                postEffect { RepositoryAdded(newRepositoryInfo, uuid) }
+            }
+        }
+    }
+
+    private suspend fun updateAllPlugins() = updatePluginsDispatcher.launch {
+        val plugins = state.value.plugins.data.values.filter { it.downloadLocation != null }
+        val updateMutex = Mutex()
+        var failed = 0
+        var downloaded = 0
+        val total = plugins.size
+
+        updateState {
+            copy(
+                updateAllPluginsDialog = PluginsUpdatingDialog(
+                    total = total,
+                    failed = 0,
+                    downloaded = 0
+                )
+            )
+        }
+
+        for (plugin in plugins) {
+            downloadDispatcher.launch(plugin.uuid) {
+                val isSuccess = downloadPlugin(plugin)
+                if (!isActive) {
+                    return@launch
+                }
+
+                updateMutex.withLock {
+                    if (isSuccess) {
+                        downloaded += 1
+                    } else {
+                        failed += 1
+                    }
+                    updateState {
+                        copy(
+                            updateAllPluginsDialog = PluginsUpdatingDialog(
+                                total = total,
+                                failed = failed,
+                                downloaded = downloaded
+                            )
+                        )
+                    }
                 }
             }
         }
+
+        if (!isActive) {
+            return@launch
+        }
+
+        updateMutex.withLock {
+            updateState {
+                copy(
+                    updateAllPluginsDialog = PluginsUpdatingDialog(
+                        total = total,
+                        failed = failed,
+                        downloaded = downloaded
+                    )
+                )
+            }
+        }
+    }
+
+    private suspend fun downloadPlugin(plugin: Plugin): Boolean {
+        val source = plugin.source ?: return false
+        runCatching {
+            manager.downloadPlugin(
+                source = source,
+                downloadProgress = { downloadedBytes, totalBytes ->
+                    updateState {
+                        copy(plugins = plugins.updating(plugin.uuid) {
+                            copy(
+                                status = PluginStatus.Downloading(
+                                    total = totalBytes,
+                                    progress = downloadedBytes
+                                )
+                            )
+                        })
+                    }
+                }
+            )
+        }.onFailure { t ->
+            updateState {
+                copy(plugins = plugins.updating(plugin.uuid) {
+                    copy(status = PluginStatus.Failed(t))
+                })
+            }
+            return false
+        }.onSuccess { downloadLocation ->
+            updateState {
+                copy(plugins = plugins.updating(plugin.uuid) {
+                    copy(status = PluginStatus.Idle, downloadLocation = downloadLocation)
+                })
+            }
+            return true
+        }
+        return false
     }
 
     private suspend fun loadRepository(uuid: Uuid, repository: RepositoryInfo) {
@@ -747,7 +822,13 @@ class ExtensionsViewModel2(
                 uuid to Repository(info = info, status = RepositoryStatus.Loading, uuid = uuid)
             }.toPersistentMap()
 
-            copy(repositories = repositories.setTo(newData = newRepositories))
+            copy(
+                repositories = repositories.setTo(
+                    newData = repositories.data.puttingAll(
+                        newRepositories
+                    )
+                )
+            )
         }
 
         repositoryDispatcher.launch(localUuid) {
