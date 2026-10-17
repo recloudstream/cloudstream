@@ -321,6 +321,7 @@ fun PlayerScreen(
         var sourceSaved: String? = null
         while (true) {
             status = player.status()
+            player.recoverStalledSeek()
             val last = playedOnLink[1]
             if (last >= 0 && status.position > last && status.position - last < 2) playedOnLink[0] += status.position - last
             playedOnLink[1] = status.position

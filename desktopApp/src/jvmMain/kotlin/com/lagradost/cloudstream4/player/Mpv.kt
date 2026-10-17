@@ -35,6 +35,7 @@ internal interface MpvLibrary : Library {
     fun mpv_free(data: Pointer)
     fun mpv_error_string(error: Int): String
     fun mpv_wait_event(ctx: Pointer, timeout: Double): Pointer
+    fun mpv_request_log_messages(ctx: Pointer, minLevel: String): Int
     fun mpv_terminate_destroy(ctx: Pointer)
 }
 
@@ -216,6 +217,13 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
     private val afterLoad = mutableListOf<() -> Unit>()
     /** Where the file opening should start, in seconds, until it has started there */
     @Volatile private var resumeAt: Double? = null
+    /** The link's own audio tracks and the subtitle files added to the file, to add again when it is opened again */
+    private var audioUrls = emptyList<String>()
+    private val subtitlesAdded = mutableListOf<Pair<File, String>>()
+    /** Since when, in ms, mpv has been waiting to play from a seek, 0 when it is not */
+    private var stalledSince = 0L
+    /** How often the file was opened again for the seek waited on */
+    private var reopens = 0
 
     private val _events = Channel<MpvEvent>(Channel.UNLIMITED)
     val events: Flow<MpvEvent> = _events.receiveAsFlow()
@@ -308,6 +316,8 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
         // Links come from the extensions already: no youtube-dl lookup before every file
         option("ytdl", "no")
         check("initialize", lib.mpv_initialize(ctx))
+        // mpv's errors, such as a server refusing a request, go to the app's log
+        check("request_log_messages", lib.mpv_request_log_messages(ctx, "error"))
         eventThread = Thread(::eventLoop, "mpv-events").apply { isDaemon = true; start() }
         pending.forEach { it() }
         pending.clear()
@@ -342,6 +352,13 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
                 val event = lib.mpv_wait_event(ctx, -1.0)
                 when (event.getInt(0)) {
                     MPV_EVENT_SHUTDOWN -> return
+                    MPV_EVENT_LOG_MESSAGE -> {
+                        // mpv_event_log_message: prefix, level, text
+                        val data = event.getPointer(16)
+                        val prefix = data.getPointer(0).getString(0, "UTF-8")
+                        val text = data.getPointer(2L * Native.POINTER_SIZE).getString(0, "UTF-8")
+                        println("ERROR mpv [$prefix]: ${text.trim()}")
+                    }
                     MPV_EVENT_PLAYBACK_RESTART -> {
                         opening = false
                         resumeAt?.let(::checkResumed)
@@ -400,17 +417,57 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
         // Appended one by one, so a comma inside a header value is never taken as a separator
         command("change-list", "http-header-fields", "clr", "")
         headers.forEach { (key, value) -> command("change-list", "http-header-fields", "append", "$key: $value") }
-        command("set", "start", startSeconds?.let { "+$it" } ?: "none")
-        resumeAt = startSeconds?.takeIf { it > 0 }
         // keep-open pauses at the end of a file, which would carry over to the next one
         command("set", "pause", "no")
-        fileLoaded = false
-        opening = true
-        afterLoad.clear()
-        command("loadfile", link.url, "replace")
-        link.audioTracks.forEach { command("audio-add", it.url, "auto") }
+        audioUrls = link.audioTracks.map { it.url }
+        subtitlesAdded.clear()
+        reopens = 0
+        load(link.url, startSeconds)
         // A new file drops the subtitles added to the last one
         subtitles.forEach { addSubtitle(it.file, it.title, it.select) }
+    }
+
+    /** Opens [url], with the link's own audio tracks, at [startSeconds] or from the start */
+    private fun load(url: String, startSeconds: Double?) {
+        command("set", "start", startSeconds?.let { "+$it" } ?: "none")
+        resumeAt = startSeconds?.takeIf { it > 0 }
+        fileLoaded = false
+        opening = true
+        stalledSince = 0
+        afterLoad.clear()
+        command("loadfile", url, "replace")
+        audioUrls.forEach { command("audio-add", it, "auto") }
+    }
+
+    /**
+     * A seek past what is loaded asks the server for that part of the file. Some servers never answer,
+     * and mpv would then wait there for good, the spinner turning. Once it waited [SEEK_PATIENCE_MS],
+     * the file is opened again at that point, which asks again on a new connection, with the audio
+     * track and subtitle that were chosen. Called with every status
+     */
+    fun recoverStalledSeek() = whenStarted {
+        val waiting = fileLoaded && (opening || property("seeking") == "yes")
+        if (!waiting) {
+            stalledSince = 0
+            if (fileLoaded) reopens = 0
+            return@whenStarted
+        }
+        val now = System.currentTimeMillis()
+        if (stalledSince == 0L) stalledSince = now
+        if (now - stalledSince < SEEK_PATIENCE_MS || reopens >= MAX_REOPENS) return@whenStarted
+        val url = currentUrl ?: return@whenStarted
+        val at = property("time-pos")?.toDoubleOrNull() ?: return@whenStarted
+        reopens++
+        println("WARNING MpvPlayer: no answer at ${at.toInt()} s for ${(now - stalledSince) / 1000} s, opening the file again there")
+        val audio = property("aid")
+        val subtitle = property("sid")
+        val subtitles = subtitlesAdded.toList()
+        load(url, at)
+        whenLoaded {
+            subtitles.forEach { (file, title) -> command("sub-add", file.absolutePath, "auto", title) }
+            audio?.let { command("set", "aid", it) }
+            subtitle?.let { command("set", "sid", it) }
+        }
     }
 
     /**
@@ -436,6 +493,7 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
 
     /** Adds a subtitle file, shown when [select] is true */
     fun addSubtitle(file: File, title: String, select: Boolean = true) = whenLoaded {
+        subtitlesAdded += file to title
         command("sub-add", file.absolutePath, if (select) "select" else "auto", title)
     }
 
@@ -604,10 +662,15 @@ class MpvPlayer internal constructor(private val lib: MpvLibrary) {
 
     private companion object {
         const val MPV_EVENT_SHUTDOWN = 1
+        const val MPV_EVENT_LOG_MESSAGE = 2
         const val MPV_EVENT_END_FILE = 7
         const val MPV_EVENT_FILE_LOADED = 8
         const val MPV_EVENT_PLAYBACK_RESTART = 21
         const val END_FILE_REASON_EOF = 0
         const val END_FILE_REASON_ERROR = 4
+        /** A slow but working server answered a far seek within 8 s in tests: 12 s leaves it room */
+        const val SEEK_PATIENCE_MS = 12_000L
+        /** Opened again this often for one seek, after which the server is left to answer */
+        const val MAX_REOPENS = 2
     }
 }
