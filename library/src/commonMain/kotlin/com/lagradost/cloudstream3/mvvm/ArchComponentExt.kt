@@ -128,7 +128,7 @@ fun Throwable.getAllMessages(): String {
 }
 
 fun Throwable.getStackTracePretty(showMessage: Boolean = true): String {
-    val prefix = if (showMessage) this.message?.let { "\n$it" } ?: "" else ""
+    val prefix = if (showMessage) this.message?.let { "$it\n" } ?: "" else ""
     return prefix + this.stackTraceToString()
         .lines()
         .mapNotNull { line ->

@@ -813,4 +813,5 @@
         <item quantity="other">%d downloads queued</item>
     </plurals>
     <string name="player_is_live">Live</string>
+    <string name="installed_plugins">Installed plugins</string>
 </resources>

@@ -302,7 +302,7 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
 
                         val fixedName = if (!name.isNullOrBlank()) name
                         else repository.name
-                        val newRepo = RepositoryData(repository.iconUrl, fixedName, url)
+                        val newRepo = RepositoryData(repository.iconUrl, fixedName, url, repository.description)
                         RepositoryManager.addRepository(newRepo)
                         extensionViewModel.loadStats()
                         extensionViewModel.loadRepositories()
