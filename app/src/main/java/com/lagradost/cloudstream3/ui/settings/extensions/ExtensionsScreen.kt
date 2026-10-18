@@ -10,6 +10,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,11 +20,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -68,7 +71,7 @@ import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
-import androidx.compose.ui.focus.focusTarget
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.Clipboard
@@ -128,7 +131,22 @@ import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.lagradost.cloudstream4.viewmodels.AddRepositoryDialog
 import com.lagradost.cloudstream4.viewmodels.DerivedRepositoryState
 import com.lagradost.cloudstream4.viewmodels.ExtensionsAction
-import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.*
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.CancelPluginDownloader
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.CancelPluginsUpdate
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.ClearPluginSearch
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.DeletePlugin
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.DeleteRepository
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.DownloadPlugin
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.DownloadRepositoryWithDialog
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.FilterByInverseLanguages
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.FilterByTypes
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.Init
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.ReloadRepository
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.Search
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.SelectPlugin
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.SelectRepository
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.SetRepositoryDialog
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.UpdateAllPlugins
 import com.lagradost.cloudstream4.viewmodels.ExtensionsEffect
 import com.lagradost.cloudstream4.viewmodels.ExtensionsState
 import com.lagradost.cloudstream4.viewmodels.ExtensionsViewModel2
@@ -154,7 +172,6 @@ import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
-import kotlin.collections.get
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
@@ -220,7 +237,7 @@ object ExtensionsScreen : Screen {
         val viewModel =
             viewModel<ExtensionsViewModel2> { ExtensionsViewModel2(manager = AndroidRepositoryManager) }
         LaunchedEffect(Unit) { // TODO fix this to only do if necessary
-            viewModel.onAction(ExtensionsAction.Init)
+            viewModel.onAction(Init)
         }
         val state by viewModel.state.collectAsState()
         val highLight = remember { mutableStateOf<Uuid?>(null) }
@@ -330,19 +347,13 @@ object ExtensionsScreen : Screen {
                 Text(text = stringResource(R.string.installed_plugins))
             }, onClick = {
                 extraDialog = false
-                val activity = activity ?: return@DropdownMenuItem
-                activity.findNavController(R.id.nav_host_fragment).navigate(
-                    R.id.navigation_settings_extensions_to_navigation_settings_plugins,
-                    PluginsFragment.newLocalInstance(
-                        activity.getString(R.string.extensions),
-                    )
-                )
+                openInstalledPlugins()
             })
             DropdownMenuItem(text = {
                 Text(text = stringResource(R.string.update_plugins_manually))
             }, onClick = {
                 extraDialog = false
-                onAction(ExtensionsAction.UpdateAllPlugins)
+                onAction(UpdateAllPlugins)
             })
         }
 
@@ -386,7 +397,7 @@ object ExtensionsScreen : Screen {
                     val removed =
                         derivedRepositoryState.languageCount.keys.subtract(selection)
                     onAction(
-                        ExtensionsAction.FilterByInverseLanguages(
+                        FilterByInverseLanguages(
                             removed.toPersistentSet()
                         )
                     )
@@ -427,6 +438,16 @@ object ExtensionsScreen : Screen {
         ),
     )
 
+    fun openInstalledPlugins() {
+        val activity = activity ?: return
+        activity.findNavController(R.id.nav_host_fragment).navigate(
+            R.id.navigation_settings_extensions_to_navigation_settings_plugins,
+            PluginsFragment.newLocalInstance(
+                activity.getString(R.string.extensions),
+            )
+        )
+    }
+
     @SuppressLint("UnrememberedMutableState")
     @Composable
     fun Content(
@@ -451,7 +472,7 @@ object ExtensionsScreen : Screen {
 
         BackHandler(enabled = state.searchPlugins) {
             textState.clearText()
-            onAction(ExtensionsAction.ClearPluginSearch)
+            onAction(ClearPluginSearch)
         }
 
         /** Fab scrolling, this works but is currently a bit too fast IMPO */
@@ -500,7 +521,7 @@ object ExtensionsScreen : Screen {
         }
 
         LaunchedEffect(textState.text) {
-            onAction(ExtensionsAction.Search(textState.text.toString()))
+            onAction(Search(textState.text.toString()))
         }
 
         LazyColumn(
@@ -554,7 +575,7 @@ object ExtensionsScreen : Screen {
                                 null
                             } else {
                                 {
-                                    onAction(ExtensionsAction.SelectPlugin(plugin.uuid))
+                                    onAction(SelectPlugin(plugin.uuid))
                                     highLightState.value = plugin.uuid
                                 }
                             }
@@ -615,12 +636,15 @@ object ExtensionsScreen : Screen {
                 items(items = state.repositories.sorted, key = { uuid -> uuid }) { uuid ->
                     val repository = state.repositories[uuid]!!
                     val isHighlighted = uuid == highLight
+                    val derivedState = state.plugins.state.repositories[uuid]
+
                     CompositionLocalProvider(
                         LocalPreferenceHighlighted provides isHighlighted,
                     ) {
                         Repository(
                             repository = repository,
                             onAction = onAction,
+                            derivedState = derivedState,
                             modifier = Modifier
                                 .animateItem()
                                 .graphicsLayer { alpha = itemAlpha.value }
@@ -700,7 +724,7 @@ object ExtensionsScreen : Screen {
             label = stringResource(text),
         ) {
             onAction(
-                ExtensionsAction.FilterByTypes(
+                FilterByTypes(
                     if (selected) {
                         filter.tvTypes.removingAll(types)
                     } else {
@@ -991,7 +1015,6 @@ object ExtensionsScreen : Screen {
         var errorDialog by remember { mutableStateOf<Throwable?>(null) }
         val errorCause = errorDialog
         if (errorCause != null) {
-            val isDownloaded = plugin.downloadLocation != null
             ErrorDialog(
                 error = errorCause,
                 tag = stringResource(
@@ -999,7 +1022,7 @@ object ExtensionsScreen : Screen {
                     plugin.info.name
                 ),
                 confirmButton = {
-                    if (isDownloaded) {
+                    if (plugin.downloadLocation != null) {
                         WhiteButton(
                             text = stringResource(R.string.delete_plugin),
                             onClick = {
@@ -1168,7 +1191,7 @@ object ExtensionsScreen : Screen {
         AlertDialog(
             containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = {
-                onAction(ExtensionsAction.CancelPluginsUpdate)
+                onAction(CancelPluginsUpdate)
             },
             confirmButton = {
             },
@@ -1179,7 +1202,7 @@ object ExtensionsScreen : Screen {
                     } else {
                         stringResource(R.string.cancel)
                     }, onClick = {
-                        onAction(ExtensionsAction.CancelPluginsUpdate)
+                        onAction(CancelPluginsUpdate)
                     })
             },
             text = {
@@ -1220,16 +1243,16 @@ object ExtensionsScreen : Screen {
         AlertDialog(
             containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = {
-                onAction(ExtensionsAction.SetRepositoryDialog(null))
+                onAction(SetRepositoryDialog(null))
             },
             confirmButton = {
                 WhiteButton(text = stringResource(R.string.add_repository), onClick = {
-                    onAction(ExtensionsAction.DownloadRepositoryWithDialog(url = dialog.url))
+                    onAction(DownloadRepositoryWithDialog(url = dialog.url))
                 })
             },
             dismissButton = {
                 BlackButton(text = stringResource(R.string.cancel), onClick = {
-                    onAction(ExtensionsAction.SetRepositoryDialog(null))
+                    onAction(SetRepositoryDialog(null))
                 })
             },
             text = {
@@ -1241,7 +1264,7 @@ object ExtensionsScreen : Screen {
                         singleLine = true
                     ) { newValue ->
                         onAction(
-                            ExtensionsAction.SetRepositoryDialog(
+                            SetRepositoryDialog(
                                 dialog.copy(
                                     url = newValue,
                                     error = null
@@ -1392,7 +1415,7 @@ object ExtensionsScreen : Screen {
             ""
         }
         onAction(
-            ExtensionsAction.SetRepositoryDialog(
+            SetRepositoryDialog(
                 AddRepositoryDialog(url = url)
             )
         )
@@ -1408,6 +1431,11 @@ object ExtensionsScreen : Screen {
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .padding(MaterialTheme.padding.small)
+                .clickable(
+                    enabled = isLayout(PHONE),
+                    onClick = {
+                        openInstalledPlugins()
+                    })
         ) {
             Text(stringResource(R.string.extensions))
             Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
@@ -1450,50 +1478,23 @@ object ExtensionsScreen : Screen {
                     MaterialTheme.padding.extraSmall
                 )
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(size)
-                        .background(
-                            color = MaterialTheme.colorScheme.onBackground,
-                            shape = shape
-                        )
-                )
-                Text(
+                DownloadBox(
                     text = stringResource(
                         R.string.plugins_downloaded,
                         state.plugins.state.downloadedAndEnabled
-                    ),
-                    style = MaterialTheme.typography.labelMedium
+                    ), color = MaterialTheme.colorScheme.onBackground
                 )
-                Box(
-                    modifier = Modifier
-                        .size(size)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = shape
-                        )
-                )
-                Text(
+                DownloadBox(
                     text = stringResource(
                         R.string.plugins_disabled,
                         state.plugins.state.downloadedAndDisabled
-                    ),
-                    style = MaterialTheme.typography.labelMedium
+                    ), color = MaterialTheme.colorScheme.primary
                 )
-                Box(
-                    modifier = Modifier
-                        .size(size)
-                        .background(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            shape = shape
-                        )
-                )
-                Text(
+                DownloadBox(
                     text = stringResource(
                         R.string.plugins_not_downloaded,
                         state.plugins.state.notDownloaded
-                    ),
-                    style = MaterialTheme.typography.labelMedium
+                    ), color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -1503,6 +1504,7 @@ object ExtensionsScreen : Screen {
     fun Repository(
         modifier: Modifier,
         repository: Repository,
+        derivedState: DerivedRepositoryState?,
         onAction: (ExtensionsAction) -> Unit
     ) {
         var deleteDialog by remember { mutableStateOf(false) }
@@ -1515,7 +1517,7 @@ object ExtensionsScreen : Screen {
                     deleteDialog = false
                 },
                 confirm = {
-                    onAction(ExtensionsAction.DeleteRepository(repository.uuid))
+                    onAction(DeleteRepository(repository.uuid))
                 },
                 confirmText = stringResource(R.string.delete),
                 dismissText = stringResource(R.string.cancel),
@@ -1536,14 +1538,56 @@ object ExtensionsScreen : Screen {
                 },
             title = repository.info.name,
             subcomponent = {
-                Text(
-                    text = repository.info.description ?: repository.info.url,
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
                     modifier = Modifier
                         .padding(horizontal = PrefsHorizontalPadding)
-                        .secondaryItemAlpha(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 10,
-                )
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(
+                            MaterialTheme.padding.extraSmall
+                        ),
+                        modifier = Modifier.defaultMinSize(minHeight = 16.dp)
+                    ) {
+                        if (derivedState != null) {
+                            DownloadBox(
+                                text = stringResource(
+                                    R.string.plugins_downloaded,
+                                    derivedState.downloadedAndEnabled
+                                ), color = MaterialTheme.colorScheme.onBackground
+                            )
+                            if (derivedState.downloadedAndDisabled > 0) {
+                                DownloadBox(
+                                    text = stringResource(
+                                        R.string.plugins_disabled,
+                                        derivedState.downloadedAndDisabled
+                                    ), color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        } else if (repository.status == RepositoryStatus.Loading) {
+                            LinearProgressIndicator(
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            )
+                        } else {
+                            Text(
+                                text = stringResource(
+                                    R.string.plugin_load_fail,
+                                    repository.info.name
+                                ),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
+                    }
+                    Text(
+                        text = repository.info.description ?: repository.info.url,
+                        modifier = Modifier.secondaryItemAlpha(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 10,
+                    )
+                }
             },
             icon = {
                 RepositoryIcon(
@@ -1558,7 +1602,7 @@ object ExtensionsScreen : Screen {
                 )
             },
             onClick = {
-                onAction(ExtensionsAction.SelectRepository(repository.uuid))
+                onAction(SelectRepository(repository.uuid))
             },
             onLongClick = {
                 val shareableRepoData =
@@ -1596,7 +1640,7 @@ object ExtensionsScreen : Screen {
                                 tag = stringResource(R.string.error_invalid_data),
                                 confirmButton = {
                                     WhiteButton(text = stringResource(R.string.reload_error)) {
-                                        onAction(ExtensionsAction.ReloadRepository(repository.uuid))
+                                        onAction(ReloadRepository(repository.uuid))
                                     }
                                     WhiteButton(text = stringResource(R.string.delete_repository)) {
                                         deleteDialog = true
@@ -1633,6 +1677,25 @@ object ExtensionsScreen : Screen {
                     }
                 }
             },
+        )
+    }
+
+    @Composable
+    fun DownloadBox(
+        text: String,
+        color: Color,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(
+                    color = color,
+                    shape = RoundedCornerShape(3.dp)
+                )
+        )
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelMedium
         )
     }
 
