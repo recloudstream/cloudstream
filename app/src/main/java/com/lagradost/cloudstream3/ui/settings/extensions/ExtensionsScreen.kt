@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,6 +51,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -116,6 +116,7 @@ import com.lagradost.cloudstream4.compose.MultiSelectDialog
 import com.lagradost.cloudstream4.compose.PHONE
 import com.lagradost.cloudstream4.compose.RoundedShape
 import com.lagradost.cloudstream4.compose.Screen
+import com.lagradost.cloudstream4.compose.TV
 import com.lagradost.cloudstream4.compose.WhiteButton
 import com.lagradost.cloudstream4.compose.WhiteFilterChip
 import com.lagradost.cloudstream4.compose.isLayout
@@ -388,7 +389,7 @@ object ExtensionsScreen : Screen {
             }
         }
 
-        if(deleteDialog && activeRepository != null) {
+        if (deleteDialog && activeRepository != null) {
             ActionDialog(
                 title = stringResource(R.string.delete_files),
                 text = stringResource(R.string.delete_repository_plugins),
@@ -772,10 +773,11 @@ object ExtensionsScreen : Screen {
     fun ErrorDialog(
         error: Throwable,
         tag: String,
-        confirmButton: @Composable (() -> Unit),
+        confirmButton: @Composable ((Modifier) -> Unit),
         onDismissRequest: () -> Unit
     ) {
-        val message = error.toString() + "\n\n" + error.stackTraceToString()
+        val message = error.toString()
+        val stackTrace = error.stackTraceToString()
             .lines()
             .mapNotNull { line ->
                 val trimmed = line.trim()
@@ -787,11 +789,19 @@ object ExtensionsScreen : Screen {
             .joinToString("\n")
 
         val (logFocusRequester, dismissFocusRequester) = remember { FocusRequester.createRefs() }
+        val isTv = isLayout(TV)
+        LaunchedEffect(Unit) {
+            if (isTv) {
+                dismissFocusRequester.requestFocus()
+            }
+        }
 
         AlertDialog(
             containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = onDismissRequest,
-            confirmButton = confirmButton,
+            confirmButton = {
+                confirmButton(Modifier)
+            },
             dismissButton = {
                 BlackButton(
                     text = stringResource(R.string.dismiss),
@@ -803,7 +813,13 @@ object ExtensionsScreen : Screen {
             text = {
                 val clipboard = LocalClipboard.current
                 val scope = rememberCoroutineScope()
-                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .focusRequester(logFocusRequester)
+                        .focusProperties {
+                            down = dismissFocusRequester
+                        }) {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         LogBoxWhite(LogLevel.Error.identifier)
                         LogBoxBlack(tag)
@@ -813,15 +829,20 @@ object ExtensionsScreen : Screen {
                         message = message,
                         onClick = {
                             scope.launch {
-                                clipboard.setPlainText("Logcat", message)
+                                clipboard.setPlainText("Error", message)
                             }
                         },
-                        modifier = Modifier
-                            .focusRequester(logFocusRequester)
-                            .focusProperties {
-                                down = dismissFocusRequester
-                            }
                     )
+                    if(stackTrace.isNotBlank()) {
+                        LogText(
+                            level = LogLevel.Error,
+                            message = stackTrace,
+                            onClick = {
+                                scope.launch {
+                                    clipboard.setPlainText("Stacktrace", stackTrace)
+                                }
+                            })
+                    }
                 }
             },
             title = {
@@ -837,8 +858,15 @@ object ExtensionsScreen : Screen {
         onClick: (() -> Unit)?,
     ) {
         val description = plugin.info.description
-
         var extendedDialog by remember { mutableStateOf(false) }
+
+        val dismissFocusRequester = remember { FocusRequester() }
+        val isTv = isLayout(TV)
+        LaunchedEffect(Unit) {
+            if (isTv) {
+                dismissFocusRequester.requestFocus()
+            }
+        }
 
         if (extendedDialog) {
             AlertDialog(
@@ -857,8 +885,10 @@ object ExtensionsScreen : Screen {
                 },
                 dismissButton = {
                     BlackButton(
+                        modifier = Modifier.focusRequester(dismissFocusRequester),
                         text = stringResource(R.string.dismiss),
-                        onClick = { extendedDialog = false })
+                        onClick = { extendedDialog = false }
+                    )
                 },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small)) {
@@ -1067,9 +1097,10 @@ object ExtensionsScreen : Screen {
                     R.string.plugin_load_fail,
                     plugin.info.name
                 ),
-                confirmButton = {
+                confirmButton = { modifier ->
                     if (plugin.downloadLocation != null) {
                         WhiteButton(
+                            modifier = modifier,
                             text = stringResource(R.string.delete_plugin),
                             onClick = {
                                 errorDialog = null
@@ -1077,6 +1108,7 @@ object ExtensionsScreen : Screen {
                             })
                     } else {
                         WhiteButton(
+                            modifier = modifier,
                             text = stringResource(R.string.reload_error),
                             onClick = {
                                 errorDialog = null
@@ -1335,7 +1367,9 @@ object ExtensionsScreen : Screen {
                             Column {
                                 Spacer(modifier = Modifier.height(MaterialTheme.padding.medium))
                                 LinearProgressIndicator(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.defaultMinSize(
+                                        minWidth = TextFieldDefaults.MinWidth,
+                                    ),
                                     color = MaterialTheme.colorScheme.onBackground,
                                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                                 )
@@ -1705,12 +1739,18 @@ object ExtensionsScreen : Screen {
                             ErrorDialog(
                                 error = reason.cause,
                                 tag = stringResource(R.string.error_invalid_data),
-                                confirmButton = {
-                                    WhiteButton(text = stringResource(R.string.reload_error)) {
+                                confirmButton = { modifier ->
+                                    WhiteButton(
+                                        text = stringResource(R.string.reload_error),
+                                        modifier = modifier
+                                    ) {
                                         onAction(ReloadRepository(repository.uuid))
                                         errorDialog = false
                                     }
-                                    WhiteButton(text = stringResource(R.string.delete_repository)) {
+                                    WhiteButton(
+                                        text = stringResource(R.string.delete_repository),
+                                        modifier = modifier
+                                    ) {
                                         deleteDialog = true
                                     }
                                 },
