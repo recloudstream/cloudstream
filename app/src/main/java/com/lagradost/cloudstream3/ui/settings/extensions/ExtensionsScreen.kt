@@ -1108,7 +1108,7 @@ object ExtensionsScreen : Screen {
             if (settings != null) {
                 val context = LocalContext.current
                 IconButton(
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier
                         .focusRequester(button1FocusRequester)
                         .focusProperties {
                             start = returnFocusRequester
