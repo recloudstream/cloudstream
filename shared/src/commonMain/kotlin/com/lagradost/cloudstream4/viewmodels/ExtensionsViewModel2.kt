@@ -1,16 +1,17 @@
 package com.lagradost.cloudstream4.viewmodels
 
+import androidx.annotation.CheckResult
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.InternalAPI
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.utils.Levenshtein
 import com.lagradost.cloudstream4.state.ActionHandler
 import com.lagradost.cloudstream4.state.DefaultEffectContainer
 import com.lagradost.cloudstream4.state.DefaultStateContainer
 import com.lagradost.cloudstream4.state.DerivedState
 import com.lagradost.cloudstream4.state.EffectContainer
-import com.lagradost.cloudstream4.state.FilterByQuery
 import com.lagradost.cloudstream4.state.MultiActiveQuery
 import com.lagradost.cloudstream4.state.SearchableData
 import com.lagradost.cloudstream4.state.SearchableDataState
@@ -102,18 +103,65 @@ data class PluginDownloadSource(
 )
 
 @Immutable
+data class PluginFilterByQuery(
+    val query: String,
+    private val ratio: Int = 80,
+) : Function1<Plugin, Boolean> {
+    override fun invoke(value: Plugin): Boolean {
+        if (query.isEmpty()) return true
+        val score1 = Levenshtein.partialRatio(
+            value.info.name.lowercase(),
+            query
+        )
+
+        if (score1 > ratio) return true
+        val score2 = value.info.description?.take(64)?.lowercase()
+            ?.let { description ->
+                Levenshtein.partialRatio(
+                    description,
+                    query
+                )
+            }
+
+        return score2 != null && score2 > ratio
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        val other = other as? PluginFilterByQuery ?: return false
+        if (query != other.query) return false
+        if (ratio != other.ratio) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = ratio
+        result = 31 * result + query.hashCode()
+        return result
+    }
+
+    @CheckResult
+    fun update(newQuery: String): PluginFilterByQuery {
+        val lowerCaseQuery = newQuery.lowercase()
+        return if (lowerCaseQuery == query) {
+            this
+        } else {
+            copy(query = lowerCaseQuery)
+        }
+    }
+}
+
+@Immutable
 data class FilterPlugin(
     val tvTypes: PersistentSet<TvType> = TvType.entries.toSet().toPersistentSet(),
     val repository: Uuid? = null,
-    val query: FilterByQuery<Plugin> = FilterByQuery(query = "") { it.info.name },
+    val query: PluginFilterByQuery = PluginFilterByQuery(query = ""),
     /** We filter by the inverse, as that makes is easy to initalize it as all = {} */
     val removeLanguages: PersistentSet<String> = persistentSetOf(),
 ) : Function1<Plugin, Boolean> {
     override fun invoke(plugin: Plugin): Boolean =
         /** Filter by repository */
         (repository == null || (plugin.repository == repository)) &&
-                /** Filter by query */
-                query(plugin) &&
                 /** Filter by type */
                 (if (plugin.info.tvTypes.isEmpty()) {
                     /**
@@ -125,7 +173,10 @@ data class FilterPlugin(
                     plugin.info.tvTypes.any(tvTypes::contains)
                 }) &&
                 /** Filter by language */
-                !(plugin.info.language?.let(removeLanguages::contains) ?: removeLanguages.contains(""))
+                !(plugin.info.language?.let(removeLanguages::contains)
+                    ?: removeLanguages.contains("")) &&
+                /** Filter by query */
+                query(plugin)
 }
 
 @Immutable
@@ -447,8 +498,8 @@ class ExtensionsViewModel2(
             is ExtensionsAction.DeletePluginsInRepository -> {
                 viewModelScope.launch {
                     val allPlugins = state.value.plugins
-                    for(plugin in allPlugins.data.values) {
-                        if(plugin.repository == action.uuid) {
+                    for (plugin in allPlugins.data.values) {
+                        if (plugin.repository == action.uuid) {
                             deletePlugin(plugin)
                         }
                     }
