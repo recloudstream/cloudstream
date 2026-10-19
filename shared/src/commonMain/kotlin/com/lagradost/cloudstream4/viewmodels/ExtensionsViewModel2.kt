@@ -125,7 +125,7 @@ data class FilterPlugin(
                     plugin.info.tvTypes.any(tvTypes::contains)
                 }) &&
                 /** Filter by language */
-                (plugin.info.language?.let(removeLanguages::contains)?.not() ?: true)
+                !(plugin.info.language?.let(removeLanguages::contains) ?: removeLanguages.contains(""))
 }
 
 @Immutable
@@ -336,6 +336,7 @@ interface RepositoryManager {
 sealed class ExtensionsAction {
     object Init : ExtensionsAction()
     data class DeleteRepository(val uuid: Uuid) : ExtensionsAction()
+    data class DeletePluginsInRepository(val uuid: Uuid) : ExtensionsAction()
     data class DeletePlugin(val uuid: Uuid) : ExtensionsAction()
     data class DownloadPlugin(val uuid: Uuid) : ExtensionsAction()
 
@@ -440,6 +441,17 @@ class ExtensionsViewModel2(
             is ExtensionsAction.SetRepositoryDialog -> {
                 updateState {
                     copy(addDialog = action.dialog)
+                }
+            }
+
+            is ExtensionsAction.DeletePluginsInRepository -> {
+                viewModelScope.launch {
+                    val allPlugins = state.value.plugins
+                    for(plugin in allPlugins.data.values) {
+                        if(plugin.repository == action.uuid) {
+                            deletePlugin(plugin)
+                        }
+                    }
                 }
             }
 

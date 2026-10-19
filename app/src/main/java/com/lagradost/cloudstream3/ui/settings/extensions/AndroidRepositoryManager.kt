@@ -115,6 +115,7 @@ object AndroidRepositoryManager : RepositoryManager {
                         internalName = plugin.internalName,
                         repositoryUrl = url
                     )
+                    val language = plugin.language?.trim()
                     Plugin(
                         info = PluginInfo(
                             name = plugin.name,
@@ -126,7 +127,11 @@ object AndroidRepositoryManager : RepositoryManager {
                                 ?: persistentListOf(),
                             authors = plugin.authors.toPersistentList(),
                             iconUrl = plugin.iconUrl,
-                            language = plugin.language,
+                            language = if (language.isNullOrBlank()) {
+                                null
+                            } else {
+                                language
+                            },
                             description = plugin.description,
                             repositoryUrl = plugin.repositoryUrl
                         ),

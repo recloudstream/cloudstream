@@ -14,12 +14,13 @@ fun LazyGridState.IsScrolling(up : Runnable, down : Runnable) {
         if(lastScrolledForward) down.run()
     }
 }
+@Suppress("FrequentlyChangingValue")
 @Composable
 fun LazyListState.IsScrolling(up : Runnable, down : Runnable) {
-    LaunchedEffect(lastScrolledBackward) {
+    LaunchedEffect(firstVisibleItemIndex) {
         if(lastScrolledBackward) up.run()
     }
-    LaunchedEffect(lastScrolledForward) {
+    LaunchedEffect(firstVisibleItemIndex) {
         if(lastScrolledForward) down.run()
     }
 }

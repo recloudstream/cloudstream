@@ -21,12 +21,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -95,6 +95,7 @@ import coil3.compose.AsyncImage
 import com.fasterxml.jackson.core.JacksonException
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.openBrowser
 import com.lagradost.cloudstream3.CommonActivity.activity
+import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.plugins.PluginManager
@@ -281,7 +282,7 @@ object ExtensionsScreen : Screen {
                     },
                     navigateUp = LocalBackPress.current,
                     actions = {
-                        ActionRow(state = state, onAction = onAction)
+                        TopActionRow(state = state, onAction = onAction)
                     },
                     scrollBehavior = it,
                 )
@@ -309,7 +310,7 @@ object ExtensionsScreen : Screen {
     }
 
     @Composable
-    fun ActionRow(state: ExtensionsState, onAction: (ExtensionsAction) -> Unit) {
+    fun TopActionRow(state: ExtensionsState, onAction: (ExtensionsAction) -> Unit) {
         val scope = rememberCoroutineScope()
         val clipboard = LocalClipboard.current
 
@@ -358,7 +359,21 @@ object ExtensionsScreen : Screen {
         }
 
         var languageDialog by remember { mutableStateOf(false) }
+        var deleteDialog by remember { mutableStateOf(false) }
         val derivedRepositoryState = state.derivedRepositoryState
+
+        val activeRepository = state.pluginFilter.repository
+        if (state.searchPlugins && activeRepository != null && derivedRepositoryState.notDownloaded != derivedRepositoryState.total) {
+            IconButton(onClick = {
+                deleteDialog = true
+            }) {
+                Icon(
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    painter = painterResource(R.drawable.delete_sweep_24px),
+                    contentDescription = stringResource(R.string.delete_repository)
+                )
+            }
+        }
 
         /** We only show the langauge filter button if we are searching plugins and there is languages to pick from*/
         if (state.searchPlugins && derivedRepositoryState.languageCount.isNotEmpty()) {
@@ -372,6 +387,24 @@ object ExtensionsScreen : Screen {
                 )
             }
         }
+
+        if(deleteDialog && activeRepository != null) {
+            ActionDialog(
+                title = stringResource(R.string.delete_files),
+                text = stringResource(R.string.delete_repository_plugins),
+                icon = painterResource(R.drawable.delete_sweep_24px),
+                dismiss = {
+                    deleteDialog = false
+                },
+                confirm = {
+                    onAction(ExtensionsAction.DeletePluginsInRepository(activeRepository))
+                    deleteDialog = false
+                },
+                confirmText = stringResource(R.string.delete),
+                dismissText = stringResource(R.string.cancel),
+            )
+        }
+
         if (languageDialog) {
             val entries =
                 derivedRepositoryState.languageCount.keys.sortedBy { lang ->
@@ -919,13 +952,20 @@ object ExtensionsScreen : Screen {
         val (backgroundFocusRequester, buttonsFocusRequester) =
             remember { FocusRequester.createRefs() }
 
+        val isPluginDisabledByAuthor = plugin.info.status == PROVIDER_STATUS_DOWN
+
         BasePreferenceWidget(
             modifier = modifier
                 .focusRequester(backgroundFocusRequester)
                 .focusProperties {
                     end = buttonsFocusRequester
                 },
-            title = plugin.info.name,
+            title =
+                if (isPluginDisabledByAuthor) {
+                    stringResource(R.string.single_plugin_disabled, plugin.info.name)
+                } else {
+                    plugin.info.name
+                },
             subcomponent =
                 {
                     Column(modifier = Modifier.padding(horizontal = PrefsHorizontalPadding)) {
@@ -980,7 +1020,13 @@ object ExtensionsScreen : Screen {
             icon = {
                 RepositoryIcon(
                     iconUrl = plugin.info.iconUrl,
-                    defaultIcon = painterResource(R.drawable.extension_24px)
+                    defaultIcon =
+                        if (isPluginDisabledByAuthor) {
+                            painterResource(R.drawable.extension_off_24px)
+                        } else {
+                            painterResource(R.drawable.extension_24px)
+                        }
+
                 )
             },
             onClick = onClick ?: {
@@ -1044,6 +1090,8 @@ object ExtensionsScreen : Screen {
             )
         }
 
+        val isPluginDisabledByAuthor = plugin.info.status == PROVIDER_STATUS_DOWN
+        val isDownloadDisabled = isPluginDisabledByAuthor || plugin.source == null
         Row(
             modifier = modifier
         ) {
@@ -1060,7 +1108,7 @@ object ExtensionsScreen : Screen {
             if (settings != null) {
                 val context = LocalContext.current
                 IconButton(
-                    modifier = Modifier
+                    modifier = Modifier.fillMaxHeight()
                         .focusRequester(button1FocusRequester)
                         .focusProperties {
                             start = returnFocusRequester
@@ -1108,6 +1156,8 @@ object ExtensionsScreen : Screen {
                         PluginStatus.Idle -> {
                             if (plugin.downloadLocation != null) {
                                 onAction(DeletePlugin(plugin.uuid))
+                            } else if (isDownloadDisabled) {
+                                /** The author has disabled the plugin, so do nothing here */
                             } else {
                                 onAction(DownloadPlugin(plugin.uuid))
                             }
@@ -1151,9 +1201,17 @@ object ExtensionsScreen : Screen {
                                 painter = painterResource(R.drawable.delete_24px),
                                 contentDescription = stringResource(R.string.delete_plugin)
                             )
+                        } else if (isDownloadDisabled) {
+                            Icon(
+                                painter = painterResource(R.drawable.visibility_off_24px),
+                                contentDescription = stringResource(
+                                    R.string.single_plugin_disabled,
+                                    plugin.info.name
+                                )
+                            )
                         } else {
                             Icon(
-                                painter = painterResource(R.drawable.netflix_download),
+                                painter = painterResource(R.drawable.arrow_circle_down_24px),
                                 contentDescription = stringResource(R.string.download)
                             )
                         }
@@ -1430,12 +1488,12 @@ object ExtensionsScreen : Screen {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(MaterialTheme.padding.small)
                 .clickable(
                     enabled = isLayout(PHONE),
                     onClick = {
                         openInstalledPlugins()
                     })
+                .padding(MaterialTheme.padding.small)
         ) {
             Text(stringResource(R.string.extensions))
             Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
@@ -1511,6 +1569,7 @@ object ExtensionsScreen : Screen {
 
         if (deleteDialog) {
             ActionDialog(
+                icon = painterResource(R.drawable.delete_24px),
                 title = stringResource(R.string.delete_repository),
                 text = stringResource(R.string.delete_repository_plugins),
                 dismiss = {
@@ -1518,6 +1577,7 @@ object ExtensionsScreen : Screen {
                 },
                 confirm = {
                     onAction(DeleteRepository(repository.uuid))
+                    deleteDialog = false
                 },
                 confirmText = stringResource(R.string.delete),
                 dismissText = stringResource(R.string.cancel),
@@ -1548,21 +1608,28 @@ object ExtensionsScreen : Screen {
                         horizontalArrangement = Arrangement.spacedBy(
                             MaterialTheme.padding.extraSmall
                         ),
-                        modifier = Modifier.defaultMinSize(minHeight = 16.dp)
+                        modifier = Modifier.defaultMinSize(minHeight = 14.dp)
                     ) {
                         if (derivedState != null) {
-                            DownloadBox(
+                            Text(
                                 text = stringResource(
                                     R.string.plugins_downloaded,
                                     derivedState.downloadedAndEnabled
-                                ), color = MaterialTheme.colorScheme.onBackground
+                                )
+                                        /**
+                                        Not very good concatenation translation here tbh,
+                                        but we do not want to add translation keys
+                                         */
+                                        + "/${derivedState.total}",
+                                style = MaterialTheme.typography.labelMedium
                             )
                             if (derivedState.downloadedAndDisabled > 0) {
-                                DownloadBox(
+                                Text(
                                     text = stringResource(
                                         R.string.plugins_disabled,
                                         derivedState.downloadedAndDisabled
-                                    ), color = MaterialTheme.colorScheme.primary
+                                    ),
+                                    style = MaterialTheme.typography.labelMedium
                                 )
                             }
                         } else if (repository.status == RepositoryStatus.Loading) {
@@ -1641,6 +1708,7 @@ object ExtensionsScreen : Screen {
                                 confirmButton = {
                                     WhiteButton(text = stringResource(R.string.reload_error)) {
                                         onAction(ReloadRepository(repository.uuid))
+                                        errorDialog = false
                                     }
                                     WhiteButton(text = stringResource(R.string.delete_repository)) {
                                         deleteDialog = true
