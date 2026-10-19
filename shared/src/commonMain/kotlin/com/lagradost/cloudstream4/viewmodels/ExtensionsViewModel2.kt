@@ -16,7 +16,6 @@ import com.lagradost.cloudstream4.state.MultiActiveQuery
 import com.lagradost.cloudstream4.state.SearchableData
 import com.lagradost.cloudstream4.state.SearchableDataState
 import com.lagradost.cloudstream4.state.SingleActiveQuery
-import com.lagradost.cloudstream4.state.SortByMatching
 import com.lagradost.cloudstream4.state.SortByName
 import com.lagradost.cloudstream4.state.StateContainer
 import com.lagradost.cloudstream4.state.UniqueItem
@@ -101,6 +100,37 @@ data class PluginDownloadSource(
     val repositoryUrl: String,
     val digest: DigestPair?,
 )
+
+@Immutable
+data class PluginSortBy(
+    val query: String,
+    val ignoreCase: Boolean = true,
+) : Comparator<Plugin> {
+    override fun compare(p0: Plugin?, p1: Plugin?): Int {
+        if (p0 == p1) return 0
+        if (p0 == null) return -1
+        if (p1 == null) return 1
+        return score(p1).compareTo(score(p0))
+    }
+
+    fun score(plugin: Plugin): Int {
+        val score1 = Levenshtein.partialRatio(
+            plugin.info.name.lowercase(),
+            query
+        )
+        if (score1 > 80) {
+            return score1
+        }
+        val score2 = plugin.info.description?.take(64)?.lowercase()
+            ?.let { description ->
+                Levenshtein.partialRatio(
+                    description,
+                    query
+                )
+            } ?: 0
+        return maxOf(score1, score2)
+    }
+}
 
 @Immutable
 data class PluginFilterByQuery(
@@ -555,7 +585,7 @@ class ExtensionsViewModel2(
                     copy(
                         plugins = plugins.searchBy(
                             newSorting = if (activeQuery) {
-                                SortByMatching(query = action.query.lowercase()) { it.info.name }
+                                PluginSortBy(query = action.query.lowercase())
                             } else {
                                 SortByName { it.info.name }
                             },

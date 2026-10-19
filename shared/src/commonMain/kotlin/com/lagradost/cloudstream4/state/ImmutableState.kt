@@ -36,7 +36,7 @@ data class FilterByQuery<Value>(
         if (query.isEmpty()) return onEmpty
         val transformed = transform(value)
         val matchAgainst = if (ignoreCase) transformed.lowercase() else transformed
-        return matchAgainst.startsWith(query) || Levenshtein.ratio(
+        return Levenshtein.partialRatio(
             query,
             matchAgainst
         ) > ratio
@@ -86,7 +86,7 @@ data class SortByMatching<Value>(
     fun score(p0: Value) : Int {
         val transformed = transform(p0)
         val matchAgainst = if (ignoreCase) transformed.lowercase() else transformed
-        return Levenshtein.ratio(
+        return Levenshtein.partialRatio(
             query,
             matchAgainst
         )
