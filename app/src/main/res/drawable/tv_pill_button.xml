@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Button of the TV layouts: white when focused, glass otherwise -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="120"
+    android:exitFadeDuration="120">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/tvFocused" />
+            <corners android:radius="100dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/tvGlass" />
+            <corners android:radius="100dp" />
+        </shape>
+    </item>
+</selector>

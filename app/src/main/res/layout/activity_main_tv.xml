@@ -57,6 +57,98 @@
 
         </com.google.android.material.navigationrail.NavigationRailView>
 
+        <!-- Replaces nav_rail_view on TV -->
+        <LinearLayout
+            android:id="@+id/nav_top_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/tv_tab_bar_top_margin"
+            android:background="@drawable/tv_tab_bar_bg"
+            android:elevation="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/nav_top_provider"
+                style="@style/TvTabItem"
+                android:drawablePadding="4dp"
+                android:ellipsize="end"
+                android:maxWidth="220dp"
+                android:nextFocusLeft="@id/nav_top_provider"
+                app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
+                app:drawableTint="@color/tv_tab_item_text"
+                tools:text="UAFlix" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="22dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="@color/tvTabSelected" />
+
+            <ImageView
+                android:id="@+id/nav_top_search"
+                style="@style/TvTabItem"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:contentDescription="@string/title_search"
+                android:paddingStart="14dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="8dp"
+                android:src="@drawable/search_icon"
+                app:tint="@color/tv_tab_item_text" />
+
+            <TextView
+                android:id="@+id/nav_top_home"
+                style="@style/TvTabItem"
+                android:text="@string/title_home" />
+
+            <TextView
+                android:id="@+id/nav_top_library"
+                style="@style/TvTabItem"
+                android:text="@string/library" />
+
+            <TextView
+                android:id="@+id/nav_top_downloads"
+                style="@style/TvTabItem"
+                android:text="@string/title_downloads" />
+
+            <TextView
+                android:id="@+id/nav_top_settings"
+                style="@style/TvTabItem"
+                android:text="@string/title_settings" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/nav_top_profile_card"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="2dp"
+                android:focusable="true"
+                android:foreground="@drawable/outline_drawable_round_20"
+                android:nextFocusRight="@id/nav_top_profile_card"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/transparent"
+                app:cardCornerRadius="19dp"
+                app:cardElevation="0dp"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/nav_top_profile_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/account"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/profile_bg_orange" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
             android:layout_width="0dp"

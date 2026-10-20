@@ -2,9 +2,12 @@ package com.lagradost.cloudstream3.utils
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.text.Spanned
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
@@ -288,6 +291,23 @@ object SingleSelectionHelper {
         )
     }
 
+    /** Width of the side panel dialogs on TV, relative to the screen */
+    private const val TV_SIDE_PANEL_WIDTH = 0.36f
+
+    /** A tvOS-like floating panel on the right side of the screen, used instead of bottom sheets on TV */
+    fun Context.createTvSidePanelDialog(): Dialog = Dialog(this, R.style.TvSidePanelDialog)
+
+    /** Must be called after [Dialog.show] as the window is only laid out then */
+    fun Dialog.layoutAsTvSidePanel() {
+        window?.apply {
+            setGravity(Gravity.END)
+            setLayout(
+                (context.resources.displayMetrics.widthPixels * TV_SIDE_PANEL_WIDTH).toInt(),
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+    }
+
     /** Only for a low amount of items */
     fun Activity?.showBottomDialog(
         items: List<String>,
@@ -303,11 +323,11 @@ object SingleSelectionHelper {
             LayoutInflater.from(this)
         )
 
-        val builder =
-            BottomSheetDialog(this)
+        val builder = if (isLayout(TV)) createTvSidePanelDialog() else BottomSheetDialog(this)
         builder.setContentView(binding.root)
 
         builder.show()
+        if (isLayout(TV)) builder.layoutAsTvSidePanel()
         showDialog(
             binding,
             builder,

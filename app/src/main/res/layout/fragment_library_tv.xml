@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/library_root"
-    android:background="?attr/primaryGrayBackground"
+    android:background="@drawable/tv_app_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -15,6 +15,8 @@
         android:layout_gravity="center"
         android:layout_margin="30dp"
         android:gravity="center"
+        android:textColor="@color/tvMutedText"
+        android:textSize="18sp"
         android:visibility="gone"
         tools:visibility="visible" />
 
@@ -22,7 +24,18 @@
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/primaryGrayBackground">
+        android:background="@color/transparent"
+        android:paddingHorizontal="@dimen/tv_content_padding"
+        android:paddingTop="28dp"
+        app:elevation="0dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/library"
+            android:textAppearance="@style/TvPageTitle"
+            app:layout_scrollFlags="scroll|enterAlways" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,65 +45,66 @@
 
             <ImageView
                 android:id="@+id/provider_selector"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="end|center_vertical"
-                android:layout_marginStart="10dp"
-                android:background="?selectableItemBackgroundBorderless"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/player_button_tv_attr"
                 android:contentDescription="@string/change_providers_img_des"
                 android:focusable="true"
                 android:nextFocusLeft="@id/navigation_library"
                 android:nextFocusRight="@id/library_sort"
-                android:padding="2dp"
                 android:src="@drawable/ic_baseline_extension_24"
                 android:tag="@string/tv_no_focus_tag"
-                app:tint="?attr/textColor" />
+                android:padding="12dp"
+                app:tint="@color/player_on_button_tv_attr" />
 
             <ImageView
                 android:id="@+id/library_sort"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="end|center_vertical"
-                android:layout_marginStart="10dp"
-                android:background="?selectableItemBackgroundBorderless"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/player_button_tv_attr"
                 android:contentDescription="@string/change_providers_img_des"
                 android:focusable="true"
                 android:nextFocusLeft="@id/provider_selector"
                 android:nextFocusRight="@id/list_selector"
                 android:src="@drawable/ic_baseline_sort_24"
                 android:tag="@string/tv_no_focus_tag"
-                app:tint="?attr/textColor" />
+                android:padding="12dp"
+                app:tint="@color/player_on_button_tv_attr" />
 
             <ImageView
                 android:id="@+id/list_selector"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="end|center_vertical"
-                android:layout_marginStart="10dp"
-                android:background="?selectableItemBackgroundBorderless"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/player_button_tv_attr"
                 android:contentDescription="@string/change_providers_img_des"
                 android:focusable="true"
                 android:nextFocusLeft="@id/library_sort"
                 android:nextFocusRight="@id/main_search"
-                android:padding="1dp"
                 android:src="@drawable/ic_baseline_filter_list_24"
                 android:tag="@string/tv_no_focus_tag"
-                app:tint="?attr/textColor" />
+                android:padding="12dp"
+                app:tint="@color/player_on_button_tv_attr" />
 
             <FrameLayout
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_margin="10dp"
+                android:layout_height="52dp"
                 android:layout_weight="1"
-                android:background="@drawable/search_background"
+                android:background="@drawable/tv_search_field_bg"
+                android:paddingStart="10dp"
                 android:visibility="visible"
                 app:layout_scrollFlags="scroll|enterAlways">
 
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/main_search"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="end"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
 
                     android:focusable="true"
                     android:iconifiedByDefault="false"
@@ -134,7 +148,9 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_gravity="top"
-            android:background="?attr/primaryGrayBackground"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/transparent"
             android:focusable="true"
             android:nextFocusDown="@id/search_result_root"
             android:paddingHorizontal="5dp"
@@ -153,7 +169,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/primaryBlackBackground"
+        android:background="@color/transparent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.viewpager2.widget.ViewPager2
@@ -170,7 +186,7 @@
             android:id="@+id/library_loading_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/primaryBlackBackground"
+            android:background="@color/transparent"
             android:focusable="false"
             android:tag="@string/tv_no_focus_tag"
             android:visibility="gone"

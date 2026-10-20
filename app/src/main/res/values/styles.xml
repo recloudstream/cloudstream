@@ -75,6 +75,75 @@
         <item name="cpv_focusBorderColor">?attr/white</item>
     </style>
 
+    <style name="TvTabItem">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginEnd">2dp</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">18dp</item>
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:background">@drawable/tv_tab_item_bg</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/tv_tab_item_text</item>
+        <item name="android:nextFocusDown">@id/home_preview_info_btt</item>
+    </style>
+
+    <style name="TvTopShelfMeta">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/tvMutedText</item>
+        <item name="android:shadowColor">#80000000</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">4</item>
+    </style>
+
+    <style name="TvSidePanelDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@drawable/tv_side_panel_bg</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.55</item>
+        <item name="android:windowAnimationStyle">@style/TvSidePanelAnimation</item>
+        <item name="android:listViewStyle">@style/ListViewStyle</item>
+    </style>
+
+    <style name="TvSidePanelAnimation">
+        <item name="android:windowEnterAnimation">@anim/tv_panel_enter</item>
+        <item name="android:windowExitAnimation">@anim/tv_panel_exit</item>
+    </style>
+
+    <style name="TvMetaBadge" parent="SmallWhiteButton">
+        <item name="backgroundTint">@color/tvGlass</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">6dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="TvResultInfoText" parent="ResultInfoText">
+        <item name="android:textColor">@color/tvMutedText</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TvPageTitle" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="fontFamily">@font/google_sans</item>
+        <item name="android:fontFamily">@font/google_sans</item>
+    </style>
+
     <style name="AppThemeTvOverlay">
         <item name="focusBackground">@drawable/outline_drawable_less</item>
     </style>
@@ -234,6 +303,28 @@
         <item name="white">@color/material_dynamic_neutral90</item>
         <item name="black">@color/material_dynamic_neutral10</item>
         <item name="colorOnPrimary">@color/material_on_primary_emphasis_medium</item>
+    </style>
+
+    <style name="TvOSMode">
+        <item name="primaryGrayBackground">@color/TvOSBackground</item>
+        <item name="primaryBlackBackground">@color/TvOSDarkerBackground</item>
+        <item name="iconGrayBackground">@color/TvOSElevated</item>
+        <item name="boxItemBackground">@color/TvOSElevated</item>
+        <item name="textColor">@color/TvOSText</item>
+        <item name="grayTextColor">@color/TvOSSecondaryText</item>
+        <item name="iconColor">@color/TvOSSecondaryText</item>
+        <item name="white">@color/TvOSText</item>
+        <item name="black">@color/TvOSDarkerBackground</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+    </style>
+
+    <style name="OverlayPrimaryColorAppleBlue">
+        <item name="colorPrimary">@color/TvOSBlue</item>
+        <item name="android:colorPrimary">@color/TvOSBlue</item>
+        <item name="colorPrimaryDark">@color/TvOSBlueDark</item>
+        <item name="colorAccent">@color/TvOSBlue</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+        <item name="android:colorAccent">@color/TvOSBlue</item>
     </style>
 
     <style name="OverlayPrimaryColorNormal">
@@ -690,6 +781,9 @@
         <item name="android:layout_marginTop">1dp</item>
     </style>
 
+    <!-- A pill on TV, see values-television -->
+    <item name="nice_button_focus" type="drawable">@drawable/outline_drawable_less</item>
+
     <style name="NiceButton">
         <!--removes shadow-->
         <item name="android:stateListAnimator">@null</item>
@@ -702,12 +796,12 @@
         <item name="android:textAllCaps">false</item>
         <item name="iconGravity">textStart</item>
         <item name="iconSize">20dp</item>
-        <item name="cornerRadius">@dimen/rounded_button_radius</item>
+        <item name="cornerRadius">@dimen/nice_button_radius</item>
         <item name="android:textSize">15sp</item>
 
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
-        <item name="android:foreground">@drawable/outline_drawable_less</item>
+        <item name="android:foreground">@drawable/nice_button_focus</item>
         <item name="android:tag">@string/tv_no_focus_tag</item>
     </style>
 
@@ -997,14 +1091,14 @@
         <item name="textColor">@color/player_on_button_tv</item>
         <item name="android:textColor">@color/player_on_button_tv</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_height">@dimen/video_button_tv_height</item>
         <item name="iconSize">16dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:baselineAligned">false</item>
         <item name="textAllCaps">false</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">@dimen/video_button_tv_text</item>
         <item name="android:layout_marginStart">4dp</item>
         <item name="android:layout_marginEnd">4dp</item>
         <item name="android:insetBottom">0dp</item>

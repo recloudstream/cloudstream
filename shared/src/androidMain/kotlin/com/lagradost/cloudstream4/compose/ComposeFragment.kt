@@ -41,6 +41,7 @@ fun CloudStreamThemeAppSettings(content: @Composable () -> Unit) {
     CloudStreamTheme(
         mode = perfToMode(mode),
         primaryColor = perfToColor(primaryColor),
+        tvStyle = layoutFlag and TV,
     ) {
         val backDispatcher = checkNotNull(LocalOnBackPressedDispatcherOwner.current) {
             "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"

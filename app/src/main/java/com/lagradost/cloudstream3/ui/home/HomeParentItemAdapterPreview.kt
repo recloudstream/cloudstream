@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
@@ -58,9 +60,10 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarMargin
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
-import com.lagradost.cloudstream3.utils.UIHelper.populateChips
-import androidx.core.graphics.toColorInt
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
+
+private const val MAX_TOP_SHELF_DOTS = 10
 
 class HomeParentItemAdapterPreview(
     private val viewModel: HomeViewModel,
@@ -84,6 +87,8 @@ class HomeParentItemAdapterPreview(
         ) else FragmentHomeHeadBinding.inflate(inflater, parent, false)
 
         if (binding is FragmentHomeHeadTvBinding && isLayout(EMULATOR)) {
+            // Room for the provider buttons, which are drawn over the header
+            binding.root.setPadding(0, 60.toPx, 0, 0)
             binding.homeBookmarkParentItemMoreInfo.isVisible = true
 
             val marginInDp = 50
@@ -342,55 +347,7 @@ class HomeParentItemAdapterPreview(
                 homePreviewDescription.isGone = item.plot.isNullOrBlank()
                 homePreviewDescription.text = item.plot?.html() ?: ""
 
-                val scoreText = item.score?.toStringNull(0.1, 10, 1, false)
-
-                scoreText?.let { score ->
-                    homePreviewScore.text =
-                        homePreviewScore.context.getString(R.string.extension_rating, score)
-
-                    // while it should never fail, we do this just in case
-                    val rating = score.toDoubleOrNull() ?: item.score?.toDouble() ?: 0.0
-
-                    val color = when {
-                        rating < 5.0 -> "#eb2f2f".toColorInt() // Red
-                        rating < 8.0 -> "#eda009".toColorInt() // Yellow
-                        else -> "#3bb33b".toColorInt() // Green
-                    }
-                    homePreviewScore.backgroundTintList =
-                        android.content.res.ColorStateList.valueOf(color)
-                }
-                homePreviewScore.isGone = scoreText == null
-
-                item.year?.let { year ->
-                    homePreviewYear.text = year.toString()
-                }
-                homePreviewYear.isGone = item.year == null
-
-                val duration = item.duration
-                duration?.let { min ->
-                    homePreviewDuration.text =
-                        homePreviewDuration.context.getString(R.string.duration_format, min)
-                }
-                homePreviewDuration.isGone = duration == null || duration <= 0
-
-                val castText = item.actors?.take(3)?.joinToString(", ") { it.actor.name }
-                if (!castText.isNullOrBlank()) {
-                    homePreviewCast.text =
-                        homePreviewCast.context.getString(R.string.cast_format, castText)
-                    homePreviewCast.isVisible = true
-                } else {
-                    homePreviewCast.isVisible = false
-                }
-
                 homePreviewText.text = item.name.html()
-                populateChips(
-                    homePreviewTags,
-                    item.tags?.take(6) ?: emptyList(),
-                    R.style.ChipFilledSemiTransparent,
-                    null
-                )
-
-
                 bindLogo(
                     url = item.logoUrl,
                     headers = item.posterHeaders,
@@ -398,8 +355,16 @@ class HomeParentItemAdapterPreview(
                     logoView = homeBackgroundPosterWatermarkBadgeHolder
                 )
 
-                homePreviewTags.isGone =
-                    item.tags.isNullOrEmpty()
+                homePreviewMeta.text = listOfNotNull(
+                    item.year?.toString(),
+                    item.duration?.takeIf { it > 0 }?.let {
+                        homePreviewMeta.context.getString(R.string.duration_format, it)
+                    },
+                    item.score?.toStringNull(0.1, 10, 1, false)?.let { "★ $it" },
+                    item.tags?.take(2)?.joinToString(", ")?.takeIf { it.isNotBlank() },
+                ).joinToString("  ·  ")
+                homePreviewMeta.isGone = homePreviewMeta.text.isNullOrBlank()
+                updateTopShelfDots(homePreviewDots, position)
 
                 homePreviewInfoBtt.setOnClickListener { view ->
                     viewModel.click(
@@ -474,6 +439,26 @@ class HomeParentItemAdapterPreview(
                     }
                 }
             }
+        }
+
+        /** Page indicator under the top shelf, shows at most [MAX_TOP_SHELF_DOTS] dots */
+        private fun updateTopShelfDots(dots: LinearLayout, position: Int) {
+            val count = minOf(previewAdapter.itemCount, MAX_TOP_SHELF_DOTS)
+            dots.isVisible = count > 1
+            if (dots.childCount != count) {
+                dots.removeAllViews()
+                repeat(count) {
+                    dots.addView(View(dots.context).apply {
+                        setBackgroundResource(R.drawable.tv_top_shelf_dot)
+                        layoutParams = LinearLayout.LayoutParams(7.toPx, 7.toPx).apply {
+                            marginStart = 4.toPx
+                            marginEnd = 4.toPx
+                        }
+                    })
+                }
+            }
+            val selected = position.coerceAtMost(count - 1)
+            dots.children.forEachIndexed { index, dot -> dot.isSelected = index == selected }
         }
 
         private val previewCallback: ViewPager2.OnPageChangeCallback =
@@ -605,6 +590,8 @@ class HomeParentItemAdapterPreview(
                 // as that causes higher android versions to stretch the ui when switching between shows
                 var lastFocusTimeoutMs = 0L
                 homePreviewInfoBtt.setOnFocusChangeListener { view, hasFocus ->
+                    // The whole shelf is the button, the pill only shows that it is focused
+                    homePreviewMoreInfo.isSelected = hasFocus
                     val lastFocusMs = lastFocusTimeoutMs
                     // Always reset timer, as we only want to update
                     // it if we have not interacted in half a second
@@ -625,9 +612,10 @@ class HomeParentItemAdapterPreview(
                     if (!hasFocus) return@setOnFocusChangeListener
                     if (previewViewpager.currentItem <= 0) {
                         //Focus the Home item as the default focus will be the header item
-                        (activity as? MainActivity)?.binding?.navRailView?.findViewById<NavigationBarItemView>(
-                            R.id.navigation_home
-                        )?.requestFocus()
+                        (activity?.findViewById<View>(R.id.nav_top_home)?.takeIf { it.isShown }
+                            ?: (activity as? MainActivity)?.binding?.navRailView?.findViewById<NavigationBarItemView>(
+                                R.id.navigation_home
+                            ))?.requestFocus()
                     } else {
                         previewViewpager.setCurrentItem(previewViewpager.currentItem - 1, true)
                         binding.homePreviewInfoBtt.requestFocus()

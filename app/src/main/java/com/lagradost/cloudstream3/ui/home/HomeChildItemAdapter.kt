@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.databinding.HomeResultGridBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
+import com.lagradost.cloudstream3.ui.TvLiftFocus
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.newSharedPool
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
@@ -226,5 +227,6 @@ open class HomeChildItemAdapter(
         )
 
         holder.itemView.tag = position
+        if (isLayout(TV)) TvLiftFocus.hideTitleUntilFocused(holder.itemView)
     }
 }

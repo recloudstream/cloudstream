@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -24,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Scaffold
@@ -71,9 +74,16 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.TV
+import com.lagradost.cloudstream4.compose.TvGlass
+import com.lagradost.cloudstream4.compose.TvGlassCard
+import com.lagradost.cloudstream4.compose.TvPageTitle
 import com.lagradost.cloudstream4.compose.circleBorder
+import com.lagradost.cloudstream4.compose.editOnSelect
 import com.lagradost.cloudstream4.compose.focusOutline
 import com.lagradost.cloudstream4.compose.isLayout
+import com.lagradost.cloudstream4.compose.tvContentWidth
+import com.lagradost.cloudstream4.compose.tvPageBackground
+import com.lagradost.cloudstream4.compose.tvScaffoldContainerColor
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.mihon.material.padding
 import com.mihon.presentation.settings.SearchableSettings
@@ -197,9 +207,26 @@ object SettingsFragmentScreen : Screen {
             }
         }
 
-        Scaffold { _ ->
-            Column(modifier = Modifier.verticalScroll(outerListState)) {
+        val isTv = isLayout(TV)
+        Scaffold(
+            modifier = Modifier.tvPageBackground(),
+            containerColor = tvScaffoldContainerColor(),
+            contentColor = MaterialTheme.colorScheme.onBackground,
+        ) { _ ->
+            Column(modifier = Modifier.tvContentWidth().verticalScroll(outerListState)) {
                 Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
+
+                if (isTv) {
+                    Text(
+                        text = stringResource(R.string.title_settings),
+                        style = LocalTextStyle.current.merge(TvPageTitle),
+                        modifier = Modifier.padding(
+                            start = MaterialTheme.padding.medium,
+                            top = 28.dp,
+                            bottom = 16.dp
+                        ),
+                    )
+                }
 
                 val default = DataStoreHelper.getDefaultAccount(
                     LocalContext.current
@@ -212,7 +239,12 @@ object SettingsFragmentScreen : Screen {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .focusOutline()
+                        .then(
+                            if (isTv) {
+                                val card = RoundedCornerShape(20.dp)
+                                Modifier.focusOutline(shape = card).background(TvGlassCard, card)
+                            } else Modifier.focusOutline()
+                        )
                         .clickable {
                             activity.navigate(
                                 R.id.accountSelectActivity,
@@ -241,7 +273,8 @@ object SettingsFragmentScreen : Screen {
                             style = MaterialTheme.typography.titleLarge,
                         )
                         Text(
-                            text = stringResource(R.string.title_settings),
+                            // The page title already says settings on TV
+                            text = stringResource(if (isTv) R.string.switch_account else R.string.title_settings),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
@@ -290,6 +323,9 @@ object SettingsFragmentScreen : Screen {
     @Composable
     fun SettingsSearch(textFieldState : TextFieldState) {
         var hasFocus by remember { mutableStateOf(false) }
+        val isTv = isLayout(TV)
+        val isEditing = remember { mutableStateOf(!isTv) }
+        val containerColor = if (isTv) TvGlass else MaterialTheme.colorScheme.surfaceVariant
         val focusProgress by animateFloatAsState(targetValue = if (hasFocus) 1.0f else 0.0f)
         val focusManager = LocalFocusManager.current
         val focusRequester = remember { FocusRequester() }
@@ -306,14 +342,17 @@ object SettingsFragmentScreen : Screen {
                 .focusOutline(enabled = isLayout(TV), CircleShape)
                 .onFocusChanged { newFocus ->
                     hasFocus = newFocus.hasFocus
-                }.focusRequester(focusRequester),
+                }
+                .editOnSelect(isEditing)
+                .focusRequester(focusRequester),
+            readOnly = !isEditing.value,
             placeholder = {
                 Text(text = stringResource(R.string.search_hint))
             },
             shape = CircleShape,
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
                 unfocusedLeadingIconColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTrailingIconColor = MaterialTheme.colorScheme.onBackground,
                 focusedTrailingIconColor = MaterialTheme.colorScheme.onBackground,

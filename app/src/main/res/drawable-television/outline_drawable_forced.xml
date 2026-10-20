@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="120"
+    android:exitFadeDuration="120">
+    <item android:state_focused="true">
+        <inset
+            android:insetLeft="6dp"
+            android:insetRight="6dp">
+            <shape android:shape="rectangle">
+                <solid android:color="@color/tvListFocused" />
+                <corners android:radius="14dp" />
+            </shape>
+        </inset>
+    </item>
+</selector>

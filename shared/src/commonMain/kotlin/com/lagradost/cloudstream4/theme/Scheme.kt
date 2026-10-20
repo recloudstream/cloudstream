@@ -160,3 +160,16 @@ internal fun silentBlueScheme() = CloudStreamColorScheme(
     ongoing = CloudStreamPalette.Ongoing,
     isLight = false,
 )
+
+internal fun tvOSScheme() = CloudStreamColorScheme(
+    background = CloudStreamPalette.TvOSBlackBg,
+    surfaceVariant = CloudStreamPalette.TvOSGrayBg,
+    surface = CloudStreamPalette.TvOSIconGrayBg,
+    surfaceContainer = CloudStreamPalette.TvOSGrayBg,
+    onBackground = CloudStreamPalette.TvOSText,
+    onSurfaceVariant = CloudStreamPalette.TvOSGrayText,
+    icon = CloudStreamPalette.TvOSGrayText,
+    primary = CloudStreamPalette.Primary,
+    ongoing = CloudStreamPalette.Ongoing,
+    isLight = false,
+)

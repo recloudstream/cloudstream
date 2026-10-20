@@ -75,6 +75,7 @@ fun Modifier.focusOutline(
 
 @Composable
 fun Modifier.whiteOutline(hasFocus: Boolean, shape: Shape = RoundedShape()): Modifier {
+    if (LocalTvStyle.current) return tvHighlight(hasFocus, shape)
     return if (hasFocus) {
         this.border(
             width = 1.dp,

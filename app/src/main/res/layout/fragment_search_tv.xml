@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="@dimen/navbar_height"
-    android:background="?attr/primaryGrayBackground"
+    android:background="@drawable/tv_app_background"
     tools:context=".ui.search.SearchFragment">
 
     <LinearLayout
@@ -19,8 +19,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/navbar_width"
         android:orientation="vertical"
-        android:paddingBottom="10dp"
-        android:background="?attr/primaryGrayBackground">
+        android:paddingHorizontal="@dimen/tv_content_padding"
+        android:paddingTop="28dp"
+        android:paddingBottom="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,27 +31,29 @@
 
             <ImageView
                 android:id="@+id/voice_search"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginStart="10dp"
-                android:background="?selectableItemBackgroundBorderless"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/player_button_tv_attr"
                 android:contentDescription="@string/change_providers_img_des"
+                android:focusable="true"
+                android:padding="12dp"
                 android:src="@drawable/ic_mic"
-                app:tint="?attr/textColor" />
+                app:tint="@color/player_on_button_tv_attr" />
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/search_background"
+                android:layout_height="52dp"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/tv_search_field_bg"
+                android:paddingStart="10dp"
                 android:visibility="visible">
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="30dp">
+                    android:layout_marginEnd="56dp">
 
                     <androidx.appcompat.widget.SearchView
                         android:id="@+id/main_search"
@@ -62,8 +65,7 @@
                         android:imeOptions="actionSearch"
 
                         android:inputType="text"
-                        android:nextFocusLeft="@id/navigation_search"
-
+                        android:nextFocusLeft="@id/voice_search"
                         android:nextFocusRight="@id/search_filter"
                         android:nextFocusUp="@id/navigation_search"
                         android:nextFocusDown="@id/search_autofit_results"
@@ -97,12 +99,13 @@
 
                 <ImageView
                     android:id="@+id/search_filter"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="end|center_vertical"
-
-                    android:layout_margin="10dp"
-                    android:background="?selectableItemBackgroundBorderless"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/player_button_tv_attr"
+                    android:focusable="true"
+                    android:padding="9dp"
                     android:contentDescription="@string/change_providers_img_des"
                     android:nextFocusLeft="@id/main_search"
                     android:nextFocusRight="@id/main_search"
@@ -110,13 +113,16 @@
                     android:nextFocusDown="@id/tvtypes_chips_scroll"
                     android:tag = "@string/tv_no_focus_tag"
                     android:src="@drawable/ic_baseline_tune_24"
-                    app:tint="?attr/textColor" />
+                    app:tint="@color/player_on_button_tv_attr" />
             </FrameLayout>
         </LinearLayout>
 
         <include
             android:id="@+id/tvtypes_chips_scroll"
-            layout="@layout/tvtypes_chips_scroll" />
+            layout="@layout/tvtypes_chips_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp" />
     </LinearLayout>
 
 
@@ -125,14 +131,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/navbar_width"
-        android:background="?attr/primaryBlackBackground"
+        android:background="@color/transparent"
         android:clipToPadding="false"
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/navigation_search"
         android:orientation="vertical"
-        android:paddingStart="8dp"
-        android:paddingTop="5dp"
-        android:paddingEnd="8dp"
+        android:paddingStart="@dimen/tv_content_padding"
+        android:paddingTop="@dimen/tv_lift_room"
+        android:paddingEnd="@dimen/tv_content_padding"
         android:visibility="gone"
         app:spanCount="3"
         tools:listitem="@layout/search_result_grid" />
@@ -142,7 +148,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-        android:background="?attr/primaryBlackBackground"
+        android:background="@color/transparent"
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/navigation_search"
         android:nextFocusUp="@id/tvtypes_chips"
@@ -154,10 +160,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/navbar_width"
-        android:background="?attr/primaryBlackBackground"
+        android:background="@color/transparent"
+        android:clipToPadding="false"
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/navigation_search"
         android:nextFocusUp="@id/tvtypes_chips"
+        android:paddingHorizontal="@dimen/tv_row_title_margin"
         android:tag = "@string/tv_no_focus_tag"
         android:visibility="visible"
         tools:listitem="@layout/search_history_item" />
@@ -168,9 +176,10 @@
         android:id="@+id/search_suggestions_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:layout_marginStart="@dimen/navbar_width"
-        android:background="?attr/primaryGrayBackground"
+        android:layout_marginTop="96dp"
+        android:layout_marginStart="@dimen/tv_content_padding"
+        android:layout_marginEnd="@dimen/tv_content_padding"
+        android:background="@drawable/tv_search_suggestions_bg"
         android:elevation="8dp"
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/navigation_search"

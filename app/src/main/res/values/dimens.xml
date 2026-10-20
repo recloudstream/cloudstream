@@ -32,4 +32,21 @@
     <dimen name="continue_watching_progress_size">25dp</dimen>
     <dimen name="circular_progress_thickness">2dp</dimen>
     <dimen name="download_header_progress_size">35dp</dimen>
+    <!-- Larger on TV, see values-television -->
+    <dimen name="nice_button_radius">@dimen/rounded_button_radius</dimen>
+    <dimen name="video_button_tv_height">25dp</dimen>
+    <dimen name="video_button_tv_text">10sp</dimen>
+
+    <dimen name="tv_tab_bar_top_margin">24dp</dimen>
+    <!-- Space above the content for the top tab bar: margin + bar + gap -->
+    <dimen name="tv_tab_bar_content_offset">76dp</dimen>
+    <dimen name="tv_content_padding">40dp</dimen>
+    <!-- tv_content_padding minus the padding of the row titles -->
+    <dimen name="tv_row_title_margin">28dp</dimen>
+    <!-- Room for the focused card around lists, see TvLiftFocus -->
+    <dimen name="tv_lift_room">12dp</dimen>
+    <dimen name="tv_top_shelf_height">430dp</dimen>
+    <dimen name="tv_top_shelf_text_width">560dp</dimen>
+    <dimen name="tv_result_text_width">620dp</dimen>
+    <dimen name="tv_top_glow_height">320dp</dimen>
 </resources>

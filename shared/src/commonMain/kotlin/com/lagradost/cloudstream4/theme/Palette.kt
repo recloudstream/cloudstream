@@ -23,6 +23,7 @@ enum class CloudStreamPrimaryColor(val color: Color) {
     DANDELION_YELLOW(Color(0xFFF5BB00)),
     COOL_BLUE(Color(0xFF408CAC)),
     LAVENDER(Color(0xFF6F55AF)),
+    APPLE_BLUE(Color(0xFF0A84FF)),
     DYNAMIC(Color(0xFF3D50FA)),
     DYNAMIC_TWO(Color(0xFF3D50FA)),
 }
@@ -81,4 +82,10 @@ internal object CloudStreamPalette {
     val SilentBlueText = Color(0xFFE0E1F3)
     val SilentBlueGrayText = Color(0xFF7B83B0)
     val SilentBlueIcon = Color(0xFF7B83B0)
+
+    val TvOSBlackBg = Color(0xFF141418)
+    val TvOSGrayBg = Color(0xFF26262C)
+    val TvOSIconGrayBg = Color(0xFF1C1C21)
+    val TvOSText = Color(0xFFF5F5F7)
+    val TvOSGrayText = Color(0xFF9A9AA2)
 }

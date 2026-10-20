@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import com.lagradost.cloudstream4.compose.LocalTvStyle
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
@@ -35,6 +36,9 @@ enum class CloudStreamThemeMode {
     /** "SilentBlue" */
     SilentBlue,
 
+    /** "TvOS" graphite, like Apple TV */
+    TvOS,
+
     /** "System" resolved on each platform via [isSystemInDarkTheme] */
     FollowSystem,
 
@@ -60,6 +64,7 @@ fun modeToTheme(mode : CloudStreamThemeMode, primaryColor: CloudStreamPrimaryCol
             CloudStreamThemeMode.Dracula -> draculaScheme()
             CloudStreamThemeMode.Lavender -> lavenderScheme()
             CloudStreamThemeMode.SilentBlue -> silentBlueScheme()
+            CloudStreamThemeMode.TvOS -> tvOSScheme()
             CloudStreamThemeMode.FollowSystem -> if (systemDark) darkScheme() else lightScheme()
             CloudStreamThemeMode.Dynamic -> dynamicTheme
         }
@@ -118,16 +123,20 @@ fun CloudStreamPreviewTheme(content: @Composable () -> Unit) {
 fun CloudStreamTheme(
     mode: CloudStreamThemeMode = CloudStreamThemeMode.FollowSystem,
     primaryColor: CloudStreamPrimaryColor = CloudStreamPrimaryColor.NORMAL,
+    tvStyle: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val csColors = modeToTheme(mode, primaryColor)
     val globalTransition = rememberInfiniteTransition(label = "GlobalSharedTransition")
     // We do not provide csColors as a global, because people should use MaterialTheme directly instead
-    CompositionLocalProvider(LocalSharedInfiniteTransition provides globalTransition) {
+    CompositionLocalProvider(
+        LocalSharedInfiniteTransition provides globalTransition,
+        LocalTvStyle provides tvStyle,
+    ) {
         MaterialTheme(
             colorScheme = csColors.toMaterial3ColorScheme(),
             content = content,
-            typography = AppFont.typography
+            typography = if (tvStyle) AppFont.tvTypography else AppFont.typography
         )
     }
 }

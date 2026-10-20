@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- View tag of cards whose title is only shown while focused, see TvLiftFocus -->
+    <item name="tv_hide_title" type="id" />
+</resources>
