@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream4.compose
 
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -12,6 +13,7 @@ fun BlackTextField(
     placeHolder : String,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     singleLine: Boolean = false,
     onValueChange: (String) -> Unit,
 ) {
@@ -20,6 +22,7 @@ fun BlackTextField(
         value = value,
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         placeholder = {
             Text(text = placeHolder)
         },

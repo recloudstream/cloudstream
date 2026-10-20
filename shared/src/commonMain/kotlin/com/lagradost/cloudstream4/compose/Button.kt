@@ -56,7 +56,7 @@ fun BlackButton(
 }
 
 @Composable
-fun IconButtonOutline(
+fun WhiteIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,

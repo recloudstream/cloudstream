@@ -35,6 +35,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -110,7 +111,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream4.compose.ActionDialog
 import com.lagradost.cloudstream4.compose.BlackButton
 import com.lagradost.cloudstream4.compose.BlackTextField
-import com.lagradost.cloudstream4.compose.IconButtonOutline
 import com.lagradost.cloudstream4.compose.IsScrolling
 import com.lagradost.cloudstream4.compose.LogBoxBlack
 import com.lagradost.cloudstream4.compose.LogBoxWhite
@@ -122,6 +122,7 @@ import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.TV
 import com.lagradost.cloudstream4.compose.WhiteButton
 import com.lagradost.cloudstream4.compose.WhiteFilterChip
+import com.lagradost.cloudstream4.compose.WhiteIconButton
 import com.lagradost.cloudstream4.compose.focusOutline
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.compose.rounded
@@ -323,7 +324,7 @@ object ExtensionsScreen : Screen {
         var extraDialog by remember { mutableStateOf(false) }
         if (!state.searchPlugins) {
             if (isLayout(TV)) {
-                IconButtonOutline(
+                WhiteIconButton(
                     onClick = {
                         scope.launch {
                             openRepositoryDialog(clipboard = clipboard, onAction = onAction)
@@ -337,7 +338,7 @@ object ExtensionsScreen : Screen {
                 }
             }
 
-            IconButtonOutline(
+            WhiteIconButton(
                 onClick = {
                     extraDialog = true
                 }) {
@@ -386,7 +387,7 @@ object ExtensionsScreen : Screen {
 
         val activeRepository = state.pluginFilter.repository
         if (state.searchPlugins && activeRepository != null && derivedRepositoryState.notDownloaded != derivedRepositoryState.total) {
-            IconButtonOutline(onClick = {
+            WhiteIconButton(onClick = {
                 deleteDialog = true
             }) {
                 Icon(
@@ -399,7 +400,7 @@ object ExtensionsScreen : Screen {
 
         /** We only show the langauge filter button if we are searching plugins and there is languages to pick from*/
         if (state.searchPlugins && derivedRepositoryState.languageCount.isNotEmpty()) {
-            IconButtonOutline(onClick = {
+            WhiteIconButton(onClick = {
                 languageDialog = true
             }) {
                 Icon(
@@ -910,17 +911,17 @@ object ExtensionsScreen : Screen {
     ) {
         val description = plugin.info.description
         var extendedDialog by remember { mutableStateOf(false) }
-
-        val dismissFocusRequester = remember { FocusRequester() }
         val isTv = isLayout(TV)
-        LaunchedEffect(Unit) {
-            if (isTv) {
-                dismissFocusRequester.requestFocus()
-            }
-        }
         val isPluginDisabledByAuthor = plugin.info.status == PROVIDER_STATUS_DOWN
 
         if (extendedDialog) {
+            val dismissFocusRequester = remember { FocusRequester() }
+            LaunchedEffect(Unit) {
+                if (isTv) {
+                    dismissFocusRequester.requestFocus()
+                }
+            }
+
             AlertDialog(
                 containerColor = MaterialTheme.colorScheme.background,
                 onDismissRequest = {
@@ -1193,7 +1194,7 @@ object ExtensionsScreen : Screen {
 
             if (settings != null) {
                 val context = LocalContext.current
-                IconButtonOutline(
+                WhiteIconButton(
                     modifier = Modifier
                         .focusRequester(button1FocusRequester)
                         .focusProperties {
@@ -1219,7 +1220,7 @@ object ExtensionsScreen : Screen {
                 }
             }
 
-            IconButtonOutline(
+            WhiteIconButton(
                 modifier = Modifier
                     .focusRequester(button2FocusRequester)
                     .focusProperties {
@@ -1384,6 +1385,8 @@ object ExtensionsScreen : Screen {
             return
         }
 
+        val nextFocusRequester = remember { FocusRequester() }
+
         AlertDialog(
             containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = {
@@ -1392,7 +1395,7 @@ object ExtensionsScreen : Screen {
             confirmButton = {
                 WhiteButton(text = stringResource(R.string.add_repository), onClick = {
                     onAction(DownloadRepositoryWithDialog(url = dialog.url))
-                })
+                }, modifier = Modifier.focusRequester(nextFocusRequester))
             },
             dismissButton = {
                 BlackButton(text = stringResource(R.string.cancel), onClick = {
@@ -1405,6 +1408,14 @@ object ExtensionsScreen : Screen {
                         value = dialog.url,
                         placeHolder = stringResource(R.string.repository_url_hint),
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Uri),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                onAction(DownloadRepositoryWithDialog(url = dialog.url))
+                            },
+                            onNext = {
+                                nextFocusRequester.requestFocus()
+                            }
+                        ),
                         singleLine = true
                     ) { newValue ->
                         onAction(
@@ -1421,9 +1432,7 @@ object ExtensionsScreen : Screen {
                             Column {
                                 Spacer(modifier = Modifier.height(MaterialTheme.padding.medium))
                                 LinearProgressIndicator(
-                                    modifier = Modifier.defaultMinSize(
-                                        minWidth = TextFieldDefaults.MinWidth,
-                                    ),
+                                    modifier = Modifier.width(TextFieldDefaults.MinWidth),
                                     color = MaterialTheme.colorScheme.onBackground,
                                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                                 )
@@ -1460,7 +1469,7 @@ object ExtensionsScreen : Screen {
 
             val message = error.message
             TextPreferenceWidget(
-                modifier = Modifier.rounded(),
+                modifier = Modifier.rounded().width(TextFieldDefaults.MinWidth),
                 title = when {
                     error is JacksonException -> {
                         stringResource(R.string.no_repository_found_error)
@@ -1774,7 +1783,7 @@ object ExtensionsScreen : Screen {
                 when (val reason = repository.status) {
                     is RepositoryStatus.Failure -> {
                         var errorDialog by remember { mutableStateOf(false) }
-                        IconButtonOutline(
+                        WhiteIconButton(
                             onClick = {
                                 errorDialog = true
                             },
@@ -1815,7 +1824,7 @@ object ExtensionsScreen : Screen {
                     }
 
                     RepositoryStatus.Loading, RepositoryStatus.Success -> {
-                        IconButtonOutline(
+                        WhiteIconButton(
                             onClick = {
                                 deleteDialog = true
                             },
