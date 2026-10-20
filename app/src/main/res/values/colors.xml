@@ -122,4 +122,27 @@
     <color name="colorTestFail">#ea596e</color>
     <color name="colorTestWarning">#FF9800</color>
     <color name="playIconBackground">#B3000000</color>
+
+    <!-- Eidos theme -->
+    <color name="TvOSBackground">#1C1C21</color>
+    <color name="TvOSDarkerBackground">#141418</color>
+    <color name="TvOSElevated">#26262C</color>
+    <color name="TvOSText">#F5F5F7</color>
+    <color name="TvOSSecondaryText">#9A9AA2</color>
+    <color name="TvOSGlow">#2B3040</color>
+    <color name="TvOSBlue">#0A84FF</color>
+    <color name="TvOSBlueDark">#0060DF</color>
+
+    <!-- TV layouts, always drawn over dark content -->
+    <color name="tvFocused">#F5F5F7</color>
+    <color name="tvSecondaryText">#CCFFFFFF</color>
+    <color name="tvMutedText">#B3FFFFFF</color>
+    <color name="tvTabBarBackground">#B31C1C1E</color>
+    <color name="tvTabSelected">#40FFFFFF</color>
+    <color name="tvGlass">#26FFFFFF</color>
+    <color name="tvGlassCard">#14FFFFFF</color>
+    <color name="tvListFocused">#33FFFFFF</color>
+    <color name="tvBadgeBackground">#A6000000</color>
+    <color name="tvSidePanelBackground">#F21C1C1E</color>
+    <color name="tvPlayerBuffered">#59FFFFFF</color>
 </resources>

@@ -2,6 +2,7 @@ package com.mihon.presentation.settings
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -10,6 +11,8 @@ import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import com.lagradost.cloudstream4.compose.tvPageBackground
+import com.lagradost.cloudstream4.compose.tvScaffoldContainerColor
 import com.mihon.material.AppBar
 import com.mihon.material.Scaffold
 
@@ -23,6 +26,9 @@ fun PreferenceScaffold(
     val (top, bottom) = remember { FocusRequester.createRefs() }
 
     Scaffold(
+        modifier = Modifier.tvPageBackground(),
+        containerColor = tvScaffoldContainerColor(),
+        contentColor = MaterialTheme.colorScheme.onBackground,
         // TODO @WindowInsets remove this when we have converted everything to compose
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {

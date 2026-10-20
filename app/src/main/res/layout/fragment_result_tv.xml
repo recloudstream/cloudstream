@@ -18,44 +18,49 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
     style="@style/DarkFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/primaryBlackBackground">
+    android:background="@drawable/tv_app_background">
 
+    <!-- Stays in place while the content scrolls over it -->
     <FrameLayout
         android:id="@+id/background_poster_holder"
         android:layout_width="match_parent"
-        android:layout_height="275dp"
+        android:layout_height="match_parent"
         android:visibility="visible">
-
 
         <com.lagradost.cloudstream3.utils.PercentageCropImageView
             android:id="@+id/background_poster"
             android:layout_width="match_parent"
-            android:layout_height="275dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:alpha="0.8"
             android:scaleType="matrix"
             app:cropYCenterOffsetPct="0.20"
             tools:src="@drawable/profile_bg_dark_blue" />
 
-        <ImageView
-            android:layout_marginBottom="-1dp"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_gravity="bottom"
-            android:src="@drawable/background_shadow" />
+            android:layout_height="match_parent"
+            android:background="@drawable/tv_result_backdrop_gradient" />
+
+        <!-- Darkened while scrolling, see ResultFragmentTv -->
+        <View
+            android:id="@+id/background_poster_dim"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:background="?attr/primaryBlackBackground" />
 
         <ImageView
             android:id="@+id/background_poster_watermark_badge_holder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="220dp"
-            android:maxHeight="72dp"
-            android:layout_gravity="bottom|start"
+            android:layout_gravity="top|start"
             android:layout_marginStart="@dimen/result_padding"
-            android:layout_marginBottom="56dp"
+            android:layout_marginTop="140dp"
             android:adjustViewBounds="true"
-            android:scaleType="fitStart"
-            android:contentDescription="@null" />
+            android:contentDescription="@null"
+            android:maxWidth="260dp"
+            android:maxHeight="80dp"
+            android:scaleType="fitStart" />
 
     </FrameLayout>
 
@@ -188,8 +193,11 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:ellipsize="marquee"
                     android:gravity="center_vertical"
                     android:singleLine="true"
-                    android:textColor="?attr/textColor"
-                    android:textSize="25sp"
+                    android:shadowColor="#80000000"
+                    android:shadowDy="2"
+                    android:shadowRadius="6"
+                    android:textColor="@color/white"
+                    android:textSize="32sp"
                     android:textStyle="bold"
                     tools:text="The Perfect Run The Perfect Run" />
 
@@ -568,59 +576,59 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/result_meta_site"
-                            style="@style/SmallWhiteButton"
+                            style="@style/TvMetaBadge"
                             android:layout_gravity="center_vertical"
                             tools:text="Gogoanime" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/result_meta_content_rating"
-                            style="@style/SmallWhiteButton"
+                            style="@style/TvMetaBadge"
                             android:layout_gravity="center_vertical"
                             android:focusable="false"
                             tools:text="PG-13" />
 
                         <TextView
                             android:id="@+id/result_meta_type"
-                            style="@style/ResultInfoText"
+                            style="@style/TvResultInfoText"
                             tools:text="Movie" />
 
                         <TextView
                             android:id="@+id/result_meta_year"
-                            style="@style/ResultInfoText"
+                            style="@style/TvResultInfoText"
                             tools:text="2022" />
 
                         <TextView
                             android:id="@+id/result_meta_rating"
-                            style="@style/ResultInfoText"
+                            style="@style/TvResultInfoText"
                             tools:text="Rated: 8.5/10.0" />
 
                         <TextView
                             android:id="@+id/result_meta_status"
-                            style="@style/ResultInfoText"
+                            style="@style/TvResultInfoText"
                             tools:text="Ongoing" />
 
                         <TextView
                             android:id="@+id/result_meta_duration"
-                            style="@style/ResultInfoText"
+                            style="@style/TvResultInfoText"
                             tools:text="121min" />
                     </com.lagradost.cloudstream3.widget.FlowLayout>
 
 
                     <TextView
                         android:id="@+id/result_description"
-                        android:layout_width="match_parent"
+                        android:layout_width="@dimen/tv_result_text_width"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:fadingEdgeLength="30dp"
                         android:focusable="true"
-                        android:foreground="@drawable/outline_drawable"
-                        android:maxLines="7"
+                        android:foreground="@drawable/tv_focus_highlight"
+                        android:lineSpacingMultiplier="1.1"
+                        android:maxLines="4"
                         android:nextFocusUp="@id/result_play_parent"
                         android:nextFocusDown="@id/result_cast_items"
-                        android:padding="5dp"
-                        android:requiresFadingEdge="vertical"
-                        android:textColor="?attr/textColor"
-                        android:textSize="16sp"
+                        android:padding="8dp"
+                        android:textColor="@color/tvSecondaryText"
+                        android:textSize="15sp"
                         tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />
 
                     <com.google.android.material.chip.ChipGroup

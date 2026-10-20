@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -87,6 +88,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.createTvSidePanelDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.layoutAsTvSidePanel
 
 private const val TAG = "HomeFragment"
 
@@ -388,10 +391,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             validAPIs.add(0, noneApi)
             //val builder: AlertDialog.Builder = AlertDialog.Builder(this)
             //builder.setView(R.layout.home_select_mainpage)
-            val builder =
-                BottomSheetDialog(this)
+            val builder: Dialog = if (isLayout(TV)) {
+                createTvSidePanelDialog()
+            } else {
+                BottomSheetDialog(this).apply {
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+            }
 
-            builder.behavior.state = BottomSheetBehavior.STATE_EXPANDED
             val binding: HomeSelectMainpageBinding = HomeSelectMainpageBinding.inflate(
                 builder.layoutInflater,
                 null,
@@ -400,6 +407,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
             builder.setContentView(binding.root)
             builder.show()
+            if (isLayout(TV)) builder.layoutAsTvSidePanel()
             builder.let { dialog ->
                 val isMultiLang = getApiProviderLangSettings().let { set ->
                     set.size > 1 || set.contains(AllLanguagesName)
@@ -689,6 +697,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 true
             }
             homeChangeApi.setOnClickListener(apiChangeClickListener)
+            topBarProvider?.apply {
+                setOnClickListener(apiChangeClickListener)
+                setOnLongClickListener {
+                    if (currentApiName == noneApi.name) return@setOnLongClickListener false
+                    homeViewModel.loadAndCancel(currentApiName, forceReload = true, fromUI = true)
+                    showToast(R.string.action_reload, Toast.LENGTH_SHORT)
+                    true
+                }
+            }
             homeSwitchAccount.setOnClickListener {
                 activity?.showAccountSelectLinear()
             }
@@ -700,6 +717,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             homeMasterRecycler.adapter = homeMasterAdapter
 
             homeApiFab.isVisible = isLayout(PHONE)
+            homeApiHolder.isGone = isLayout(TV)
 
             homePreviewReloadProvider.setOnClickListener {
                 homeViewModel.loadAndCancel(
@@ -747,6 +765,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
 
 
+            // On TV the clock is placed below the top tab bar
+            val headerButtonsOffset = if (isLayout(TV)) {
+                resources.getDimensionPixelSize(R.dimen.tv_tab_bar_content_offset) - 10.toPx
+            } else -60.toPx
+
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (isLayout(PHONE)) {
@@ -784,8 +807,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             // Hopefully getLocationInWindow acts correctly on all devices
                             val rect = IntArray(2)
                             view.getLocationInWindow(rect)
-                            scrollParent.isVisible = true
-                            scrollParent.translationY = rect[1].toFloat() - 60.toPx
+                            scrollParent.isVisible = !isLayout(TV)
+                            scrollParent.translationY = rect[1].toFloat() + headerButtonsOffset
 
                             // Move the TV layout real time clock out of the way too
                             // We check if we have the correct layout and if the clock is enabled
@@ -795,7 +818,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                                 val rect = IntArray(2)
                                 view.getLocationInWindow(rect)
                                 scrollParent.isVisible = true
-                                scrollParent.translationY = rect[1].toFloat() - 60.toPx
+                                scrollParent.translationY = rect[1].toFloat() + headerButtonsOffset
                             }
                         }
                     }
@@ -826,6 +849,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             binding.apply {
                 homeApiFab.text = displayApiName
                 homeChangeApi.text = displayApiName
+                topBarProvider?.text = displayApiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
                 homePreviewSearchButton.isGone = (apiName == noneApi.name)
             }
@@ -979,6 +1003,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }*/
     }
 
+    /** The provider picker in the top tab bar of MainActivity, replaces home_api_holder on TV */
+    private val topBarProvider: TextView?
+        get() = if (isLayout(TV)) activity?.findViewById(R.id.nav_top_provider) else null
+
     private fun updateTvRailFocus() {
         if (!isLayout(TV or EMULATOR)) return
         // home_api_holder is glued to the header row's top by the mirror logic in
@@ -1028,7 +1056,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 binding?.homeMasterRecycler?.scrollToPosition(0)
                 // Defer focus request until after scroll ends
                 binding?.homeChangeApi?.post {
-                    binding?.homeChangeApi?.requestFocus()
+                    (topBarProvider ?: binding?.homeChangeApi)?.requestFocus()
                 }
             }
             // Case 2: Focus is on plugin selector or nearby buttons -> Move to home navigation

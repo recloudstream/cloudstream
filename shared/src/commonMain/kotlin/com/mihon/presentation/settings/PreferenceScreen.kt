@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,6 +13,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import com.lagradost.cloudstream4.compose.LocalTvStyle
+import com.lagradost.cloudstream4.compose.tvContentWidth
 import com.mihon.presentation.settings.widget.PreferenceGroupHeader
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -40,10 +43,14 @@ fun PreferenceScreen(
         }
     }
 
+    // On TV the list is placed below the transparent app bar instead of scrolling under it
+    val isTv = LocalTvStyle.current
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier
+            .then(if (isTv) Modifier.padding(contentPadding) else Modifier)
+            .tvContentWidth(),
         state = state,
-        contentPadding = contentPadding,
+        contentPadding = if (isTv) PaddingValues(0.dp) else contentPadding,
     ) {
         items.fastForEachIndexed { i, preference ->
             when (preference) {

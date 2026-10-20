@@ -102,6 +102,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.localLi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
+import com.lagradost.cloudstream3.ui.TvLiftFocus
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -490,6 +491,27 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         navHostFragment.navController.currentDestination?.let { updateNavBar(it) }
     }
 
+    private var isTabBarShown = true
+
+    /** The tab bar scrolls away with the home page, called on every scrolled frame */
+    private fun updateTabBarVisibility() {
+        val tabBar = tvTabBarBinding?.navTopBar ?: return
+        if (!tabBar.isVisible) return
+
+        val homeRecycler = binding?.root?.findViewById<RecyclerView?>(R.id.home_master_recycler)
+        val show = tabBar.hasFocus() || homeRecycler == null ||
+                homeRecycler.computeVerticalScrollOffset() < 40.toPx
+        if (show == isTabBarShown) return
+        isTabBarShown = show
+
+        tabBar.animate().cancel()
+        tabBar.animate()
+            .translationY(if (show) 0.0f else -(tabBar.bottom + 10.toPx).toFloat())
+            .alpha(if (show) 1.0f else 0.0f)
+            .setDuration(200)
+            .start()
+    }
+
     private fun updateNavBar(destination: NavDestination) {
         this.hideKeyboard()
 
@@ -557,15 +579,29 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }*/
 
         binding?.apply {
-            navRailView.isVisible = isNavVisible && isLandscape()
+            // On TV the top tab bar replaces the nav rail
+            navRailView.isVisible = isNavVisible && isLandscape() && !isLayout(TV)
             navView.isVisible = isNavVisible && !isLandscape()
             navHostFragment.apply {
                 val marginPx = resources.getDimensionPixelSize(R.dimen.nav_rail_view_width)
                 layoutParams =
                     (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
                         marginStart =
-                            if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
+                            if (isNavVisible && isLandscape() && isLayout(EMULATOR)) marginPx else 0
                     }
+            }
+
+            tvTabBarBinding?.apply {
+                navTopBar.isVisible = destination.id == R.id.navigation_home
+                if (navTopBar.isVisible) {
+                    updateTabBarVisibility()
+                    // Focus "Home" on app start and whenever nothing is focused
+                    val isFirstFocus = !hasDoneInitialTvFocus
+                    hasDoneInitialTvFocus = true
+                    navTopBar.postDelayed({
+                        if (isFirstFocus || currentFocus?.isShown != true) navTopHome.requestFocus()
+                    }, 500)
+                }
             }
 
             /**
@@ -907,6 +943,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     }
 
     var binding: ActivityMainBinding? = null
+
+    /** Only set on TV, holds the top tab bar */
+    private var tvTabBarBinding: ActivityMainTvBinding? = null
+    private var hasDoneInitialTvFocus = false
 
     object TvFocus {
         data class FocusTarget(
@@ -1251,6 +1291,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
 
                 if (isLayout(TV)) {
+                    tvTabBarBinding = newLocalBinding
+                    newLocalBinding.navTopHome.isSelected = true
+                    newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
+                        TvLiftFocus.onFocusChanged(newFocus)
+                        updateTabBarVisibility()
+                    }
+                    newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
+                        updateTabBarVisibility()
+                    }
+
                     // Put here any button you don't want focusing it to center the view
                     val exceptionButtons = listOf(
                         //R.id.home_preview_play_btt,
@@ -1834,6 +1884,31 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             }
                         }
                 }*/
+            }
+        }
+
+        tvTabBarBinding?.apply {
+            for ((tab, destinationId) in listOf(
+                navTopHome to R.id.navigation_home,
+                navTopSearch to R.id.navigation_search,
+                navTopLibrary to R.id.navigation_library,
+                navTopDownloads to R.id.navigation_downloads,
+                navTopSettings to R.id.navigation_settings,
+            )) {
+                tab.setOnClickListener {
+                    binding?.navRailView?.menu?.findItem(destinationId)?.let { item ->
+                        onNavDestinationSelected(item, navController)
+                    }
+                }
+            }
+
+            navTopProfileCard.setOnClickListener {
+                showAccountSelectLinear()
+            }
+            val homeViewModel = ViewModelProvider(this@MainActivity)[HomeViewModel::class.java]
+            observe(homeViewModel.currentAccount) { currentAccount ->
+                navTopProfileCard.isVisible = currentAccount != null
+                if (currentAccount != null) navTopProfilePic.loadImage(currentAccount.image)
             }
         }
 

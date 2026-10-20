@@ -7,6 +7,10 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import com.lagradost.cloudstream4.generated.resources.Res
+import com.lagradost.cloudstream4.generated.resources.inter_bold
+import com.lagradost.cloudstream4.generated.resources.inter_medium
+import com.lagradost.cloudstream4.generated.resources.inter_regular
+import com.lagradost.cloudstream4.generated.resources.inter_semibold
 import com.lagradost.cloudstream4.generated.resources.productsans_black
 import com.lagradost.cloudstream4.generated.resources.productsans_blackitalic
 import com.lagradost.cloudstream4.generated.resources.productsans_bold
@@ -41,9 +45,20 @@ object AppFont {
         Font(Res.font.productsans_black, weight = FontWeight.W900, style = FontStyle.Normal),
         Font(Res.font.productsans_blackitalic, weight = FontWeight.W900, style = FontStyle.Italic))
 
+    /** Used on TV, as it is close to the SF font of tvOS */
+    val inter @Composable get() = FontFamily(
+        Font(Res.font.inter_regular, weight = FontWeight.W400, style = FontStyle.Normal),
+        Font(Res.font.inter_medium, weight = FontWeight.W500, style = FontStyle.Normal),
+        Font(Res.font.inter_semibold, weight = FontWeight.W600, style = FontStyle.Normal),
+        Font(Res.font.inter_bold, weight = FontWeight.W700, style = FontStyle.Normal),
+    )
+
     private val defaultTypography = androidx.compose.material3.Typography()
-    val typography @Composable get() =
-        googleSans.let { fontFamily ->
+    val typography @Composable get() = typography(googleSans)
+    val tvTypography @Composable get() = typography(inter)
+
+    private fun typography(fontFamily: FontFamily) =
+        run {
             val lineHeight = 1.3.em
             Typography(
                 displayLarge = defaultTypography.displayLarge.copy(fontFamily = fontFamily, lineHeight = lineHeight),

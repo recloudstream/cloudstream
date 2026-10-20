@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Keeps the text on the left of the backdrop readable -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="0"
+                android:centerColor="#99141418"
+                android:centerX="0.45"
+                android:endColor="#1A141418"
+                android:startColor="#F2141418" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="90"
+                android:centerColor="#00141418"
+                android:centerY="0.45"
+                android:endColor="#00141418"
+                android:startColor="@color/TvOSDarkerBackground" />
+        </shape>
+    </item>
+</layer-list>

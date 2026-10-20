@@ -8,6 +8,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+    <!-- Glow behind the content, only visible when the top shelf is scrolled away -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tv_top_glow_height"
+        android:background="@drawable/tv_top_glow"
+        android:importantForAccessibility="no" />
+
 
     <FrameLayout
         android:id="@+id/home_loading"
@@ -199,6 +206,7 @@
             android:background="@drawable/player_button_tv_attr_no_bg"
             android:gravity="center"
             android:nextFocusLeft="@id/navigation_home"
+            android:nextFocusUp="@id/nav_top_settings"
             tools:text="Hello!"
             android:nextFocusRight="@id/home_preview_settings_button"
             android:nextFocusDown="@id/home_preview_info_btt" >
@@ -232,7 +240,7 @@
             android:focusable="true"
             android:nextFocusLeft="@id/home_preview_settings_button"
             android:nextFocusRight="@id/home_preview_search_button"
-            android:nextFocusUp="@id/home_preview_reload_provider"
+            android:nextFocusUp="@id/nav_top_settings"
             android:nextFocusDown="@id/home_preview_info_btt"
             android:padding="10dp"
             tools:visibility="visible"
@@ -252,6 +260,7 @@
             android:focusable="true"
             android:nextFocusLeft="@id/home_preview_reload_provider"
             android:nextFocusRight="@id/home_switch_account"
+            android:nextFocusUp="@id/nav_top_settings"
             android:nextFocusDown="@id/home_preview_info_btt"
             android:padding="10dp"
             android:src="@drawable/search_icon"

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A highlight instead of an outline on TV -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="120"
+    android:exitFadeDuration="120">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/tvListFocused" />
+            <corners android:radius="@dimen/rounded_image_radius" />
+        </shape>
+    </item>
+</selector>

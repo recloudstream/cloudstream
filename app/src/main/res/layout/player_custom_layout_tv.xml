@@ -946,16 +946,16 @@
                         android:layout_width="0dp"
                         android:layout_height="30dp"
                         android:layout_weight="1"
-                        app:bar_height="2dp"
+                        app:bar_height="5dp"
+                        app:buffered_color="@color/tvPlayerBuffered"
                         app:layout_constraintBottom_toBottomOf="@id/exo_position"
                         app:layout_constraintEnd_toStartOf="@id/exo_duration"
                         app:layout_constraintStart_toEndOf="@+id/exo_position"
-                        app:played_color="?attr/colorPrimary"
-
-                        app:scrubber_color="?attr/colorPrimary"
-                        app:scrubber_dragged_size="26dp"
-                        app:scrubber_enabled_size="24dp"
-                        app:unplayed_color="@color/videoProgress" />
+                        app:played_color="@color/white"
+                        app:scrubber_color="@color/white"
+                        app:scrubber_dragged_size="20dp"
+                        app:scrubber_enabled_size="16dp"
+                        app:unplayed_color="@color/tvGlass" />
 
                     <TextView
                         android:id="@id/exo_duration"

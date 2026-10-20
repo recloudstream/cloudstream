@@ -62,10 +62,15 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
+
+/** Scroll distance in dp after which the backdrop is fully dimmed */
+private const val BACKDROP_DIM_DISTANCE = 300
+private const val BACKDROP_MAX_DIM = 0.85f
 
 class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     BindingCreator.Inflate(FragmentResultTvBinding::inflate)
@@ -276,9 +281,11 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         binding.apply {
             //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
 
-            // parallax on background
+            // The backdrop stays in place and is darkened, the logo scrolls with the content
             resultFinishLoading.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { view, _, scrollY, _, oldScrollY ->
-                backgroundPosterHolder.translationY = -scrollY.toFloat() * 0.8f
+                backgroundPosterWatermarkBadgeHolder.translationY = -scrollY.toFloat()
+                backgroundPosterDim.alpha =
+                    (scrollY / BACKDROP_DIM_DISTANCE.toPx.toFloat()).coerceIn(0.0f, BACKDROP_MAX_DIM)
             })
 
             redirectToPlay.setOnFocusChangeListener { _, hasFocus ->

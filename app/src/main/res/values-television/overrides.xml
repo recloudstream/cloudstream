@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="nice_button_radius">100dp</dimen>
+    <dimen name="video_button_tv_height">34dp</dimen>
+    <dimen name="video_button_tv_text">13sp</dimen>
+    <item name="nice_button_focus" type="drawable">@drawable/tv_pill_focus</item>
+    <item name="player_button_tv" type="drawable">@drawable/tv_pill_button</item>
+    <item name="player_button_tv_attr" type="drawable">@drawable/tv_pill_button</item>
+</resources>

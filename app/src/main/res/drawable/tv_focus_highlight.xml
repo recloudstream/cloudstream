@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Focus of large blocks on TV, instead of an outline -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="150"
+    android:exitFadeDuration="150">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/tvListFocused" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+</selector>

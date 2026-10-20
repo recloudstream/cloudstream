@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -21,6 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.lagradost.cloudstream4.compose.LocalTvStyle
+import com.lagradost.cloudstream4.compose.TvPageTitle
+import com.lagradost.cloudstream4.compose.tvContentWidth
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.action_bar_up_description
 import com.lagradost.cloudstream4.generated.resources.arrow_back
@@ -96,8 +100,10 @@ fun AppBar(
 
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
+    // The page background shows through on TV, the list does not scroll under it (PreferenceScreen)
+    val isTransparent = LocalTvStyle.current && !isActionMode && backgroundColor == null
     Column(
-        modifier = modifier,
+        modifier = modifier.tvContentWidth(),
     ) {
         TopAppBar(
             // TODO @WindowInsets remove this when we have converted everything to compose
@@ -121,9 +127,10 @@ fun AppBar(
             title = titleContent,
             actions = actions,
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = backgroundColor ?: MaterialTheme.colorScheme.surfaceColorAtElevation(
+                containerColor = backgroundColor ?: if (isTransparent) Color.Transparent else MaterialTheme.colorScheme.surfaceColorAtElevation(
                     elevation = if (isActionMode) 3.dp else 0.dp,
                 ),
+                scrolledContainerColor = if (isTransparent) Color.Transparent else Color.Unspecified,
             ),
             scrollBehavior = scrollBehavior,
         )
@@ -142,6 +149,7 @@ fun AppBarTitle(
                 text = it,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                style = if (LocalTvStyle.current) LocalTextStyle.current.merge(TvPageTitle) else LocalTextStyle.current,
             )
         }
         subtitle?.let {

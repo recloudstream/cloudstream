@@ -11,7 +11,7 @@
         style="@style/WatchHeaderText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/navbar_width"
+        android:layout_marginStart="@dimen/tv_row_title_margin"
         android:layout_marginEnd="0dp"
         android:padding="12dp"
         tools:text="Trending" />
@@ -24,8 +24,10 @@
         android:descendantFocusability="afterDescendants"
         android:nextFocusUp="@id/home_child_more_info"
         android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="5dp"
+        android:paddingStart="@dimen/tv_content_padding"
+        android:paddingTop="@dimen/tv_lift_room"
+        android:paddingEnd="@dimen/tv_content_padding"
+        android:paddingBottom="@dimen/tv_lift_room"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/home_result_grid" />
 </LinearLayout>

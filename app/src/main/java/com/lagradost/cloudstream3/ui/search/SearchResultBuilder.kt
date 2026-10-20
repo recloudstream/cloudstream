@@ -324,7 +324,13 @@ object SearchResultBuilder {
             boxes[boxes.size - 1].setBackgroundResource(R.drawable.bg_color_bottom)
         }
         textIsDub?.apply {
-            backgroundTintList = ColorStateList.valueOf(context.colorFromAttribute(R.attr.textColor))
+            if (isLayout(TV)) {
+                // Subtle translucent badges on TV, like on tvOS
+                backgroundTintList = ColorStateList.valueOf(context.getColor(R.color.tvBadgeBackground))
+                setTextColor(context.getColor(R.color.whiteText))
+            } else {
+                backgroundTintList = ColorStateList.valueOf(context.colorFromAttribute(R.attr.textColor))
+            }
         }
     }
 }

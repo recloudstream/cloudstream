@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The glow is only at the top, a full screen gradient is too slow for TVs -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/primaryBlackBackground" />
+        </shape>
+    </item>
+    <item
+        android:drawable="@drawable/tv_top_glow"
+        android:gravity="top"
+        android:height="@dimen/tv_top_glow_height" />
+</layer-list>

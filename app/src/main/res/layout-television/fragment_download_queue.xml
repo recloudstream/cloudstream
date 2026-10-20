@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TV variant of layout/fragment_download_queue.xml, keeps its ids -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/download_queue_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tv_app_background">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:elevation="0dp">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/download_queue_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:paddingStart="@dimen/tv_row_title_margin"
+                android:paddingEnd="@dimen/tv_row_title_margin"
+                android:paddingTop="20dp"
+                app:titleTextAppearance="@style/TvPageTitle"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:menu="@menu/download_queue"
+                app:navigationIconTint="?attr/iconColor"
+                app:titleTextColor="?attr/textColor"
+                tools:title="Overlord" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/download_queue_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nextFocusLeft="@id/navigation_downloads"
+                android:nextFocusUp="@id/download_queue_toolbar"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/tv_content_padding"
+                android:paddingVertical="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/download_queue_item" />
+
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <TextView
+        android:id="@+id/text_no_queue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawablePadding="14dp"
+        android:gravity="center"
+        android:text="@string/queue_empty_message"
+        android:textColor="@color/tvMutedText"
+        android:textSize="18sp"
+        app:drawableTint="@color/tvMutedText"
+        app:drawableTopCompat="@drawable/netflix_download"
+        android:visibility="visible" />
+
+</FrameLayout>
