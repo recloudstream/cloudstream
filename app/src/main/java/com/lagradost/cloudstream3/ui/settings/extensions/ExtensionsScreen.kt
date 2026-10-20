@@ -1595,7 +1595,7 @@ object ExtensionsScreen : Screen {
                         .weight(
                             maxOf(
                                 state.plugins.state.downloadedAndEnabled.toFloat(),
-                                0.01f
+                                0.001f
                             )
                         )
                 )
@@ -1606,7 +1606,7 @@ object ExtensionsScreen : Screen {
                         .weight(
                             maxOf(
                                 state.plugins.state.downloadedAndDisabled.toFloat(),
-                                0.01f
+                                0.001f
                             )
                         )
                 )
@@ -1614,7 +1614,7 @@ object ExtensionsScreen : Screen {
                     modifier = Modifier
                         .height(size)
                         .background(color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        .weight(maxOf(state.plugins.state.notDownloaded.toFloat(), 0.2f))
+                        .weight(maxOf(state.plugins.state.notDownloaded.toFloat(), 0.02f))
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
