@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.parseRepoUrl
 import com.lagradost.cloudstream3.plugins.RepositoryManager.removeRepository
 import com.lagradost.cloudstream3.plugins.SitePlugin
 import com.lagradost.cloudstream3.ui.settings.ApkUpdater
+import com.lagradost.cloudstream3.ui.settings.ApkUpdater.isFileDigest
 import com.lagradost.cloudstream4.viewmodels.DigestPair
 import com.lagradost.cloudstream4.viewmodels.Plugin
 import com.lagradost.cloudstream4.viewmodels.PluginDownloadSource
@@ -172,6 +173,16 @@ object AndroidRepositoryManager : RepositoryManager {
             internalName = source.internalName,
             repositoryUrl = source.repositoryUrl
         )
+
+        /**
+         * Before we do anything that needs a network connection,
+         * we actually check if we need to update it
+         *
+         * Because if the file digest is correct, then why do we need to do a network connection?
+         * */
+        if (isFileDigest(file, source.digest)) {
+            return@withContext file.absolutePath
+        }
 
         val tempFile = File.createTempFile(file.name, ".tmp", context.cacheDir)
 

@@ -129,6 +129,7 @@ import com.lagradost.cloudstream4.compose.rounded
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.no_results_found
 import com.lagradost.cloudstream4.getPlainText
+import com.lagradost.cloudstream4.rememberAppSettings
 import com.lagradost.cloudstream4.setPlainText
 import com.lagradost.cloudstream4.state.LogLevel
 import com.lagradost.cloudstream4.state.ObserveEffect
@@ -242,8 +243,14 @@ fun Preview() {
 object ExtensionsScreen : Screen {
     @Composable
     override fun Content() {
+        val settings = rememberAppSettings()
         val viewModel =
-            viewModel<ExtensionsViewModel2> { ExtensionsViewModel2(manager = AndroidRepositoryManager) }
+            viewModel<ExtensionsViewModel2> {
+                ExtensionsViewModel2(
+                    manager = AndroidRepositoryManager,
+                    settings = settings
+                )
+            }
         LaunchedEffect(Unit) { // TODO fix this to only do if necessary
             viewModel.onAction(Init)
         }
@@ -726,12 +733,14 @@ object ExtensionsScreen : Screen {
                             modifier = Modifier
                                 .focusOutline()
                                 .sizeIn(minHeight = minHeight)
-                                .combinedClickable( onClick = { scope.launch {
-                                    openRepositoryDialog(
-                                        clipboard = clipboard,
-                                        onAction = onAction
-                                    )
-                                } })
+                                .combinedClickable(onClick = {
+                                    scope.launch {
+                                        openRepositoryDialog(
+                                            clipboard = clipboard,
+                                            onAction = onAction
+                                        )
+                                    }
+                                })
                                 .fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center,
@@ -1469,7 +1478,9 @@ object ExtensionsScreen : Screen {
 
             val message = error.message
             TextPreferenceWidget(
-                modifier = Modifier.rounded().width(TextFieldDefaults.MinWidth),
+                modifier = Modifier
+                    .rounded()
+                    .width(TextFieldDefaults.MinWidth),
                 title = when {
                     error is JacksonException -> {
                         stringResource(R.string.no_repository_found_error)

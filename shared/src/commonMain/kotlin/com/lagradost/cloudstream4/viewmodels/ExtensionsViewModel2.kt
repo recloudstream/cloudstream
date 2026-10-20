@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.InternalAPI
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.utils.Levenshtein
+import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.state.ActionHandler
 import com.lagradost.cloudstream4.state.DefaultEffectContainer
 import com.lagradost.cloudstream4.state.DefaultStateContainer
@@ -446,6 +447,7 @@ sealed class ExtensionsAction {
  *   <---(state)---/        <--(callback)--/
  * */
 class ExtensionsViewModel2(
+    private val settings : AppSettings,
     private val manager: RepositoryManager,
     private val localUuid: Uuid = Uuid.random(),
 ) : ViewModel(), StateContainer<ExtensionsState> by DefaultStateContainer(ExtensionsState()),
@@ -632,7 +634,7 @@ class ExtensionsViewModel2(
     }
 
     private suspend fun onRepositoryAdded(
-        uuid: Uuid,
+        repositoryUuid: Uuid,
         newRepositoryInfo: RepositoryInfo,
         pluginsFetched: List<Plugin>
     ) {
@@ -650,10 +652,23 @@ class ExtensionsViewModel2(
                 uniqueId(plugin) to plugin.uuid
             }
 
-            /** If we refresh plugins that already exist by assigning them the old uuid */
-            val newPlugins = pluginsFetched.associate { plugin ->
-                val newUuid = oldPlugins[uniqueId(plugin)]
-                    ?: plugin.uuid
+            /**
+             * NSFW is a unique setting that we filter here, instead of the regular filter
+             * to avoid issues where the UI says something else that what we can see
+             *
+             * Moreover, we only filter remove plugins, as you should always have access to "local"
+             * plugins
+             * */
+            val includeNSFW = settings.provider.preferredMedia.get().contains(TvType.NSFW.ordinal.toString())
+            val filteredPluginsFetched = if(includeNSFW) {
+                pluginsFetched
+            } else {
+                pluginsFetched.filterNot { it.info.tvTypes.contains(TvType.NSFW) }
+            }
+
+            /** Reuse the uuid if possible, to avoid duplicates and avoid clearing UI */
+            val newPluginsFetched = filteredPluginsFetched.associate { plugin ->
+                val newUuid = oldPlugins[uniqueId(plugin)] ?: plugin.uuid
                 newUuid to if (newUuid != plugin.uuid) {
                     plugin.copy(uuid = newUuid)
                 } else {
@@ -661,13 +676,22 @@ class ExtensionsViewModel2(
                 }
             }
 
+            val newPlugins = plugins.data.mutate { edit ->
+                for ((uuid, plugin) in plugins.data) {
+                    if (plugin.repository == repositoryUuid) {
+                        edit.remove(uuid)
+                    }
+                }
+                edit.putAll(newPluginsFetched)
+            }
+
             copy(
-                plugins = plugins.setTo(plugins.data.puttingAll(newPlugins)),
+                plugins = plugins.setTo(newPlugins),
                 repositories = repositories.adding(
-                    uuid, Repository(
+                    repositoryUuid, Repository(
                         status = RepositoryStatus.Success,
                         info = newRepositoryInfo,
-                        uuid = uuid
+                        uuid = repositoryUuid
                     )
                 )
             )
@@ -788,7 +812,7 @@ class ExtensionsViewModel2(
                     return@launch
                 }
                 onRepositoryAdded(
-                    uuid = uuid,
+                    repositoryUuid = uuid,
                     newRepositoryInfo = newRepositoryInfo,
                     pluginsFetched = pluginsFetched
                 )
@@ -915,7 +939,7 @@ class ExtensionsViewModel2(
                 }
             }.onSuccess { (newRepositoryInfo, pluginsFetched) ->
                 onRepositoryAdded(
-                    uuid = uuid,
+                    repositoryUuid = uuid,
                     newRepositoryInfo = newRepositoryInfo,
                     pluginsFetched = pluginsFetched
                 )
@@ -956,7 +980,7 @@ class ExtensionsViewModel2(
                         "All local plugins must have a download path"
                     }
 
-                    val newUuid = oldPlugins[plugin.downloadLocation] ?: Uuid.random()
+                    val newUuid = oldPlugins[plugin.downloadLocation] ?: plugin.uuid
                     newUuid to if (newUuid != plugin.uuid) {
                         plugin.copy(uuid = newUuid)
                     } else {
