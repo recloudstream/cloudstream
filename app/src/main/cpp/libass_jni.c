@@ -33,54 +33,86 @@ typedef struct {
     int left, top, right, bottom;
 } Rect;
 
+static inline int max_int(int a, int b) { return a > b ? a : b; }
+
+static inline int min_int(int a, int b) { return a < b ? a : b; }
+
+static inline int rect_is_empty(Rect rect) {
+    return rect.right <= rect.left || rect.bottom <= rect.top;
+}
+
+static Rect rect_intersect(Rect a, Rect b) {
+    return (Rect) {
+        max_int(a.left, b.left), max_int(a.top, b.top),
+        min_int(a.right, b.right), min_int(a.bottom, b.bottom)
+    };
+}
+
+static Rect rect_union(Rect a, Rect b) {
+    if (rect_is_empty(a)) return b;
+    if (rect_is_empty(b)) return a;
+    return (Rect) {
+        min_int(a.left, b.left), min_int(a.top, b.top),
+        max_int(a.right, b.right), max_int(a.bottom, b.bottom)
+    };
+}
+
 static void clear_rect(uint8_t *pixels, uint32_t stride, Rect rect) {
-    if (rect.right <= rect.left || rect.bottom <= rect.top) return;
+    if (rect_is_empty(rect)) return;
     size_t row_bytes = (size_t) (rect.right - rect.left) * 4;
     for (int y = rect.top; y < rect.bottom; y++) {
         memset(pixels + (size_t) y * stride + (size_t) rect.left * 4, 0, row_bytes);
     }
 }
 
-/* Blends one libass image (an alpha mask with a color) onto a premultiplied RGBA bitmap */
-static void blend_image(const ASS_Image *img, uint8_t *pixels, uint32_t stride,
-                        int width, int height, Rect *dirty) {
-    uint32_t color = img->color;
-    uint32_t opacity = 255 - (color & 0xFF);
-    if (opacity == 0 || img->w <= 0 || img->h <= 0) return;
+static void blend_row(const uint8_t *src, uint8_t *dst, int count,
+                      uint32_t color, uint32_t opacity) {
     uint32_t r = color >> 24;
     uint32_t g = (color >> 16) & 0xFF;
     uint32_t b = (color >> 8) & 0xFF;
+    for (int x = 0; x < count; x++, dst += 4) {
+        uint32_t mask = src[x];
+        if (mask == 0) continue;
+        uint32_t alpha = div255(mask * opacity);
+        uint32_t inverse = 255 - alpha;
+        dst[0] = (uint8_t) div255(r * alpha + dst[0] * inverse);
+        dst[1] = (uint8_t) div255(g * alpha + dst[1] * inverse);
+        dst[2] = (uint8_t) div255(b * alpha + dst[2] * inverse);
+        dst[3] = (uint8_t) (alpha + div255(dst[3] * inverse));
+    }
+}
 
-    int x0 = img->dst_x < 0 ? 0 : img->dst_x;
-    int y0 = img->dst_y < 0 ? 0 : img->dst_y;
-    int x1 = img->dst_x + img->w > width ? width : img->dst_x + img->w;
-    int y1 = img->dst_y + img->h > height ? height : img->dst_y + img->h;
-    if (x1 <= x0 || y1 <= y0) return;
+/*
+ * Blends one libass image (an alpha mask with a color) onto a premultiplied RGBA bitmap
+ * and returns the area that was drawn
+ */
+static Rect blend_image(const ASS_Image *img, uint8_t *pixels, uint32_t stride, Rect bounds) {
+    Rect empty = {0, 0, 0, 0};
+    uint32_t opacity = 255 - (img->color & 0xFF);
+    if (opacity == 0) return empty;
 
-    for (int y = y0; y < y1; y++) {
+    Rect image = {img->dst_x, img->dst_y, img->dst_x + img->w, img->dst_y + img->h};
+    Rect area = rect_intersect(image, bounds);
+    if (rect_is_empty(area)) return empty;
+
+    for (int y = area.top; y < area.bottom; y++) {
         const uint8_t *src = img->bitmap + (size_t) (y - img->dst_y) * img->stride
-                             + (x0 - img->dst_x);
-        uint8_t *dst = pixels + (size_t) y * stride + (size_t) x0 * 4;
-        for (int x = x0; x < x1; x++, src++, dst += 4) {
-            uint32_t mask = *src;
-            if (mask == 0) continue;
-            uint32_t alpha = div255(mask * opacity);
-            uint32_t inverse = 255 - alpha;
-            dst[0] = (uint8_t) div255(r * alpha + dst[0] * inverse);
-            dst[1] = (uint8_t) div255(g * alpha + dst[1] * inverse);
-            dst[2] = (uint8_t) div255(b * alpha + dst[2] * inverse);
-            dst[3] = (uint8_t) (alpha + div255(dst[3] * inverse));
-        }
+                             + (area.left - img->dst_x);
+        uint8_t *dst = pixels + (size_t) y * stride + (size_t) area.left * 4;
+        blend_row(src, dst, area.right - area.left, img->color, opacity);
     }
+    return area;
+}
 
-    if (dirty->right <= dirty->left || dirty->bottom <= dirty->top) {
-        *dirty = (Rect) {x0, y0, x1, y1};
-    } else {
-        if (x0 < dirty->left) dirty->left = x0;
-        if (y0 < dirty->top) dirty->top = y0;
-        if (x1 > dirty->right) dirty->right = x1;
-        if (y1 > dirty->bottom) dirty->bottom = y1;
+/* Locks an RGBA_8888 bitmap, returns NULL on failure */
+static uint8_t *lock_bitmap(JNIEnv *env, jobject bitmap, AndroidBitmapInfo *info) {
+    if (AndroidBitmap_getInfo(env, bitmap, info) != ANDROID_BITMAP_RESULT_SUCCESS) return NULL;
+    if (info->format != ANDROID_BITMAP_FORMAT_RGBA_8888) return NULL;
+    void *pixels = NULL;
+    if (AndroidBitmap_lockPixels(env, bitmap, &pixels) != ANDROID_BITMAP_RESULT_SUCCESS) {
+        return NULL;
     }
+    return pixels;
 }
 
 JNIEXPORT jlong JNICALL
@@ -200,30 +232,18 @@ JNI_FN(renderFrame)(JNIEnv *env, jobject thiz, jlong renderer, jlong track, jlon
     if (change == 0 && !force) return 0;
 
     AndroidBitmapInfo info;
-    if (AndroidBitmap_getInfo(env, bitmap, &info) != ANDROID_BITMAP_RESULT_SUCCESS ||
-        info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
-        return -1;
-    }
-    void *pixels = NULL;
-    if (AndroidBitmap_lockPixels(env, bitmap, &pixels) != ANDROID_BITMAP_RESULT_SUCCESS ||
-        !pixels) {
-        return -1;
-    }
+    uint8_t *pixels = lock_bitmap(env, bitmap, &info);
+    if (!pixels) return -1;
+    Rect bounds = {0, 0, (int) info.width, (int) info.height};
 
     jint rect[4];
     (*env)->GetIntArrayRegion(env, dirty, 0, 4, rect);
     Rect previous = {rect[0], rect[1], rect[2], rect[3]};
-    int width = (int) info.width;
-    int height = (int) info.height;
-    if (previous.left < 0) previous.left = 0;
-    if (previous.top < 0) previous.top = 0;
-    if (previous.right > width) previous.right = width;
-    if (previous.bottom > height) previous.bottom = height;
-    clear_rect(pixels, info.stride, previous);
+    clear_rect(pixels, info.stride, rect_intersect(previous, bounds));
 
     Rect drawn = {0, 0, 0, 0};
     for (const ASS_Image *img = images; img; img = img->next) {
-        blend_image(img, pixels, info.stride, width, height, &drawn);
+        drawn = rect_union(drawn, blend_image(img, pixels, info.stride, bounds));
     }
 
     AndroidBitmap_unlockPixels(env, bitmap);
