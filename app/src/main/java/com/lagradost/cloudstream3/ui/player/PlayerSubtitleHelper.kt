@@ -98,12 +98,16 @@ class PlayerSubtitleHelper {
 
     var subtitleView: SubtitleView? = null
 
+    /** Where the libass overlay is placed */
+    var exoPlayerView: androidx.media3.ui.PlayerView? = null
+
     companion object {
         fun String.toSubtitleMimeType(): String {
             return when {
                 endsWith("vtt", true) -> MimeTypes.TEXT_VTT
                 endsWith("srt", true) -> MimeTypes.APPLICATION_SUBRIP
                 endsWith("xml", true) || endsWith("ttml", true) -> MimeTypes.APPLICATION_TTML
+                endsWith(".ass", true) || endsWith(".ssa", true) -> MimeTypes.TEXT_SSA
                 else -> MimeTypes.APPLICATION_SUBRIP
             }
         }
