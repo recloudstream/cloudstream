@@ -97,8 +97,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:contentDescription="@string/title_search"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="8dp"
+                android:paddingStart="14dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="8dp"
                 android:src="@drawable/search_icon"
                 app:tint="@color/tv_tab_item_text" />
 

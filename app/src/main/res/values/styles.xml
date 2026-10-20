@@ -78,9 +78,12 @@
     <style name="TvTabItem">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginHorizontal">2dp</item>
-        <item name="android:paddingHorizontal">18dp</item>
-        <item name="android:paddingVertical">7dp</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginEnd">2dp</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">18dp</item>
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">7dp</item>
         <item name="android:background">@drawable/tv_tab_item_bg</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
