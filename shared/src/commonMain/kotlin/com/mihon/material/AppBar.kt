@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.lagradost.cloudstream4.compose.IconButtonOutline
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.action_bar_up_description
 import com.lagradost.cloudstream4.generated.resources.arrow_back
@@ -104,7 +105,7 @@ fun AppBar(
             windowInsets = WindowInsets(0, 0, 0, 0),
             navigationIcon = {
                 if (isActionMode) {
-                    IconButton(onClick = onCancelActionMode) {
+                    IconButtonOutline(onClick = onCancelActionMode) {
                         Icon(
                             painter = painterResource(Res.drawable.close),
                             contentDescription = stringResource(Res.string.cancel),
@@ -112,7 +113,7 @@ fun AppBar(
                     }
                 } else {
                     navigateUp?.let {
-                        IconButton(onClick = it) {
+                        IconButtonOutline(onClick = it) {
                             UpIcon(navigationIcon = navigationIcon)
                         }
                     }

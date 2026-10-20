@@ -11,6 +11,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -43,7 +46,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
@@ -108,6 +110,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream4.compose.ActionDialog
 import com.lagradost.cloudstream4.compose.BlackButton
 import com.lagradost.cloudstream4.compose.BlackTextField
+import com.lagradost.cloudstream4.compose.IconButtonOutline
 import com.lagradost.cloudstream4.compose.IsScrolling
 import com.lagradost.cloudstream4.compose.LogBoxBlack
 import com.lagradost.cloudstream4.compose.LogBoxWhite
@@ -119,6 +122,7 @@ import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.TV
 import com.lagradost.cloudstream4.compose.WhiteButton
 import com.lagradost.cloudstream4.compose.WhiteFilterChip
+import com.lagradost.cloudstream4.compose.focusOutline
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.compose.rounded
 import com.lagradost.cloudstream4.generated.resources.Res
@@ -164,6 +168,7 @@ import com.mihon.material.padding
 import com.mihon.presentation.LocalBackPress
 import com.mihon.presentation.secondaryItemAlpha
 import com.mihon.presentation.settings.LocalPreferenceHighlighted
+import com.mihon.presentation.settings.LocalPreferenceMinHeight
 import com.mihon.presentation.settings.widget.BasePreferenceWidget
 import com.mihon.presentation.settings.widget.PrefsHorizontalPadding
 import com.mihon.presentation.settings.widget.TextPreferenceWidget
@@ -317,9 +322,25 @@ object ExtensionsScreen : Screen {
 
         var extraDialog by remember { mutableStateOf(false) }
         if (!state.searchPlugins) {
-            IconButton(onClick = {
-                extraDialog = true
-            }) {
+            if (isLayout(TV)) {
+                IconButtonOutline(
+                    onClick = {
+                        scope.launch {
+                            openRepositoryDialog(clipboard = clipboard, onAction = onAction)
+                        }
+                    }) {
+                    Icon(
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        painter = painterResource(R.drawable.add_24px),
+                        contentDescription = stringResource(R.string.add_repository)
+                    )
+                }
+            }
+
+            IconButtonOutline(
+                onClick = {
+                    extraDialog = true
+                }) {
                 Icon(
                     tint = MaterialTheme.colorScheme.onBackground,
                     painter = painterResource(R.drawable.ic_baseline_more_vert_24),
@@ -365,7 +386,7 @@ object ExtensionsScreen : Screen {
 
         val activeRepository = state.pluginFilter.repository
         if (state.searchPlugins && activeRepository != null && derivedRepositoryState.notDownloaded != derivedRepositoryState.total) {
-            IconButton(onClick = {
+            IconButtonOutline(onClick = {
                 deleteDialog = true
             }) {
                 Icon(
@@ -378,7 +399,7 @@ object ExtensionsScreen : Screen {
 
         /** We only show the langauge filter button if we are searching plugins and there is languages to pick from*/
         if (state.searchPlugins && derivedRepositoryState.languageCount.isNotEmpty()) {
-            IconButton(onClick = {
+            IconButtonOutline(onClick = {
                 languageDialog = true
             }) {
                 Icon(
@@ -696,6 +717,36 @@ object ExtensionsScreen : Screen {
                             textAlign = TextAlign.Center
                         )
                     }
+                    item {
+                        val scope = rememberCoroutineScope()
+                        val clipboard = LocalClipboard.current
+                        val minHeight = LocalPreferenceMinHeight.current
+                        Row(
+                            modifier = Modifier
+                                .focusOutline()
+                                .sizeIn(minHeight = minHeight)
+                                .combinedClickable( onClick = { scope.launch {
+                                    openRepositoryDialog(
+                                        clipboard = clipboard,
+                                        onAction = onAction
+                                    )
+                                } })
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.add_24px),
+                                tint = MaterialTheme.colorScheme.onBackground,
+                                contentDescription = stringResource(R.string.add_repository)
+                            )
+                            Spacer(modifier = Modifier.width(MaterialTheme.padding.medium))
+                            Text(
+                                text = stringResource(R.string.add_repository),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -833,7 +884,7 @@ object ExtensionsScreen : Screen {
                             }
                         },
                     )
-                    if(stackTrace.isNotBlank()) {
+                    if (stackTrace.isNotBlank()) {
                         LogText(
                             level = LogLevel.Error,
                             message = stackTrace,
@@ -867,6 +918,7 @@ object ExtensionsScreen : Screen {
                 dismissFocusRequester.requestFocus()
             }
         }
+        val isPluginDisabledByAuthor = plugin.info.status == PROVIDER_STATUS_DOWN
 
         if (extendedDialog) {
             AlertDialog(
@@ -972,7 +1024,11 @@ object ExtensionsScreen : Screen {
                     ) {
                         RepositoryIcon(
                             iconUrl = plugin.info.iconUrl,
-                            defaultIcon = painterResource(R.drawable.extension_24px)
+                            defaultIcon = if (isPluginDisabledByAuthor) {
+                                painterResource(R.drawable.extension_off_24px)
+                            } else {
+                                painterResource(R.drawable.extension_24px)
+                            }
                         )
                         Text(text = plugin.info.name)
                     }
@@ -982,7 +1038,6 @@ object ExtensionsScreen : Screen {
         val (backgroundFocusRequester, buttonsFocusRequester) =
             remember { FocusRequester.createRefs() }
 
-        val isPluginDisabledByAuthor = plugin.info.status == PROVIDER_STATUS_DOWN
 
         BasePreferenceWidget(
             modifier = modifier
@@ -1056,7 +1111,6 @@ object ExtensionsScreen : Screen {
                         } else {
                             painterResource(R.drawable.extension_24px)
                         }
-
                 )
             },
             onClick = onClick ?: {
@@ -1139,7 +1193,7 @@ object ExtensionsScreen : Screen {
 
             if (settings != null) {
                 val context = LocalContext.current
-                IconButton(
+                IconButtonOutline(
                     modifier = Modifier
                         .focusRequester(button1FocusRequester)
                         .focusProperties {
@@ -1165,7 +1219,7 @@ object ExtensionsScreen : Screen {
                 }
             }
 
-            IconButton(
+            IconButtonOutline(
                 modifier = Modifier
                     .focusRequester(button2FocusRequester)
                     .focusProperties {
@@ -1720,7 +1774,7 @@ object ExtensionsScreen : Screen {
                 when (val reason = repository.status) {
                     is RepositoryStatus.Failure -> {
                         var errorDialog by remember { mutableStateOf(false) }
-                        IconButton(
+                        IconButtonOutline(
                             onClick = {
                                 errorDialog = true
                             },
@@ -1761,7 +1815,7 @@ object ExtensionsScreen : Screen {
                     }
 
                     RepositoryStatus.Loading, RepositoryStatus.Success -> {
-                        IconButton(
+                        IconButtonOutline(
                             onClick = {
                                 deleteDialog = true
                             },

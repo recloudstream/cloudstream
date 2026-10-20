@@ -79,7 +79,7 @@ object AndroidRepositoryManager : RepositoryManager {
 
             val parsedRepository = app.get(
                 url = convertRawGitUrl(url),
-                cacheTime = 5,
+                cacheTime = 15,
                 cacheUnit = TimeUnit.MINUTES
             ).parsed<com.lagradost.cloudstream3.plugins.Repository>()
 
@@ -105,7 +105,7 @@ object AndroidRepositoryManager : RepositoryManager {
                 /** This should really be a list of size ~ 1 */
                 app.get(
                     url = convertRawGitUrl(url),
-                    cacheTime = 5,
+                    cacheTime = 15,
                     cacheUnit = TimeUnit.MINUTES
                 ).parsed<Array<SitePlugin>>()
             }.flatMap { plugins ->
