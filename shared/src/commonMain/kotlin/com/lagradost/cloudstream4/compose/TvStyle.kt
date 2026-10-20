@@ -7,17 +7,25 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -79,4 +87,25 @@ internal fun Modifier.tvHighlight(hasFocus: Boolean, shape: Shape): Modifier {
         this.shape = shape
         clip = true
     }.background(Color.White.copy(alpha = 0.20f * progress), shape)
+}
+
+private val SelectKeys = setOf(Key.DirectionCenter, Key.Enter, Key.NumPadEnter)
+
+/**
+ * On TV a text field is only editable after pressing it, so the keyboard does not open
+ * when the remote just moves the focus over it. Use [isEditing] as the inverse of readOnly.
+ */
+@Composable
+fun Modifier.editOnSelect(isEditing: MutableState<Boolean>): Modifier {
+    if (!LocalTvStyle.current) return this
+    val keyboard = LocalSoftwareKeyboardController.current
+    return onFocusChanged { if (!it.hasFocus) isEditing.value = false }
+        .onPreviewKeyEvent { event ->
+            if (isEditing.value || event.key !in SelectKeys) return@onPreviewKeyEvent false
+            if (event.type == KeyEventType.KeyUp) {
+                isEditing.value = true
+                keyboard?.show()
+            }
+            true
+        }
 }

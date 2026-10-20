@@ -50,11 +50,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -83,6 +78,7 @@ import com.lagradost.cloudstream4.compose.TvGlass
 import com.lagradost.cloudstream4.compose.TvGlassCard
 import com.lagradost.cloudstream4.compose.TvPageTitle
 import com.lagradost.cloudstream4.compose.circleBorder
+import com.lagradost.cloudstream4.compose.editOnSelect
 import com.lagradost.cloudstream4.compose.focusOutline
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.compose.tvContentWidth
@@ -328,9 +324,8 @@ object SettingsFragmentScreen : Screen {
     fun SettingsSearch(textFieldState : TextFieldState) {
         var hasFocus by remember { mutableStateOf(false) }
         val isTv = isLayout(TV)
-        // On TV the keyboard is only shown after pressing the field, not when focusing it
-        var isEditing by remember { mutableStateOf(!isTv) }
-        val keyboard = LocalSoftwareKeyboardController.current
+        val isEditing = remember { mutableStateOf(!isTv) }
+        val containerColor = if (isTv) TvGlass else MaterialTheme.colorScheme.surfaceVariant
         val focusProgress by animateFloatAsState(targetValue = if (hasFocus) 1.0f else 0.0f)
         val focusManager = LocalFocusManager.current
         val focusRequester = remember { FocusRequester() }
@@ -347,28 +342,17 @@ object SettingsFragmentScreen : Screen {
                 .focusOutline(enabled = isLayout(TV), CircleShape)
                 .onFocusChanged { newFocus ->
                     hasFocus = newFocus.hasFocus
-                    if (isTv && !newFocus.hasFocus) isEditing = false
                 }
-                .onPreviewKeyEvent { event ->
-                    val isSelect = event.key == Key.DirectionCenter || event.key == Key.Enter ||
-                            event.key == Key.NumPadEnter
-                    if (isTv && !isEditing && isSelect) {
-                        if (event.type == KeyEventType.KeyUp) {
-                            isEditing = true
-                            keyboard?.show()
-                        }
-                        true
-                    } else false
-                }
+                .editOnSelect(isEditing)
                 .focusRequester(focusRequester),
-            readOnly = !isEditing,
+            readOnly = !isEditing.value,
             placeholder = {
                 Text(text = stringResource(R.string.search_hint))
             },
             shape = CircleShape,
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = if (isTv) TvGlass else MaterialTheme.colorScheme.surfaceVariant,
-                unfocusedContainerColor = if (isTv) TvGlass else MaterialTheme.colorScheme.surfaceVariant,
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
                 unfocusedLeadingIconColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTrailingIconColor = MaterialTheme.colorScheme.onBackground,
                 focusedTrailingIconColor = MaterialTheme.colorScheme.onBackground,
