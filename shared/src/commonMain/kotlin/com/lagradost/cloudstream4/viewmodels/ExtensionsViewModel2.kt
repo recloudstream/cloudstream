@@ -20,6 +20,7 @@ import com.lagradost.cloudstream4.state.SingleActiveQuery
 import com.lagradost.cloudstream4.state.SortByName
 import com.lagradost.cloudstream4.state.StateContainer
 import com.lagradost.cloudstream4.state.UniqueItem
+import com.lagradost.cloudstream4.state.sortByInt
 import com.lagradost.cloudstream4.viewmodels.ExtensionsEffect.RepositoryAdded
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentMap
@@ -27,6 +28,7 @@ import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.puttingAll
 import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +51,14 @@ data class RepositoryInfo(
 data class Repository(
     val info: RepositoryInfo,
     val status: RepositoryStatus,
+    /**
+     * To avoid the issue of people using ! to sort repositories higher up,
+     * we use the added insertion order.
+     *
+     * We can add an alphabetical sort later,
+     * but the default should not prioritize on name
+     * */
+    val sortingOrder: Int,
     override val uuid: Uuid
 ) : UniqueItem
 
@@ -349,7 +359,7 @@ data class DerivedPluginsState(
 data class ExtensionsState(
     val repositories: SearchableData<Uuid, Repository> = SearchableData.from(
         data = persistentMapOf(),
-        sortedBy = SortByName { it.info.name }
+        sortedBy = sortByInt(Repository::sortingOrder)
     ),
     val plugins: SearchableDataState<Uuid, Plugin, DerivedPluginsState> = SearchableDataState.from(
         data = persistentMapOf(),
@@ -389,6 +399,7 @@ sealed class ExtensionsEffect {
 
 @InternalAPI
 interface RepositoryManager {
+    /** Returns an ***ordered*** list of installed repositories */
     fun getRepositories(): List<RepositoryInfo>
 
     @Throws
@@ -435,6 +446,7 @@ sealed class ExtensionsAction {
     data class SetRepositoryDialog(val dialog: AddRepositoryDialog?) : ExtensionsAction()
     object ClearPluginSearch : ExtensionsAction()
     object UpdateAllPlugins : ExtensionsAction()
+    object DeleteAllRepositories : ExtensionsAction()
     object CancelPluginsUpdate : ExtensionsAction()
     data class CancelPluginDownloader(val uuid: Uuid) : ExtensionsAction()
 }
@@ -447,7 +459,7 @@ sealed class ExtensionsAction {
  *   <---(state)---/        <--(callback)--/
  * */
 class ExtensionsViewModel2(
-    private val settings : AppSettings,
+    private val settings: AppSettings,
     private val manager: RepositoryManager,
     private val localUuid: Uuid = Uuid.random(),
 ) : ViewModel(), StateContainer<ExtensionsState> by DefaultStateContainer(ExtensionsState()),
@@ -461,7 +473,8 @@ class ExtensionsViewModel2(
             description = "Locally installed plugins"
         ),
         status = RepositoryStatus.Success,
-        uuid = localUuid
+        uuid = localUuid,
+        sortingOrder = -1,
     )
     private val repositoryDispatcher = MultiActiveQuery<Uuid>(dispatcher = Dispatchers.IO)
     private val downloadDispatcher = MultiActiveQuery<Uuid>(dispatcher = Dispatchers.IO)
@@ -500,6 +513,15 @@ class ExtensionsViewModel2(
                         updateState {
                             copy(updateAllPluginsDialog = null)
                         }
+                    }
+                }
+            }
+
+            ExtensionsAction.DeleteAllRepositories -> {
+                val repositories = state.value.repositories.data.values
+                viewModelScope.launch {
+                    for (repository in repositories) {
+                        deleteRepository(repository)
                     }
                 }
             }
@@ -659,8 +681,9 @@ class ExtensionsViewModel2(
              * Moreover, we only filter remove plugins, as you should always have access to "local"
              * plugins
              * */
-            val includeNSFW = settings.provider.preferredMedia.get().contains(TvType.NSFW.ordinal.toString())
-            val filteredPluginsFetched = if(includeNSFW) {
+            val includeNSFW =
+                settings.provider.preferredMedia.get().contains(TvType.NSFW.ordinal.toString())
+            val filteredPluginsFetched = if (includeNSFW) {
                 pluginsFetched
             } else {
                 pluginsFetched.filterNot { it.info.tvTypes.contains(TvType.NSFW) }
@@ -685,13 +708,28 @@ class ExtensionsViewModel2(
                 edit.putAll(newPluginsFetched)
             }
 
+            /**
+             * Order = `current ?: max + 1 ?: 0` as that will keep the insertion order
+             * even if we can remove repos in the middle of the process.
+             *
+             * e.g.  0,1,2 -> 0,1,2,3
+             *       0,2 -> 0,2,3
+             *
+             * But after reloading, 0,2,3 will become 0,1,2 again
+             * */
+            val sortingOrder =
+                repositories[repositoryUuid]?.sortingOrder ?: repositories.data.values.maxOfOrNull(
+                    Repository::sortingOrder
+                )?.plus(1) ?: 0
+
             copy(
                 plugins = plugins.setTo(newPlugins),
                 repositories = repositories.adding(
                     repositoryUuid, Repository(
                         status = RepositoryStatus.Success,
                         info = newRepositoryInfo,
-                        uuid = repositoryUuid
+                        uuid = repositoryUuid,
+                        sortingOrder = sortingOrder,
                     )
                 )
             )
@@ -955,18 +993,30 @@ class ExtensionsViewModel2(
                 repository.info.url to repository.uuid
             }
 
-            val newRepositories = repos.associate { info ->
-                val uuid = oldRepositories[info.url] ?: Uuid.random()
-                uuid to Repository(info = info, status = RepositoryStatus.Loading, uuid = uuid)
-            }.toPersistentMap()
-
-            copy(
-                repositories = repositories.setTo(
-                    newData = repositories.data.puttingAll(
-                        newRepositories
+            val newRepositories =
+                persistentMapOf<Uuid, Repository>().puttingAll(repos.mapIndexed { index, info ->
+                    val uuid = oldRepositories[info.url] ?: Uuid.random()
+                    uuid to Repository(
+                        info = info,
+                        status = RepositoryStatus.Loading,
+                        uuid = uuid,
+                        sortingOrder = index
                     )
-                )
-            )
+                })
+
+            val oldLocalRepository = repositories[localUuid]
+
+            /**
+             * Clear the old repositories if they are deleted from outside the context,
+             * but include the local repository
+             * */
+            val newRepositoriesWithLocal = if (oldLocalRepository != null) {
+                newRepositories.putting(localUuid, oldLocalRepository)
+            } else {
+                newRepositories
+            }
+
+            copy(repositories = repositories.setTo(newData = newRepositoriesWithLocal))
         }
 
         repositoryDispatcher.launch(localUuid) {

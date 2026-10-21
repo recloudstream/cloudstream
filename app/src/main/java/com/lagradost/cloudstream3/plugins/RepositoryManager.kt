@@ -248,8 +248,15 @@ object RepositoryManager {
     suspend fun addRepository(repository: RepositoryData) {
         repoLock.withLock {
             // No duplicates, but we want the new repository instead of the old one
-            val currentRepos = getRepositories().associateBy { it.url } + (repository.url to repository)
-            setKey(REPOSITORIES_KEY, currentRepos.values.toTypedArray())
+            var currentRepos = getRepositories()
+            val index = currentRepos.indexOfFirst { it.url == repository.url }
+            if(index == -1) {
+                currentRepos += repository
+            } else {
+                /** We want to keep the ordering here, as that is the addition order */
+                currentRepos[index] = repository
+            }
+            setKey(REPOSITORIES_KEY, currentRepos)
         }
     }
 

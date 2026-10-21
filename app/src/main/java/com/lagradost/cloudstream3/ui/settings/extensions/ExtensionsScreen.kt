@@ -96,6 +96,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.findNavController
 import coil3.compose.AsyncImage
 import com.fasterxml.jackson.core.JacksonException
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.openBrowser
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
@@ -210,7 +211,8 @@ fun Preview() {
                                 url = "https://raw.githubusercontent.com/recloudstream/extensions/refs/heads/master/repo.json",
                                 iconUrl = null
                             ),
-                            status = RepositoryStatus.Loading
+                            status = RepositoryStatus.Loading,
+                            sortingOrder = 0,
                         ),
                         uuid2 to Repository(
                             uuid = uuid2,
@@ -219,7 +221,8 @@ fun Preview() {
                                 url = "https://codeberg.org/",
                                 iconUrl = null
                             ),
-                            status = RepositoryStatus.Loading
+                            status = RepositoryStatus.Loading,
+                            sortingOrder = 1,
                         ),
                         uuid3 to Repository(
                             uuid = uuid3,
@@ -228,7 +231,8 @@ fun Preview() {
                                 url = "https://pastebin.com/",
                                 iconUrl = null
                             ),
-                            status = RepositoryStatus.Loading
+                            status = RepositoryStatus.Loading,
+                            sortingOrder = 2,
                         )
                     ),
                     sortedBy = SortByName { it.info.name }
@@ -386,6 +390,19 @@ object ExtensionsScreen : Screen {
                 extraDialog = false
                 onAction(UpdateAllPlugins)
             })
+
+            /**
+             * Easier to debug the system if we have this.
+             * No need to translate this IMPO
+             * */
+            if (BuildConfig.DEBUG) {
+                DropdownMenuItem(text = {
+                    Text(text = "Delete all repositories")
+                }, onClick = {
+                    extraDialog = false
+                    onAction(ExtensionsAction.DeleteAllRepositories)
+                })
+            }
         }
 
         var languageDialog by remember { mutableStateOf(false) }
@@ -561,9 +578,8 @@ object ExtensionsScreen : Screen {
             val index = list.indexOfFirst { uuid -> uuid == highLight }
             if (index != -1) {
                 lazyRepoState.animateScrollToItem(
-                    index +
-                            /** We have some extra items here */
-                            if (state.searchPlugins) 2 else 1
+                    /** We have some extra items here */
+                    index + 2
                 )
             }
             delay(5.0.seconds)
@@ -696,24 +712,6 @@ object ExtensionsScreen : Screen {
                     }
                 }
             } else {
-                items(items = state.repositories.sorted, key = { uuid -> uuid }) { uuid ->
-                    val repository = state.repositories[uuid]!!
-                    val isHighlighted = uuid == highLight
-                    val derivedState = state.plugins.state.repositories[uuid]
-
-                    CompositionLocalProvider(
-                        LocalPreferenceHighlighted provides isHighlighted,
-                    ) {
-                        Repository(
-                            repository = repository,
-                            onAction = onAction,
-                            derivedState = derivedState,
-                            modifier = Modifier
-                                .animateItem()
-                                .graphicsLayer { alpha = itemAlpha.value }
-                        )
-                    }
-                }
                 if (state.repositories.sorted.isEmpty()) {
                     item {
                         Text(
@@ -756,6 +754,29 @@ object ExtensionsScreen : Screen {
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
+                    }
+                } else {
+                    item(key = "items top padding") {
+                        Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
+                    }
+                }
+
+                items(items = state.repositories.sorted, key = { uuid -> uuid }) { uuid ->
+                    val repository = state.repositories[uuid]!!
+                    val isHighlighted = uuid == highLight
+                    val derivedState = state.plugins.state.repositories[uuid]
+
+                    CompositionLocalProvider(
+                        LocalPreferenceHighlighted provides isHighlighted,
+                    ) {
+                        Repository(
+                            repository = repository,
+                            onAction = onAction,
+                            derivedState = derivedState,
+                            modifier = Modifier
+                                .animateItem()
+                                .graphicsLayer { alpha = itemAlpha.value }
+                        )
                     }
                 }
             }
