@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
@@ -30,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
@@ -47,6 +47,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -288,25 +293,54 @@ object SettingsFragmentScreen : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     @Composable
-    fun SettingsSearch(textFieldState : TextFieldState) {
+    fun SettingsSearch(textFieldState: TextFieldState) {
         var hasFocus by remember { mutableStateOf(false) }
+        var isWritable by remember { mutableStateOf(false) }
         val focusProgress by animateFloatAsState(targetValue = if (hasFocus) 1.0f else 0.0f)
         val focusManager = LocalFocusManager.current
         val focusRequester = remember { FocusRequester() }
+        val isTv = isLayout(TV)
         TextField(
             state = textFieldState,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Search,
-                // This option is bugged on compose, making it unable to open at all
-                // showKeyboardOnFocus = false
+                /**
+                 * We do not want to pull up the keyboard when navigating to the item on TV, therefore
+                 * we listen to when the TV user presses some key to "extra" focus it
+                 *
+                 * showKeyboardOnFocus is somewhat bugged, so need to change this to true when you
+                 * press it, as otherwise no keyboard will show even with keyboardController
+                 * */
+                showKeyboardOnFocus = if (isTv) isWritable else true
             ),
+            lineLimits = TextFieldLineLimits.SingleLine,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp - 12.dp * focusProgress)
-                .focusOutline(enabled = isLayout(TV), CircleShape)
+                .focusOutline(enabled = isTv, CircleShape)
                 .onFocusChanged { newFocus ->
                     hasFocus = newFocus.hasFocus
-                }.focusRequester(focusRequester),
+                    /** Loss of focus -> readonly */
+                    if (!newFocus.hasFocus) {
+                        isWritable = false
+                    }
+                }
+                .focusRequester(focusRequester)
+                .onPreviewKeyEvent { keyEvent ->
+                    if (isWritable || !isTv || !hasFocus || keyEvent.type != KeyEventType.KeyUp) {
+                        return@onPreviewKeyEvent false
+                    }
+
+                    /** Focus + press once -> writable */
+                    return@onPreviewKeyEvent when (keyEvent.key) {
+                        Key.Enter, Key.DirectionCenter, Key.NumPadEnter, Key.Spacebar -> {
+                            isWritable = true
+                            true
+                        }
+
+                        else -> false
+                    }
+                },
             placeholder = {
                 Text(text = stringResource(R.string.search_hint))
             },

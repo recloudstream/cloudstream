@@ -189,6 +189,58 @@ object ApkUpdater : AppUpdater {
         }
     }
 
+    /**
+     * Returns true if we have a non-null digest that matches a digest on the specified existing file
+     * */
+    suspend fun isFileDigest(file: File, digest: DigestPair?): Boolean {
+        if (digest == null) {
+            return false
+        }
+        try {
+            val fileDigest = calculateDigest(
+                digestAlgorithm = digest.algorithm,
+                readStream = file.inputStream()
+            )
+            return fileDigest != null && digest.digest.contentEquals(fileDigest)
+        } catch (_: Throwable) {
+            // File not found/security/read issues, not very useful errors
+        }
+        return false
+    }
+
+    /**
+     * Calculates the digest of a stream with the specified algorithm, use transfer instead if
+     * you already download something.
+     *
+     * Will throw read errors
+     * Will return null if the algorithm is null or does not exist/has some error
+     * */
+    @Throws
+    suspend fun calculateDigest(digestAlgorithm: String?, readStream: InputStream) =
+        withContext(Dispatchers.IO) {
+            if (digestAlgorithm == null) return@withContext null
+
+            val md =
+                safe {
+                    MessageDigest.getInstance(digestAlgorithm)
+                } ?: return@withContext null
+
+            val context = currentCoroutineContext()
+            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+            var read: Int
+            while ((readStream.read(buffer, 0, DEFAULT_BUFFER_SIZE)
+                    .also { read = it }) >= 0
+            ) {
+                try {
+                    md.update(buffer, 0, read)
+                } catch (_: Throwable) {
+                    return@withContext null
+                }
+                context.ensureActive()
+            }
+            return@withContext safe { md.digest() }
+        }
+
     @Throws
     suspend fun legacyDownloader(
         activity: Activity,

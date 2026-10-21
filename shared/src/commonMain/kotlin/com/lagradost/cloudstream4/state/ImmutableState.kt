@@ -35,9 +35,10 @@ data class FilterByQuery<Value>(
     override fun invoke(value: Value): Boolean {
         if (query.isEmpty()) return onEmpty
         val transformed = transform(value)
-        return Levenshtein.ratio(
+        val matchAgainst = if (ignoreCase) transformed.lowercase() else transformed
+        return Levenshtein.partialRatio(
             query,
-            if (ignoreCase) transformed.lowercase() else transformed
+            matchAgainst
         ) > ratio
     }
 
@@ -65,6 +66,30 @@ data class FilterByQuery<Value>(
         } else {
             copy(query = lowerCaseQuery)
         }
+    }
+}
+
+/** Sorting by closest match first */
+@Immutable
+data class SortByMatching<Value>(
+    val query: String,
+    val ignoreCase: Boolean = true,
+    val transform: (Value) -> String,
+) : Comparator<Value> {
+    override fun compare(p0: Value?, p1: Value?): Int {
+        if (p0 == p1) return 0
+        if (p0 == null) return -1
+        if (p1 == null) return 1
+        return score(p1).compareTo(score(p0))
+    }
+
+    fun score(p0: Value) : Int {
+        val transformed = transform(p0)
+        val matchAgainst = if (ignoreCase) transformed.lowercase() else transformed
+        return Levenshtein.partialRatio(
+            query,
+            matchAgainst
+        )
     }
 }
 
@@ -122,6 +147,8 @@ fun <K, V> PersistentMap<K, V>.edit(key: K, updater: V.() -> V): PersistentMap<K
  * 2. `updating` calls that need both the old and new value, but to store the derived state we need to
  * store the old and new values outside the `updating` call.
  * 3. `updateState` that might be called twice due to a race
+ *
+ * The derived state is calculated *before* the filtering.
  * */
 interface DerivedState<Self : DerivedState<Self, Value>, Value> {
     /** State = {} */
@@ -137,6 +164,9 @@ interface DerivedState<Self : DerivedState<Self, Value>, Value> {
 /**
  * For state that updated a lot we might need to calculate some accumulation, then
  * this is used to more ergonomically and efficiently do a `.filter {}` or `.count {}`.
+ *
+ * Note that the derived state is calculated *before* the filtering, and as such the filterBy has
+ * no effect on the state.
  */
 @Immutable
 data class SearchableDataState<Key, Value, State : DerivedState<State, Value>>(
@@ -150,12 +180,22 @@ data class SearchableDataState<Key, Value, State : DerivedState<State, Value>>(
     val sortedBy get() = internalData.sortedBy
 
     @CheckResult
+    operator fun get(key : Key?) : Value? = internalData[key]
+
+    @CheckResult
     fun sortingBy(newSorting: Comparator<Value>): SearchableDataState<Key, Value, State> =
         copy(internalData = internalData.sortingBy(newSorting))
 
     @CheckResult
     fun filteringBy(newFilter: ((Value) -> Boolean)?): SearchableDataState<Key, Value, State> =
         copy(internalData = internalData.filteringBy(newFilter))
+
+    @CheckResult
+    fun searchBy(
+        newSorting: Comparator<Value>,
+        newFilter: ((Value) -> Boolean)?
+    ): SearchableDataState<Key, Value, State> =
+        copy(internalData = internalData.searchBy(newSorting = newSorting, newFilter = newFilter))
 
     @CheckResult
     fun updating(
@@ -274,6 +314,9 @@ data class SearchableData<Key, Value>(
     val sortedBy: Comparator<Value>,
 ) {
     @CheckResult
+    operator fun get(key : Key?) : Value? = key?.let(data::get)
+
+    @CheckResult
     fun sortingBy(newSorting: Comparator<Value>): SearchableData<Key, Value> {
         if (newSorting == sortedBy) {
             return this
@@ -292,6 +335,28 @@ data class SearchableData<Key, Value>(
         val newFiltered = filter(data = data, filteredBy = newFilter)
         val newSorted = sort(data = data, filtered = newFiltered, sortedBy = sortedBy)
         return copy(filteredBy = newFilter, filtered = newFiltered, sorted = newSorted)
+    }
+
+    @CheckResult
+    fun searchBy(
+        newSorting: Comparator<Value>,
+        newFilter: ((Value) -> Boolean)?
+    ): SearchableData<Key, Value> {
+        if (newFilter == filteredBy && newSorting == sortedBy) {
+            return this
+        }
+        val newFiltered = if (newFilter == filteredBy) {
+            filtered
+        } else {
+            filter(data = data, filteredBy = newFilter)
+        }
+        val newSorted = sort(data = data, filtered = newFiltered, sortedBy = newSorting)
+        return copy(
+            filteredBy = newFilter,
+            sortedBy = newSorting,
+            filtered = newFiltered,
+            sorted = newSorted
+        )
     }
 
     @CheckResult
@@ -341,8 +406,7 @@ data class SearchableData<Key, Value>(
         } else if (newFiltered.size < filtered.size) {
             /** Shown -> Hidden, If the update filtered out the item then just remove it from the list */
             return copy(data = newData, filtered = newFiltered, sorted = sorted.removing(key))
-        } else
-        {
+        } else {
             /** Hidden -> Shown, we only need to insert it to the sorted list */
             return copy(
                 data = newData, filtered = newFiltered, sorted = addItemAt(

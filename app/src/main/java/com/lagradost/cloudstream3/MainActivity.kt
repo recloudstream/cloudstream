@@ -1379,7 +1379,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     }
 
                     //Automatically download not existing plugins, using mode specified.
-                    val autoDownloadPlugin = AutoDownloadMode.getEnum(
+                    /*val autoDownloadPlugin = AutoDownloadMode.getEnum(
                         settingsManager.getInt(
                             getString(R.string.auto_download_plugins_key),
                             0
@@ -1390,7 +1390,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             this@MainActivity,
                             autoDownloadPlugin
                         )
-                    }
+                    }*/
                 }
 
                 ioSafe {

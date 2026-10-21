@@ -22,6 +22,7 @@ import org.jetbrains.compose.resources.painterResource
 fun WhiteFilterChip(
     selected: Boolean,
     label: String,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
@@ -31,16 +32,24 @@ fun WhiteFilterChip(
         border = FilterChipDefaults.filterChipBorder(
             enabled = enabled,
             selected = selected,
-            borderColor = MaterialTheme.colorScheme.surfaceVariant,
+            borderColor = if (hasFocus) {
+                MaterialTheme.colorScheme.onBackground
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            },
             disabledBorderColor = MaterialTheme.colorScheme.surfaceVariant,
             selectedBorderColor = Color.Transparent,
             disabledSelectedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
-        modifier = Modifier.onFocusChanged { newFocus ->
+        modifier = modifier.onFocusChanged { newFocus ->
             hasFocus = canHaveFocus && newFocus.hasFocus
         },
         selected = selected,
-        colors = Colors.whiteChip,
+        colors = if (hasFocus) {
+            Colors.whiteChipFocused
+        } else {
+            Colors.whiteChip
+        },
         label = {
             Text(label)
         },
