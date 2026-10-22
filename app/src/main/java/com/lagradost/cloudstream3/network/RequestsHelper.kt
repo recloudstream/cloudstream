@@ -41,6 +41,11 @@ fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClie
     val baseClient = OkHttpClient.Builder()
         .followRedirects(true)
         .followSslRedirects(true)
+        // Explicit timeouts — OkHttp's 10s default is too short for slower
+        // TV network stacks, a known contributor to ExoPlayer error 2004/2001.
+        .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
         .apply {
             if (ignoreSSL) {
                 ignoreAllSSLErrors()
@@ -63,6 +68,9 @@ fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClie
                 6 -> addQuad9Dns()
                 7 -> addDnsSbDns()
                 8 -> addCanadianShieldDns()
+                // Default (system DNS): still wrap with IPv4OnlyDns so Android TV's
+                // often-broken IPv6 stack doesn't get tried even with no DoH selected.
+                else -> dns(IPv4OnlyDns())
             }
         }
         // Needs to be build as otherwise the other builders will change this object

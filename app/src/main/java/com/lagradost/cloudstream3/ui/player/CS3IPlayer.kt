@@ -93,6 +93,7 @@ import com.lagradost.cloudstream3.ui.player.live.LiveHelper
 import com.lagradost.cloudstream3.ui.player.live.PREFERRED_LIVE_OFFSET
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
@@ -669,7 +670,9 @@ class CS3IPlayer : IPlayer {
     }
 
     companion object {
-        private const val CRONET_TIMEOUT_MS = 15_000
+        // 30s instead of 15s — TV network stacks are slower than phones
+        // and were timing out before the stream could even start.
+        private const val CRONET_TIMEOUT_MS = 30_000
 
         /**
          * Single shared engine, to minimize the overhead of maintaining many as:
@@ -765,6 +768,18 @@ class CS3IPlayer : IPlayer {
         }
 
         fun tryCreateEngine(context: Context, diskCacheSize: Long): CronetEngine? {
+            // Android TV: skip Cronet entirely and fall back to OkHttp instead.
+            // Cronet manages its own native networking stack (its own DNS resolution,
+            // its own IPv6 handling, its own QUIC/UDP transport) completely independent
+            // of OkHttp — none of OkHttp's IPv4-only DNS fix or timeout settings reach
+            // Cronet at all. Many Android TV boxes have broken IPv6 and/or block UDP,
+            // which Cronet has no public API to work around, but OkHttp (via
+            // IPv4OnlyDns in RequestsHelper/DohProviders) already handles correctly.
+            // This is the root cause behind ExoPlayer errors 2004/2001 on TV.
+            if (isLayout(TV)) {
+                return null
+            }
+
             // Fast case, no need to recreate it
             cronetEngine?.let {
                 return it
@@ -780,7 +795,10 @@ class CS3IPlayer : IPlayer {
                 CronetEngine.Builder(context)
                     .enableBrotli(true)
                     .enableHttp2(true)
-                    .enableQuic(true)
+                    // QUIC runs over UDP, which many routers/ISPs throttle or block,
+                    // and which Cronet handles with no app-level override. Disabled as
+                    // defense-in-depth in case TV detection above ever misses a device.
+                    .enableQuic(false)
                     .setStoragePath(cacheDirectory.absolutePath)
                     .setLibraryLoader(null)
                     .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK, diskCacheSize)
