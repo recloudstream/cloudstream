@@ -50,6 +50,9 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showNginxTextInputDialog
+import java.net.URLEncoder
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
@@ -908,6 +911,74 @@ class GeneratorPlayer : FullScreenPlayer() {
         )
     }
 
+    private fun handleTranslateSubtitlesClick(ctx: Context, sourceDialog: Dialog) {
+        val proxyUrl = DataStoreHelper.subtitleTranslationProxy
+        if (proxyUrl.isNullOrBlank()) {
+            activity?.showNginxTextInputDialog(
+                name = ctx.getString(R.string.subtitle_translation_proxy_title),
+                value = "",
+                textInputType = null,
+                dismissCallback = {}
+            ) { input ->
+                if (input.isNotBlank()) {
+                    DataStoreHelper.subtitleTranslationProxy = input.trim()
+                    showToast(R.string.subtitle_translation_proxy_saved)
+                    handleTranslateSubtitlesClick(ctx, sourceDialog)
+                }
+            }
+            return
+        }
+
+        val activeSub = player.getCurrentPreferredSubtitle()
+            ?: viewModel.state.subtitles.firstOrNull { it.origin == SubtitleOrigin.URL }
+
+        if (activeSub == null) {
+            showToast(R.string.no_subtitle_selected_to_translate)
+            return
+        }
+        if (activeSub.origin != SubtitleOrigin.URL) {
+            showToast(R.string.only_url_subtitles_can_be_translated)
+            return
+        }
+
+        val languages = listOf(
+            Pair("🇦🇿 Azerbaijani", "az"),
+            Pair("🇹🇷 Turkish", "tr"),
+            Pair("🇬🇧 English", "en"),
+            Pair("🇷🇺 Russian", "ru"),
+            Pair("🇩🇪 German", "de"),
+            Pair("🇪🇸 Spanish", "es"),
+            Pair("🇫🇷 French", "fr"),
+            Pair("🇮🇹 Italian", "it"),
+            Pair("🇸🇦 Arabic", "ar"),
+            Pair("🇵🇹 Portuguese", "pt")
+        )
+
+        activity?.showBottomDialogInstant(
+            items = languages.map { it.first },
+            name = ctx.getString(R.string.select_target_language),
+            dismissCallback = {}
+        ) { selectedIndex ->
+            if (selectedIndex in languages.indices) {
+                val (label, code) = languages[selectedIndex]
+                val encodedUrl = URLEncoder.encode(activeSub.getFixedUrl(), "UTF-8")
+                val proxiedUrl = "${proxyUrl.trimEnd('/')}/translate?url=$encodedUrl&target=$code"
+
+                val translatedData = SubtitleData(
+                    originalName = "$label (AI)",
+                    nameSuffix = "",
+                    url = proxiedUrl,
+                    origin = SubtitleOrigin.URL,
+                    mimeType = MimeTypes.TEXT_VTT,
+                    headers = emptyMap(),
+                    languageCode = code
+                )
+                sourceDialog.dismissSafe(activity)
+                addAndSelectSubtitles(translatedData)
+            }
+        }
+    }
+
     // Open file picker
     private val subsPathPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -1042,6 +1113,17 @@ class GeneratorPlayer : FullScreenPlayer() {
                     openSubPicker()
                 }
                 subtitleList.addFooterView(loadFromFileFooter)
+
+                val translateSubsFooter: TextView =
+                    layoutInflater.inflate(R.layout.sort_bottom_footer_add_choice, null) as TextView
+                translateSubsFooter.text = ctx.getString(R.string.translate_subtitles)
+                translateSubsFooter.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_baseline_auto_awesome_24, 0, 0, 0
+                )
+                translateSubsFooter.setOnClickListener {
+                    handleTranslateSubtitlesClick(ctx, sourceDialog)
+                }
+                subtitleList.addFooterView(translateSubsFooter)
 
                 var shouldDismiss = true
 
