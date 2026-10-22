@@ -531,7 +531,7 @@ object VideoDownloadManager {
     /** This class handles the notifications, as well as the relevant key */
     data class DownloadMetaData(
         private val id: Int?,
-        private val linkHash : Int,
+        private val linkHash: Int,
         var bytesDownloaded: Long = 0,
         var bytesWritten: Long = 0,
 
@@ -543,7 +543,7 @@ object VideoDownloadManager {
         private val createNotificationCallback: (CreateNotificationMetadata) -> Unit,
 
         private var internalType: DownloadType = DownloadType.IsPending,
-        val isHLS : Boolean,
+        val isHLS: Boolean,
         // how many segments that we have downloaded
         var hlsProgress: Int = 0,
         // how many segments that exist
@@ -1045,7 +1045,7 @@ object VideoDownloadManager {
                 )
             )
 
-            // too short file, treat it as a invalid link
+            // too short file, treat it as an invalid link
             if (items.totalLength != null && items.totalLength < minimumSize) {
                 fileStream.closeQuietly()
                 metadata.onDelete()
@@ -1241,13 +1241,15 @@ object VideoDownloadManager {
             metadata.type = DownloadType.IsDone
             return@withContext DOWNLOAD_SUCCESS
         } catch (e: IOException) {
-            // some sort of IO error, this should not happened
+            // some sort of IO error, this usually happens when storage access is revoked
             // we just rethrow it
+            showToast(R.string.error_file_io_toast)
             logError(e)
             throw e
         } catch (t: Throwable) {
             // some sort of network error, will error
             logError(t)
+            showToast(R.string.error_file_unknown_toast)
             // note that when failing we don't want to delete the file,
             // only user interaction has that power
             metadata.type = DownloadType.IsFailed
@@ -1818,6 +1820,9 @@ object VideoDownloadManager {
                         isCompleted = true
                         break
                     } else if (!connectionResult.tryNext || index >= item.links.lastIndex) {
+                        if (connectionResult == DOWNLOAD_INVALID_INPUT) {
+                            showToast(R.string.error_file_invalid_toast)
+                        }
                         isFailed = true
                         break
                     }
