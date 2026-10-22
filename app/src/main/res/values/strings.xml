@@ -205,6 +205,8 @@
     <string name="automatic_plugin_download_summary">Automatically install all not yet installed plugins from added repositories.</string>
     <string name="updates_settings">Show app updates</string>
     <string name="updates_settings_des">Automatically search for new updates after starting the app.</string>
+    <string name="pre_download_updates">Pre-download updates</string>
+    <string name="pre_download_updates_des">Download updates in the background so they install instantly.</string>
     <string name="redo_setup_process">Redo setup process</string>
     <string name="install_prerelease">Install pre-release version</string>
     <string name="prerelease_already_installed">Pre-release is already installed.</string>
