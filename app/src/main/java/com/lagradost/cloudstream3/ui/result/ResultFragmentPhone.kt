@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
@@ -1450,12 +1451,29 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         val isInvalid = rec.isNullOrEmpty()
         val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
+        val isHorizontal = viewModel.isRecommendationsHorizontal()
 
         recommendationBinding?.apply {
             root.isGone = isInvalid
+            if (isHorizontal) {
+                val orientation = root.context.resources.configuration.orientation
+                resultRecommendationsList.spanCount =
+                    if (orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
+            }
+            val currentAdapter = resultRecommendationsList.adapter as? SearchAdapter
+            val adapter = if (currentAdapter != null) {
+                currentAdapter.apply { this.isHorizontal = isHorizontal }
+            } else {
+                SearchAdapter(
+                    resultRecommendationsList,
+                    isHorizontal = isHorizontal,
+                ) { callback ->
+                    SearchHelper.handleSearchClickCallback(callback)
+                }.also { resultRecommendationsList.adapter = it }
+            }
             root.post {
                 rec?.let { list ->
-                    (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(list.filter { it.apiName == matchAgainst })
+                    adapter.submitList(list.filter { it.apiName == matchAgainst })
                 }
             }
         }

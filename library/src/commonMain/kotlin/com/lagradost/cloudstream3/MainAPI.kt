@@ -479,15 +479,33 @@ fun newSearchResponseList(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
 ): SearchResponseList {
+    return newSearchResponseList(list, hasNext, false)
+}
+
+@Prerelease
+fun newSearchResponseList(
+    list: List<SearchResponse>,
+    hasNext: Boolean? = null,
+    isHorizontalImages: Boolean,
+): SearchResponseList {
     @Suppress("DEPRECATION_ERROR")
     return SearchResponseList(
         list,
-        hasNext = hasNext ?: list.isNotEmpty()
+        hasNext = hasNext ?: list.isNotEmpty(),
+        isHorizontalImages = isHorizontalImages
     )
 }
 
 fun List<SearchResponse>.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
     return newSearchResponseList(this, hasNext)
+}
+
+@Prerelease
+fun List<SearchResponse>.toNewSearchResponseList(
+    hasNext: Boolean? = null,
+    isHorizontalImages: Boolean,
+): SearchResponseList {
+    return newSearchResponseList(this, hasNext, isHorizontalImages)
 }
 
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
@@ -1293,8 +1311,16 @@ data class SearchResponseList
 @Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
 constructor(
     val items: List<SearchResponse>,
-    val hasNext: Boolean = false
-)
+    val hasNext: Boolean = false,
+    @property:Prerelease val isHorizontalImages: Boolean = false
+) {
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
+    constructor(
+        items: List<SearchResponse>,
+        hasNext: Boolean = false
+    ) : this(items, hasNext, false)
+}
 
 /** enum class holds search quality.
  *
@@ -1826,6 +1852,10 @@ interface LoadResponse {
     var trailers: MutableList<TrailerData>
 
     var recommendations: List<SearchResponse>?
+    @property:Prerelease
+    var isHorizontalImages: Boolean
+        get() = false
+        set(value) {}
     var actors: List<ActorData>?
     var comingSoon: Boolean
     var syncData: MutableMap<String, String>
@@ -2290,7 +2320,10 @@ constructor(
     override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
-) : LoadResponse
+) : LoadResponse {
+    @property:Prerelease
+    override var isHorizontalImages: Boolean = false
+}
 
 suspend fun MainAPI.newTorrentLoadResponse(
     name: String,
@@ -2352,6 +2385,8 @@ constructor(
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
+    @property:Prerelease
+    override var isHorizontalImages: Boolean = false
 
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         return episodes.map { (status, episodes) ->
@@ -2437,7 +2472,10 @@ constructor(
     override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
-) : LoadResponse
+) : LoadResponse {
+    @property:Prerelease
+    override var isHorizontalImages: Boolean = false
+}
 
 suspend fun MainAPI.newLiveStreamLoadResponse(
     name: String,
@@ -2486,7 +2524,10 @@ constructor(
     override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
-) : LoadResponse
+) : LoadResponse {
+    @property:Prerelease
+    override var isHorizontalImages: Boolean = false
+}
 
 suspend fun <T> MainAPI.newMovieLoadResponse(
     name: String,
@@ -2702,6 +2743,8 @@ constructor(
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
+    @property:Prerelease
+    override var isHorizontalImages: Boolean = false
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         val maxSeason =
             episodes.maxOfOrNull { it.season ?: Int.MIN_VALUE }.takeUnless { it == Int.MIN_VALUE }
