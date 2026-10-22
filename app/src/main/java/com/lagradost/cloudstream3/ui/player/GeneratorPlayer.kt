@@ -1616,7 +1616,12 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val links = viewModel.state.sortLinks(currentQualityProfile)
 
-        val firstAvailableLink = links.firstOrNull { it.shouldUseLink }?.link
+        // Auto-play regex: read user pattern (comma-separated → OR). If it matches a source name, play that; otherwise fall back to first available.
+        val autoPlayRegex = CloudStreamApp.getKey<String>("player_auto_play_regex")
+        val pattern = autoPlayRegex?.trim()?.takeIf { it.isNotEmpty() }
+            ?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }?.joinToString("|")
+        val regex = pattern?.let { runCatching { Regex(it, RegexOption.IGNORE_CASE) }.getOrNull() }
+        val firstAvailableLink = (regex?.let { r -> links.firstOrNull { it.shouldUseLink && r.containsMatchIn(it.link?.first?.name ?: "") } } ?: links.firstOrNull { it.shouldUseLink })?.link
         if (firstAvailableLink == null) {
             noLinksFound()
             return

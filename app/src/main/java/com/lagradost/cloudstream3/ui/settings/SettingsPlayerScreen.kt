@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import androidx.appcompat.app.AlertDialog
 import android.text.format.Formatter.formatShortFileSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import com.lagradost.cloudstream3.CommonActivity.activity
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
@@ -106,6 +108,25 @@ object SettingsPlayerScreen : SearchableSettings {
                                     ).show()
                                 }
                             }
+                        }),
+
+                    Preference.PreferenceItem.TextPreference(
+                        title = "Auto-play source regex",
+                        subtitle = "Auto-pick first source matching (e.g. hindi,hin,tamil,webdl,4k). Empty = normal.",
+                        icon = painterResource(R.drawable.play_arrow_24px),
+                        onClick = {
+                            val ctx = context
+                            val input = android.widget.EditText(ctx).apply {
+                                setText(CloudStreamApp.getKey<String>("player_auto_play_regex") ?: "")
+                                isSingleLine = true
+                            }
+                            AlertDialog.Builder(ctx, R.style.AlertDialogCustom).setTitle("Auto-play source regex")
+                                .setView(input)
+                                .setPositiveButton("Save") { _, _ ->
+                                    CloudStreamApp.setKey("player_auto_play_regex", input.text.toString().trim())
+                                }
+                                .setNegativeButton("Cancel", null)
+                                .show()
                         }),
 
                     Preference.PreferenceItem.SwitchPreference(
