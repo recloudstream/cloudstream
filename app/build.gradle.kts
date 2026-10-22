@@ -140,6 +140,23 @@ android {
             "\"" + (System.getenv("ANILIST_KEY") ?: localProperties["anilist.key"]) + "\""
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild {
+            cmake {
+                // Static C++ runtime so it can not clash with the other native libraries
+                arguments += "-DANDROID_STL=c++_static"
+                // Shared between ABIs and variants so the sources are only downloaded once
+                arguments += "-DLIBASS_DEPS_DIR=${layout.buildDirectory.get().asFile.invariantSeparatorsPath}/libass-deps"
+            }
+        }
+    }
+
+    // libass for ASS/SSA subtitles
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 
     buildTypes {
