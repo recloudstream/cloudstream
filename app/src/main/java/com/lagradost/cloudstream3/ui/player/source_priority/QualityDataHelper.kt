@@ -263,4 +263,6 @@ object QualityDataHelper {
 sealed class ProfileSettings<T>(val key: String, val defaultValue: T) {
     object HideErrorSources : ProfileSettings<Boolean>("hide_error_sources", false)
     object HideNegativeSources : ProfileSettings<Boolean>("hide_negative_sources", false)
+    object SourceRegex : ProfileSettings<String>("source_regex", "")
+    object SourceRegexPriority : ProfileSettings<Boolean>("source_regex_priority", false)
 }

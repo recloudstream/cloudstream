@@ -100,6 +100,35 @@ class SourcePriorityDialog(
             settingsBtt.setOnClickListener {
                 SourceProfileSettingsDialog(ctx, themeRes, profile.id).show()
             }
+
+            regexBtt?.setOnClickListener {
+                val currentRegex = QualityDataHelper.getProfileSetting(profile.id, ProfileSettings.SourceRegex)
+                val currentPriority = QualityDataHelper.getProfileSetting(profile.id, ProfileSettings.SourceRegexPriority)
+                val input = android.widget.EditText(ctx).apply {
+                    setText(currentRegex)
+                    isSingleLine = true
+                }
+                val toggle = android.widget.Switch(ctx).apply {
+                    text = ctx.getString(R.string.source_regex_prioritize)
+                    isChecked = currentPriority
+                }
+                val layout = android.widget.LinearLayout(ctx).apply {
+                    orientation = android.widget.LinearLayout.VERTICAL
+                    setPadding(40, 4, 40, 0)
+                    addView(input)
+                    addView(toggle)
+                }
+                android.app.AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                    .setTitle(ctx.getString(R.string.source_regex))
+                    .setMessage(ctx.getString(R.string.source_regex_hint))
+                    .setView(layout)
+                    .setPositiveButton(ctx.getString(R.string.sort_apply)) { _, _ ->
+                        QualityDataHelper.setProfileSetting(profile.id, ProfileSettings.SourceRegex, input.text.toString().trim())
+                        QualityDataHelper.setProfileSetting(profile.id, ProfileSettings.SourceRegexPriority, toggle.isChecked)
+                    }
+                    .setNegativeButton(ctx.getString(R.string.sort_cancel), null)
+                    .show()
+            }
         }
         super.show()
     }
