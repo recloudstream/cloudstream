@@ -21,7 +21,7 @@ class FcastManager {
 
     /**
      * Start the fcast service
-     * @param registerReceiver If true will register the app as a compatible fcast receiver for discovery in other app
+     * @param registerReceiver If true will register the app as a compatible fcast receiver for discovery in other apps
      */
     fun init(context: Context, registerReceiver: Boolean) = ioSafe {
         nsdManager = context.getSystemService(Context.NSD_SERVICE) as NsdManager
