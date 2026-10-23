@@ -790,4 +790,5 @@
     <string name="edit_profile_image_url">URL</string>
     <string name="edit_profile_image_picker">Selettore immagini</string>
     <string name="edit_profile_image_default">Immagini predefinite</string>
+    <string name="installed_plugins">Plugin installati</string>
 </resources>
