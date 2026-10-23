@@ -74,6 +74,16 @@ interface AppUpdater {
         digest: DigestPair?,
         downloadProgress: (Long, Long?) -> Unit,
     )
+
+    /**
+     * Downloads the update apk in the background and caches it, keyed by its
+     * digest. Returns the cached file path, or null on failure.
+     * If the correct apk is already cached, returns the path without downloading.
+     */
+    suspend fun cacheUpdate(
+        url: String,
+        digest: DigestPair?,
+    ): String?
 }
 
 interface GithubRepository {
@@ -304,6 +314,16 @@ class GithubViewModel(
                 copy(dialog = baseDialog.copy(state = GithubUpdateDialogState.NoUpdateFound))
             }
             return@dispatchUpdate
+        }
+
+        // Pre-download the apk in the background when enabled, so tapping
+        // "Update" later installs instantly from the cache. Works for stable
+        // and pre-release, as the cache is keyed by the apk digest.
+        if (!fromUser && settings.updates.preDownloadUpdates.get()) {
+            updater.cacheUpdate(
+                url = release.downloadUrl,
+                digest = DigestPair.parse(release.digest),
+            )
         }
 
         updateState {

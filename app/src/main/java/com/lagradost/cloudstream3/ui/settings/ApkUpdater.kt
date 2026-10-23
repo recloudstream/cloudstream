@@ -25,6 +25,9 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.security.DigestException
 import java.security.MessageDigest
 
@@ -40,6 +43,37 @@ object ApkUpdater : AppUpdater {
         downloadProgress: (Long, Long?) -> Unit
     ) {
         val activity = CommonActivity.activity ?: throw ErrorLoadingException("No activity found")
+
+        // Always install from the digest keyed cache file, never straight
+        // from the raw download stream. If the correct apk is already cached
+        // (e.g. pre-downloaded) it is reused as is, otherwise it is downloaded
+        // into the cache first. As the cache is keyed by digest, a stale apk
+        // from an older build under the same floating tag (e.g. "pre-release")
+        // can never be installed here.
+        if (digest != null) {
+            val cached = downloadToCache(activity, url, digest)
+            cached.inputStream().use { readStream ->
+                when (settings.updates.apkInstaller.get()) {
+                    0 -> packageInstallerDownloader(
+                        activity,
+                        readStream,
+                        cached.length(),
+                        digest,
+                        downloadProgress
+                    )
+
+                    else -> legacyDownloader(
+                        activity,
+                        readStream,
+                        cached.length(),
+                        digest,
+                        downloadProgress
+                    )
+                }
+            }
+            return
+        }
+
         clearOldFiles(activity)
 
         val request = app.get(url)
@@ -73,6 +107,122 @@ object ApkUpdater : AppUpdater {
             it.name.startsWith(APP_UPDATE_NAME) && it.extension == APP_UPDATE_SUFFIX
         }?.forEach {
             deleteFileOnExit(it)
+        }
+    }
+
+    /**
+     * The cached update apk of a specific release, named by its digest so
+     * different builds never share a cache file, even under a floating tag.
+     */
+    private fun getCachedUpdateFile(context: Context, digest: DigestPair): File {
+        return File(
+            context.cacheDir,
+            "${APP_UPDATE_NAME}_${digest.algorithm.lowercase()}_${digest.digest.toHexString()}.$APP_UPDATE_SUFFIX"
+        )
+    }
+
+    /**
+     * Downloads the apk of a release into its digest keyed cache file and
+     * returns that file. If the correct apk is already cached, it is returned
+     * without downloading anything.
+     */
+    @Throws
+    private suspend fun downloadToCache(
+        activity: Activity,
+        url: String,
+        digest: DigestPair
+    ): File {
+        val target = getCachedUpdateFile(activity, digest)
+        if (target.exists()) {
+            if (isFileDigest(target, digest)) {
+                return target
+            }
+
+            // The cached file belongs to another build, delete it and
+            // download this release instead of failing.
+            target.delete()
+        }
+
+        // Drop cached apks of other builds before downloading this one
+        clearOldFiles(activity)
+
+        val request = app.get(url)
+        val body = request.body
+        val tempFile =
+            File.createTempFile(APP_UPDATE_NAME, ".$APP_UPDATE_SUFFIX", activity.cacheDir)
+        try {
+            body.use { responseBody ->
+                tempFile.outputStream().use { writeStream ->
+                    transfer(
+                        writeStream,
+                        responseBody.byteStream(),
+                        request.size ?: responseBody.contentLength(),
+                        { _, _ -> },
+                        digest
+                    )
+                }
+            }
+            moveIntoPlace(tempFile, target)
+        } catch (t: Throwable) {
+            tempFile.delete()
+            throw t
+        }
+        return target
+    }
+
+    override suspend fun cacheUpdate(
+        url: String,
+        digest: DigestPair?
+    ): String? = withContext(Dispatchers.IO) {
+        // Without a digest we cannot key or verify the cache, so do nothing.
+        if (digest == null) return@withContext null
+        val activity = CommonActivity.activity ?: return@withContext null
+        try {
+            downloadToCache(activity, url, digest).absolutePath
+        } catch (_: Throwable) {
+            // Pre-downloading is best effort only, it must never fail the
+            // update check, the apk is simply downloaded again on update.
+            null
+        }
+    }
+
+    /**
+     * Moves [temp] to [target], preferring an atomic move. If the filesystem
+     * does not support atomic moves, the old file is kept as a backup until
+     * the new one is in place, and restored if the move fails.
+     */
+    @Throws
+    private fun moveIntoPlace(temp: File, target: File) {
+        try {
+            Files.move(
+                temp.toPath(),
+                target.toPath(),
+                StandardCopyOption.ATOMIC_MOVE,
+                StandardCopyOption.REPLACE_EXISTING
+            )
+            return
+        } catch (_: AtomicMoveNotSupportedException) {
+            // Fall through to the backup based move below
+        }
+
+        val backup = File(target.parentFile, target.name + ".bak")
+        backup.delete()
+        val hadTarget = target.exists() && target.renameTo(backup)
+        try {
+            Files.move(
+                temp.toPath(),
+                target.toPath(),
+                StandardCopyOption.REPLACE_EXISTING
+            )
+        } catch (t: Throwable) {
+            if (hadTarget) {
+                target.delete()
+                backup.renameTo(target)
+            }
+            throw t
+        }
+        if (hadTarget) {
+            backup.delete()
         }
     }
 
@@ -228,8 +378,8 @@ object ApkUpdater : AppUpdater {
             val context = currentCoroutineContext()
             val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
             var read: Int
-            while ((readStream.read(buffer, 0, DEFAULT_BUFFER_SIZE)
-                    .also { read = it }) >= 0
+            while (readStream.read(buffer, 0, DEFAULT_BUFFER_SIZE)
+                    .also { read = it } >= 0
             ) {
                 try {
                     md.update(buffer, 0, read)

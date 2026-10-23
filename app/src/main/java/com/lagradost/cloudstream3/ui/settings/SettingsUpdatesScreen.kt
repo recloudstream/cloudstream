@@ -126,6 +126,13 @@ object SettingsUpdatesScreen : SearchableSettings {
                         subtitle = stringResource(R.string.updates_settings_des),
                         icon = painterResource(R.drawable.notifications_active_24px),
                         preference = settings.updates.showAppUpdates
+                    ),
+
+                    Preference.PreferenceItem.SwitchPreference(
+                        title = stringResource(R.string.pre_download_updates),
+                        subtitle = stringResource(R.string.pre_download_updates_des),
+                        icon = painterResource(R.drawable.mobile_wrench_24px),
+                        preference = settings.updates.preDownloadUpdates
                     )
                 )
             ),

@@ -48,6 +48,7 @@ class UpdatePreferences(preferences: PreferenceStore) {
     val showAppUpdates = preferences.getBoolean("auto_update", true)
     // Node id for this update
     val skipUpdate = preferences.getString("skip_update_key", "")
+    val preDownloadUpdates = preferences.getBoolean("pre_download_updates", false)
 }
 
 class SecurityPreferences(preferences: PreferenceStore) {
