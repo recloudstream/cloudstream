@@ -101,7 +101,7 @@ data class VideoState(
         val hideErrorSources =
             QualityDataHelper.getProfileSetting(qualityProfile, ProfileSettings.HideErrorSources)
         // Read user's regex pattern and priority toggle from the quality profile.
-        // sourceRegex: comma-separated patterns (e.g. "telugu,tel"). Empty = no filter.
+        // sourceRegex: comma-separated patterns. Empty = no filter.
         // regexPriority: when true, ALL matching sources sort first (regardless of quality priority).
         //                when false, regex only breaks ties among equal-priority sources.
         val sourceRegex =
