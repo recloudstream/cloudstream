@@ -66,7 +66,7 @@ data class VideoState(
      *
      * sortedBy is not exactly expensive, but each hasNextMirror does it again, so this alleviates unnecessary recomputation
      * */
-    private val sortedLinks: ConcurrentHashMap<Int, List<DisplayLink>> = ConcurrentHashMap()
+    private val sortedLinks: ConcurrentHashMap<String, List<DisplayLink>> = ConcurrentHashMap()
 
     /**
      * The cache is guaranteed to be up to date link-wise due to the immutable links.
@@ -95,24 +95,58 @@ data class VideoState(
     // It is by all standards, idempotent and by extension also pure as it has no "visible" side effect
     /** Returns .links in the sorted order according to the qualityProfile.
      * Use .links if order is not needed */
-    @Contract(pure = true)
     fun sortLinks(qualityProfile: Int): List<DisplayLink> {
-        sortedLinks[qualityProfile]?.let {
-            return it
-        }
-
         val hideNegativeSources =
             QualityDataHelper.getProfileSetting(qualityProfile, ProfileSettings.HideNegativeSources)
         val hideErrorSources =
             QualityDataHelper.getProfileSetting(qualityProfile, ProfileSettings.HideErrorSources)
+        // Read user's regex pattern and priority toggle from the quality profile.
+        // sourceRegex: comma-separated patterns. Empty = no filter.
+        // regexPriority: when true, ALL matching sources sort first (regardless of quality priority).
+        //                when false, regex only breaks ties among equal-priority sources.
+        val sourceRegex =
+            QualityDataHelper.getProfileSetting(qualityProfile, ProfileSettings.SourceRegex)
+        val regexPriority =
+            QualityDataHelper.getProfileSetting(qualityProfile, ProfileSettings.SourceRegexPriority)
 
-        return links.map { link ->
-            // negative because we want to sort highest quality first
+        // Parse comma-separated patterns into a single case-insensitive regex.
+        // Invalid regex returns null (no filtering, safe fallback).
+        val regex = sourceRegex.trim().takeIf { it.isNotEmpty() }?.let { pattern ->
+            val joined = pattern.split(",").map { it.trim() }.filter { it.isNotEmpty() }.joinToString("|")
+            runCatching { Regex(joined, RegexOption.IGNORE_CASE) }.getOrNull()
+        }
+
+        // Cache key includes regex and priority flag so stale results aren't returned
+        // after the user changes either setting.
+        val cacheKey = if (regex != null) "$qualityProfile|${sourceRegex.trim()}|$regexPriority" else qualityProfile.toString()
+
+        sortedLinks[cacheKey]?.let {
+            return it
+        }
+
+        val displayLinks = links.map { link ->
             link.toDisplayLink(qualityProfile, hideNegativeSources, hideErrorSources)
-        }.sortedBy {
-            // negative because we want to sort highest quality first
-            -it.priority
-        }.also { value -> sortedLinks[qualityProfile] = value }
+        }
+
+        // Three modes:
+        // 1. No regex (or invalid): sort by priority only (original behavior).
+        // 2. Regex + prioritize ON: matching sources first (sorted by priority), then non-matching (by priority).
+        //    This ensures all matching sources play before any non-matching source, regardless of quality priority.
+        // 3. Regex + prioritize OFF: priority is primary, regex breaks ties among equal-priority sources.
+        //    This respects the user's quality priority while preferring matching sources within the same tier.
+        val sorted = if (regex != null && regexPriority) {
+            val (matched, rest) = displayLinks.partition { it.shouldUseLink && regex.containsMatchIn(it.link?.first?.name ?: "") }
+            matched.sortedBy { -it.priority } + rest.sortedBy { -it.priority }
+        } else if (regex != null) {
+            displayLinks.sortedWith(
+                compareByDescending<DisplayLink> { it.priority }
+                    .thenByDescending { if (it.shouldUseLink && regex.containsMatchIn(it.link?.first?.name ?: "")) 1 else 0 }
+            )
+        } else {
+            displayLinks.sortedBy { -it.priority }
+        }
+
+        return sorted.also { value -> sortedLinks[cacheKey] = value }
     }
 
     @Contract(pure = true)

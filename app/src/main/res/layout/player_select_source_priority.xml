@@ -161,6 +161,13 @@
         <!--            android:src="@drawable/outline_edit_24" />-->
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/regex_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="Regex" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/settings_btt"
             style="@style/WhiteButton"
             android:layout_width="wrap_content"
