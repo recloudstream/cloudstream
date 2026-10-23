@@ -165,7 +165,7 @@
             style="@style/WhiteButton"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical|end"
-            android:text="Regex" />
+            android:text="@string/source_regex" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/settings_btt"

@@ -109,24 +109,24 @@ class SourcePriorityDialog(
                     isSingleLine = true
                 }
                 val toggle = android.widget.Switch(ctx).apply {
-                    text = "Prioritize regex"
+                    text = ctx.getString(R.string.source_regex_prioritize)
                     isChecked = currentPriority
                 }
                 val layout = android.widget.LinearLayout(ctx).apply {
                     orientation = android.widget.LinearLayout.VERTICAL
-                    setPadding(40, 20, 40, 0)
+                    setPadding(40, 4, 40, 0)
                     addView(input)
                     addView(toggle)
                 }
                 android.app.AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                    .setTitle("Source regex")
-                    .setMessage("Comma-separated patterns. Empty = normal.")
+                    .setTitle(ctx.getString(R.string.source_regex))
+                    .setMessage(ctx.getString(R.string.source_regex_hint))
                     .setView(layout)
-                    .setPositiveButton("Save") { _, _ ->
+                    .setPositiveButton(ctx.getString(R.string.sort_apply)) { _, _ ->
                         QualityDataHelper.setProfileSetting(profile.id, ProfileSettings.SourceRegex, input.text.toString().trim())
                         QualityDataHelper.setProfileSetting(profile.id, ProfileSettings.SourceRegexPriority, toggle.isChecked)
                     }
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(ctx.getString(R.string.sort_cancel), null)
                     .show()
             }
         }
