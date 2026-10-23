@@ -44,40 +44,34 @@ object ApkUpdater : AppUpdater {
     ) {
         val activity = CommonActivity.activity ?: throw ErrorLoadingException("No activity found")
 
-        // If the correct apk was already pre-downloaded, install it straight
-        // from the cache instead of downloading it again. The cache is keyed
-        // by digest, so a stale apk from an older build under the same
-        // floating tag (e.g. "pre-release") can never be installed here.
+        // Always install from the digest keyed cache file, never straight
+        // from the raw download stream. If the correct apk is already cached
+        // (e.g. pre-downloaded) it is reused as is, otherwise it is downloaded
+        // into the cache first. As the cache is keyed by digest, a stale apk
+        // from an older build under the same floating tag (e.g. "pre-release")
+        // can never be installed here.
         if (digest != null) {
-            val cached = getCachedUpdateFile(activity, digest)
-            if (cached.exists()) {
-                if (isFileDigest(cached, digest)) {
-                    cached.inputStream().use { readStream ->
-                        when (settings.updates.apkInstaller.get()) {
-                            0 -> packageInstallerDownloader(
-                                activity,
-                                readStream,
-                                cached.length(),
-                                digest,
-                                downloadProgress
-                            )
+            val cached = downloadToCache(activity, url, digest)
+            cached.inputStream().use { readStream ->
+                when (settings.updates.apkInstaller.get()) {
+                    0 -> packageInstallerDownloader(
+                        activity,
+                        readStream,
+                        cached.length(),
+                        digest,
+                        downloadProgress
+                    )
 
-                            else -> legacyDownloader(
-                                activity,
-                                readStream,
-                                cached.length(),
-                                digest,
-                                downloadProgress
-                            )
-                        }
-                    }
-                    return
+                    else -> legacyDownloader(
+                        activity,
+                        readStream,
+                        cached.length(),
+                        digest,
+                        downloadProgress
+                    )
                 }
-
-                // The cached file belongs to another build, delete it and
-                // fall through to a normal download instead of failing.
-                cached.delete()
             }
+            return
         }
 
         clearOldFiles(activity)
@@ -127,6 +121,55 @@ object ApkUpdater : AppUpdater {
         )
     }
 
+    /**
+     * Downloads the apk of a release into its digest keyed cache file and
+     * returns that file. If the correct apk is already cached, it is returned
+     * without downloading anything.
+     */
+    @Throws
+    private suspend fun downloadToCache(
+        activity: Activity,
+        url: String,
+        digest: DigestPair
+    ): File {
+        val target = getCachedUpdateFile(activity, digest)
+        if (target.exists()) {
+            if (isFileDigest(target, digest)) {
+                return target
+            }
+
+            // The cached file belongs to another build, delete it and
+            // download this release instead of failing.
+            target.delete()
+        }
+
+        // Drop cached apks of other builds before downloading this one
+        clearOldFiles(activity)
+
+        val request = app.get(url)
+        val body = request.body
+        val tempFile =
+            File.createTempFile(APP_UPDATE_NAME, ".$APP_UPDATE_SUFFIX", activity.cacheDir)
+        try {
+            body.use { responseBody ->
+                tempFile.outputStream().use { writeStream ->
+                    transfer(
+                        writeStream,
+                        responseBody.byteStream(),
+                        request.size ?: responseBody.contentLength(),
+                        { _, _ -> },
+                        digest
+                    )
+                }
+            }
+            moveIntoPlace(tempFile, target)
+        } catch (t: Throwable) {
+            tempFile.delete()
+            throw t
+        }
+        return target
+    }
+
     override suspend fun cacheUpdate(
         url: String,
         digest: DigestPair?
@@ -135,36 +178,7 @@ object ApkUpdater : AppUpdater {
         if (digest == null) return@withContext null
         val activity = CommonActivity.activity ?: return@withContext null
         try {
-            val target = getCachedUpdateFile(activity, digest)
-            if (target.exists() && isFileDigest(target, digest)) {
-                return@withContext target.absolutePath
-            }
-
-            // Drop cached apks of other builds before downloading this one
-            clearOldFiles(activity)
-
-            val request = app.get(url)
-            val body = request.body
-            val tempFile =
-                File.createTempFile(APP_UPDATE_NAME, ".$APP_UPDATE_SUFFIX", activity.cacheDir)
-            try {
-                body.use { responseBody ->
-                    tempFile.outputStream().use { writeStream ->
-                        transfer(
-                            writeStream,
-                            responseBody.byteStream(),
-                            request.size ?: responseBody.contentLength(),
-                            { _, _ -> },
-                            digest
-                        )
-                    }
-                }
-                moveIntoPlace(tempFile, target)
-            } catch (t: Throwable) {
-                tempFile.delete()
-                throw t
-            }
-            target.absolutePath
+            downloadToCache(activity, url, digest).absolutePath
         } catch (_: Throwable) {
             // Pre-downloading is best effort only, it must never fail the
             // update check, the apk is simply downloaded again on update.
