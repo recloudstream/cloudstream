@@ -12,9 +12,15 @@ open class ActivityManager {
     }
 
     open fun getMemoryInfo(outInfo: MemoryInfo) {
-        val os = ManagementFactory.getOperatingSystemMXBean() as? com.sun.management.OperatingSystemMXBean
-        outInfo.totalMem = os?.totalMemorySize ?: Runtime.getRuntime().maxMemory()
-        outInfo.availMem = os?.freeMemorySize ?: Runtime.getRuntime().freeMemory()
+        // com.sun.management lives in the jdk.management module, fall back to the JVM's own numbers without it
+        val (total, free) = try {
+            val os = ManagementFactory.getOperatingSystemMXBean() as com.sun.management.OperatingSystemMXBean
+            os.totalMemorySize to os.freeMemorySize
+        } catch (_: Throwable) {
+            Runtime.getRuntime().maxMemory() to Runtime.getRuntime().freeMemory()
+        }
+        outInfo.totalMem = total
+        outInfo.availMem = free
         outInfo.threshold = outInfo.totalMem / 20
         outInfo.lowMemory = outInfo.availMem < outInfo.threshold
     }

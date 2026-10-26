@@ -131,6 +131,7 @@ compose.desktop {
                 "jdk.dynalink",
                 "jdk.httpserver",
                 "jdk.localedata",
+                "jdk.management",
                 "jdk.net",
                 "jdk.unsupported",
                 "jdk.zipfs",
