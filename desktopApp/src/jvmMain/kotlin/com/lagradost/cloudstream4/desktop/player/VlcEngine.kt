@@ -26,17 +26,27 @@ import javax.swing.SwingUtilities
 data class Track(val id: Int, val name: String)
 
 object Vlc {
-    /** Null if LibVLC (the VLC app) is not installed */
-    val factory: MediaPlayerFactory? by lazy {
+    /** Only finds the LibVLC libraries, without starting VLC itself, so screens can check it cheaply */
+    val isInstalled: Boolean by lazy {
+        runCatching { NativeDiscovery().discover() }.onFailure { logError(it) }.getOrDefault(false)
+    }
+
+    /** Null if LibVLC (the VLC app) is not installed. Starting it loads every VLC plugin, so only the player uses it */
+    private val factoryLazy = lazy {
         try {
-            if (NativeDiscovery().discover()) {
-                MediaPlayerFactory("--no-video-title-show", "--quiet", "--network-caching=3000")
+            if (isInstalled) {
+                MediaPlayerFactory("--no-video-title-show", "--quiet", "--network-caching=3000", "--no-metadata-network-access")
             } else null
         } catch (t: Throwable) {
             logError(t)
             null
         }
     }
+
+    val factory: MediaPlayerFactory? by factoryLazy
+
+    /** If [factory] was already created, reading it is then instant */
+    val isStarted: Boolean get() = factoryLazy.isInitialized()
 
     val isAvailable: Boolean get() = factory != null
 }

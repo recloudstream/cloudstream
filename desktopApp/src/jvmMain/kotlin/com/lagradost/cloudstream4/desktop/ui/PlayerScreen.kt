@@ -39,6 +39,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -86,15 +87,17 @@ import com.lagradost.cloudstream4.desktop.generated.resources.volume_up
 import com.lagradost.cloudstream4.desktop.player.ExternalPlayer
 import com.lagradost.cloudstream4.desktop.player.Vlc
 import com.lagradost.cloudstream4.desktop.player.VlcEngine
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import java.awt.Cursor
 import java.awt.Point
 import java.awt.Toolkit
 import java.awt.image.BufferedImage
 import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 val LocalWindowState = compositionLocalOf<WindowState?> { null }
 
@@ -127,7 +130,16 @@ fun PlayerScreen(route: Route.Player) {
     val hasNext = route.index + 1 < route.playlist.size
     val playNext = { navigator.replace(route.copy(index = route.index + 1)) }
 
-    if (settings.player == PlayerKind.External || !Vlc.isAvailable) {
+    // Starting VLC takes a moment the first time, do it off the UI thread
+    val vlcAvailable by produceState(if (Vlc.isStarted) Vlc.isAvailable else null) {
+        if (value == null) value = withContext(Dispatchers.IO) { Vlc.isAvailable }
+    }
+    if (settings.player == PlayerKind.Internal && vlcAvailable == null) {
+        Box(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+        return
+    }
+
+    if (settings.player == PlayerKind.External || vlcAvailable == false) {
         ExternalPlayerScreen(route, viewModel, state, hasNext, playNext)
         return
     }

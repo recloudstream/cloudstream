@@ -264,6 +264,9 @@ object PluginManager {
         AppData.plugins.value.forEach { plugin ->
             if (!File(plugin.filePath).exists()) {
                 AppData.removePlugin(plugin.filePath)
+            } else if (plugin.convertedFromDex && plugin.converterVersion < DexConverter.RECONVERT_BELOW) {
+                // Falls back to the old conversion if the repository cannot be reached
+                if (reinstall(plugin).onFailure { logError(it) }.isFailure) load(plugin)
             } else if (plugin.convertedFromDex && plugin.converterVersion < DexConverter.VERSION) {
                 val repaired = runCatching { DexConverter.repairJar(File(plugin.filePath)) }
                     .onFailure { logError(it) }.isSuccess
@@ -274,6 +277,14 @@ object PluginManager {
                 load(plugin)
             }
         }
+    }
+
+    /** Downloads and converts an installed extension again, from the latest version in its repository */
+    private suspend fun reinstall(plugin: InstalledPlugin): Result<InstalledPlugin> = runCatching {
+        val repository = fetchRepository(plugin.repositoryUrl) ?: throw IllegalStateException("Repository unavailable")
+        val remote = fetchRepositoryPlugins(repository).firstOrNull { it.internalName == plugin.internalName }
+            ?: throw IllegalStateException("${plugin.name} is no longer in its repository")
+        install(plugin.repositoryUrl, remote).getOrThrow()
     }
 
     /** Checks every repository for newer versions of the installed extensions and installs them */

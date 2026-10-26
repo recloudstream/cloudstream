@@ -47,7 +47,7 @@ class SyncRepo(val api: SyncAPI) {
 
     fun authUser(): AuthUser? = null
 
-    // Kotlin mangles functions returning Result, extensions call it by this name
-    @JvmName("library_IoAF18A")
+    // Kotlin mangles functions returning Result, extensions call it by the app's mangled name
+    @JvmName("library-IoAF18A")
     suspend fun library(): Any = Result.success<SyncAPI.LibraryMetadata?>(null)
 }

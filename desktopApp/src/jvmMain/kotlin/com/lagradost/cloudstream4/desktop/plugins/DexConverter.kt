@@ -18,7 +18,10 @@ import java.util.zip.ZipOutputStream
  */
 object DexConverter {
     /** Bump when the conversion changes, older conversions are then repaired on startup */
-    const val VERSION = 1
+    const val VERSION = 2
+
+    /** Conversions older than this cannot be repaired in place and are converted again from the original */
+    const val RECONVERT_BELOW = 2
 
     /** Applies the bytecode fixes of the current [VERSION] to a jar converted by an older version */
     fun repairJar(jar: File) {
@@ -103,6 +106,8 @@ object DexConverter {
                                 .topoLogicalSort()
                                 .skipDebug(false)
                                 .optimizeSynchronized(true)
+                                // Kotlin names like `constructor-impl` are valid on the JVM, renaming them breaks calls into Kotlin and the app
+                                .dontSanitizeNames(true)
                                 .to(classesDir.toPath())
                         } else if (entry.name == "manifest.json" || !entry.name.startsWith("res/")) {
                             // Keep the manifest and any plain java resources, Android resources are useless here

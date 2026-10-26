@@ -26,6 +26,9 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -107,13 +110,17 @@ fun SettingsScreen() {
                 FilterChip(settings.player == PlayerKind.External, { AppData.updateSettings { it.copy(player = PlayerKind.External) } },
                     label = { Text("External player") })
             }
-            Text(
-                if (Vlc.isAvailable) "VLC found, the built-in player is available."
-                else "VLC was not found. Install VLC to use the built-in player.",
-                style = MaterialTheme.typography.bodySmall,
-                color = if (Vlc.isAvailable) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
-            )
-            if (!Vlc.isAvailable) TextButton(onClick = { openInBrowser("https://www.videolan.org/vlc/") }) { Text("Download VLC") }
+            // Looked up off the UI thread, null until known
+            val vlcInstalled by produceState<Boolean?>(null) { value = withContext(Dispatchers.IO) { Vlc.isInstalled } }
+            vlcInstalled?.let { installed ->
+                Text(
+                    if (installed) "VLC found, the built-in player is available."
+                    else "VLC was not found. Install VLC to use the built-in player.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (installed) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+                )
+            }
+            if (vlcInstalled == false) TextButton(onClick = { openInBrowser("https://www.videolan.org/vlc/") }) { Text("Download VLC") }
             OutlinedTextField(
                 value = settings.externalPlayer,
                 onValueChange = { value -> AppData.updateSettings { it.copy(externalPlayer = value) } },
