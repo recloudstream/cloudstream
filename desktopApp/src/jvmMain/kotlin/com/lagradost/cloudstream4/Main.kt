@@ -22,6 +22,7 @@ import com.lagradost.cloudstream4.compose.LocalFocusOutlineDefault
 import com.lagradost.cloudstream4.desktop.data.AppData
 import com.lagradost.cloudstream4.desktop.data.AppDirs
 import com.lagradost.cloudstream4.desktop.ui.App
+import com.lagradost.cloudstream4.desktop.update.Updater
 import com.lagradost.cloudstream4.desktop.ui.LocalWindowState
 import com.lagradost.cloudstream4.desktop.ui.Navigator
 import com.lagradost.cloudstream4.desktop.ui.Route
@@ -36,6 +37,8 @@ import org.jetbrains.compose.resources.stringResource
 fun main() {
     System.setProperty("apple.awt.application.name", "CloudStream")
     System.setProperty("apple.awt.application.appearance", "system")
+    // Covers closing the window, Cmd+Q and logging out
+    Runtime.getRuntime().addShutdownHook(Thread { Updater.installOnExitIfReady() })
 
     application {
         setSingletonImageLoaderFactory { context ->

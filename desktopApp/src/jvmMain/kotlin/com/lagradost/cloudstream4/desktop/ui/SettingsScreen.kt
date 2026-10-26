@@ -32,12 +32,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.lagradost.cloudstream4.desktop.BuildInfo
 import com.lagradost.cloudstream4.desktop.data.AppData
 import com.lagradost.cloudstream4.desktop.data.AppDirs
 import com.lagradost.cloudstream4.desktop.data.PlayerKind
 import com.lagradost.cloudstream4.desktop.downloads.DownloadManager
 import com.lagradost.cloudstream4.desktop.player.ExternalPlayer
 import com.lagradost.cloudstream4.desktop.player.Vlc
+import com.lagradost.cloudstream4.desktop.update.UpdateState
+import com.lagradost.cloudstream4.desktop.update.Updater
 import com.lagradost.cloudstream4.theme.CloudStreamPrimaryColor
 import com.lagradost.cloudstream4.theme.CloudStreamThemeMode
 import java.awt.Desktop
@@ -150,6 +153,50 @@ fun SettingsScreen() {
         Section("Storage") {
             Text("Data folder: ${AppDirs.dataDir.absolutePath}", style = MaterialTheme.typography.bodySmall)
             TextButton(onClick = { runCatching { Desktop.getDesktop().open(AppDirs.dataDir) } }) { Text("Open data folder") }
+        }
+
+        Section("Updates") {
+            val update by Updater.state.collectAsState()
+            Text("Version ${Updater.currentVersion}, updates from github.com/${BuildInfo.UPDATE_REPOSITORY}", style = MaterialTheme.typography.bodyMedium)
+            SwitchRow("Check for updates on startup", null, settings.checkForUpdates) { value ->
+                AppData.updateSettings { it.copy(checkForUpdates = value) }
+            }
+            SwitchRow(
+                "Update automatically",
+                "Downloads new versions in the background and installs them when you restart or quit",
+                settings.autoUpdate,
+            ) { value -> AppData.updateSettings { it.copy(autoUpdate = value) } }
+            if (!Updater.canInstall) {
+                Text(
+                    "Running outside the installed app, updates can be checked but not installed.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                when (val current = update) {
+                    is UpdateState.Ready -> TextButton(onClick = Updater::installAndRestart) { Text("Restart and update to ${current.update.version}") }
+                    is UpdateState.Available -> TextButton(onClick = {
+                        if (Updater.canInstall) Updater.download(current.update) else openInBrowser(current.update.asset.downloadUrl)
+                    }) { Text("Download ${current.update.version}") }
+
+                    is UpdateState.Downloading, UpdateState.Checking -> Unit
+                    else -> TextButton(onClick = { Updater.check(userInitiated = true) }) { Text("Check for updates") }
+                }
+                Text(
+                    when (val current = update) {
+                        UpdateState.Idle -> ""
+                        UpdateState.Checking -> "Checking..."
+                        UpdateState.UpToDate -> "You have the latest version"
+                        is UpdateState.Available -> "Version ${current.update.version} is available"
+                        is UpdateState.Downloading -> "Downloading ${current.update.version}: ${(current.progress * 100).toInt()}%"
+                        is UpdateState.Ready -> "Version ${current.update.version} will be installed when you quit"
+                        is UpdateState.Failed -> current.message
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (update is UpdateState.Failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
         Section("About") {

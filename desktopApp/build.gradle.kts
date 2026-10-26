@@ -59,7 +59,35 @@ compose.resources {
     generateResClass = always
 }
 
-val appVersion = libs.versions.versionName.get()
+// CI passes the version from the release tag (desktop-v1.2.3 -> 1.2.3) so updates compare correctly
+val appVersion = (findProperty("desktopVersion") as String?)?.takeIf { it.isNotBlank() } ?: libs.versions.versionName.get()
+// GitHub repository whose releases the app updates itself from
+val updateRepository = (findProperty("desktopUpdateRepo") as String?) ?: "atomic-crafter/cloudstream"
+
+val generateBuildInfo by tasks.registering {
+    val output = layout.buildDirectory.dir("generated/buildinfo/kotlin")
+    val version = appVersion
+    val repository = updateRepository
+    inputs.property("version", version)
+    inputs.property("repository", repository)
+    outputs.dir(output)
+    doLast {
+        val file = output.get().file("com/lagradost/cloudstream4/desktop/BuildInfo.kt").asFile
+        file.parentFile.mkdirs()
+        file.writeText(
+            """
+            |package com.lagradost.cloudstream4.desktop
+            |
+            |object BuildInfo {
+            |    const val VERSION = "$version"
+            |    const val UPDATE_REPOSITORY = "$repository"
+            |}
+            |""".trimMargin()
+        )
+    }
+}
+
+kotlin.sourceSets.getByName("jvmMain").kotlin.srcDir(generateBuildInfo)
 
 compose.desktop {
     application {

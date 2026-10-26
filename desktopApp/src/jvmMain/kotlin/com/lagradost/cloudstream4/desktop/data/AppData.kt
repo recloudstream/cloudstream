@@ -71,6 +71,9 @@ data class Settings(
     val seekSeconds: Int = 10,
     /** Empty means ~/Downloads/CloudStream */
     val downloadDirectory: String = "",
+    val checkForUpdates: Boolean = true,
+    /** Download updates in the background and install them on restart or quit */
+    val autoUpdate: Boolean = true,
 )
 
 /**

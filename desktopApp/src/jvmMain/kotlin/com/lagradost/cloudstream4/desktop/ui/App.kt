@@ -13,7 +13,9 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -36,7 +38,10 @@ import com.lagradost.cloudstream4.desktop.generated.resources.home
 import com.lagradost.cloudstream4.desktop.generated.resources.library
 import com.lagradost.cloudstream4.desktop.generated.resources.search
 import com.lagradost.cloudstream4.desktop.generated.resources.settings
+import com.lagradost.cloudstream4.desktop.data.AppData
 import com.lagradost.cloudstream4.desktop.plugins.PluginManager
+import com.lagradost.cloudstream4.desktop.update.UpdateState
+import com.lagradost.cloudstream4.desktop.update.Updater
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -71,6 +76,24 @@ fun App(navigator: Navigator) {
         loadingPlugins = false
         val failed = PluginManager.errors.value.size
         if (failed > 0) notify("$failed extensions failed to load, see the Extensions tab")
+        if (AppData.settings.value.checkForUpdates) Updater.check()
+    }
+
+    // Offer the update once it is downloaded (or found, when automatic updates are off)
+    LaunchedEffect(Unit) {
+        Updater.state.collect { update ->
+            val (message, action, onAction) = when (update) {
+                is UpdateState.Ready -> Triple("CloudStream ${update.update.version} is ready to install", "Restart", Updater::installAndRestart)
+                is UpdateState.Available -> Triple("CloudStream ${update.update.version} is available", "Download") {
+                    if (Updater.canInstall) Updater.download(update.update) else openInBrowser(update.update.asset.downloadUrl)
+                }
+                else -> return@collect
+            }
+            scope.launch {
+                val result = snackbar.showSnackbar(message, actionLabel = action, duration = SnackbarDuration.Indefinite, withDismissAction = true)
+                if (result == SnackbarResult.ActionPerformed) onAction()
+            }
+        }
     }
 
     val stateHolder = rememberSaveableStateHolder()

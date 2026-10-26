@@ -5,7 +5,7 @@ name: Desktop Installers
 on:
   workflow_dispatch:
   push:
-    branches: [master]
+    branches: [master, desktop-port]
     tags: ["desktop-v*"]
     paths:
       - "desktopApp/**"
@@ -69,7 +69,10 @@ jobs:
           chmod +x gradlew
           tasks=""
           for task in ${{ matrix.tasks }}; do tasks="$tasks :desktopApp:$task"; done
-          ./gradlew $tasks --no-configuration-cache
+          # Release builds take their version from the tag, which is what the in-app updater compares
+          version=""
+          if [[ "$GITHUB_REF" == refs/tags/desktop-v* ]]; then version="-PdesktopVersion=${GITHUB_REF#refs/tags/desktop-v}"; fi
+          ./gradlew $tasks $version -PdesktopUpdateRepo=${{ github.repository }} --no-configuration-cache
 
       - name: Upload installers
         uses: actions/upload-artifact@v7
@@ -113,5 +116,6 @@ jobs:
           generate_release_notes: true
           body: |
             Unsigned builds. VLC must be installed for the built-in player.
+            Installed apps update themselves to new releases automatically.
             macOS: if it says the app is damaged, run `xattr -cr /Applications/CloudStream.app`.
             Windows: SmartScreen may warn, choose "More info" → "Run anyway".
