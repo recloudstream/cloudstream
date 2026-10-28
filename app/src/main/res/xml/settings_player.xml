@@ -40,6 +40,12 @@
             android:icon="@drawable/ic_baseline_text_format_24"
             android:key="@string/hide_player_control_names_key"
             android:title="@string/hide_player_control_names" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/video_locked"
+            android:key="@string/show_info_when_locked_key"
+            android:summary="@string/show_info_when_locked_desc"
+            android:title="@string/show_info_when_locked" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_subtitles">
