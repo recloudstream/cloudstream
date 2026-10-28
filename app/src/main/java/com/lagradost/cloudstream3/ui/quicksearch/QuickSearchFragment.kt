@@ -225,7 +225,8 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
 
                         val homePageList = HomePageList(
                             ongoing.key,
-                            dataListFiltered
+                            dataListFiltered,
+                            isHorizontalImages = ongoing.value.isHorizontalImages
                         )
 
                         val expandableList = HomeViewModel.ExpandableHomepageList(
@@ -268,12 +269,15 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
-                        val adapter =
-                            (binding.quickSearchAutofitResults.adapter as? SearchAdapter)
-                        adapter?.submitList(
-                            context?.filterSearchResultByFilmQuality(data.list) ?: data.list
-                        )
-                        adapter?.hasNext = data.hasNext
+                        val list = context?.filterSearchResultByFilmQuality(data.list) ?: data.list
+                        val isHorizontal = data.isHorizontalImages
+                        binding.quickSearchAutofitResults.spanCount =
+                            context?.getSpanCount(isHorizontal) ?: binding.quickSearchAutofitResults.spanCount
+                        (binding.quickSearchAutofitResults.adapter as? SearchAdapter)?.apply {
+                            this.isHorizontal = isHorizontal
+                            submitList(list)
+                            hasNext = data.hasNext
+                        }
                     }
                     searchExitIcon?.alpha = 1f
                     binding.quickSearchLoadingBar.alpha = 0f
