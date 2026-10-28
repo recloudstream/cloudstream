@@ -198,11 +198,15 @@ object DownloadQueueManager {
         }
     }
 
-    /** /** Removes all inactive downloads */ */
+    /** Cancel and remove all inactive downloads */
     fun removeAllFromQueue() {
         downloadInstances.value
-            .filter { downloadStatus[it.downloadQueueWrapper.id] != VideoDownloadManager.DownloadType.IsDownloading }
+            .filter {
+                val status = downloadStatus[it.downloadQueueWrapper.id]
+                status != VideoDownloadManager.DownloadType.IsDownloading && status != VideoDownloadManager.DownloadType.IsPaused
+            }
             .forEach { it.cancelDownload() }
+
         removeAll().forEach { wrapper ->
             setQueueStatus(wrapper.id, VideoDownloadManager.DownloadType.IsStopped)
         }
