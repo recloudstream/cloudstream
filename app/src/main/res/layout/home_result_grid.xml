@@ -61,9 +61,23 @@
             tools:text="The Perfect Run" />
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/search_item_download_play"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:src="@drawable/play_button" />
 
-
-
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/watchProgress"
+        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="-1.5dp"
+        android:progressBackgroundTint="?attr/colorPrimary"
+        android:progressTint="?attr/colorPrimary"
+        tools:progress="50" />
 
     <!--<View
             android:id="@+id/search_result_lang"
@@ -116,21 +130,4 @@
             tools:text="🇸🇪"
             tools:visibility="visible" />
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/watch_progress_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/search_item_download_play"
-            style="@style/HomePlayUnderlayProgress"
-            />
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/watchProgress"
-            style="@style/HomeCircularProgress"
-            tools:progress="50" />
-
-    </FrameLayout>
 </androidx.cardview.widget.CardView>
