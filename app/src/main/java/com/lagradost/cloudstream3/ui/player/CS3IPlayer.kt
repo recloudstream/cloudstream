@@ -72,6 +72,7 @@ import androidx.media3.exoplayer.text.TextRenderer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.TrackSelector
 import androidx.media3.extractor.mp4.FragmentedMp4Extractor
+import androidx.media3.extractor.text.DefaultSubtitleParserFactory
 import androidx.media3.ui.SubtitleView
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -139,6 +140,10 @@ const val toleranceAfterUs = 300_000L
 @OptIn(UnstableApi::class)
 class CS3IPlayer : IPlayer {
     private var playerListener: Player.Listener? = null
+
+    /** libass for ASS/SSA subtitles, null if disabled */
+    private var assSupport: LibassSubtitleSupport? = null
+
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
         set(value) {
@@ -263,8 +268,18 @@ class CS3IPlayer : IPlayer {
         return this.replace(Regex("""^\d+:"""), "")
     }
 
-    fun initSubtitles(subView: SubtitleView?, subHolder: FrameLayout?, style: SaveCaptionStyle?) {
+    fun initSubtitles(
+        subView: SubtitleView?,
+        subHolder: FrameLayout?,
+        style: SaveCaptionStyle?,
+        playerView: androidx.media3.ui.PlayerView? = null
+    ) {
         subtitleHelper.initSubtitles(subView, subHolder, style)
+        if (playerView != null) {
+            subtitleHelper.exoPlayerView = playerView
+            // The player might already exist, move the ASS overlay to the new view
+            assSupport?.attachOverlay(playerView)
+        }
     }
 
     override fun getPreview(fraction: Float): Bitmap? {
@@ -626,6 +641,8 @@ class CS3IPlayer : IPlayer {
             stop()
             release()
         }
+        assSupport?.release()
+        assSupport = null
         //simpleCache?.release()
 
         exoPlayer = null
@@ -1092,6 +1109,11 @@ class CS3IPlayer : IPlayer {
         /** External audio tracks to merge with the video */
         audioSources: List<MediaSource> = emptyList()
     ): ExoPlayer {
+        // One libass instance per player
+        assSupport?.release()
+        val libass = LibassSubtitleSupport.createIfEnabled(context)
+        assSupport = libass
+
         val exoPlayerBuilder =
             ExoPlayer.Builder(context)
                 .setMediaSourceFactory(
@@ -1230,7 +1252,7 @@ class CS3IPlayer : IPlayer {
                     ).map {
                         if (it is TextRenderer) {
                             CustomDecoder.subtitleOffset = subtitleOffset
-                            val decoder = CustomSubtitleDecoderFactory()
+                            val decoder = CustomSubtitleDecoderFactory(libass)
 
                             // @OptIn(ExperimentalApi::class)
                             val currentTextRenderer = TextRenderer(
@@ -1249,6 +1271,10 @@ class CS3IPlayer : IPlayer {
                             currentTextRenderer
                         } else
                             it
+                    }.let { renderers ->
+                        // libass needs the playback position for animations
+                        val timeRenderer = libass?.timeRenderer
+                        if (timeRenderer != null) renderers + timeRenderer else renderers
                     }.toTypedArray()
                 }
                 .setTrackSelector(
@@ -1288,6 +1314,7 @@ class CS3IPlayer : IPlayer {
         // This includes the updated MKV extractor that enabled seeking in formats where the seek information is at the back of the file
         val extractorFactor = UpdatedDefaultExtractorsFactory()
             .setFragmentedMp4ExtractorFlags(FragmentedMp4Extractor.FLAG_MERGE_FRAGMENTED_SIDX)
+            .also { it.assSupport = libass }
 
         // Create an online connection with cache for all online sources
         val dataSourceFactory = if (onlineSource == null) {
@@ -1307,6 +1334,12 @@ class CS3IPlayer : IPlayer {
             DefaultMediaSourceFactory(dataSourceFactory, extractorFactor)
         } else {
             DefaultMediaSourceFactory(context, extractorFactor)
+        }
+        if (libass != null) {
+            // Embedded MKV ASS tracks are drawn by libass instead of being converted to cues
+            defaultMediaSourceFactory.setSubtitleParserFactory(
+                libass.wrapParserFactory(DefaultSubtitleParserFactory())
+            )
         }
 
         // If there is only one item then treat it as normal, if multiple: concatenate the items.
@@ -1398,6 +1431,9 @@ class CS3IPlayer : IPlayer {
             }
         }
         return exoPlayerBuilder.build().apply {
+            // Must be attached before setMediaSource
+            libass?.attach(this)
+            libass?.attachOverlay(subtitleHelper.exoPlayerView)
             setPlayWhenReady(playWhenReady)
             seekTo(currentWindow, playbackPosition)
             // Merge video, subtitles and external audio tracks
