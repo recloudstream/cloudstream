@@ -1,0 +1,7 @@
+<resources>
+    <string name="navigation_options_title">Navegación</string>
+    <string name="auto_hide_rail_title">Ocultar automáticamente el menú lateral en TV</string>
+    <string name="auto_hide_rail_summary">Se oculta al recorrer carátulas. Vuelve desde el primer elemento o pulsa Opciones para mostrarlo.</string>
+    <string name="restore_navigation_title">Restaurar la pantalla anterior</string>
+    <string name="restore_navigation_summary">Conserva la pantalla anterior al abrir la app y cambiar de sección. Desactivado: abre Inicio desde el lanzador y la raíz de cada sección.</string>
+</resources>

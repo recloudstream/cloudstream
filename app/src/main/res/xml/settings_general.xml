@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/navigation_options_title">
+        <SwitchPreferenceCompat android:key="restore_navigation" android:title="@string/restore_navigation_title" android:summary="@string/restore_navigation_summary" android:defaultValue="false" />
+        <SwitchPreferenceCompat android:key="auto_hide_navigation_rail" android:title="@string/auto_hide_rail_title" android:summary="@string/auto_hide_rail_summary" android:defaultValue="true" />
+    </PreferenceCategory>
     <Preference
         android:icon="@drawable/ic_baseline_language_24"
         android:key="@string/locale_key"

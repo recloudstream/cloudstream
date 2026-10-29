@@ -114,6 +114,21 @@ object SettingsGeneralScreen : SearchableSettings {
         }.sortedBy { fromTagToLanguageName(it) ?: it }
 
         return persistentListOf(
+            Preference.PreferenceGroup(
+                title = stringResource(R.string.navigation_options_title),
+                preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.general.restoreNavigation,
+                        title = stringResource(R.string.restore_navigation_title),
+                        subtitle = stringResource(R.string.restore_navigation_summary),
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.general.autoHideNavigationRail,
+                        title = stringResource(R.string.auto_hide_rail_title),
+                        subtitle = stringResource(R.string.auto_hide_rail_summary),
+                    ),
+                ),
+            ),
             Preference.PreferenceGroup(title = stringResource(R.string.extension_language), preferenceItems = persistentListOf(
                 Preference.PreferenceItem.ListPreference(
                     preference = settings.general.locale,

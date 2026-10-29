@@ -189,6 +189,8 @@ class PlayerPreferences(preferences: PreferenceStore) {
 }
 
 class GeneralPreferences(preferences: PreferenceStore) {
+    val restoreNavigation = preferences.getBoolean("restore_navigation", false)
+    val autoHideNavigationRail = preferences.getBoolean("auto_hide_navigation_rail", true)
     val locale = preferences.getString("app_locale", "")
     val bananas = preferences.getInt("benene_count", 0)
     val parallelDownloads = preferences.getInt("download_parallel_key", 3)

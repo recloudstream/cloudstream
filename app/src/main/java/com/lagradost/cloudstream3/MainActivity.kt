@@ -567,6 +567,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
                     }
             }
+            autoHideRail?.destinationChanged(isNavVisible && isLandscape())
 
             /**
              * We need to make sure if we return to a sub-fragment,
@@ -669,8 +670,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
+    private var autoHideRail: com.lagradost.cloudstream3.ui.AutoHideNavigationRail? = null
+
     override fun dispatchKeyEvent(event: KeyEvent): Boolean =
-        CommonActivity.dispatchKeyEvent(this, event) ?: super.dispatchKeyEvent(event)
+        if (autoHideRail?.dispatch(event, currentFocus) == true) true
+        else CommonActivity.dispatchKeyEvent(this, event) ?: super.dispatchKeyEvent(event)
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean =
         CommonActivity.onKeyDown(this, keyCode, event) ?: super.onKeyDown(keyCode, event)
@@ -732,8 +736,30 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     }
 
     override fun onNewIntent(intent: Intent) {
+        resetHomeOnResume = shouldResetLauncherEntry(intent)
         handleAppIntent(intent)
         super.onNewIntent(intent)
+    }
+
+    private var resetHomeOnResume = false
+
+    private fun shouldResetLauncherEntry(entry: Intent?): Boolean {
+        if (entry?.action != Intent.ACTION_MAIN || entry.data != null) return false
+        if (!entry.hasCategory(Intent.CATEGORY_LAUNCHER) &&
+            !entry.hasCategory(Intent.CATEGORY_LEANBACK_LAUNCHER)) return false
+        return !PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean("restore_navigation", false)
+    }
+
+    override fun onPostResume() {
+        super.onPostResume()
+        if (!resetHomeOnResume) return
+        resetHomeOnResume = false
+        val host = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+            ?: return
+        host.navController.navigate(R.id.navigation_home, null,
+            NavOptions.Builder().setPopUpTo(host.navController.graph.id, false)
+                .setLaunchSingleTop(true).build())
     }
 
     private fun handleAppIntent(intent: Intent?) {
@@ -757,7 +783,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val destinationId = item.itemId
 
         // Check if we are already at the selected destination
-        if (navController.currentDestination?.id == destinationId) return false
+        val restoreNavigation = PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean("restore_navigation", false)
+        if (navController.currentDestination?.id == destinationId && restoreNavigation) return false
 
         // Make all nav buttons focus on this specific view when nextFocusRightId
         val targetView = when (destinationId) {
@@ -788,7 +816,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         }
 
-        val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
+        val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(restoreNavigation)
             .setEnterAnim(R.anim.enter_anim)
             .setExitAnim(R.anim.exit_anim)
             .setPopEnterAnim(R.anim.pop_enter)
@@ -797,7 +825,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             builder.setPopUpTo(
                 navController.graph.findStartDestination().id,
                 inclusive = false,
-                saveState = true
+                saveState = restoreNavigation
             )
         }
         return try {
@@ -1183,6 +1211,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        resetHomeOnResume = savedInstanceState != null && lastNonConfigurationInstance == null && shouldResetLauncherEntry(intent)
         app.initClient(this, ignoreSSL = false)
         @OptIn(UnsafeSSL::class)
         insecureApp.initClient(this, ignoreSSL = true)
@@ -1678,6 +1707,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
+        if (isLayout(TV or EMULATOR)) binding?.let {
+            autoHideRail = com.lagradost.cloudstream3.ui.AutoHideNavigationRail(it.root, it.navRailView, it.navHostFragment)
+        }
         navController.addOnDestinationChangedListener { _: NavController, navDestination: NavDestination, bundle: Bundle? ->
             // Intercept search and add a query
             updateNavBar(navDestination)

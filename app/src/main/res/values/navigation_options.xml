@@ -1,0 +1,7 @@
+<resources>
+    <string name="navigation_options_title">Navigation</string>
+    <string name="auto_hide_rail_title">Automatically hide the TV sidebar</string>
+    <string name="auto_hide_rail_summary">Hide while browsing posters. Return from the first item or press Menu to show it.</string>
+    <string name="restore_navigation_title">Restore previous screen</string>
+    <string name="restore_navigation_summary">Keep the previous screen when opening the app and switching sections. When off, launcher entry opens Home and sections open their root screen.</string>
+</resources>
