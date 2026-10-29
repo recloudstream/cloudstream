@@ -1565,7 +1565,7 @@ class ResultViewModel2 : ViewModel() {
                     activity?.navigate(
                         R.id.global_to_navigation_player,
                         GeneratorPlayer.newInstance(
-                            generator, index,list
+                            com.lagradost.cloudstream3.ui.player.LocalFirstGenerator(generator), index,list
                         )
                     )
                 }

@@ -196,6 +196,7 @@ object VideoDownloadManager {
 
     const val KEY_RESUME_PACKAGES = "download_resume_2"
     const val KEY_DOWNLOAD_INFO = "download_info"
+    const val KEY_COMPLETED_DOWNLOAD_BYTES = "completed_download_bytes"
 
     /** A key to save all the downloads which have not yet started and those currently running, using [DownloadQueueWrapper]
      * [KEY_RESUME_PACKAGES] can store keys which should not be automatically queued, unlike this key.
@@ -639,6 +640,7 @@ object VideoDownloadManager {
         }
 
         fun setDownloadFileInfoTemplate(template: DownloadedFileInfo) {
+            if (id != null) removeKey(KEY_COMPLETED_DOWNLOAD_BYTES, id.toString())
             downloadFileInfoTemplate = template
             updateFileInfo()
         }
@@ -665,6 +667,9 @@ object VideoDownloadManager {
             get() = internalType
             set(value) {
                 internalType = value
+                if (id != null && value == DownloadType.IsDone) {
+                    setKey(KEY_COMPLETED_DOWNLOAD_BYTES, id.toString(), bytesWritten)
+                }
                 notify()
             }
 
@@ -1617,7 +1622,10 @@ object VideoDownloadManager {
 
     private fun deleteFileAndUpdateSettings(context: Context, id: Int): Boolean {
         val success = deleteFile(context, id)
-        if (success) context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
+        if (success) {
+            context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
+            context.removeKey(KEY_COMPLETED_DOWNLOAD_BYTES, id.toString())
+        }
         return success
     }
 

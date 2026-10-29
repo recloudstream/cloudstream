@@ -114,6 +114,16 @@ object SettingsGeneralScreen : SearchableSettings {
         }.sortedBy { fromTagToLanguageName(it) ?: it }
 
         return persistentListOf(
+            Preference.PreferenceGroup(
+                title = stringResource(R.string.local_playback_options_title),
+                preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.general.preferLocalDownloads,
+                        title = stringResource(R.string.prefer_local_downloads_title),
+                        subtitle = stringResource(R.string.prefer_local_downloads_summary),
+                    ),
+                ),
+            ),
             Preference.PreferenceGroup(title = stringResource(R.string.extension_language), preferenceItems = persistentListOf(
                 Preference.PreferenceItem.ListPreference(
                     preference = settings.general.locale,

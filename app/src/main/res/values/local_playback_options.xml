@@ -1,0 +1,5 @@
+<resources>
+    <string name="local_playback_options_title">Local playback</string>
+    <string name="prefer_local_downloads_title">Play downloaded files first</string>
+    <string name="prefer_local_downloads_summary">Use a complete, readable download before requesting streaming links. Turn off to keep streaming first.</string>
+</resources>

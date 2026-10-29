@@ -1,0 +1,5 @@
+<resources>
+    <string name="local_playback_options_title">Reproducción local</string>
+    <string name="prefer_local_downloads_title">Reproducir primero las descargas</string>
+    <string name="prefer_local_downloads_summary">Usa una descarga completa y accesible antes de solicitar enlaces. Desactívalo para priorizar el streaming.</string>
+</resources>
