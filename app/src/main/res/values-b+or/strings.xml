@@ -156,5 +156,41 @@
     <string name="video_skip_op">ଆଦ୍ୟ ବାଦ୍ ଦିଅ</string>
     <string name="next_episode_format" formatted="true">ଏପିସୋଡ୍ %d ମୁକ୍ତିଲାଭ କରିବ</string>
     <string name="next_season_episode_format" formatted="true">ସିଜିନ୍ %1$d ଏପିସୋଡ୍ %2$d ମୁକ୍ତିଲାଭ କରିବ</string>
-    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dଘଣ୍ଟା %2$dମିନିଟ୍ %3$dସେକେଣ୍ଡ</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dଘ %2$dମି %3$dସେ</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dମି %2$dସେ</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dସେ</string>
+    <string name="go_back_img_des">ଫେରିଯିବା</string>
+    <string name="play_from_beginning_img_des">ଆରମ୍ଭରୁ ଚଲାଅ</string>
+    <string name="player_speed">ଚାଳକ ଵେଗ</string>
+    <string name="player_size_settings">ଚାଳକ ଆକାର ଠିକ୍ କରିବା ବଟନ୍</string>
+    <string name="action_open_watching">ଅଧିକ ସୂଚନା</string>
+    <string name="player_is_live">ସିଧାପ୍ରସରଣ</string>
+    <string name="search">ସନ୍ଧାନ</string>
+    <string name="settings_info">ସୂଚନା</string>
+    <string name="github">GitHub</string>
+    <string name="free_storage">ଖାଲି</string>
+    <string name="music_singular">ସଙ୍ଗୀତ</string>
+    <string name="custom_media_singular">ମିଡ଼ିଆ</string>
+    <string name="audio_singular">ଅଡ଼ିଓ</string>
+    <string name="previous">ପୂର୍ବବର୍ତ୍ତୀ</string>
+    <string name="is_adult">୧୮+</string>
+    <string name="tracks">ଧାରା</string>
+    <string name="compressor_on">ଚାଲୁ</string>
+    <string name="compressor_on_format">ଚାଲୁ · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">ବନ୍ଦ</string>
+    <string name="help">ସହାୟତା</string>
+    <string name="name">ନାମ</string>
+    <string name="eigengraumode_settings">ଚାଲିବା ଵେଗ</string>
+    <string name="source_name">ଉତ୍ସ ନାମ</string>
+    <string name="bottom_left">ତଳ ବାମ</string>
+    <string name="bottom_center">ତଳ ମଧ୍ୟ</string>
+    <string name="bottom_right">ତଳ ଡାହାଣ</string>
+    <string name="middle_left">ମଝି ବାମ</string>
+    <string name="middle_center">ମଝି ମଧ୍ୟ</string>
+    <string name="subtitles_shadow">ଛାଇ</string>
+    <string name="middle_right">ମଝି ଡାହାଣ</string>
+    <string name="top_left">ଉପର ବାମ</string>
+    <string name="top_center">ଉପର ମଧ୍ୟ</string>
+    <string name="top_right">ଉପର ଡାହାଣ</string>
+    <string name="skip_type_preview">ପୂର୍ବାବଲୋକନ</string>
 </resources>
