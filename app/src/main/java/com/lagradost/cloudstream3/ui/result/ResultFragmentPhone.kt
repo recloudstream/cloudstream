@@ -492,6 +492,7 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
 
         resultBinding?.apply {
             resultReloadConnectionerror.setOnClickListener {
+                com.lagradost.cloudstream3.ui.APIRepository.invalidateLoadResponse(storedData.apiName, storedData.url)
                 viewModel.load(
                     activity,
                     storedData.url,
@@ -989,6 +990,8 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                     populateChips(resultTag, d.tags)
 
                     resultComingSoon.isVisible = d.comingSoon
+                    resultComingSoon.setText(R.string.playback_availability_unknown)
+                    resultComingSoon.setOnClickListener { resultReloadConnectionerror.performClick() }
                     resultDataHolder.isGone = d.comingSoon
 
                     val prefs =
