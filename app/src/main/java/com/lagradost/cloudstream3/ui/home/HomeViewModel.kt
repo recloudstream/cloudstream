@@ -379,7 +379,10 @@ class HomeViewModel : ViewModel() {
                                 previewResponses,
                                 previewResponsesAdded,
                                 randomItems,
-                                3
+                                context?.let {
+                                    androidx.preference.PreferenceManager.getDefaultSharedPreferences(it)
+                                        .getString("home_preview_count", "5")?.toIntOrNull()?.coerceIn(1, 5)
+                                } ?: 5
                             )
 
                             _randomItems.postValue(randomItems)

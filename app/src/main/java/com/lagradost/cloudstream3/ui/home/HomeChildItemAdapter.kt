@@ -171,7 +171,9 @@ open class HomeChildItemAdapter(
             val scale = value ?: PreferenceManager.getDefaultSharedPreferences(context)
                 ?.getInt(context.getString(R.string.poster_size_key), 0) ?: 0
             // Scale by +10% per step
-            val mul = 1.0f + scale * 0.1f
+            val cardScale = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("home_card_scale", "125")?.toIntOrNull()?.coerceIn(100, 150) ?: 125
+            val mul = (1.0f + scale * 0.1f) * (cardScale / 100f)
             minPosterSize = (114.toPx.toFloat() * mul).toInt()
             maxPosterSize = (180.toPx.toFloat() * mul).toInt()
         }

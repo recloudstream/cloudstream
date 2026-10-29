@@ -1,0 +1,6 @@
+<resources>
+    <string name="home_presentation_options_title">Presentación de Inicio</string>
+    <string name="home_card_scale_title">Tamaño de tarjetas de Inicio</string>
+    <string name="home_preview_count_title">Títulos destacados</string>
+    <string-array name="home_card_scale_entries"><item>Original (100%)</item><item>Grandes (125%)</item><item>Más grandes (150%)</item></string-array>
+</resources>

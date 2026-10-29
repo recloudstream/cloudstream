@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/home_presentation_options_title">
+        <ListPreference android:key="home_card_scale" android:title="@string/home_card_scale_title" android:defaultValue="125" android:entries="@array/home_card_scale_entries" android:entryValues="@array/home_card_scale_values" app:useSimpleSummaryProvider="true" />
+        <ListPreference android:key="home_preview_count" android:title="@string/home_preview_count_title" android:defaultValue="5" android:entries="@array/home_preview_count_entries" android:entryValues="@array/home_preview_count_values" app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
     <Preference
         android:icon="@drawable/ic_baseline_language_24"
         android:key="@string/locale_key"

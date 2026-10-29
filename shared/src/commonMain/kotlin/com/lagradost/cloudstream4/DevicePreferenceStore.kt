@@ -189,6 +189,8 @@ class PlayerPreferences(preferences: PreferenceStore) {
 }
 
 class GeneralPreferences(preferences: PreferenceStore) {
+    val homeCardScale = preferences.getString("home_card_scale", "125")
+    val homePreviewCount = preferences.getString("home_preview_count", "5")
     val locale = preferences.getString("app_locale", "")
     val bananas = preferences.getInt("benene_count", 0)
     val parallelDownloads = preferences.getInt("download_parallel_key", 3)
