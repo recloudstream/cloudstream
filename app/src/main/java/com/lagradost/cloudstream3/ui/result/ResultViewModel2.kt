@@ -2410,6 +2410,12 @@ class ResultViewModel2 : ViewModel() {
 
     private fun resume(): ResumeWatchingStatus? {
         val correctId = currentId ?: return null
+        currentResponse?.let { response ->
+            com.lagradost.cloudstream3.syncproviders.local.PendingWatchTransfer.apply(
+                response.apiName, response.url, correctId, response.isMovie(),
+                currentEpisodes.filter { preferDubStatus == null || it.key.dubStatus == preferDubStatus }.values.flatten()
+            )
+        }
         val resume = getLastWatched(correctId)
         val resumeParentId = resume?.parentId
         if (resumeParentId != correctId) return null // is null or smth went wrong with getLastWatched

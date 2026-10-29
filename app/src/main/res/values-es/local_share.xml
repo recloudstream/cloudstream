@@ -1,0 +1,23 @@
+<resources>
+    <string name="local_share_title">Compartir con otro dispositivo</string>
+    <string name="local_share_description">Envía un título y su progreso en la red local. El receptor debe confirmar.</string>
+    <string name="local_share_permission_denied">Acceso a la red local denegado.</string>
+    <string name="local_share_receive">Recibir con código</string>
+    <string name="local_share_send_recent">Enviar desde Seguir viendo</string>
+    <string name="local_share_send_title">Enviar este título</string>
+    <string name="local_share_starting">Preparando recepción…</string>
+    <string name="local_share_reception_finished">Recepción finalizada. Inicia de nuevo para obtener otro código.</string>
+    <string name="local_share_receiver_code">Código: %1$s\nVálido por dos minutos y un envío.\n%2$s</string>
+    <string name="local_share_failed">El envío falló. Revisa código y red y reintenta.</string>
+    <string name="local_share_confirm">Proveedor: %1$s\nProgreso: %2$d segundos. ¿Abrir título?</string>
+    <string name="local_share_open">Abrir título</string>
+    <string name="local_share_search">Buscar título</string>
+    <string name="local_share_no_recent">No hay títulos en Seguir viendo.</string>
+    <string name="local_share_invalid">No se puede compartir este título o enlace.</string>
+    <string name="local_share_find_devices">Elige un receptor</string>
+    <string name="local_share_manual">Introducir IP local y puerto</string>
+    <string name="local_share_continue">Continuar</string>
+    <string name="local_share_enter_code">Introduce los 12 caracteres del receptor</string>
+    <string name="local_share_send">Enviar</string>
+    <string name="local_share_sent">Entregado. Confirma en el dispositivo receptor.</string>
+</resources>

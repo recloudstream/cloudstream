@@ -277,6 +277,10 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_general, rootKey)
+        findPreference<androidx.preference.Preference>("local_share")?.setOnPreferenceClickListener {
+            startActivity(android.content.Intent(requireContext(), com.lagradost.cloudstream3.syncproviders.local.LocalShareActivity::class.java))
+            true
+        }
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
 

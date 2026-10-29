@@ -114,6 +114,16 @@ object SettingsGeneralScreen : SearchableSettings {
         }.sortedBy { fromTagToLanguageName(it) ?: it }
 
         return persistentListOf(
+            Preference.PreferenceGroup(
+                title = stringResource(R.string.local_device_options_title),
+                preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.TextPreference(
+                        title = stringResource(R.string.local_share_title),
+                        subtitle = stringResource(R.string.local_share_description),
+                        onClick = { context.startActivity(Intent(context, com.lagradost.cloudstream3.syncproviders.local.LocalShareActivity::class.java)) }
+                    ),
+                ),
+            ),
             Preference.PreferenceGroup(title = stringResource(R.string.extension_language), preferenceItems = persistentListOf(
                 Preference.PreferenceItem.ListPreference(
                     preference = settings.general.locale,

@@ -1,0 +1,23 @@
+<resources>
+    <string name="local_share_title">Share with another device</string>
+    <string name="local_share_description">Send one title and its progress on your local network. The receiver must confirm.</string>
+    <string name="local_share_permission_denied">Local network access denied.</string>
+    <string name="local_share_receive">Receive with code</string>
+    <string name="local_share_send_recent">Send from Continue watching</string>
+    <string name="local_share_send_title">Send this title</string>
+    <string name="local_share_starting">Preparing reception…</string>
+    <string name="local_share_reception_finished">Reception finished. Start again for a new code.</string>
+    <string name="local_share_receiver_code">Code: %1$s\nValid for two minutes, one transfer.\n%2$s</string>
+    <string name="local_share_failed">Transfer failed. Check code and network, then retry.</string>
+    <string name="local_share_confirm">Source: %1$s\nProgress: %2$d seconds. Open title?</string>
+    <string name="local_share_open">Open title</string>
+    <string name="local_share_search">Search title</string>
+    <string name="local_share_no_recent">No titles in Continue watching.</string>
+    <string name="local_share_invalid">This title or link cannot be shared.</string>
+    <string name="local_share_find_devices">Choose a receiver</string>
+    <string name="local_share_manual">Enter local IP and port</string>
+    <string name="local_share_continue">Continue</string>
+    <string name="local_share_enter_code">Enter the 12-character receiver code</string>
+    <string name="local_share_send">Send</string>
+    <string name="local_share_sent">Delivered. Confirm on the receiving device.</string>
+</resources>
