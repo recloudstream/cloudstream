@@ -58,6 +58,10 @@ class APIRepository(val api: MainAPI) {
         private val cache = atomicListOf<SavedLoadResponse>()
         private var cacheIndex: Int = 0
         const val CACHE_SIZE = 20
+        fun invalidateLoadResponse(apiName: String, url: String) {
+            val fixedUrl = com.lagradost.cloudstream3.APIHolder.getApiFromNameNull(apiName)?.fixUrl(url) ?: url
+            cache.withLock { cache.removeAll { it.hash == (apiName to fixedUrl) } }
+        }
 
         fun getTimeout(desired: Long?): Long {
             return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
@@ -93,7 +97,7 @@ class APIRepository(val api: MainAPI) {
                     var found: LoadResponse? = null
                     for (item in cache) {
                         // 10 min save
-                        if (item.hash == lookingForHash && (unixTime - item.unixTime) < 60 * 10) {
+                        if (item.hash == lookingForHash && LoadResponseCachePolicy.isFresh(item.unixTime, unixTime, item.response.comingSoon)) {
                             found = item.response
                             break
                         }
@@ -108,7 +112,7 @@ class APIRepository(val api: MainAPI) {
                     val add = SavedLoadResponse(unixTime, response, lookingForHash)
 
                     cache.withLock {
-                        if (cache.size > CACHE_SIZE) {
+                        if (cache.size >= CACHE_SIZE) {
                             cache[cacheIndex] = add // rolling cache
                             cacheIndex = (cacheIndex + 1) % CACHE_SIZE
                         } else {
@@ -212,6 +216,11 @@ class APIRepository(val api: MainAPI) {
             withTimeout(getTimeout(api.loadLinksTimeoutMs)) {
                 api.loadLinks(data, isCasting, subtitleCallback, callback)
             }
+        } catch (timeout: kotlinx.coroutines.TimeoutCancellationException) {
+            logError(timeout)
+            return false
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
         } catch (throwable: Throwable) {
             logError(throwable)
             return false
