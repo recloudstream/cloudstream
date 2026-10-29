@@ -53,6 +53,13 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withTimeoutOrNull
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.withContext
 import java.util.EnumSet
 import java.util.concurrent.CopyOnWriteArrayList
@@ -244,7 +251,10 @@ class HomeViewModel : ViewModel() {
                 }
 
                 val nextPage = current.currentPage + 1
-                val next = getMainPage(nextPage, mainPage.indexOfFirst { it.name == name })
+                val pageIndex = (api as? CombinedHomeApi)?.pageIndexForRow(name)
+                    ?: mainPage.indexOfFirst { it.name == name }
+                if (pageIndex < 0) { lock -= name; return null }
+                val next = getMainPage(nextPage, pageIndex)
                 if (next is Resource.Success) {
                     next.value.filterNotNull().forEach { main ->
                         main.items.forEach { newList ->
@@ -301,15 +311,28 @@ class HomeViewModel : ViewModel() {
             }
         }
 
-        val add = addItems.amap { searchResponse ->
-            repo?.load(searchResponse.url)
-        }.mapNotNull { if (it != null && it is Resource.Success) it.value else null }
+        val completed = ConcurrentHashMap<Int, LoadResponse>()
+        val permits = Semaphore(2)
+        withTimeoutOrNull(18_000) {
+            coroutineScope {
+                addItems.mapIndexed { index, searchResponse -> async {
+                    permits.withPermit {
+                        val response = withTimeoutOrNull(8_000) {
+                            getApiFromNameNull(searchResponse.apiName)?.let { APIRepository(it).load(searchResponse.url) }
+                        }
+                        if (response is Resource.Success) completed[index] = response.value
+                    }
+                } }.awaitAll()
+            }
+        }
+        val add = completed.toSortedMap().values.toList()
         current.addAll(add)
         return add.size
     }
 
     private var addJob: Job? = null
     fun loadMoreHomeScrollResponses() {
+        addJob?.cancel()
         addJob = ioSafe {
             updatePreviewResponses(previewResponses, previewResponsesAdded, currentShuffledList, 1)
             _preview.postValue(Resource.Success((previewResponsesAdded.size < currentShuffledList.size) to previewResponses))
@@ -317,6 +340,16 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun load(api: MainAPI): Job = ioSafe {
+        if (api is CombinedHomeApi) api.onPartial = { responses ->
+            if (repo?.api === api) {
+                val partial = linkedMapOf<String, ExpandableHomepageList>()
+                responses.forEach { response -> response.items.forEach { row ->
+                    val filtered = context?.filterHomePageListByFilmQuality(row) ?: row
+                    partial[row.name] = ExpandableHomepageList(filtered, 1, false)
+                } }
+                _page.postValue(Resource.Success(partial))
+            }
+        }
         repo = //if (api != null) {
             APIRepository(api)
         //} else {
@@ -357,6 +390,7 @@ class HomeViewModel : ViewModel() {
                         }
                     }
 
+                    _page.postValue(Resource.Success(expandable.toMap()))
                     val items = data.value.mapNotNull { it?.items }.flatten()
 
 
@@ -517,6 +551,13 @@ class HomeViewModel : ViewModel() {
             }
 
             val api = getApiFromNameNull(preferredApiName)
+            if (preferredApiName == CombinedHomeApi.NAME) {
+                val providers = context?.let(MultipleHomeSources::selected).orEmpty()
+                if (fromUI) DataStoreHelper.currentHomePage = CombinedHomeApi.NAME
+                loadAndCancel(if (providers.isEmpty()) noneApi else CombinedHomeApi(providers))
+                reloadAccount()
+                return@ioSafe
+            }
             if (preferredApiName == noneApi.name) {
                 // just set to random
                 if (fromUI) DataStoreHelper.currentHomePage = noneApi.name

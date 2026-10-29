@@ -114,6 +114,16 @@ object SettingsGeneralScreen : SearchableSettings {
         }.sortedBy { fromTagToLanguageName(it) ?: it }
 
         return persistentListOf(
+            Preference.PreferenceGroup(
+                title = stringResource(R.string.catalogue_options_title),
+                preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.ListPreference(
+                        preference = settings.general.recommendationCount,
+                        title = stringResource(R.string.recommendation_count_title),
+                        entries = mapOf("6" to "6", "12" to "12"),
+                    ),
+                ),
+            ),
             Preference.PreferenceGroup(title = stringResource(R.string.extension_language), preferenceItems = persistentListOf(
                 Preference.PreferenceItem.ListPreference(
                     preference = settings.general.locale,

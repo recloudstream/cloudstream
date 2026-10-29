@@ -154,6 +154,7 @@ class APIRepository(val api: MainAPI) {
     }
 
     suspend fun getMainPage(page: Int, nameIndex: Int? = null): Resource<List<HomePageResponse?>> {
+        if (api is com.lagradost.cloudstream3.ui.home.CombinedHomeApi) return api.getPages(page, nameIndex)
         return safeApiCall {
             withTimeout(getTimeout(api.getMainPageTimeoutMs)) {
                 api.lastHomepageRequest = unixTimeMS

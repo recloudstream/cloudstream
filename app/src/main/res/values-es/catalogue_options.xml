@@ -1,0 +1,7 @@
+<resources>
+    <string name="catalogue_options_title">Fuentes de Inicio y recomendaciones</string>
+    <string name="recommendations_all_sources">Todas las fuentes seleccionadas</string>
+    <string name="recommendation_count_title">Recomendaciones por título</string>
+    <string name="home_multiple_sources">Seleccionar varias fuentes</string>
+    <string name="home_all_sources">Todas las fuentes compatibles</string>
+</resources>

@@ -139,6 +139,7 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.txt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.coroutineScope
@@ -2503,8 +2504,25 @@ class ResultViewModel2 : ViewModel() {
 
 
     // this instantly updates the metadata on the page
+    private var recommendationJob: Job? = null
+    private var recommendationKey: String? = null
+
     private fun postPage(loadResponse: LoadResponse, apiRepository: APIRepository) {
-        _recommendations.postValue(loadResponse.recommendations ?: emptyList())
+        val sources = context?.let(com.lagradost.cloudstream3.ui.home.MultipleHomeSources::active).orEmpty()
+        val limit = context?.let { androidx.preference.PreferenceManager.getDefaultSharedPreferences(it)
+            .getString("recommendation_count", "12")?.toIntOrNull()?.coerceIn(6, 12) } ?: 12
+        val key = loadResponse.apiName + loadResponse.url + sources.joinToString { it.name } + limit
+        if (key != recommendationKey) {
+            recommendationJob?.cancel()
+            recommendationKey = key
+            _recommendations.postValue(loadResponse.recommendations.orEmpty()
+                .filter { sources.isEmpty() || sources.any { api -> api.name == it.apiName } }.take(limit))
+            recommendationJob = viewModelScope.launchSafe(Dispatchers.IO) {
+                ProviderRecommendations.collect(loadResponse, sources, limit) { recommendations ->
+                    if (recommendationKey == key) _recommendations.postValue(recommendations)
+                }
+            }
+        }
         _page.postValue(Resource.Success(loadResponse.toResultData(apiRepository)))
     }
 

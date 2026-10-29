@@ -1,0 +1,8 @@
+<resources>
+    <string name="catalogue_options_title">Home sources and recommendations</string>
+    <string name="recommendations_all_sources">All selected sources</string>
+    <string name="recommendation_count_title">Recommendations per title</string>
+    <string-array name="recommendation_count_entries"><item>6</item><item>12</item></string-array>
+    <string name="home_multiple_sources">Select multiple sources</string>
+    <string name="home_all_sources">All compatible sources</string>
+</resources>

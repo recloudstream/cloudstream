@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/catalogue_options_title">
+        <ListPreference android:key="recommendation_count" android:title="@string/recommendation_count_title" android:defaultValue="12" android:entries="@array/recommendation_count_entries" android:entryValues="@array/recommendation_count_entries" app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
     <Preference
         android:icon="@drawable/ic_baseline_language_24"
         android:key="@string/locale_key"

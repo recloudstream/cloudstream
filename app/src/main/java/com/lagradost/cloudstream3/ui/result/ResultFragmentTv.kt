@@ -155,19 +155,19 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         binding?.apply {
             resultRecommendationsList.isGone = isInvalid
             resultRecommendationsHolder.isGone = isInvalid
-            val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
-            (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(rec?.filter { it.apiName == matchAgainst }
+            val matchAgainst = validApiName?.takeUnless { it == "__all_selected_sources__" }
+            (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(rec?.filter { matchAgainst == null || it.apiName == matchAgainst }?.take(12)
                 ?: emptyList())
 
             rec?.map { it.apiName }?.distinct()?.let { apiNames ->
                 // very dirty selection
                 resultRecommendationsFilterSelection.isVisible = apiNames.size > 1
-                resultRecommendationsFilterSelection.update(apiNames.map {
+                resultRecommendationsFilterSelection.update(listOf(txt(R.string.recommendations_all_sources) to "__all_selected_sources__") + apiNames.map {
                     txt(
                         it
                     ) to it
                 })
-                resultRecommendationsFilterSelection.select(apiNames.indexOf(matchAgainst))
+                resultRecommendationsFilterSelection.select(if (matchAgainst == null) 0 else apiNames.indexOf(matchAgainst) + 1)
             } ?: run {
                 resultRecommendationsFilterSelection.isVisible = false
             }

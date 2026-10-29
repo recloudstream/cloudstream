@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_rowWeight="1"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="60dp"
         android:layout_marginBottom="60dp"
         android:clipToPadding="false"
         android:minHeight="0dp"
@@ -20,6 +20,10 @@
         android:nextFocusRight="@id/cancel_btt"
         android:requiresFadingEdge="vertical"
         tools:listitem="@layout/sort_bottom_single_provider_choice" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/multiple_sources_btt" style="@style/BlackButton"
+        android:layout_width="wrap_content" android:layout_height="48dp"
+        android:layout_gravity="top|center_horizontal" android:text="@string/home_multiple_sources" />
 
     <LinearLayout
         android:orientation="vertical"

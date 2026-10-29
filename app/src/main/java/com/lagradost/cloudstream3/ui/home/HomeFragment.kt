@@ -399,6 +399,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             )
 
             builder.setContentView(binding.root)
+            binding.multipleSourcesBtt.setOnClickListener {
+                builder.dismissSafe()
+                MultipleHomeSources.show(this, selectedApiName, callback)
+            }
             builder.show()
             builder.let { dialog ->
                 val isMultiLang = getApiProviderLangSettings().let { set ->
