@@ -114,6 +114,16 @@ object SettingsGeneralScreen : SearchableSettings {
         }.sortedBy { fromTagToLanguageName(it) ?: it }
 
         return persistentListOf(
+            Preference.PreferenceGroup(
+                title = stringResource(R.string.image_loading_options_title),
+                preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.ListPreference(
+                        preference = settings.general.imageDecodingMode,
+                        title = stringResource(R.string.image_decoding_title),
+                        entries = mapOf("auto" to stringResource(R.string.image_decoding_automatic), "software" to stringResource(R.string.image_decoding_software)),
+                    ),
+                ),
+            ),
             Preference.PreferenceGroup(title = stringResource(R.string.extension_language), preferenceItems = persistentListOf(
                 Preference.PreferenceItem.ListPreference(
                     preference = settings.general.locale,

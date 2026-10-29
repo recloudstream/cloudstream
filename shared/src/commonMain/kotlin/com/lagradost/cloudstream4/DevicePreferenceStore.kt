@@ -189,6 +189,7 @@ class PlayerPreferences(preferences: PreferenceStore) {
 }
 
 class GeneralPreferences(preferences: PreferenceStore) {
+    val imageDecodingMode = preferences.getString("image_decoding_mode", "auto")
     val locale = preferences.getString("app_locale", "")
     val bananas = preferences.getInt("benene_count", 0)
     val parallelDownloads = preferences.getInt("download_parallel_key", 3)
