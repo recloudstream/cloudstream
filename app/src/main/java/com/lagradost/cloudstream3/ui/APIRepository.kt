@@ -56,22 +56,19 @@ class APIRepository(val api: MainAPI) {
         )
 
         private val cache = atomicListOf<SavedLoadResponse>()
+
+        init {
+            afterPluginsLoadedEvent += { forceReload ->
+                if (forceReload) cache.clear()
+            }
+        }
+
         private var cacheIndex: Int = 0
         const val CACHE_SIZE = 20
 
         fun getTimeout(desired: Long?): Long {
             return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
         }
-    }
-
-    private fun afterPluginsLoaded(forceReload: Boolean) {
-        if (forceReload) {
-            cache.clear()
-        }
-    }
-
-    init {
-        afterPluginsLoadedEvent += ::afterPluginsLoaded
     }
 
     val hasMainPage = api.hasMainPage
