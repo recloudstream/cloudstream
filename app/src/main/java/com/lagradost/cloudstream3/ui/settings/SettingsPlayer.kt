@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
+import com.lagradost.cloudstream3.ui.player.PlaybackSpeeds
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -48,7 +49,8 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 R.string.pref_category_gestures_key,
                 R.string.rotate_video_key,
                 R.string.auto_rotate_video_key,
-                R.string.speedup_key
+                R.string.speedup_key,
+                R.string.speedup_speed_key
             ),
             TV or EMULATOR
         )
@@ -91,6 +93,28 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
             ) {
                 settingsManager.edit {
                     putInt(getString(R.string.prefer_limit_title_key), prefValues[it])
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.speedup_speed_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.speedup_speed_names)
+            val prefValues = resources.getIntArray(R.array.speedup_speed_values)
+            val current = settingsManager.getInt(
+                getString(R.string.speedup_speed_key),
+                PlaybackSpeeds.DEFAULT_HOLD_SPEED_PERCENT
+            )
+
+            activity?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(current),
+                getString(R.string.speedup_speed_title),
+                true,
+                {}
+            ) {
+                settingsManager.edit {
+                    putInt(getString(R.string.speedup_speed_key), prefValues[it])
                 }
             }
             return@setOnPreferenceClickListener true

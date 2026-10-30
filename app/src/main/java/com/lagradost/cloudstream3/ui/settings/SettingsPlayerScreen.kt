@@ -142,6 +142,15 @@ object SettingsPlayerScreen : SearchableSettings {
                         subtitle = stringResource(R.string.speedup_summary),
                         icon = painterResource(R.drawable.speedup),
                     ),
+                    Preference.PreferenceItem.ListPreference(
+                        preference = settings.player.tiktokSpeed,
+                        title = stringResource(R.string.speedup_speed_title),
+                        subtitle = stringResource(R.string.speedup_speed_summary) + "\n%s",
+                        icon = painterResource(R.drawable.speedup),
+                        entries = integerArrayResource(R.array.speedup_speed_values).zip(
+                            stringArrayResource(R.array.speedup_speed_names)
+                        ).toMap()
+                    ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.autoPlayEnabled,
                         title = stringResource(R.string.autoplay_next_settings),
