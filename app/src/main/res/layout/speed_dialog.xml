@@ -43,13 +43,13 @@
             android:nextFocusLeft="@id/speed_minus"
             android:nextFocusRight="@id/speed_plus"
             android:nextFocusUp="@id/speed_bar"
-            android:nextFocusDown="@id/speed_125"
+            android:nextFocusDown="@id/speed_100"
             android:progressTint="?attr/white"
             android:stepSize="0.05"
             android:thumbTint="?attr/white"
             android:value="1.0"
             android:valueFrom="0.1"
-            android:valueTo="2.0"
+            android:valueTo="4.0"
             app:labelStyle="@style/BlackLabel"
             app:thumbColor="?attr/white"
             app:tickVisible="false"
@@ -66,7 +66,7 @@
             android:foreground="@drawable/outline_drawable"
             android:nextFocusLeft="@id/speed_bar"
             android:nextFocusRight="@id/speed_minus"
-            android:nextFocusDown="@id/speed_200"
+            android:nextFocusDown="@id/speed_125"
             android:src="@drawable/media3_icon_plus"
             app:tint="?attr/textColor" />
     </LinearLayout>
@@ -74,7 +74,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="14dp">
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="0dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/speed_25"
@@ -82,11 +85,37 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:nextFocusLeft="@id/speed_200"
-            android:nextFocusRight="@id/speed_100"
+            android:nextFocusLeft="@id/speed_125"
+            android:nextFocusRight="@id/speed_50"
             android:nextFocusUp="@id/speed_minus"
-            android:nextFocusDown="@id/speed_25"
+            android:nextFocusDown="@id/speed_150"
             android:text="0.25x"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_50"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_25"
+            android:nextFocusRight="@id/speed_75"
+            android:nextFocusUp="@id/speed_bar"
+            android:nextFocusDown="@id/speed_175"
+            android:text="0.5x"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_75"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_50"
+            android:nextFocusRight="@id/speed_100"
+            android:nextFocusUp="@id/speed_bar"
+            android:nextFocusDown="@id/speed_200"
+            android:text="0.75x"
             tools:ignore="HardcodedText" />
 
         <com.google.android.material.button.MaterialButton
@@ -95,10 +124,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:nextFocusLeft="@id/speed_25"
+            android:nextFocusLeft="@id/speed_75"
             android:nextFocusRight="@id/speed_125"
             android:nextFocusUp="@id/speed_bar"
-            android:nextFocusDown="@id/speed_100"
+            android:nextFocusDown="@id/speed_300"
             android:text="1.0x"
             tools:ignore="HardcodedText" />
 
@@ -109,11 +138,19 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:nextFocusLeft="@id/speed_100"
-            android:nextFocusRight="@id/speed_150"
-            android:nextFocusUp="@id/speed_bar"
-            android:nextFocusDown="@id/speed_125"
+            android:nextFocusRight="@id/speed_25"
+            android:nextFocusUp="@id/speed_plus"
+            android:nextFocusDown="@id/speed_400"
             android:text="1.25x"
             tools:ignore="HardcodedText" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="14dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/speed_150"
@@ -121,11 +158,24 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:nextFocusLeft="@id/speed_125"
-            android:nextFocusRight="@id/speed_200"
-            android:nextFocusUp="@id/speed_bar"
+            android:nextFocusLeft="@id/speed_400"
+            android:nextFocusRight="@id/speed_175"
+            android:nextFocusUp="@id/speed_25"
             android:nextFocusDown="@id/speed_150"
             android:text="1.5x"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_175"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_150"
+            android:nextFocusRight="@id/speed_200"
+            android:nextFocusUp="@id/speed_50"
+            android:nextFocusDown="@id/speed_175"
+            android:text="1.75x"
             tools:ignore="HardcodedText" />
 
         <com.google.android.material.button.MaterialButton
@@ -134,11 +184,37 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:nextFocusLeft="@id/speed_150"
-            android:nextFocusRight="@id/speed_25"
-            android:nextFocusUp="@id/speed_plus"
+            android:nextFocusLeft="@id/speed_175"
+            android:nextFocusRight="@id/speed_300"
+            android:nextFocusUp="@id/speed_75"
             android:nextFocusDown="@id/speed_200"
             android:text="2.0x"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_300"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_200"
+            android:nextFocusRight="@id/speed_400"
+            android:nextFocusUp="@id/speed_100"
+            android:nextFocusDown="@id/speed_300"
+            android:text="3.0x"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_400"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_300"
+            android:nextFocusRight="@id/speed_150"
+            android:nextFocusUp="@id/speed_125"
+            android:nextFocusDown="@id/speed_400"
+            android:text="4.0x"
             tools:ignore="HardcodedText" />
     </LinearLayout>
 

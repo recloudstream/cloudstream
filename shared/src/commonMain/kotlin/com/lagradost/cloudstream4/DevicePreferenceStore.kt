@@ -165,9 +165,11 @@ class PlayerPreferences(preferences: PreferenceStore) {
     val showMediaInfo = preferences.getBoolean("show_media_info", false)
     val pipEnabled = preferences.getBoolean("pip_enabled_key", true)
     val resizeEnabled = preferences.getBoolean("player_resize_enabled_key", true)
-    val speedEnabled = preferences.getBoolean("playback_speed_enabled_key", false)
+    val speedEnabled = preferences.getBoolean("playback_speed_enabled_key", true)
     val compressorEnabled = preferences.getBoolean("compressor_enabled_key", false)
-    val tiktokEnabled = preferences.getBoolean("speedup_key", false)
+    val tiktokEnabled = preferences.getBoolean("speedup_key", true)
+    /** Long press speed in percent, 200 = 2x */
+    val tiktokSpeed = preferences.getInt("speedup_speed_key", 200)
     val autoPlayEnabled = preferences.getBoolean("autoplay_next_key", true)
     val startPaused = preferences.getBoolean("start_paused_key", false)
     val skipOpEnabled = preferences.getBoolean("enable_skip_op_from_database", true)
