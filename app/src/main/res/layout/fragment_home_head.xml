@@ -16,7 +16,7 @@
     <FrameLayout
         android:id="@+id/home_preview_viewpager_text"
         android:layout_width="match_parent"
-        android:layout_height="500dp">
+        android:layout_height="580dp">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/home_preview_viewpager"

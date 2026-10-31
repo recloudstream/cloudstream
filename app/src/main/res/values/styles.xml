@@ -224,6 +224,19 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
+    <style name="CinemaMode">
+        <item name="primaryGrayBackground">@color/CinemaPrimaryGrayBackground</item>
+        <item name="primaryBlackBackground">@color/CinemaBitDarkerGrayBackground</item>
+        <item name="iconGrayBackground">@color/CinemaGrayBackground</item>
+        <item name="boxItemBackground">@color/CinemaItemBackground</item>
+        <item name="textColor">@color/CinemaTextColor</item>
+        <item name="grayTextColor">@color/CinemaGrayTextColor</item>
+        <item name="iconColor">@color/CinemaGrayTextColor</item>
+        <item name="white">@color/CinemaTextColor</item>
+        <item name="black">@color/CinemaBitDarkerGrayBackground</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+    </style>
+
     <style name="MonetMode">
         <item name="primaryGrayBackground">@color/material_dynamic_neutral20</item>
         <item name="primaryBlackBackground">@color/material_dynamic_neutral10</item>
@@ -311,6 +324,16 @@
         <item name="colorOnPrimary">@color/whiteText</item> <!--#EC3838-->
         <!-- Needed for leanback fuckery -->
         <item name="android:colorAccent">@color/colorPrimaryRed</item>
+    </style>
+
+    <style name="OverlayPrimaryColorCinemaRed">
+        <item name="colorPrimary">@color/colorPrimaryCinemaRed</item>
+        <item name="android:colorPrimary">@color/colorPrimaryCinemaRed</item>
+        <item name="colorPrimaryDark">#B20710</item>
+        <item name="colorAccent">@color/colorPrimaryCinemaRed</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+        <!-- Needed for leanback -->
+        <item name="android:colorAccent">@color/colorPrimaryCinemaRed</item>
     </style>
 
     <style name="OverlayPrimaryColorBanana">

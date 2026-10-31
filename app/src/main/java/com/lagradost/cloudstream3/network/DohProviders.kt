@@ -20,6 +20,15 @@ fun OkHttpClient.Builder.addGenericDns(url: String, ips: List<String>) = dns(
         .build()
 )
 
+/** User supplied DNS-over-HTTPS server, resolved using the system DNS */
+fun OkHttpClient.Builder.addCustomDns(url: String) = dns(
+    DnsOverHttps
+        .Builder()
+        .client(build())
+        .url(url.trim().toHttpUrl())
+        .build()
+)
+
 fun OkHttpClient.Builder.addGoogleDns() = (
         addGenericDns(
             "https://dns.google/dns-query",

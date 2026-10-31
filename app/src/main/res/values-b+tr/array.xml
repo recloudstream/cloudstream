@@ -214,6 +214,7 @@
         <item>Lavanta</item>
         <item>Material You</item>
         <item>Material You (İkincil)</item>
+        <item>Cinema Red</item>
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
@@ -250,6 +251,7 @@
         <item>Dracula</item>
         <item>Lavanta Rüyası</item>
         <item>Sessiz Mavi</item>
+        <item>Cinema Black</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>

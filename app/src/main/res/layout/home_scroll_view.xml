@@ -25,7 +25,7 @@
     <View
         android:id="@+id/title_shadow"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="420dp"
         android:layout_gravity="bottom"
         android:background="@drawable/background_shadow" />
 
@@ -54,8 +54,10 @@
             android:paddingHorizontal="30dp"
             android:paddingBottom="10dp"
             android:textColor="?attr/white"
-            android:textSize="17sp"
+            android:textSize="26sp"
             android:textStyle="bold"
+            android:shadowColor="#99000000"
+            android:shadowRadius="8"
             tools:text="The Perfect Run" />
         <!--<TextView
             android:paddingStart="30dp"
@@ -75,8 +77,8 @@
             android:gravity="center"
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
-            android:textColor="?attr/white"
-            android:textSize="14sp"
+            android:textColor="?attr/grayTextColor"
+            android:textSize="13sp"
             tools:text="Hello • World • Tags" />
     </LinearLayout>
 

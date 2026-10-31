@@ -192,6 +192,7 @@
         <item>Lavanda</item>
         <item>Material You</item>
         <item>Material You (Secondary)</item>
+        <item>Cinema Red</item>
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
@@ -229,6 +230,7 @@
         <item>Dracula</item>
         <item>Sueños De Lavanda</item>
         <item>Azul Silencioso</item>
+        <item>Cinema Black</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
