@@ -16,37 +16,60 @@
     <FrameLayout
         android:id="@+id/home_preview_viewpager_text"
         android:layout_width="match_parent"
-        android:layout_height="580dp">
+        android:layout_height="@dimen/home_hero_height">
 
+        <!-- Hero cards sit below the top bar -->
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/home_preview_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/home_top_bar_height"
+            android:orientation="horizontal" />
 
-        </androidx.viewpager2.widget.ViewPager2>
+        <include
+            layout="@layout/loading_hero_banner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/home_top_bar_height" />
 
-        <include layout="@layout/loading_hero_banner" />
-
+        <!-- Top bar: logo | search | extension switch | profile -->
         <LinearLayout
             android:id="@+id/home_padding"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/home_top_bar_height"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingHorizontal="0dp">
+            android:paddingHorizontal="12dp">
 
+            <ImageView
+                android:id="@+id/home_head_logo"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_cloudstream_monochrome"
+                app:tint="?attr/colorPrimary" />
+
+            <TextView
+                android:id="@+id/home_head_app_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/app_name"
+                android:textColor="?attr/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/home_search"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
                 android:editTextColor="@color/white"
                 android:gravity="center_vertical"
                 android:iconifiedByDefault="true"
-                android:nextFocusRight="@id/home_head_profile_padding"
+                android:nextFocusRight="@id/home_head_change_api"
                 android:padding="0dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
@@ -57,26 +80,50 @@
                 app:searchIcon="@drawable/search_icon"
                 tools:ignore="RtlSymmetry" />
 
+            <!-- Switches the extension shown on the home page -->
+            <TextView
+                android:id="@+id/home_head_change_api"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/home_pill_background"
+                android:drawablePadding="2dp"
+                android:ellipsize="end"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_select_ripple"
+                android:gravity="center_vertical"
+                android:maxWidth="160dp"
+                android:maxLines="1"
+                android:nextFocusLeft="@id/home_search"
+                android:nextFocusRight="@id/home_head_profile_padding"
+                android:paddingStart="14dp"
+                android:paddingEnd="8dp"
+                android:textColor="?attr/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
+                app:drawableTint="?attr/white"
+                tools:text="Extension" />
+
             <LinearLayout
                 android:id="@+id/home_head_profile_padding"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="@drawable/rounded_select_ripple"
                 android:gravity="center"
-                android:nextFocusLeft="@id/home_search"
+                android:nextFocusLeft="@id/home_head_change_api"
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/home_head_profile_card"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_gravity="center"
                     android:background="@color/transparent"
                     android:focusable="true"
-                    android:foreground="@drawable/outline_big_15_gray"
-                    app:cardCornerRadius="20dp">
+                    app:cardCornerRadius="6dp">
 
                     <ImageView
                         android:id="@+id/home_head_profile_pic"
@@ -89,43 +136,29 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!--
-                        <TextView
-                            android:visibility="gone"
-                            android:id="@+id/test_search"
-                            android:background="?android:attr/selectableItemBackgroundBorderless"
-                            android:layout_gravity="start"
-                            android:gravity="center"
-
-                            android:textSize="20dp"
-                            android:layout_margin="20dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/search"
-                            android:textColor="@color/white"
-                            app:drawableLeftCompat="@drawable/search_icon"
-                            app:tint="@color/white" />
-        -->
-
+        <!-- Hero buttons, drawn on top of the current card -->
         <LinearLayout
             android:id="@+id/home_preview_title_holder"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:layout_marginBottom="28dp"
             android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/home_preview_bookmark"
-                android:layout_width="70dp"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="25dp"
+                android:layout_marginEnd="12dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:text="@string/none"
                 android:textColor="?attr/white"
+                android:textSize="12sp"
                 app:drawableTint="?attr/white"
                 app:drawableTopCompat="@drawable/ic_baseline_add_24"
                 app:tint="?attr/white" />
@@ -135,23 +168,28 @@
                 style="@style/WhiteButton"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center"
+                android:minWidth="120dp"
                 android:text="@string/home_play"
+                app:cornerRadius="24dp"
                 app:icon="@drawable/ic_baseline_play_arrow_24" />
 
             <TextView
                 android:id="@+id/home_preview_info"
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="25dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/home_pill_background"
+                android:drawablePadding="6dp"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_select_ripple"
                 android:gravity="center"
+                android:paddingHorizontal="16dp"
                 android:text="@string/home_info"
                 android:textColor="?attr/white"
-                app:drawableTint="?attr/white"
-                app:drawableTopCompat="@drawable/ic_outline_info_24"
-                app:tint="?attr/white" />
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_outline_info_24"
+                app:drawableTint="?attr/white" />
 
         </LinearLayout>
 
@@ -161,9 +199,31 @@
         android:id="@+id/alternative_account_padding"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:gravity="end"
+        android:gravity="end|center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="0dp">
+
+        <!-- Extension switch when there is no hero banner -->
+        <TextView
+            android:id="@+id/alternate_home_head_change_api"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:background="@drawable/home_pill_background"
+            android:drawablePadding="2dp"
+            android:ellipsize="end"
+            android:focusable="true"
+            android:foreground="@drawable/rounded_select_ripple"
+            android:gravity="center_vertical"
+            android:maxWidth="160dp"
+            android:maxLines="1"
+            android:paddingStart="14dp"
+            android:paddingEnd="8dp"
+            android:textColor="?attr/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
+            app:drawableTint="?attr/white"
+            tools:text="Extension" />
 
         <LinearLayout
             android:id="@+id/alternate_home_head_profile_padding"

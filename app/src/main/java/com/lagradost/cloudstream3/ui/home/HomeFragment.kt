@@ -699,7 +699,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             homeMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             homeMasterRecycler.adapter = homeMasterAdapter
 
-            homeApiFab.isVisible = isLayout(PHONE)
+            // The extension switch lives in the home top bar instead
+            homeApiFab.isVisible = false
 
             homePreviewReloadProvider.setOnClickListener {
                 homeViewModel.loadAndCancel(

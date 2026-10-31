@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Translucent gray pill used for the hero "Info" and extension buttons -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#66808080" />
+    <corners android:radius="24dp" />
+</shape>

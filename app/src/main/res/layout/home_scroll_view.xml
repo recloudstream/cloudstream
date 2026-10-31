@@ -1,85 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- One hero card on the home page -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="?attr/primaryGrayBackground"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/home_scroll_preview"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        tools:src="@drawable/example_poster" />
-
-    <View
-        android:id="@+id/title_shadow_top"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_gravity="top"
-        android:alpha="1"
-        android:background="@drawable/background_shadow"
-        android:rotation="180"
-        android:visibility="visible" />
-
-    <View
-        android:id="@+id/title_shadow"
-        android:layout_width="match_parent"
-        android:layout_height="420dp"
-        android:layout_gravity="bottom"
-        android:background="@drawable/background_shadow" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="100dp"
-        android:orientation="vertical">
+        android:layout_marginHorizontal="@dimen/home_hero_margin"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="?attr/primaryGrayBackground"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="0dp"
+        app:strokeColor="#33FFFFFF"
+        app:strokeWidth="1dp">
 
         <ImageView
-            android:id="@+id/home_preview_logo"
-            android:layout_width="260dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:scaleType="fitCenter"
-            android:paddingBottom="10dp"
-            android:contentDescription="@null" />
+            android:id="@+id/home_scroll_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/example_poster" />
 
-        <TextView
-            android:id="@+id/home_scroll_preview_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            android:paddingHorizontal="30dp"
-            android:paddingBottom="10dp"
-            android:textColor="?attr/white"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:shadowColor="#99000000"
-            android:shadowRadius="8"
-            tools:text="The Perfect Run" />
-        <!--<TextView
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:id="@+id/home_season_tags"
+        <View
+            android:id="@+id/title_shadow_top"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_gravity="top"
+            android:alpha="0.6"
+            android:background="@drawable/background_shadow"
+            android:rotation="180"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/title_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="340dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/background_shadow" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            tools:text="5 seasons 50 episodes" />-->
-        <TextView
-            android:id="@+id/home_scroll_preview_tags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:textColor="?attr/grayTextColor"
-            android:textSize="13sp"
-            tools:text="Hello • World • Tags" />
-    </LinearLayout>
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="84dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp">
+
+            <ImageView
+                android:id="@+id/home_preview_logo"
+                android:layout_width="260dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@null"
+                android:paddingBottom="10dp"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/home_scroll_preview_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:paddingBottom="8dp"
+                android:shadowColor="#99000000"
+                android:shadowRadius="8"
+                android:textColor="?attr/white"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                tools:text="The Perfect Run" />
+
+            <TextView
+                android:id="@+id/home_scroll_preview_tags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textColor="?attr/grayTextColor"
+                android:textSize="13sp"
+                tools:text="Hello • World • Tags" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </FrameLayout>
