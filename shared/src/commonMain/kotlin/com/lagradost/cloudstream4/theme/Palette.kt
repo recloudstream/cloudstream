@@ -23,6 +23,7 @@ enum class CloudStreamPrimaryColor(val color: Color) {
     DANDELION_YELLOW(Color(0xFFF5BB00)),
     COOL_BLUE(Color(0xFF408CAC)),
     LAVENDER(Color(0xFF6F55AF)),
+    CINEMA_RED(Color(0xFFE50914)),
     DYNAMIC(Color(0xFF3D50FA)),
     DYNAMIC_TWO(Color(0xFF3D50FA)),
 }
@@ -81,4 +82,13 @@ internal object CloudStreamPalette {
     val SilentBlueText = Color(0xFFE0E1F3)
     val SilentBlueGrayText = Color(0xFF7B83B0)
     val SilentBlueIcon = Color(0xFF7B83B0)
+
+    // Cinema
+    val CinemaPrimaryGrayBg = Color(0xFF181818)
+    val CinemaBlackBg = Color(0xFF000000)
+    val CinemaIconGrayBg = Color(0xFF222222)
+    val CinemaBoxItemBg = Color(0xFF141414)
+    val CinemaText = Color(0xFFFFFFFF)
+    val CinemaGrayText = Color(0xFFB3B3B3)
+    val CinemaRed = Color(0xFFE50914)
 }

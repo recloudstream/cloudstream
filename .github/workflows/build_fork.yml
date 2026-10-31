@@ -1,0 +1,49 @@
+name: Build APK (fork)
+
+# Builds an installable debug APK for this fork.
+# Runs on every push to a branch other than master, or manually from the Actions tab.
+on:
+  push:
+    branches-ignore: [ master ]
+    paths-ignore:
+      - '*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-fork-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v5
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v5
+
+    # Use the same debug key on every build so new APKs install over old ones
+    - name: Install debug keystore
+      run: |
+        mkdir -p ~/.android
+        cp .github/debug.keystore ~/.android/debug.keystore
+
+    - name: Build APK
+      run: |
+        chmod +x gradlew
+        ./gradlew assemblePrereleaseDebug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v7
+      with:
+        name: cloudstream-apk
+        path: "app/build/outputs/apk/prerelease/debug/*.apk"

@@ -63,6 +63,11 @@ fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClie
                 6 -> addQuad9Dns()
                 7 -> addDnsSbDns()
                 8 -> addCanadianShieldDns()
+                9 -> settingsManager.getString(
+                    context.getString(R.string.custom_dns_url_key), null
+                )?.takeIf { it.isNotBlank() }?.let { url ->
+                    safe { addCustomDns(url) }
+                }
             }
         }
         // Needs to be build as otherwise the other builders will change this object

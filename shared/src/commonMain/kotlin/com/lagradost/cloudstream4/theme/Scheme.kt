@@ -160,3 +160,16 @@ internal fun silentBlueScheme() = CloudStreamColorScheme(
     ongoing = CloudStreamPalette.Ongoing,
     isLight = false,
 )
+
+internal fun cinemaScheme() = CloudStreamColorScheme(
+    background = CloudStreamPalette.CinemaBlackBg,
+    surfaceVariant = CloudStreamPalette.CinemaPrimaryGrayBg,
+    surface = CloudStreamPalette.CinemaIconGrayBg,
+    surfaceContainer = CloudStreamPalette.CinemaBoxItemBg,
+    onBackground = CloudStreamPalette.CinemaText,
+    onSurfaceVariant = CloudStreamPalette.CinemaGrayText,
+    icon = CloudStreamPalette.CinemaGrayText,
+    primary = CloudStreamPalette.CinemaRed,
+    ongoing = CloudStreamPalette.Ongoing,
+    isLight = false,
+)

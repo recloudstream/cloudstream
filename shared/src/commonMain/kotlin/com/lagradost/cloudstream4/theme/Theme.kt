@@ -35,6 +35,9 @@ enum class CloudStreamThemeMode {
     /** "SilentBlue" */
     SilentBlue,
 
+    /** "Cinema" pure black with dark gray cards */
+    Cinema,
+
     /** "System" resolved on each platform via [isSystemInDarkTheme] */
     FollowSystem,
 
@@ -60,6 +63,7 @@ fun modeToTheme(mode : CloudStreamThemeMode, primaryColor: CloudStreamPrimaryCol
             CloudStreamThemeMode.Dracula -> draculaScheme()
             CloudStreamThemeMode.Lavender -> lavenderScheme()
             CloudStreamThemeMode.SilentBlue -> silentBlueScheme()
+            CloudStreamThemeMode.Cinema -> cinemaScheme()
             CloudStreamThemeMode.FollowSystem -> if (systemDark) darkScheme() else lightScheme()
             CloudStreamThemeMode.Dynamic -> dynamicTheme
         }

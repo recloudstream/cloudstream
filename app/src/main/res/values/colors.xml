@@ -99,6 +99,15 @@
     <!--Other Colors -->
     <color name="colorPrimaryBlue">#5664B7</color>
     <color name="colorPrimaryRed">#D50000</color>
+    <color name="colorPrimaryCinemaRed">#E50914</color>
+
+    <!-- Cinema theme: pure black with dark gray cards -->
+    <color name="CinemaPrimaryGrayBackground">#181818</color>
+    <color name="CinemaBitDarkerGrayBackground">#000000</color>
+    <color name="CinemaGrayBackground">#222222</color>
+    <color name="CinemaItemBackground">#141414</color>
+    <color name="CinemaTextColor">#FFFFFF</color>
+    <color name="CinemaGrayTextColor">#B3B3B3</color>
     <color name="colorPrimaryPurple">#6200EA</color> <!-- Burple-->
     <color name="colorPrimaryGreen">#00BFA5</color>
     <color name="colorPrimaryGreenApple">#48E484</color>
