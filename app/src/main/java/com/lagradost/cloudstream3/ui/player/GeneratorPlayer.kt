@@ -34,6 +34,7 @@ import androidx.core.text.toSpanned
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
@@ -68,7 +69,6 @@ import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
@@ -138,7 +138,6 @@ import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.lang.ref.WeakReference
 import java.util.Calendar
-import kotlin.coroutines.cancellation.CancellationException
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
@@ -241,6 +240,9 @@ class GeneratorPlayer : FullScreenPlayer() {
         super.playerStatusChanged()
         if (player.getIsPlaying()) {
             viewModel.forceClearCache = false
+        } else if (currentPlayerStatus == CSPlayerLoading.IsPaused) {
+            // Never seek away while the user has paused the video
+            cancelAutoSkipCountdown()
         }
     }
 
@@ -2056,11 +2058,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    override fun onDestroyView() {
-        clearSkipChapterAutoClick()
-        super.onDestroyView()
-    }
-
     /**
      * This is used instead of layout-television to follow the
      * settings and some TV devices are not classified as TV
@@ -2071,9 +2068,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     var skipAnimator: ValueAnimator? = null
     var skipIndex = 0
-    private var skipAutoClickJob: Job? = null
+    private var autoSkipJob: Job? = null
 
-    private fun isAutoSkipPopupEnabled(): Boolean {
+    private fun isAutoSkipEnabled(): Boolean {
         val ctx = context ?: return false
         return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
             ctx.getString(R.string.auto_skip_popup_key),
@@ -2081,52 +2078,51 @@ class GeneratorPlayer : FullScreenPlayer() {
         )
     }
 
-    private fun updateSkipChapterButtonText(
-        timestamp: VideoSkipStamp,
-        secondsRemaining: Int? = null
-    ) {
-        val text = if (isAutoSkipPopupEnabled() && secondsRemaining != null) {
-            txt(R.string.skip_chapter_countdown_format, timestamp.uiText, secondsRemaining)
-        } else {
-            timestamp.uiText
-        }
-
-        playerBinding?.skipChapterButton?.setText(text)
+    private fun cancelAutoSkipCountdown() {
+        autoSkipJob?.cancel()
+        autoSkipJob = null
     }
 
-    private fun clearSkipChapterAutoClick() {
-        skipAutoClickJob?.cancel()
-        skipAutoClickJob = null
-    }
+    /**
+     * Counts down on the skip button and skips the chapter once it reaches
+     * zero. The countdown is cancelled by any user interaction (see
+     * [onPlayerInteraction]) or when the player is paused, so the user
+     * always keeps manual control.
+     */
+    private fun startAutoSkipCountdown(timestamp: VideoSkipStamp, currentIndex: Int) {
+        cancelAutoSkipCountdown()
+        if (!isAutoSkipEnabled()) return
 
-    private fun startSkipChapterAutoClick(timestamp: VideoSkipStamp, currentIndex: Int) {
-        clearSkipChapterAutoClick()
-        if (!isAutoSkipPopupEnabled()) {
-            updateSkipChapterButtonText(timestamp)
-            return
-        }
-
-        skipAutoClickJob = viewModel.viewModelScope.launchSafe  {
+        autoSkipJob = viewLifecycleOwner.lifecycleScope.launch {
             try {
                 for (secondsRemaining in SKIP_CHAPTER_AUTO_CLICK_COUNTDOWN_SECONDS downTo 1) {
-                    if (!isActive) return@launchSafe
-                    if (skipIndex != currentIndex) return@launchSafe
+                    if (skipIndex != currentIndex) return@launch
 
-                    updateSkipChapterButtonText(timestamp, secondsRemaining)
+                    playerBinding?.skipChapterButton?.setText(
+                        txt(
+                            R.string.skip_chapter_countdown_format,
+                            timestamp.uiText,
+                            secondsRemaining
+                        )
+                    )
                     delay(1000)
                 }
 
-                if (isActive && skipIndex == currentIndex) {
+                if (skipIndex == currentIndex) {
                     player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
                 }
-            } catch (_: CancellationException) {
-                // If we get canceled, do nothing.
             } finally {
-                if (isActive) {
-                    clearSkipChapterAutoClick()
+                // Restore the plain label no matter how the countdown ended
+                // (fired, cancelled or replaced by a new timestamp)
+                if (skipIndex == currentIndex) {
+                    playerBinding?.skipChapterButton?.setText(timestamp.uiText)
                 }
             }
         }
+    }
+
+    override fun onPlayerInteraction() {
+        cancelAutoSkipCountdown()
     }
 
     private fun displayTimeStamp(show: Boolean) {
@@ -2162,6 +2158,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     if (!show) {
                         playerBinding?.skipChapterButton?.isVisible = false
                         if (!isShowing) {
+                            // Automatically return focus to play pause
                             playerBinding?.playerPausePlay?.requestFocus()
                         }
                     }
@@ -2179,7 +2176,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun onTimestampSkipped(timestamp: VideoSkipStamp) {
-        clearSkipChapterAutoClick()
+        cancelAutoSkipCountdown()
         displayTimeStamp(false)
     }
 
@@ -2192,9 +2189,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 if (skipIndex == currentIndex)
                     displayTimeStamp(false)
             }, 6000)
-            startSkipChapterAutoClick(timestamp, currentIndex)
+            startAutoSkipCountdown(timestamp, currentIndex)
         } else {
-            clearSkipChapterAutoClick()
+            cancelAutoSkipCountdown()
             displayTimeStamp(false)
         }
     }

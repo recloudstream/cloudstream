@@ -1093,11 +1093,20 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
     override fun isUIShowing(): Boolean = isShowing
 
+    /**
+     * Called whenever the user interacts with the player while it is active
+     * (tap, swipe or key press). Lets subclasses abort automatic actions
+     * such as the auto-skip countdown.
+     */
+    protected open fun onPlayerInteraction() {}
+
     override fun onSingleTap() {
+        onPlayerInteraction()
         onClickChange()
     }
 
     override fun onTouchDown() {
+        onPlayerInteraction()
         if (isShowingEpisodeOverlay) toggleEpisodesOverlay(show = false)
     }
 
@@ -1294,6 +1303,10 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     private fun handleKeyEvent(event: KeyEvent, hasNavigated: Boolean): Boolean {
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            onPlayerInteraction()
+        }
+
         if (hasNavigated) {
             autoHide()
             return false
