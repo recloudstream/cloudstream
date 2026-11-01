@@ -762,4 +762,5 @@
     <string name="edit_profile_image_url">URL</string>
     <string name="edit_profile_image_picker">이미지 선택기</string>
     <string name="edit_profile_image_default">기본 이미지</string>
+    <string name="installed_plugins">설치한 플러그인</string>
 </resources>

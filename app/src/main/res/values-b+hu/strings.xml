@@ -472,7 +472,7 @@
     <string name="skip_setup">Beállítás kihagyása</string>
     <string name="quality_hq">HQ</string>
     <string name="plugins_downloaded" formatted="true">%d letöltve</string>
-    <string name="start">Start</string>
+    <string name="start">Kezdés</string>
     <string name="emulator_layout">Emulátor elrendezés</string>
     <string name="add_sync">Nyomkövetés hozzáadása</string>
     <string name="phone_layout">Telefon elrendezés</string>
@@ -634,4 +634,9 @@
     <string name="sort_release_date_new">Kiadás dátuma (újabbaktól régebbi felé)</string>
     <string name="sort_release_date_old">Kiadás dátuma (régitől újig)</string>
     <string name="hide_player_control_names">A lejátszó vezérlői neveinek elrejtése</string>
+    <string name="log_cat">Naplómacska 🐈</string>
+    <string name="start_paused_settings">A videók lejátszása szüneteltetve</string>
+    <string name="start_paused_settings_des">Csökkentse a források kiválasztásával járó stresszt</string>
+    <string name="show_player_metadata_overlay">A lejátszó metaadatainak megjelenítése</string>
+    <string name="video_singular">Videó</string>
 </resources>

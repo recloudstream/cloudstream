@@ -263,7 +263,7 @@
     <string name="pref_category_gestures">Gestos</string>
     <string name="provider_lang_settings">Idiomas de la extensión</string>
     <string name="player_loaded_subtitles" formatted="true">%s Cargado</string>
-    <string name="subtitles_remove_bloat">Eliminar excedente (bloat) de los subtítulos</string>
+    <string name="subtitles_remove_bloat">Retirar publicidad de los subtítulos</string>
     <string name="skip_setup">Omitir configuración</string>
     <string name="preferred_media_subtext">Qué quieres ver</string>
     <string name="uppercase_all_subtitles">Poner en MAYÚSCULAS todos los subtítulos</string>
@@ -392,8 +392,8 @@
     <string name="subtitle_offset">Sincronizar subtítulos</string>
     <string name="subtitle_offset_title">Retraso de subtítulos</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -437,7 +437,7 @@
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="tracks">Pistas</string>
     <string name="audio_tracks">Pistas de audio</string>
-    <string name="video_tracks">Pistas de video</string>
+    <string name="video_tracks">Pistas de vídeo</string>
     <string name="safe_mode_title">Modo seguro ACTIVADO</string>
     <string name="safe_mode_crash_info">Ver información de fallos</string>
     <string name="extension_rating" formatted="true">Puntaje:%s</string>
@@ -747,4 +747,26 @@
         <item quantity="many">%d enlaces ocultos</item>
         <item quantity="other">%d enlaces ocultos</item>
     </plurals>
+    <string name="subs_edge">Canto</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Comenzar vídeo pausado</string>
+    <string name="start_paused_settings_des">Reduzca el estrés al seleccionar fuentes</string>
+    <string name="compressor">Compresor</string>
+    <string name="compressor_setting">Compresor de Rango Dinámico</string>
+    <string name="compressor_setting_summary">Muestra los controles del compresión en el productor (ayuda balance de sonido fuerte/silencioso)</string>
+    <string name="compressor_on">Encender</string>
+    <string name="compressor_on_format">Encender %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Apagar</string>
+    <string name="compressor_preset_light">Claro</string>
+    <string name="compressor_preset_dialog">Impulso al diálogo</string>
+    <string name="compressor_preset_heavy">Denso</string>
+    <string name="compressor_threshold_label">Umbral: %d dB</string>
+    <string name="compressor_makeup_hint">Aumenta el volumen general en +%d dB</string>
+    <string name="compressor_threshold_hint">Sonidos más fuertes que %d dB son rechazados</string>
+    <string name="background">Fondo</string>
+    <string name="edit_profile_image_url">URL</string>
+    <string name="edit_profile_image_picker">Selector de imágenes</string>
+    <string name="edit_profile_image_default">Imágenes por defecto</string>
+    <string name="installed_plugins">Complementos instalados</string>
+    <string name="compressor_makeup_label">Ajuste obtenido: +%d dB</string>
 </resources>

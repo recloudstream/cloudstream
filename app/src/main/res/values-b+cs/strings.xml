@@ -786,4 +786,5 @@
     <string name="edit_profile_image_url">Adresa</string>
     <string name="edit_profile_image_picker">Výběr obrázků</string>
     <string name="edit_profile_image_default">Výchozí obrázky</string>
+    <string name="installed_plugins">Nainstalované doplňky</string>
 </resources>

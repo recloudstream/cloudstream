@@ -776,4 +776,5 @@
     <string name="edit_profile_image_url">Url</string>
     <string name="edit_profile_image_picker">图片选择器</string>
     <string name="edit_profile_image_default">默认图片</string>
+    <string name="installed_plugins">已安装的插件</string>
 </resources>
