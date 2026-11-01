@@ -114,6 +114,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.SnackbarHelper
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
@@ -148,7 +149,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         const val NOTIFICATION_ID = 2326
         const val CHANNEL_ID = 7340
         const val STOP_ACTION = "stopcs3"
-        private const val SKIP_CHAPTER_AUTO_CLICK_COUNTDOWN_SECONDS = 5
+        private const val DEFAULT_AUTO_SKIP_COUNTDOWN_SECONDS = 5
+        private const val AUTO_SKIP_UNDO_DURATION_MS = 4000
 
         private val generators = ConcurrentHashMap<String, VideoGenerator<*>>()
         fun newInstance(
@@ -2070,17 +2072,62 @@ class GeneratorPlayer : FullScreenPlayer() {
     var skipIndex = 0
     private var autoSkipJob: Job? = null
 
-    private fun isAutoSkipEnabled(): Boolean {
+    /** Timestamp the user rolled back with undo, never auto-skip it again */
+    private var undoneTimestamp: VideoSkipStamp? = null
+
+    private fun isAutoSkipEnabled(timestamp: VideoSkipStamp): Boolean {
         val ctx = context ?: return false
-        return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
-            ctx.getString(R.string.auto_skip_popup_key),
-            false
+        val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
+        if (!prefs.getBoolean(ctx.getString(R.string.auto_skip_popup_key), false)) {
+            return false
+        }
+
+        // The user can exclude individual skip types from auto skipping
+        val disabledTypes = prefs.getStringSet(
+            ctx.getString(R.string.auto_skip_disabled_types_key),
+            emptySet()
+        ).orEmpty()
+
+        return timestamp.timestamp.type.name !in disabledTypes
+    }
+
+    private fun getAutoSkipCountdownSeconds(): Int {
+        val ctx = context ?: return DEFAULT_AUTO_SKIP_COUNTDOWN_SECONDS
+        return PreferenceManager.getDefaultSharedPreferences(ctx).getInt(
+            ctx.getString(R.string.auto_skip_countdown_key),
+            DEFAULT_AUTO_SKIP_COUNTDOWN_SECONDS
         )
     }
 
     private fun cancelAutoSkipCountdown() {
         autoSkipJob?.cancel()
         autoSkipJob = null
+    }
+
+    /**
+     * Skips the current chapter and offers a short undo window, since skip
+     * timestamps are not always accurate.
+     */
+    private fun autoSkipChapter(timestamp: VideoSkipStamp) {
+        // Skipping to the next episode cannot be undone with a simple seek
+        if (!timestamp.skipToNextEpisode) {
+            val skippedName =
+                txt(timestamp.timestamp.label ?: getString(timestamp.timestamp.type.res))
+
+            player.getPosition()?.let { position ->
+                SnackbarHelper.showSnackbar(
+                    activity,
+                    txt(R.string.skipped_type_format, skippedName),
+                    AUTO_SKIP_UNDO_DURATION_MS,
+                    txt(R.string.undo)
+                ) {
+                    undoneTimestamp = timestamp
+                    player.seekTo(position)
+                }
+            }
+        }
+
+        player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
     }
 
     /**
@@ -2091,11 +2138,20 @@ class GeneratorPlayer : FullScreenPlayer() {
      */
     private fun startAutoSkipCountdown(timestamp: VideoSkipStamp, currentIndex: Int) {
         cancelAutoSkipCountdown()
-        if (!isAutoSkipEnabled()) return
+        if (!isAutoSkipEnabled(timestamp)) return
+        if (timestamp == undoneTimestamp) return
+        undoneTimestamp = null
+
+        val countdownSeconds = getAutoSkipCountdownSeconds()
+        if (countdownSeconds <= 0) {
+            // Skip instantly when the countdown is set to zero
+            autoSkipChapter(timestamp)
+            return
+        }
 
         autoSkipJob = viewLifecycleOwner.lifecycleScope.launch {
             try {
-                for (secondsRemaining in SKIP_CHAPTER_AUTO_CLICK_COUNTDOWN_SECONDS downTo 1) {
+                for (secondsRemaining in countdownSeconds downTo 1) {
                     if (skipIndex != currentIndex) return@launch
 
                     playerBinding?.skipChapterButton?.setText(
@@ -2109,7 +2165,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 if (skipIndex == currentIndex) {
-                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+                    autoSkipChapter(timestamp)
                 }
             } finally {
                 // Restore the plain label no matter how the countdown ended

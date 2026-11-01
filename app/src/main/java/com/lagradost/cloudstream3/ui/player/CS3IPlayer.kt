@@ -670,6 +670,7 @@ class CS3IPlayer : IPlayer {
 
     companion object {
         private const val CRONET_TIMEOUT_MS = 15_000
+        private const val SKIP_CHAPTER_END_MARGIN_MS = 500L
 
         /**
          * Single shared engine, to minimize the overhead of maintaining many as:
@@ -1025,7 +1026,9 @@ class CS3IPlayer : IPlayer {
                             if (lastTimeStamp.skipToNextEpisode) {
                                 handleEvent(CSPlayerEvent.NextEpisode, source)
                             } else {
-                                seekTo(lastTimeStamp.timestamp.endMs + 1L)
+                                // A small margin past the end so the last frames
+                                // of the skipped section are not shown
+                                seekTo(lastTimeStamp.timestamp.endMs + SKIP_CHAPTER_END_MARGIN_MS)
                             }
                             event(TimestampSkippedEvent(timestamp = lastTimeStamp, source = source))
                         }
