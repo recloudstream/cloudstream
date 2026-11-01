@@ -70,6 +70,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.seconds
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_ALL
@@ -802,12 +803,38 @@ class ResultViewModel2 : ViewModel() {
             if (currentStatus != status) {
                 MainActivity.bookmarksUpdatedEvent(true)
                 MainActivity.reloadLibraryEvent(true)
+                syncWatchStatus(response.syncData, status)
             }
 
             _watchStatus.postValue(status)
 
             statusChangedCallback?.invoke(true)
         }
+    }
+
+    /**
+     * Mirrors a bookmark status change to every logged in sync account (AniList, MAL, ...)
+     * that has an id for this title. The TV layout has no sync controls of its own,
+     * so this is the only way to add titles to those lists there.
+     */
+    private fun syncWatchStatus(syncData: Map<String, String>?, status: WatchType) = ioSafe {
+        if (syncData.isNullOrEmpty()) return@ioSafe
+        // WatchType.NONE and SyncWatchType.NONE have different internal ids
+        val syncStatus = if (status == WatchType.NONE) SyncWatchType.NONE
+        else SyncWatchType.fromInternalId(status.internalId)
+
+        val results = AccountManager.syncApis.toList().amap { repo ->
+            val id = syncData[repo.idPrefix] ?: return@amap false
+            if (repo.authUser() == null) return@amap false
+            val newStatus = repo.status(id).getOrNull()?.apply { this.status = syncStatus }
+                ?: SyncAPI.SyncStatus(status = syncStatus, score = null, watchedEpisodes = null)
+            val result = repo.updateStatus(id, newStatus)
+            Log.i(TAG, "syncWatchStatus ${repo.name} $id => $syncStatus: $result")
+            result.getOrNull() == true
+        }
+        // The library reload fired by the bookmark change has most likely already fetched
+        // the remote list before this update landed, so reload it again
+        if (results.any { it }) MainActivity.reloadLibraryEvent(true)
     }
 
     private fun startChromecast(
