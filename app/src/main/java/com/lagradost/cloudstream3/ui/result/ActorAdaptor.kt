@@ -5,6 +5,9 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.OvershootInterpolator
+import android.view.animation.ScaleAnimation
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
@@ -44,6 +47,24 @@ class ActorAdaptor(
                 clearImage(binding.actorImage)
             }
         }
+    }
+
+    override fun onUpdateContent(holder: ViewHolderState<Any>, item: ActorData, position: Int) {
+        when (val binding = holder.view) {
+            is CastItemBinding -> {
+                val anim: Animation = ScaleAnimation(
+                    0.8f, 1f,
+                    0.8f, 1f,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f
+                )
+                anim.fillAfter = true
+                anim.duration = 200
+                anim.interpolator = OvershootInterpolator()
+                binding.voiceActorImageHolder2.startAnimation(anim)
+            }
+        }
+        super.onUpdateContent(holder, item, position)
     }
 
     override fun onBindContent(holder: ViewHolderState<Any>, item: ActorData, position: Int) {

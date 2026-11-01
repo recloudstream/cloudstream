@@ -21,6 +21,8 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UiImage
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
@@ -34,33 +36,32 @@ enum class VideoWatchState {
     Watched
 }
 
+@Serializable
 data class ResultEpisode(
-    val headerName: String,
-    val name: String?,
-    val poster: String?,
-    val episode: Int,
-    val seasonIndex: Int?,  // this is the "season" index used season names
-    val season: Int?, // this is the display
-    val data: String,
-    val apiName: String,
-    val id: Int,
-    val index: Int,
-    val position: Long, // time in MS
-    val duration: Long, // duration in MS
-    val score: Score?,
-    val description: String?,
-    val isFiller: Boolean?,
-    val tvType: TvType,
-    val parentId: Int,
-    /**
-     * Conveys if the episode itself is marked as watched
-     **/
-    val videoWatchState: VideoWatchState,
-    /** Sum of all previous season episode counts + episode */
-    val totalEpisodeIndex: Int? = null,
-    val airDate: Long? = null,
-    val runTime: Int? = null,
-    val seasonData: SeasonData? = null,
+    @SerialName("headerName") val headerName: String,
+    @SerialName("name") val name: String?,
+    @SerialName("poster") val poster: String?,
+    @SerialName("episode") val episode: Int,
+    @SerialName("seasonIndex") val seasonIndex: Int?, // this is the "season" index used season names
+    @SerialName("season") val season: Int?, // this is the display
+    @SerialName("data") val data: String,
+    @SerialName("apiName") val apiName: String,
+    @SerialName("id") val id: Int,
+    @SerialName("index") val index: Int,
+    @SerialName("position") val position: Long, // time in MS
+    @SerialName("duration") val duration: Long, // duration in MS
+    @SerialName("score") val score: Score?,
+    @SerialName("description") val description: String?,
+    @SerialName("isFiller") val isFiller: Boolean?,
+    @SerialName("tvType") val tvType: TvType,
+    @SerialName("parentId") val parentId: Int,
+    /** Conveys if the episode itself is marked as watched. */
+    @SerialName("videoWatchState") val videoWatchState: VideoWatchState,
+    /** Sum of all previous season episode counts + episode. */
+    @SerialName("totalEpisodeIndex") val totalEpisodeIndex: Int? = null,
+    @SerialName("airDate") val airDate: Long? = null,
+    @SerialName("runTime") val runTime: Int? = null,
+    @SerialName("seasonData") val seasonData: SeasonData? = null,
 )
 
 fun ResultEpisode.getRealPosition(): Long {

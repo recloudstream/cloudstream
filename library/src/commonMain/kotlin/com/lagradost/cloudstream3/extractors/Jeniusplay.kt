@@ -9,6 +9,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getAndUnpack
 import com.lagradost.cloudstream3.utils.getPacked
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 open class Jeniusplay : ExtractorApi() {
     override val name = "Jeniusplay"
@@ -19,16 +21,15 @@ open class Jeniusplay : ExtractorApi() {
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
+        callback: (ExtractorLink) -> Unit,
     ) {
         val document = app.get(url, referer = "$mainUrl/").document
         val hash = url.split("/").last().substringAfter("data=")
-
         val m3uLink = app.post(
             url = "$mainUrl/player/index.php?data=$hash&do=getVideo",
             data = mapOf("hash" to hash, "r" to "$referer"),
             referer = url,
-            headers = mapOf("X-Requested-With" to "XMLHttpRequest")
+            headers = mapOf("X-Requested-With" to "XMLHttpRequest"),
         ).parsed<ResponseSource>().videoSource
 
         M3u8Helper.generateM3u8(
@@ -36,7 +37,6 @@ open class Jeniusplay : ExtractorApi() {
             m3uLink,
             url,
         ).forEach(callback)
-
         document.select("script").map { script ->
             if (getPacked(script.data()) != null) {
                 val unpacked = getAndUnpack(script.data())
@@ -45,9 +45,10 @@ open class Jeniusplay : ExtractorApi() {
         }
     }
 
+    @Serializable
     data class ResponseSource(
-        @JsonProperty("hls") val hls: Boolean,
-        @JsonProperty("videoSource") val videoSource: String,
-        @JsonProperty("securedLink") val securedLink: String?,
+        @JsonProperty("hls") @SerialName("hls") val hls: Boolean,
+        @JsonProperty("videoSource") @SerialName("videoSource") val videoSource: String,
+        @JsonProperty("securedLink") @SerialName("securedLink") val securedLink: String?,
     )
 }

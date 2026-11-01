@@ -353,6 +353,22 @@
                     android:layout_marginEnd="32dp"
                     android:orientation="vertical">
 
+                    <TextClock
+                            android:id="@+id/player_video_clock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:maxWidth="600dp"
+                            android:textAlignment="viewEnd"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:visibility="visible"
+                            android:format12Hour="hh:mm a"
+                            android:format24Hour="HH:mm"
+                            android:fontFamily="@font/google_sans"
+                            android:textStyle="bold" />
+
                     <LinearLayout
                         android:id="@+id/player_video_title_holder"
                         android:layout_width="wrap_content"
@@ -1105,10 +1121,21 @@
                             android:id="@+id/player_tracks_btt"
                             style="@style/VideoButtonTV"
                             android:nextFocusLeft="@id/player_sources_btt"
-                            android:nextFocusRight="@id/player_skip_op"
+                            android:nextFocusRight="@id/player_compressor_btt"
                             android:nextFocusUp="@id/player_pause_play"
+                            android:nextFocusDown="@id/player_compressor_btt"
                             android:text="@string/tracks"
                             app:icon="@drawable/ic_baseline_equalizer_24" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/player_compressor_btt"
+                            style="@style/VideoButtonTV"
+                            android:nextFocusLeft="@id/player_tracks_btt"
+                            android:nextFocusRight="@id/player_skip_op"
+                            android:nextFocusUp="@id/player_pause_play"
+                            android:nextFocusDown="@id/player_skip_op"
+                            android:text="@string/compressor"
+                            app:icon="@drawable/ic_compressor_24" />
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
@@ -1117,6 +1144,8 @@
 
     <FrameLayout
         android:id="@+id/subtitle_holder"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

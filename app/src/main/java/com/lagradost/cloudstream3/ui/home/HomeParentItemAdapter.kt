@@ -159,7 +159,7 @@ open class ParentItemAdapter(
             })
 
             //(recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
-            if (isLayout(PHONE)) {
+            if (isLayout(PHONE or EMULATOR)) {
                 homeChildMoreInfo.setOnClickListener {
                     moreInfoClickCallback.invoke(item)
                 }

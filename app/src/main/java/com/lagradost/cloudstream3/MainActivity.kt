@@ -171,6 +171,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -178,6 +179,8 @@ import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream4.compose.CloudStreamThemeAppSettings
+import com.lagradost.cloudstream4.theme.CloudStreamTheme
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -1214,7 +1217,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
         safe {
             val appVer = BuildConfig.VERSION_NAME
-            val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
+            val lastAppAutoBackup: String = getKey<String>("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
                 if (lastAppAutoBackup.isEmpty()) return@safe
@@ -1296,6 +1299,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 padRight = false,
                 padTop = false
             )
+
+            composeView.apply {
+                setContent {
+                    CloudStreamThemeAppSettings {
+                        MainActivityScreen.Content()
+                    }
+                }
+            }
         }
 
         // overscan
@@ -1368,7 +1379,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     }
 
                     //Automatically download not existing plugins, using mode specified.
-                    val autoDownloadPlugin = AutoDownloadMode.getEnum(
+                    /*val autoDownloadPlugin = AutoDownloadMode.getEnum(
                         settingsManager.getInt(
                             getString(R.string.auto_download_plugins_key),
                             0
@@ -1379,7 +1390,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             this@MainActivity,
                             autoDownloadPlugin
                         )
-                    }
+                    }*/
                 }
 
                 ioSafe {
@@ -1428,8 +1439,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
                     else -> {
                         resultviewPreviewBookmark.isEnabled = false
-                        resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
-                        resultviewPreviewBookmark.setText(R.string.loading)
+                        resultviewPreviewBookmark.showProgress()
+                        //resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
+                        //resultviewPreviewBookmark.setText(R.string.loading)
                     }
                 }
             }
@@ -1977,9 +1989,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         handleAppIntent(intent)
 
-        ioSafe {
-            runAutoUpdate()
-        }
+        //ioSafe {
+        //    runAutoUpdate()
+        //}
 
         FcastManager().init(this, false)
 
@@ -2016,7 +2028,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
 
         try {
-            if (getKey(HAS_DONE_SETUP_KEY, false) != true) {
+            if (getKey<Boolean>(HAS_DONE_SETUP_KEY, false) != true) {
                 navController.navigate(R.id.navigation_setup_language)
                 // If no plugins bring up extensions screen
             } else if (PluginManager.getPluginsOnline().isEmpty()

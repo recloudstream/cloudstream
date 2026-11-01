@@ -352,8 +352,8 @@
     <string name="home_random">随机</string>
     <string name="coming_soon">即将到来…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -655,7 +655,7 @@
     <string name="sort_button_rating">得分 %s</string>
     <string name="sort_button_date">日期 %s</string>
     <string name="update_plugins">更新插件</string>
-    <string name="plugins_updated_manually">成功更新了 %d 个插件！</string>
+    <string name="plugins_updated_manually">成功更新了 %d 个插件</string>
     <string name="no_plugins_updated_manually">没有插件被更新。</string>
     <string name="update_plugins_manually">手动更新插件</string>
     <string name="sort_episodes_number_asc">集数（升序）</string>
@@ -747,4 +747,33 @@
     <string name="video_singular">视频</string>
     <string name="skip_type_preview">预览</string>
     <string name="player_is_live">播放中</string>
+    <string name="tv_layout_clock_settings">显示实时时钟</string>
+    <string name="tv_layout_clock_settings_des">在屏幕顶部显示实时时钟。应用于主页和播放器</string>
+    <string name="profile_settings">配置文件设置</string>
+    <string name="profile_hide_negative_sources">隐藏负优先级的来源</string>
+    <string name="profile_hide_error_sources">隐藏有错误的来源</string>
+    <plurals name="links_hidden">
+        <item quantity="other">%d 条隐藏链接</item>
+    </plurals>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">开始暂停的视频</string>
+    <string name="start_paused_settings_des">降低选择源时的压力</string>
+    <string name="subs_edge">边缘</string>
+    <string name="background">后台</string>
+    <string name="compressor">压缩器</string>
+    <string name="compressor_setting">动态范围压缩器</string>
+    <string name="compressor_setting_summary">在播放器中显示压缩器控件（帮助平衡响亮/安静声音）</string>
+    <string name="compressor_on">开</string>
+    <string name="compressor_on_format">开 · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">关</string>
+    <string name="compressor_preset_light">轻度</string>
+    <string name="compressor_preset_dialog">对话增强</string>
+    <string name="compressor_preset_heavy">重度</string>
+    <string name="compressor_threshold_label">阈值：%d dB</string>
+    <string name="compressor_makeup_label">增益补偿：+%d dB</string>
+    <string name="compressor_threshold_hint">会降低比 %d dB 响的声音的音量</string>
+    <string name="compressor_makeup_hint">将总体音量调高 %d dB</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">图片选择器</string>
+    <string name="edit_profile_image_default">默认图片</string>
 </resources>

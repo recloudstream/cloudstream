@@ -88,7 +88,6 @@ class MyVidPlay : DoodLaExtractor() {
     override var mainUrl = "https://myvidplay.com"
 }
 
-@Prerelease
 class Playmogo : DoodLaExtractor() {
     override var mainUrl = "https://playmogo.com"
 }
@@ -112,7 +111,7 @@ open class DoodLaExtractor : ExtractorApi() {
         val response0 = req.text
         val md5 = host + (Regex("/pass_md5/[^']*").find(response0)?.value ?: return)
         val trueUrl = app.get(md5, referer = req.url).text + createHashTable() + "?token=" + md5.substringAfterLast("/")
-        val quality = Regex("\\d{3,4}p")
+        val quality = Regex("\\d{3,4}[pP]")
             .find(response0.substringAfter("<title>").substringBefore("</title>"))
             ?.groupValues
             ?.getOrNull(0)

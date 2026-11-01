@@ -46,7 +46,9 @@ import androidx.media3.exoplayer.DecoderCounters
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.DefaultLivePlaybackSpeedControl
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
 import androidx.media3.exoplayer.Renderer.STATE_STARTED
@@ -108,6 +110,7 @@ import com.lagradost.cloudstream3.utils.PLAYREADY_DRM_UUID
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.WIDEVINE_DRM_UUID
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
+import com.lagradost.cloudstream4.AppSettings
 import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
@@ -160,6 +163,14 @@ class CS3IPlayer : IPlayer {
 
     private var ignoreSSL: Boolean = true
     private var playBackSpeed: Float = 1.0f
+
+    /**
+     * Shared compressor instance — only created when the setting is enabled.
+     * When disabled, this stays null and the audio pipeline is completely
+     * unmodified (no custom AudioProcessor, no custom AudioSink at all).
+     */
+    var compressor: DynamicRangeCompressor? = null
+        private set
 
     private var lastMuteVolume: Float = 1.0f
 
@@ -719,7 +730,7 @@ class CS3IPlayer : IPlayer {
          **/
         var preferredAudioTrackLanguage: String? = null
             get() {
-                return field ?: getKey(
+                return field ?: getKey<String>(
                     "$currentAccount/$PREFERRED_AUDIO_LANGUAGE_KEY",
                     field
                 )?.also {
@@ -1109,8 +1120,17 @@ class CS3IPlayer : IPlayer {
                         else -> isLayout(PHONE or EMULATOR) to false
                     }
 
+                    // Only create the compressor when the setting is actually enabled.
+                    // When it's off, `compressor` stays null and nothing about the audio
+                    // pipeline is touched — same behaviour as before this feature existed.
+                    val isCompressorEnabled = settingsManager.getBoolean(
+                        context.getString(R.string.compressor_enabled_key),
+                        false
+                    )
+                    compressor = if (isCompressorEnabled) DynamicRangeCompressor().apply { restoreSavedSettings() } else null
+
                     val factory = if (isSoftwareDecodingEnabled) {
-                        FixedNextRenderersFactory(context).apply {
+                        FixedNextRenderersFactory(context, compressor).apply {
                             setEnableDecoderFallback(true)
                             setExtensionRendererMode(
                                 if (isSoftwareDecodingPreferred)
@@ -1120,8 +1140,24 @@ class CS3IPlayer : IPlayer {
                             )
                         }
                     } else {
-                        // no nextlib = EXTENSION_RENDERER_MODE_OFF
-                        DefaultRenderersFactory(context)
+                        val activeCompressor = compressor
+                        if (activeCompressor == null) {
+                            // no nextlib = EXTENSION_RENDERER_MODE_OFF, no compressor = fully default sink
+                            DefaultRenderersFactory(context)
+                        } else {
+                            object : DefaultRenderersFactory(context) {
+                                @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+                                override fun buildAudioSink(
+                                    ctx: Context,
+                                    enableFloatOutput: Boolean,
+                                    enableAudioTrackPlaybackParams: Boolean
+                                ) = DefaultAudioSink.Builder(ctx)
+                                    .setEnableFloatOutput(enableFloatOutput)
+                                    .setEnableAudioOutputPlaybackParameters(enableAudioTrackPlaybackParams)
+                                    .setAudioProcessors(arrayOf<AudioProcessor>(activeCompressor))
+                                    .build()
+                            }
+                        }
                     }
 
                     val style = CustomDecoder.style
@@ -1389,9 +1425,16 @@ class CS3IPlayer : IPlayer {
             context.getString(if (context.isUsingMobileData()) R.string.quality_pref_mobile_data_key else R.string.quality_pref_key),
             Int.MAX_VALUE
         )
+        val settings = AppSettings(context)
 
         try {
             hasUsedFirstRender = false
+
+            val playWhenReady = if (settings.player.startPaused.get()) {
+                false
+            } else {
+                isPlaying // this keep the current state of the player
+            }
 
             // ye this has to be a val for whatever reason
             // this makes no sense
@@ -1404,7 +1447,7 @@ class CS3IPlayer : IPlayer {
                 playBackSpeed,
                 cacheSize = cacheSize,
                 videoBufferMs = videoBufferMs,
-                playWhenReady = isPlaying, // this keep the current state of the player
+                playWhenReady = playWhenReady,
                 subtitleOffset = currentSubtitleOffset,
                 maxVideoHeight = maxVideoHeight,
                 audioSources = audioSources,

@@ -60,7 +60,7 @@ open class VlcPackage: OpenInAppAction(
         intent.putExtra("secure_uri", true)
         intent.putExtra("title", video.name)
 
-        val subsLang = getKey(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
+        val subsLang = getKey<String>(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
         result.subs.firstOrNull {
             subsLang == it.languageCode
         }?.let {

@@ -47,6 +47,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/voice_actor_image_holder2"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:foreground="@drawable/outline_drawable"

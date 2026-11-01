@@ -8,11 +8,14 @@ import androidx.annotation.OptIn
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.SubtitleView
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 enum class SubtitleStatus {
     IS_ACTIVE,
@@ -32,17 +35,19 @@ enum class SubtitleOrigin {
  * @param url Url for the subtitle, when EMBEDDED_IN_VIDEO this variable is used as the real backend id
  * @param headers if empty it will use the base onlineDataSource headers else only the specified headers
  * @param languageCode usually, tags such as "en", "es-mx", or "zh-hant-TW". But it could be something like "English 4"
- * */
+ */
+@Serializable
 data class SubtitleData(
-    val originalName: String,
-    val nameSuffix: String,
-    val url: String,
-    val origin: SubtitleOrigin,
-    val mimeType: String,
-    val headers: Map<String, String>,
-    val languageCode: String?,
+    @SerialName("originalName") val originalName: String,
+    @SerialName("nameSuffix") val nameSuffix: String,
+    @SerialName("url") val url: String,
+    @SerialName("origin") val origin: SubtitleOrigin,
+    @SerialName("mimeType") val mimeType: String,
+    @SerialName("headers") val headers: Map<String, String>,
+    @SerialName("languageCode") val languageCode: String?,
 ) {
-    /** Internal ID for exoplayer, unique for each link*/
+    /** Internal ID for media3, unique for each link. */
+    @JsonIgnore
     fun getId(): String {
         return if (origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) url
         else "$url|$name"
@@ -54,22 +59,22 @@ data class SubtitleData(
     }
 
     /** Tries hard to figure out a valid IETF tag based on language code and name. Will return null if not found. */
+    @JsonIgnore
     fun getIETF_tag(): String? {
         return fromLanguageToTagIETF(this.languageCode) ?: fromLanguageToTagIETF(this.originalName, halfMatch = true)
     }
 
-    val name = "$originalName $nameSuffix"
+    @SerialName("name") val name = "$originalName $nameSuffix"
 
     /**
      * Gets the URL, but tries to fix it if it is malformed.
      */
+    @JsonIgnore
     fun getFixedUrl(): String {
         // Some extensions fail to include the protocol, this helps with that.
         val fixedSubUrl = if (this.url.startsWith("//")) {
             "https:${this.url}"
-        } else {
-            this.url
-        }
+        } else this.url
         return fixedSubUrl
     }
 }

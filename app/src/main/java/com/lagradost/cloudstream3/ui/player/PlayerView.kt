@@ -7,8 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.media.metrics.PlaybackErrorEvent
 import android.os.Build
 import android.os.Handler
@@ -41,6 +43,7 @@ import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.SubtitleView
 import androidx.media3.ui.TimeBar
 import androidx.preference.PreferenceManager
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.github.rubensousa.previewseekbar.PreviewBar
 import com.github.rubensousa.previewseekbar.media3.PreviewTimeBar
@@ -541,10 +544,36 @@ class PlayerView @JvmOverloads constructor(
         else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
+    // Defined outside updateIsPlaying to prevent redundant object creation.
+    private val pausePlayAnimatable2CompatCallback = object : Animatable2Compat.AnimationCallback() {
+        override fun onAnimationEnd(drawable: Drawable?) {
+            playerPausePlay?.setImageResource(
+                if (player.getIsPlaying()) R.drawable.netflix_pause else R.drawable.netflix_play
+            )
+            super.onAnimationEnd(drawable)
+        }
+    }
+
+    private val pausePlayAnimatable2Callback = object : Animatable2.AnimationCallback() {
+        override fun onAnimationEnd(drawable: Drawable?) {
+            playerPausePlay?.setImageResource(
+                if (player.getIsPlaying()) R.drawable.netflix_pause else R.drawable.netflix_play
+            )
+            super.onAnimationEnd(drawable)
+        }
+    }
+
     fun updateIsPlaying(wasPlaying: CSPlayerLoading, isPlaying: CSPlayerLoading) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
         val isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         currentPlayerStatus = isPlaying
+
+        val currentPlayerDrawable = playerPausePlay?.drawable
+        if (currentPlayerDrawable is Animatable2Compat) {
+            currentPlayerDrawable.clearAnimationCallbacks()
+        } else if (currentPlayerDrawable is Animatable2) {
+            currentPlayerDrawable.clearAnimationCallbacks()
+        }
 
         keepScreenOn(isPlayingRightNow || isBuffering)
 
@@ -573,6 +602,14 @@ class PlayerView @JvmOverloads constructor(
                     playerPausePlay?.setImageResource(
                         if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play
                     )
+                } else {
+                    // Some devices cannot animate SVGs well. They get a pixel-wide gap in the play icon.
+                    // Therefore, we need to manually set a static SVG on animation end
+                    if (drawable is Animatable2Compat) {
+                        drawable.registerAnimationCallback(pausePlayAnimatable2CompatCallback)
+                    } else if (drawable is Animatable2) {
+                        drawable.registerAnimationCallback(pausePlayAnimatable2Callback)
+                    }
                 }
             } else {
                 playerPausePlay?.setImageResource(

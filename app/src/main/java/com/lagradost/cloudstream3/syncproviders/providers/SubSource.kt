@@ -7,11 +7,10 @@ import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
 import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.util.concurrent.TimeUnit
 
 class SubSourceApi : SubtitleAPI() {
     override val name = "SubSource"
@@ -20,77 +19,70 @@ class SubSourceApi : SubtitleAPI() {
     override val requiresLogin = false
 
     companion object {
-        const val APIURL = "https://api.subsource.net/api"
-        const val DOWNLOADENDPOINT = "https://api.subsource.net/api/downloadSub"
+        const val APIURL = "https://api.subsource.net/v1"
     }
 
     override suspend fun search(
         auth: AuthData?,
         query: AbstractSubtitleEntities.SubtitleSearch
     ): List<AbstractSubtitleEntities.SubtitleEntity>? {
-
         //Only supports Imdb Id search for now
         if (query.imdbId == null) return null
         val queryLang = SubtitleHelper.fromTagToEnglishLanguageName(query.lang)
         val type = if ((query.seasonNumber ?: 0) > 0) TvType.TvSeries else TvType.Movie
 
-        val searchRes = app.post(
-            url = "$APIURL/searchMovie",
-            data = mapOf(
-                "query" to query.imdbId!!
-            )
-        ).parsedSafe<ApiSearch>() ?: return null
+        val searchResponse = app.post(
+            url = "$APIURL/movie/search",
+            json = mapOf(
+                "includeSeasons" to false,
+                "limit" to 15,
+                "query" to query.imdbId!!,
+                "signal" to "{}"
+            ),
+            cacheTime = 120,
+            cacheUnit = TimeUnit.MINUTES,
+        ).parsedSafe<SearchRoot>() ?: return null
 
-        val postData = if (type == TvType.TvSeries) {
-            mapOf(
-                "langs" to "[]",
-                "movieName" to searchRes.found.first().linkName,
-                "season" to "season-${query.seasonNumber}"
-            )
-        } else {
-            mapOf(
-                "langs" to "[]",
-                "movieName" to searchRes.found.first().linkName,
-            )
+        val firstResult = searchResponse.results.firstOrNull() ?: return null
+
+        val apiResponse = app.get(
+            url = "$APIURL${firstResult.link.replace("series", "subtitles")}",
+            cacheTime = 120,
+            cacheUnit = TimeUnit.MINUTES,
+        ).parsedSafe<ItemRoot>() ?: return null
+
+        val filteredSubtitles = apiResponse.subtitles.filter { sub ->
+            sub.releaseType != "trailer" &&
+                    sub.language.equals(queryLang, true)
         }
 
-        val getMovieRes = app.post(
-            url = "$APIURL/getMovie",
-            data = postData
-        ).parsedSafe<ApiResponse>().let {
-            // api doesn't has episode number or lang filtering
-            if (type == TvType.Movie) {
-                it?.subs?.filter { sub ->
-                    sub.lang == queryLang
-                }
-            } else {
-                it?.subs?.filter { sub ->
-                    sub.releaseName!!.contains(
-                        String.format(
-                            null,
-                            "E%02d",
-                            query.epNumber
-                        )
-                    ) && sub.lang == queryLang
-                }
+        // api doesn't has episode number or lang filtering
+        val subtitles = if (type == TvType.Movie) {
+            filteredSubtitles
+        } else {
+            val shouldContain = String.format(
+                null,
+                "E%02d",
+                query.epNumber
+            )
+            filteredSubtitles.filter { sub ->
+                sub.releaseInfo.contains(
+                    shouldContain
+                )
             }
-        } ?: return null
+        }
 
-        return getMovieRes.map { subtitle ->
+        return subtitles.map { subtitle ->
             AbstractSubtitleEntities.SubtitleEntity(
                 idPrefix = this.idPrefix,
-                name = subtitle.releaseName!!,
-                lang = subtitle.lang!!,
-                data = SubData(
-                    movie = subtitle.linkName!!,
-                    lang = subtitle.lang,
-                    id = subtitle.subId.toString(),
-                ).toJson(),
+                name = subtitle.releaseInfo,
+                lang = subtitle.language,
+                data = subtitle.link,
                 type = type,
                 source = this.name,
                 epNumber = query.epNumber,
                 seasonNumber = query.seasonNumber,
-                isHearingImpaired = subtitle.hi == 1,
+                isHearingImpaired = subtitle.hearingImpaired == 1,
             )
         }
     }
@@ -99,79 +91,114 @@ class SubSourceApi : SubtitleAPI() {
         auth: AuthData?,
         subtitle: AbstractSubtitleEntities.SubtitleEntity
     ) {
-        val parsedSub = parseJson<SubData>(subtitle.data)
-
-        val subRes = app.post(
-            url = "$APIURL/getSub",
-            data = mapOf(
-                "movie" to parsedSub.movie,
-                "lang" to subtitle.lang,
-                "id" to parsedSub.id
-            )
-        ).parsedSafe<SubTitleLink>() ?: return
+        val data = app.get("$APIURL/subtitle/${subtitle.data}")
+            .parsedSafe<DownloadRoot>()
+            ?: return
 
         this.addZipUrl(
-            "$DOWNLOADENDPOINT/${subRes.sub.downloadToken}"
+            "$APIURL/subtitle/download/${data.subtitle.downloadToken}"
         ) { name, _ ->
             name
         }
     }
 
+
     @Serializable
-    data class ApiSearch(
-        @JsonProperty("success") @SerialName("success") val success: Boolean,
-        @JsonProperty("found") @SerialName("found") val found: List<Found>,
+    data class SearchRoot(
+        @JsonProperty("success") @SerialName("success") var success: Boolean? = null,
+        @JsonProperty("results") @SerialName("results") var results: ArrayList<Results> = arrayListOf(),
+        @JsonProperty("users") @SerialName("users") var users: ArrayList<Users> = arrayListOf()
     )
 
     @Serializable
-    data class Found(
-        @JsonProperty("id") @SerialName("id") val id: Long,
-        @JsonProperty("title") @SerialName("title") val title: String,
-        @JsonProperty("seasons") @SerialName("seasons") val seasons: Long,
-        @JsonProperty("type") @SerialName("type") val type: String,
-        @JsonProperty("releaseYear") @SerialName("releaseYear") val releaseYear: Long,
-        @JsonProperty("linkName") @SerialName("linkName") val linkName: String,
+    data class Users(
+
+        @JsonProperty("id") @SerialName("id") var id: Int? = null,
+        @JsonProperty("displayname") @SerialName("displayname") var displayname: String? = null,
+        @JsonProperty("avatar") @SerialName("avatar") var avatar: String? = null,
+        @JsonProperty("badges") @SerialName("badges") var badges: ArrayList<String> = arrayListOf()
+
     )
 
     @Serializable
-    data class ApiResponse(
-        @JsonProperty("success") @SerialName("success") val success: Boolean,
-        @JsonProperty("movie") @SerialName("movie") val movie: Movie,
-        @JsonProperty("subs") @SerialName("subs") val subs: List<Sub>,
+    data class Results(
+        @JsonProperty("id") @SerialName("id") var id: Int? = null,
+        @JsonProperty("title") @SerialName("title") var title: String? = null,
+        @JsonProperty("type") @SerialName("type") var type: String? = null,
+        @JsonProperty("link") @SerialName("link") var link: String,
+        @JsonProperty("releaseYear") @SerialName("releaseYear") var releaseYear: Int? = null,
+        @JsonProperty("poster") @SerialName("poster") var poster: String? = null,
+        @JsonProperty("subtitleCount") @SerialName("subtitleCount") var subtitleCount: String? = null,
+        @JsonProperty("rating") @SerialName("rating") var rating: Double? = null,
+        @JsonProperty("cast") @SerialName("cast") var cast: ArrayList<String> = arrayListOf(),
+        @JsonProperty("genres") @SerialName("genres") var genres: ArrayList<String> = arrayListOf(),
+        @JsonProperty("score") @SerialName("score") var score: Double? = null
     )
 
     @Serializable
-    data class Movie(
-        @JsonProperty("id") @SerialName("id") val id: Long? = null,
-        @JsonProperty("type") @SerialName("type") val type: String? = null,
-        @JsonProperty("year") @SerialName("year") val year: Long? = null,
-        @JsonProperty("fullName") @SerialName("fullName") val fullName: String? = null,
+
+    data class ItemRoot(
+
+        // @SerialName("media_type" ) var mediaType : String?              = null,
+        @JsonProperty("subtitles") @SerialName("subtitles") var subtitles: ArrayList<Subtitles>,
+        //@SerialName("movie"      ) var movie     : Movie?               = Movie()
+
     )
 
     @Serializable
-    data class Sub(
-        @JsonProperty("hi") @SerialName("hi") val hi: Int? = null,
-        @JsonProperty("fullLink") @SerialName("fullLink") val fullLink: String? = null,
-        @JsonProperty("linkName") @SerialName("linkName") val linkName: String? = null,
-        @JsonProperty("lang") @SerialName("lang") val lang: String? = null,
-        @JsonProperty("releaseName") @SerialName("releaseName") val releaseName: String? = null,
-        @JsonProperty("subId") @SerialName("subId") val subId: Long? = null,
+    data class Subtitles(
+
+        @JsonProperty("id") @SerialName("id") var id: Int? = null,
+        @JsonProperty("language") @SerialName("language") var language: String,
+        @JsonProperty("release_type") @SerialName("release_type") var releaseType: String? = null,
+        @JsonProperty("release_info") @SerialName("release_info") var releaseInfo: String,
+        @JsonProperty("upload_date") @SerialName("upload_date") var uploadDate: String? = null,
+        @JsonProperty("hearing_impaired") @SerialName("hearing_impaired") var hearingImpaired: Int? = null,
+        @JsonProperty("caption") @SerialName("caption") var caption: String? = null,
+        @JsonProperty("rating") @SerialName("rating") var rating: String? = null,
+        @JsonProperty("uploader_id") @SerialName("uploader_id") var uploaderId: Int? = null,
+        @JsonProperty("uploader_displayname") @SerialName("uploader_displayname") var uploaderDisplayname: String? = null,
+        @JsonProperty("uploader_badges") @SerialName("uploader_badges") var uploaderBadges: ArrayList<String> = arrayListOf(),
+        @JsonProperty("link") @SerialName("link") var link: String,
+        @JsonProperty("production_type") @SerialName("production_type") var productionType: String? = null,
+        @JsonProperty("last_subtitle") @SerialName("last_subtitle") var lastSubtitle: Boolean? = null
+
     )
 
     @Serializable
-    data class SubData(
-        @JsonProperty("movie") @SerialName("movie") val movie: String,
-        @JsonProperty("lang") @SerialName("lang") val lang: String,
-        @JsonProperty("id") @SerialName("id") val id: String,
+    data class DownloadRoot(
+        @JsonProperty("subtitle") @SerialName("subtitle") var subtitle: Subtitle,
+        //@SerializedName("movie"         ) var movie         : Movie?         = Movie(),
+        //@SerializedName("donationLinks" ) var donationLinks : DonationLinks? = DonationLinks(),
+        //@SerializedName("isDownloaded"  ) var isDownloaded  : Boolean?       = null,
+        //@SerializedName("user_rated"    ) var userRated     : String?        = null
     )
 
     @Serializable
-    data class SubTitleLink(
-        @JsonProperty("sub") @SerialName("sub") val sub: SubToken,
-    )
+    data class Subtitle(
 
-    @Serializable
-    data class SubToken(
-        @JsonProperty("downloadToken") @SerialName("downloadToken") val downloadToken: String,
+        @JsonProperty("id") @SerialName("id") var id: Int? = null,
+        @JsonProperty("uploaded_at") @SerialName("uploaded_at") var uploadedAt: String? = null,
+        @JsonProperty("language") @SerialName("language") var language: String? = null,
+        @JsonProperty("rating") @SerialName("rating") var rating: String? = null,
+        //SerialName("rates"            ) var rates           : Rates?              = Rates(),
+        @JsonProperty("uploaded_by") @SerialName("uploaded_by") var uploadedBy: Int? = null,
+        //@SerialName("contribs"         ) var contribs        : ArrayList<Contribs> = arrayListOf(),
+        @JsonProperty("release_info") @SerialName("release_info") var releaseInfo: ArrayList<String> = arrayListOf(),
+        @JsonProperty("commentary") @SerialName("commentary") var commentary: String? = null,
+        @JsonProperty("files") @SerialName("files") var files: String? = null,
+        @JsonProperty("size") @SerialName("size") var size: String? = null,
+        @JsonProperty("downloads") @SerialName("downloads") var downloads: Int? = null,
+        @JsonProperty("comments") @SerialName("comments") var comments: Int? = null,
+        @JsonProperty("production_type") @SerialName("production_type") var productionType: String? = null,
+        @JsonProperty("release_type") @SerialName("release_type") var releaseType: String? = null,
+        @JsonProperty("episode") @SerialName("episode") var episode: String? = null,
+        @JsonProperty("hearing_impaired") @SerialName("hearing_impaired") var hearingImpaired: Int? = null,
+        @JsonProperty("foreign_parts") @SerialName("foreign_parts") var foreignParts: String? = null,
+        @JsonProperty("framerate") @SerialName("framerate") var framerate: String? = null,
+        @JsonProperty("preview") @SerialName("preview") var preview: String? = null,
+        @JsonProperty("user_uploaded") @SerialName("user_uploaded") var userUploaded: Boolean? = null,
+        @JsonProperty("download_token") @SerialName("download_token") var downloadToken: String
+
     )
 }

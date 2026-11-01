@@ -9,6 +9,7 @@ import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.DelicateCryptographyApi
 import dev.whyoleg.cryptography.algorithms.AES
 import dev.whyoleg.cryptography.algorithms.MD5
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -20,8 +21,7 @@ object AesHelper {
     private val md5Hasher = provider.get(MD5).hasher()
 
     @OptIn(DelicateCryptographyApi::class)
-    @Prerelease
-    fun cryptoAESHandler(
+    suspend fun cryptoAESHandler(
         data: String,
         pass: ByteArray,
         encrypt: Boolean = true,
@@ -35,22 +35,21 @@ object AesHelper {
             saltLength = parse.s.length / 2,
         ) ?: return null
 
-        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, key)
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, key)
         val cipher = aesKey.cipher(padding = padding)
 
         return if (!encrypt) {
-            val plainBytes = cipher.decryptWithIvBlocking(iv, base64DecodeArray(parse.ct))
+            val plainBytes = cipher.decryptWithIv(iv, base64DecodeArray(parse.ct))
             plainBytes.decodeToString()
         } else {
-            base64Encode(cipher.encryptWithIvBlocking(iv, parse.ct.encodeToByteArray()))
+            base64Encode(cipher.encryptWithIv(iv, parse.ct.encodeToByteArray()))
         }
     }
 
-    // Deprecate after next stable
-    /* @Deprecated(
+    @Deprecated(
         message = "Set padding = false for no padding",
         level = DeprecationLevel.WARNING,
-    ) */
+    )
     fun cryptoAESHandler(
         data: String,
         pass: ByteArray,
@@ -60,7 +59,7 @@ object AesHelper {
         // If it ends with NoPadding (e.g. "AES/CBC/NoPadding"), then it
         // doesn't have padding, otherwise we treat as if it does.
         val hasPadding = !padding.endsWith("NoPadding")
-        return cryptoAESHandler(data, pass, encrypt, hasPadding)
+        return runBlocking { cryptoAESHandler(data, pass, encrypt, hasPadding) }
     }
 
     // https://stackoverflow.com/a/41434590/8166854

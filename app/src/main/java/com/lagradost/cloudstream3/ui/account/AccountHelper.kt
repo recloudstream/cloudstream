@@ -37,8 +37,14 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.hideProgress
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
+import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.setRippleForeground
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 
 object AccountHelper {
     fun showAccountEditDialog(
@@ -54,6 +60,12 @@ object AccountHelper {
 
         var currentEditAccount = account
         val dialog = builder.show()
+        binding.accountImageHolder.requestFocus()
+
+        if (!isLayout(TV or EMULATOR)) {
+            binding.accountImageHolder.setRippleForeground()
+            binding.editProfilePhotoButtonHolder.setRippleForeground()
+        }
 
         if (!isNewAccount) binding.title.setText(R.string.edit_account)
 
@@ -98,7 +110,7 @@ object AccountHelper {
 
         // Handle the profile picture and its interactions
         binding.accountImage.loadImage(account.image)
-        binding.accountImage.setOnClickListener {
+        binding.accountImageHolder.setOnClickListener {
             // Roll the image forwards once
             currentEditAccount = currentEditAccount.copy(customImage = null)
             currentEditAccount =
@@ -164,52 +176,57 @@ object AccountHelper {
 
         canSetPin = true
 
-        binding.editProfilePhotoButton.setOnClickListener({
-            val bottomSheetDialog = BottomSheetDialog(context)
+        binding.editProfilePhotoButtonHolder.setOnClickListener {
+            val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
             val sheetBinding = BottomInputDialogBinding.inflate(LayoutInflater.from(context))
-            bottomSheetDialog.setContentView(sheetBinding.root)
-            bottomSheetDialog.show()
+            builder.setView(sheetBinding.root)
+            val dialog = builder.create()
+            dialog.show()
 
             sheetBinding.apply {
                 text1.text = context.getString(R.string.edit_profile_image_title)
                 nginxTextInput.hint = context.getString(R.string.edit_profile_image_hint)
 
-                applyBtt.setOnClickListener({
+                applyBtt.setOnClickListener {
                     val url = sheetBinding.nginxTextInput.text.toString()
-                    if (url.isNotEmpty()) {
-                        val imageLoader = ImageLoader(context)
-                        val request = ImageRequest.Builder(context)
-                            .data(url)
-                            .allowHardware(false)
-                            .listener(
-                                onSuccess = { _, _ ->
-                                    currentEditAccount = currentEditAccount.copy(customImage = url)
-                                    binding.accountImage.loadImage(url)
-                                    showToast(
-                                        R.string.edit_profile_image_success,
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    bottomSheetDialog.dismiss()
-                                },
-                                onError = { _, _ ->
-                                    showToast(
-                                        R.string.edit_profile_image_error_invalid,
-                                        Toast.LENGTH_SHORT
-                                    )
-                                }
-                            )
-                            .build()
-                        imageLoader.enqueue(request)
-                    } else {
+                    if (url.isEmpty()) {
                         showToast(R.string.edit_profile_image_error_empty, Toast.LENGTH_SHORT)
+                        return@setOnClickListener
                     }
-                    bottomSheetDialog.dismissSafe()
-                })
-                sheetBinding.cancelBtt.setOnClickListener({
-                    bottomSheetDialog.dismissSafe()
-                })
+                    applyBtt.showProgress()
+                    val imageLoader = ImageLoader(context)
+                    val request = ImageRequest.Builder(context)
+                        .data(url)
+                        .allowHardware(false)
+                        .listener(
+                            onSuccess = { _, _ ->
+                                currentEditAccount = currentEditAccount.copy(customImage = url)
+                                binding.accountImage.loadImage(url)
+                                showToast(
+                                    R.string.edit_profile_image_success,
+                                    Toast.LENGTH_SHORT
+                                )
+                                dialog.dismissSafe()
+                            },
+                            onError = { _, _ ->
+                                showToast(
+                                    R.string.edit_profile_image_error_invalid,
+                                    Toast.LENGTH_SHORT
+                                )
+                                applyBtt.hideProgress()
+                            },
+                            onCancel = {
+                                applyBtt.hideProgress()
+                            }
+                        )
+                        .build()
+                    imageLoader.enqueue(request)
+                }
+                sheetBinding.cancelBtt.setOnClickListener {
+                    dialog.dismissSafe()
+                }
             }
-        })
+        }
     }
 
     fun showPinInputDialog(
@@ -351,6 +368,11 @@ object AccountHelper {
 
     fun Activity?.showAccountSelectLinear() {
         val activity = this as? MainActivity ?: return
+        activity.navigate(
+            R.id.accountSelectActivity,
+            Bundle().apply { putBoolean(AccountSelectActivity2.IS_FROM_MAIN_ACTIVITY, true) }
+        )
+        /*
         val viewModel = ViewModelProvider(activity)[AccountViewModel::class.java]
 
         val binding: AccountSelectLinearBinding = AccountSelectLinearBinding.inflate(
@@ -408,6 +430,6 @@ object AccountHelper {
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 layoutManager.scrollToPositionWithOffset(selectedKeyIndex, 0)
             }
-        }
+        }*/
     }
 }

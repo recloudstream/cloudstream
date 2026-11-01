@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.dokka)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.compose.compiler)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -276,6 +278,8 @@ dependencies {
     implementation(libs.jackson.module.kotlin) // JSON Parser
     implementation(libs.zipline)
 
+    // Temp/deprecated; will be removed once extensions have time to migrate from using it
+    implementation("com.google.code.gson:gson:2.11.0")
     // Deprecated; will be removed once extensions have time to migrate from using it
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
 
@@ -286,7 +290,12 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     implementation(libs.nicehttp) // HTTP Lib
 
+    implementation(libs.bundles.compose)
+    implementation(libs.activity.compose)
+    implementation(libs.kotlinx.io.core) // Logcat parser
+
     implementation(project(":library"))
+    implementation(project(":shared"))
 }
 
 tasks.register<Jar>("androidSourcesJar") {
@@ -323,11 +332,9 @@ tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
         jvmDefault.set(JvmDefaultMode.ENABLE)
-        freeCompilerArgs.add("-Xannotation-default-target=param-property")
         optIn.addAll(
             "com.lagradost.cloudstream3.InternalAPI",
             "com.lagradost.cloudstream3.Prerelease",
-            "kotlin.uuid.ExperimentalUuidApi",
         )
     }
 }

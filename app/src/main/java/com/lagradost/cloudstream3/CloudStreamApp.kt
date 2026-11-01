@@ -113,7 +113,7 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
             get() = _context?.get()
             private set(value) {
                 _context = WeakReference(value)
-                setContext(WeakReference(value))
+                setContext(value)
             }
 
         fun <T : Any> getKeyClass(path: String, valueType: Class<T>): T? {
@@ -170,11 +170,11 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
         }
 
         /** Will fall back to WebView if in TV or emulator layout. */
-        fun openBrowser(url: String, activity: FragmentActivity?) {
+        fun openBrowser(url: String, activity: Activity?) {
             openBrowser(
                 url,
                 isLayout(TV or EMULATOR),
-                activity?.supportFragmentManager?.fragments?.lastOrNull()
+                (activity as? FragmentActivity)?.supportFragmentManager?.fragments?.lastOrNull()
             )
         }
     }

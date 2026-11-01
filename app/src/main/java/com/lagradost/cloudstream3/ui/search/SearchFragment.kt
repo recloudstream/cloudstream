@@ -149,6 +149,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
     override fun onResume() {
         super.onResume()
+        searchViewModel.clearSuggestions()
         afterPluginsLoadedEvent += ::reloadRepos
     }
 
@@ -167,6 +168,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
      **/
     fun search(query: String?) {
         if (query == null) return
+        searchViewModel.clearSuggestions()
         // don't resume state from prev search
         (binding?.searchMasterRecycler?.adapter as? BaseAdapter<*, *>)?.clearState()
         context?.let { ctx ->

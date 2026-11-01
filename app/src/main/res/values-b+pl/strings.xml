@@ -324,8 +324,8 @@
     <string name="home_random">Losowy</string>
     <string name="coming_soon">Już wkrótce…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -349,7 +349,7 @@
     <string name="error_invalid_url">Niepoprawny URL</string>
     <string name="error">Błąd</string>
     <string name="subtitles_remove_captions">Usuń CC z napisów</string>
-    <string name="subtitles_remove_bloat">Usuń nadmiarowe informacje z napisów</string>
+    <string name="subtitles_remove_bloat">Usuń reklamy z napisów</string>
     <string name="subtitles_filter_lang">Filtrowanie wg preferowanego języka</string>
     <string name="extras">Dodatki</string>
     <string name="trailer">Zwiastun</string>
@@ -649,7 +649,7 @@
     <string name="sort_episodes_number_desc">Odcinek (malejąco)</string>
     <string name="sort_episodes_rating_high_low">Ocena (najwyższa)</string>
     <string name="update_plugins">Zaktualizuj wtyczki</string>
-    <string name="plugins_updated_manually">Pomyślnie zaktualizowano wtyczki: %d!</string>
+    <string name="plugins_updated_manually">Pomyślnie zaktualizowano wtyczki: %d</string>
     <string name="no_plugins_updated_manually">Nie zaktualizowano żadnych wtyczek.</string>
     <string name="update_plugins_manually">Zaktualizuj wtyczki ręcznie</string>
     <string name="starting_plugin_update_manually">Rozpoczęcie procesu aktualizacji wtyczek!</string>
@@ -742,4 +742,36 @@
     <string name="video_singular">Wideo</string>
     <string name="skip_type_preview">Zapowiedź</string>
     <string name="player_is_live">Na żywo</string>
+    <string name="profile_settings">Ustawienia profilu</string>
+    <string name="profile_hide_negative_sources">Ukryj źródła z negatywnym priorytetem</string>
+    <string name="profile_hide_error_sources">Ukryj źródła z błędami</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d ukryty odnośnik</item>
+        <item quantity="few">%d ukryte odnośniki</item>
+        <item quantity="many">%d ukrytych odnośników</item>
+        <item quantity="other">%d ukrytych odnośników</item>
+    </plurals>
+    <string name="tv_layout_clock_settings">Pokaż zegar czasu rzeczywistego</string>
+    <string name="tv_layout_clock_settings_des">Wyświetl zegar czasu rzeczywistego u góry ekranu. Dotyczy strony głównej i odtwarzacza</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Uruchamiaj filmy wstrzymane</string>
+    <string name="start_paused_settings_des">Ogranicz obciążenie podczas wyboru źródeł</string>
+    <string name="background">Tło</string>
+    <string name="subs_edge">Krawędź</string>
+    <string name="compressor">Kompresor</string>
+    <string name="compressor_setting">Kompresor zakresu dynamicznego</string>
+    <string name="compressor_setting_summary">Wyświetlaj w odtwarzaczu elementy sterujące kompresorem (pomaga wyrównać głośność dźwięku)</string>
+    <string name="compressor_on">Włączony</string>
+    <string name="compressor_on_format">Włączony · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Wyłączony</string>
+    <string name="compressor_preset_light">Lekki</string>
+    <string name="compressor_preset_dialog">Wzmocnienie dialogów</string>
+    <string name="compressor_preset_heavy">Silny</string>
+    <string name="compressor_threshold_label">Próg: %d dB</string>
+    <string name="compressor_makeup_label">Wzmocnienie kompensujące: +%d dB</string>
+    <string name="compressor_threshold_hint">Dźwięki głośniejsze niż %d dB są ściszane</string>
+    <string name="compressor_makeup_hint">Zwiększa ogólną głośność o +%d dB</string>
+    <string name="edit_profile_image_default">Domyślne obrazy</string>
+    <string name="edit_profile_image_url">Adres URL</string>
+    <string name="edit_profile_image_picker">Wybór obrazu</string>
 </resources>

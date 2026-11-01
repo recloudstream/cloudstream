@@ -181,11 +181,11 @@ object DataStore {
     }
 
     fun <T : Any> Context.getKey(path: String, valueType: Class<T>): T? {
-        try {
+        return try {
             val json: String = getSharedPrefs().getString(path, null) ?: return null
-            return parseJson(json, valueType.kotlin)
-        } catch (e: Exception) {
-            return null
+            parseJson(json, valueType.kotlin)
+        } catch (_: Exception) {
+            null
         }
     }
 
@@ -193,21 +193,37 @@ object DataStore {
         setKey(getFolderName(folder, path), value)
     }
 
+    @Deprecated(
+        message = "Use parseJson<T>(this) directly instead.",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith(
+            expression = "parseJson<T>(this)",
+            imports = ["com.lagradost.cloudstream3.utils.AppUtils.parseJson"],
+        ),
+    )
     inline fun <reified T : Any> String.toKotlinObject(): T {
         return parseJson(this)
     }
 
+    @Deprecated(
+        message = "Use parseJson<T>(this) directly instead.",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith(
+            expression = "parseJson<T>(this)",
+            imports = ["com.lagradost.cloudstream3.utils.AppUtils.parseJson"],
+        ),
+    )
     fun <T : Any> String.toKotlinObject(valueType: Class<T>): T {
         return parseJson(this, valueType.kotlin)
     }
 
     // GET KEY GIVEN PATH AND DEFAULT VALUE, NULL IF ERROR
     inline fun <reified T : Any> Context.getKey(path: String, defVal: T?): T? {
-        try {
+        return try {
             val json: String = getSharedPrefs().getString(path, null) ?: return defVal
-            return json.toKotlinObject()
-        } catch (e: Exception) {
-            return null
+            parseJson<T>(json)
+        } catch (_: Exception) {
+            null
         }
     }
 

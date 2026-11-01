@@ -136,9 +136,9 @@ class SerializationClassTester {
                 runCatching { Class.forName(it).kotlin }.getOrNull()
             }.filter { kClass ->
                 // Not possible to use .hasAnnotation() on newer Android versions.
-                kClass.java.annotations.any {
-                    it is Serializable
-                } && kClass.java.annotations.none { it is SkipSerializationTest }
+                kClass.java.annotations.any { it is Serializable }
+                    && kClass.java.annotations.none { it is SkipSerializationTest }
+                    && !kClass.isAbstract
             }
     }
 

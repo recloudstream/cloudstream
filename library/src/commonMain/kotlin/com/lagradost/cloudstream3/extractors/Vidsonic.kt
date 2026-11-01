@@ -1,17 +1,45 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.api.Log
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.base64Decode
+import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import com.lagradost.nicehttp.NiceResponse
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
-class Vidsonic() : ExtractorApi() {
+open class Vixeo : Vidsonic() {
+    override val name: String = "Vixeo"
+    override val mainUrl: String = "https://vixeo.io"
+
+    @Prerelease
+    override fun extractEncodedVideoUrl(response: NiceResponse): String {
+        // Vixeo encodes the stream URL as Base64 instead of inlining it into JavaScript
+        val dataConfigBase64 = response.document.select("#streamsonic-player-root").attr("data-config")
+        val dataConfigRaw = base64Decode(dataConfigBase64)
+        val dataConfig = AppUtils.parseJson<JsonObject>(dataConfigRaw)
+        return dataConfig["source"]!!.jsonPrimitive.content
+    }
+}
+
+@Prerelease
+open class Vidsonic : ExtractorApi() {
     override val name: String = "Vidsonic"
     override val mainUrl: String = "https://vidsonic.net"
     override val requiresReferer: Boolean = false
+
+    @Prerelease
+    open fun extractEncodedVideoUrl(response: NiceResponse): String {
+        return response.text
+            .substringAfter("const _0x1 = ")
+            .substringBefore(";")
+            .replace("'", "")
+    }
 
     override suspend fun getUrl(
         url: String,
@@ -31,12 +59,8 @@ class Vidsonic() : ExtractorApi() {
         //     return _0x5.split('').reverse().join('');
         // };
         // const _0x7 = _0x2(_0x1); <-- now contains the stream URL
-
-        val response = app.get(url).text
-        val encodedStreamUrl = response
-            .substringAfter("const _0x1 = ")
-            .substringBefore(";")
-            .replace("'", "")
+        val response = app.get(url)
+        val encodedStreamUrl = extractEncodedVideoUrl(response)
 
         // (improved) Kotlin implementation of the JavaScript code from above
         val streamUrl = encodedStreamUrl

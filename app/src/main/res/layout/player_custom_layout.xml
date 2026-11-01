@@ -264,6 +264,15 @@
                             tools:visibility="visible"
                             android:layout_gravity="center"/>
                     </LinearLayout>
+
+                    <TextClock
+                        android:id="@+id/player_video_clock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:visibility="gone"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <!-- Removed as it has no use anymore-->
@@ -919,9 +928,18 @@
                                 android:layout_height="40dp"
 
                                 android:nextFocusLeft="@id/player_sources_btt"
-                                android:nextFocusRight="@id/player_skip_op"
+                                android:nextFocusRight="@id/player_compressor_btt"
                                 android:text="@string/tracks"
                                 app:icon="@drawable/ic_baseline_equalizer_24" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/player_compressor_btt"
+                                style="@style/VideoButton"
+                                android:layout_height="40dp"
+                                android:nextFocusLeft="@id/player_tracks_btt"
+                                android:nextFocusRight="@id/player_skip_op"
+                                android:text="@string/compressor"
+                                app:icon="@drawable/ic_compressor_24" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/player_skip_op"
@@ -1077,6 +1095,8 @@
 
     <FrameLayout
         android:id="@+id/subtitle_holder"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

@@ -22,7 +22,6 @@ fun Requests.initClient(context: Context) {
 }
 
 /** Only use ignoreSSL if you know what you are doing*/
-@Prerelease
 fun Requests.initClient(context: Context, ignoreSSL: Boolean = false) {
     this.baseClient = buildDefaultClient(context, ignoreSSL)
 }
@@ -34,12 +33,11 @@ fun buildDefaultClient(context: Context): OkHttpClient {
 }
 
 /** Only use ignoreSSL if you know what you are doing*/
-@Prerelease
 fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClient {
     safe { Security.insertProviderAt(Conscrypt.newProvider(), 1) }
     
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-    val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)
+    val dns = settingsManager.getInt(context.getString(R.string.dns_key), 0)
     val baseClient = OkHttpClient.Builder()
         .followRedirects(true)
         .followSslRedirects(true)

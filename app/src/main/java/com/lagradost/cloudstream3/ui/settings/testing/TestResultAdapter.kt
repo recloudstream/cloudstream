@@ -21,10 +21,12 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.TestingUtils
+import com.lagradost.cloudstream3.utils.TestingUtils.Logger
+import com.lagradost.cloudstream4.state.LogLevel
 import java.io.File
 
 class TestResultAdapter() :
-    NoStateAdapter<Pair<MainAPI, TestingUtils.TestResultProvider>>(
+    NoStateAdapter<Triple<MainAPI, TestingUtils.TestResultProvider, Logger>>(
         diffCallback = BaseDiffCallback(
             itemSame = { a, b ->
                 a.first.name == b.first.name && a.first.mainUrl == b.first.mainUrl
@@ -56,11 +58,11 @@ class TestResultAdapter() :
 
     override fun onBindContent(
         holder: ViewHolderState<Any>,
-        item: Pair<MainAPI, TestingUtils.TestResultProvider>,
+        item: Triple<MainAPI, TestingUtils.TestResultProvider, Logger>,
         position: Int
     ) {
         val binding = holder.view as? ProviderTestItemBinding ?: return
-        val (api, result) = item
+        val (api, result, log) = item
 
         val itemView = holder.itemView
 
@@ -74,7 +76,7 @@ class TestResultAdapter() :
         providerTitle.text = api.name
 
         val (resultText, resultColor) = if (result.success) {
-            if (result.log.any { it.level == TestingUtils.Logger.LogLevel.Warning }) {
+            if (log.messageLog.any { it.level == LogLevel.Warning }) {
                 R.string.test_warning to R.color.colorTestWarning
             } else {
                 R.string.test_passed to R.color.colorTestPass
@@ -88,7 +90,7 @@ class TestResultAdapter() :
 
         val stackTrace = result.exception?.getStackTracePretty(false)?.ifBlank { null }
         val messages = result.exception?.getAllMessages()?.ifBlank { null }
-        val resultLog = result.log.joinToString("\n")
+        val resultLog = log.messageLog.joinToString("\n")
         val fullLog =
             resultLog +
                     (messages?.let { "\n\nError: $it" } ?: "") +
