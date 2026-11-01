@@ -110,25 +110,6 @@
             android:title="@string/auto_skip_popup_settings"
             app:defaultValue="false"
             app:key="@string/auto_skip_popup_key" />
-        <SeekBarPreference
-            android:defaultValue="5"
-            android:max="10"
-            android:summary="@string/auto_skip_countdown_settings_des"
-            android:title="@string/auto_skip_countdown_settings"
-            app:adjustable="true"
-            app:defaultValue="5"
-            app:dependency="@string/auto_skip_popup_key"
-            app:icon="@drawable/ic_baseline_skip_next_24"
-            app:key="@string/auto_skip_countdown_key"
-            app:min="0"
-            app:seekBarIncrement="1"
-            app:showSeekBarValue="true" />
-        <Preference
-            android:summary="@string/auto_skip_types_settings_des"
-            android:title="@string/auto_skip_types_settings"
-            app:dependency="@string/auto_skip_popup_key"
-            app:icon="@drawable/baseline_list_alt_24"
-            app:key="@string/auto_skip_types_key" />
         <SwitchPreference
             android:icon="@drawable/screen_rotation"
             android:summary="@string/rotate_video_desc"

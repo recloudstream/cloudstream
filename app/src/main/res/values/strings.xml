@@ -163,7 +163,6 @@
     <string name="auto_skip_countdown_settings">Auto-skip countdown (Seconds)</string>
     <string name="auto_skip_countdown_settings_des">How long to wait before automatically skipping. Set to 0 to skip instantly</string>
     <string name="auto_skip_types_settings">Auto-skip types</string>
-    <string name="auto_skip_types_settings_des">Choose which timestamps are automatically skipped</string>
     <string name="start_paused_settings">Start videos paused</string>
     <string name="start_paused_settings_des">Reduce stress when selecting sources</string>
     <string name="double_tap_to_seek_settings">Double tap to seek</string>
@@ -589,8 +588,6 @@
     <string name="skip_type_preview">Preview</string>
     <string name="skip_type_intro">Intro</string>
     <string name="skip_chapter_countdown_format" formatted="true">%1$s (%2$d)</string>
-    <string name="skipped_type_format" formatted="true">Skipped %1$s</string>
-    <string name="undo">Undo</string>
     <string name="clear_history">Clear history</string>
     <string name="history">History</string>
     <string name="enable_skip_op_from_database_des">Show skip popups for opening/ending</string>

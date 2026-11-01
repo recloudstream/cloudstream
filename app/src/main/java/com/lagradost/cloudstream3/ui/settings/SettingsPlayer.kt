@@ -28,7 +28,6 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.utils.videoskip.SkipType
 
 class SettingsPlayer : BasePreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -145,29 +144,6 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                     for ((index, key) in keys.withIndex()) {
                         putBoolean(key, selected.contains(index))
                     }
-                }
-            }
-
-            true
-        }
-
-        getPref(R.string.auto_skip_types_key)?.setOnPreferenceClickListener {
-            val types = SkipType.entries
-            val disabledKey = getString(R.string.auto_skip_disabled_types_key)
-            val disabled = settingsManager.getStringSet(disabledKey, emptySet()).orEmpty()
-
-            activity?.showMultiDialog(
-                types.map { getString(it.res) },
-                types.indices.filter { types[it].name !in disabled },
-                getString(R.string.auto_skip_types_settings),
-                {}
-            ) { selected ->
-                val selectedNames = selected.map { types[it].name }.toSet()
-                settingsManager.edit {
-                    putStringSet(
-                        disabledKey,
-                        types.map { it.name }.filter { it !in selectedNames }.toSet()
-                    )
                 }
             }
 

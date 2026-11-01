@@ -42,7 +42,6 @@
     <string name="auto_skip_popup_key">auto_skip_popup_key</string>
     <string name="auto_skip_countdown_key">auto_skip_countdown_key</string>
     <string name="auto_skip_types_key">auto_skip_types_key</string>
-    <string name="auto_skip_disabled_types_key">auto_skip_disabled_types_key</string>
     <string name="display_sub_key">display_sub_key</string>
     <string name="show_fillers_key">show_fillers_key</string>
     <string name="show_player_metadata_key">show_player_metadata_key</string>

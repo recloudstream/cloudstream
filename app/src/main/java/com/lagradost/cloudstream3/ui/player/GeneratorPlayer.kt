@@ -114,7 +114,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.SnackbarHelper
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
@@ -130,6 +129,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.getImageBitmapFromUrl
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream3.utils.videoskip.SkipType
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
@@ -150,7 +150,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         const val CHANNEL_ID = 7340
         const val STOP_ACTION = "stopcs3"
         private const val DEFAULT_AUTO_SKIP_COUNTDOWN_SECONDS = 5
-        private const val AUTO_SKIP_UNDO_DURATION_MS = 4000
 
         private val generators = ConcurrentHashMap<String, VideoGenerator<*>>()
         fun newInstance(
@@ -2074,8 +2073,8 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var autoSkipJob: Job? = null
 
     /**
-     * Timestamp the user declined, either by interacting with the player
-     * during its countdown or by undoing its skip. Never auto-skip it again.
+     * Timestamp the user declined by interacting with the player during its
+     * countdown. Never auto-skip it again.
      */
     private var declinedTimestamp: VideoSkipStamp? = null
 
@@ -2086,13 +2085,13 @@ class GeneratorPlayer : FullScreenPlayer() {
             return false
         }
 
-        // The user can exclude individual skip types from auto skipping
-        val disabledTypes = prefs.getStringSet(
-            ctx.getString(R.string.auto_skip_disabled_types_key),
-            emptySet()
+        // The user can select which skip types are automatically skipped
+        val enabledTypes = prefs.getStringSet(
+            ctx.getString(R.string.auto_skip_types_key),
+            SkipType.entries.map { it.name }.toSet()
         ).orEmpty()
 
-        return timestamp.timestamp.type.name !in disabledTypes
+        return timestamp.timestamp.type.name in enabledTypes
     }
 
     private fun getAutoSkipCountdownSeconds(): Int {
@@ -2106,32 +2105,6 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun cancelAutoSkipCountdown() {
         autoSkipJob?.cancel()
         autoSkipJob = null
-    }
-
-    /**
-     * Skips the current chapter and offers a short undo window, since skip
-     * timestamps are not always accurate.
-     */
-    private fun autoSkipChapter(timestamp: VideoSkipStamp) {
-        // Skipping to the next episode cannot be undone with a simple seek
-        if (!timestamp.skipToNextEpisode) {
-            val skippedName =
-                txt(timestamp.timestamp.label ?: getString(timestamp.timestamp.type.res))
-
-            player.getPosition()?.let { position ->
-                SnackbarHelper.showSnackbar(
-                    activity,
-                    txt(R.string.skipped_type_format, skippedName),
-                    AUTO_SKIP_UNDO_DURATION_MS,
-                    txt(R.string.undo)
-                ) {
-                    declinedTimestamp = timestamp
-                    player.seekTo(position)
-                }
-            }
-        }
-
-        player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
     }
 
     /**
@@ -2149,7 +2122,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         val countdownSeconds = getAutoSkipCountdownSeconds()
         if (countdownSeconds <= 0) {
             // Skip instantly when the countdown is set to zero
-            autoSkipChapter(timestamp)
+            player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
             return
         }
 
@@ -2169,7 +2142,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 if (skipIndex == currentIndex) {
-                    autoSkipChapter(timestamp)
+                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
                 }
             } finally {
                 // Restore the plain label no matter how the countdown ended
