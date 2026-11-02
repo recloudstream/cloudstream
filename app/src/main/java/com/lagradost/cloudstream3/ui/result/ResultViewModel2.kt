@@ -138,6 +138,7 @@ import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.downloadSubtitl
 import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream4.AppSettings
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -814,11 +815,13 @@ class ResultViewModel2 : ViewModel() {
 
     /**
      * Mirrors a bookmark status change to every logged in sync account (AniList, MAL, ...)
-     * that has an id for this title. The TV layout has no sync controls of its own,
-     * so this is the only way to add titles to those lists there.
+     * that has an id for this title, if enabled in the settings. The TV layout has no sync
+     * controls of its own, so this is the only way to add titles to those lists there.
      */
     private fun syncWatchStatus(syncData: Map<String, String>?, status: WatchType) = ioSafe {
         if (syncData.isNullOrEmpty()) return@ioSafe
+        val ctx = context ?: return@ioSafe
+        if (!AppSettings(ctx).security.syncBookmarks.get()) return@ioSafe
         // WatchType.NONE and SyncWatchType.NONE have different internal ids
         val syncStatus = if (status == WatchType.NONE) SyncWatchType.NONE
         else SyncWatchType.fromInternalId(status.internalId)
