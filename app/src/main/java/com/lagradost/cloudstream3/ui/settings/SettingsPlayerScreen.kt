@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getFold
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.videoskip.SkipType
 import com.lagradost.cloudstream4.compose.EMULATOR
 import com.lagradost.cloudstream4.compose.PHONE
 import com.lagradost.cloudstream4.compose.TV
@@ -28,6 +29,7 @@ import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
+import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -59,6 +61,8 @@ object SettingsPlayerScreen : SearchableSettings {
                 cacheSize = getFolderSize(cacheDir)
             }
         }
+
+        val autoSkipEnabled by settings.player.autoSkipEnabled.collectAsState()
 
         return persistentListOf(
             Preference.PreferenceGroup(
@@ -159,6 +163,27 @@ object SettingsPlayerScreen : SearchableSettings {
                         title = stringResource(R.string.video_skip_op),
                         subtitle = stringResource(R.string.enable_skip_op_from_database_des),
                         icon = painterResource(R.drawable.keyboard_double_arrow_right_24px),
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.player.autoSkipEnabled,
+                        title = stringResource(R.string.auto_skip_popup_settings),
+                        subtitle = stringResource(R.string.auto_skip_popup_settings_des),
+                        icon = painterResource(R.drawable.skip_next_24px),
+                    ),
+                    Preference.PreferenceItem.SliderPreference(
+                        preference = settings.player.autoSkipCountdown,
+                        title = stringResource(R.string.auto_skip_countdown_settings),
+                        subtitle = stringResource(R.string.auto_skip_countdown_settings_des),
+                        icon = painterResource(R.drawable.hourglass_24),
+                        valueRange = 0..10,
+                        enabled = autoSkipEnabled,
+                    ),
+                    Preference.PreferenceItem.MultiSelectListPreference(
+                        preference = settings.player.autoSkipTypes,
+                        title = stringResource(R.string.auto_skip_types_settings),
+                        icon = painterResource(R.drawable.filter_alt_24px),
+                        entries = SkipType.entries.associate { it.name to stringResource(it.res) },
+                        enabled = autoSkipEnabled,
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.autoRotateEnabled,
