@@ -1,23 +1,41 @@
 package com.lagradost.cloudstream3.network
 
+import okhttp3.Dns
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.dnsoverhttps.DnsOverHttps
+import java.net.Inet4Address
 import java.net.InetAddress
 
 /**
  * Based on https://github.com/tachiyomiorg/tachiyomi/blob/master/app/src/main/java/eu/kanade/tachiyomi/network/DohProviders.kt
  */
 
+/**
+ * Strips IPv6 addresses from any DNS result, returning IPv4-only.
+ * Android TV firmware often has a broken IPv6 stack — looks available but
+ * connections silently fail or hang, causing ExoPlayer errors 2004/2001
+ * while the same stream works fine on mobile over the same Wi-Fi.
+ */
+class IPv4OnlyDns(private val delegate: Dns = Dns.SYSTEM) : Dns {
+    override fun lookup(hostname: String): List<InetAddress> {
+        val addresses = delegate.lookup(hostname)
+        val ipv4Only = addresses.filterIsInstance<Inet4Address>()
+        return ipv4Only.ifEmpty { addresses }
+    }
+}
+
 fun OkHttpClient.Builder.addGenericDns(url: String, ips: List<String>) = dns(
-    DnsOverHttps
-        .Builder()
-        .client(build())
-        .url(url.toHttpUrl())
-        .bootstrapDnsHosts(
-            ips.map { InetAddress.getByName(it) }
-        )
-        .build()
+    IPv4OnlyDns(
+        DnsOverHttps
+            .Builder()
+            .client(build())
+            .url(url.toHttpUrl())
+            .bootstrapDnsHosts(
+                ips.map { InetAddress.getByName(it) }
+            )
+            .build()
+    )
 )
 
 fun OkHttpClient.Builder.addGoogleDns() = (
