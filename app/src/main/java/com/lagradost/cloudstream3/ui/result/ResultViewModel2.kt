@@ -1474,18 +1474,28 @@ class ResultViewModel2 : ViewModel() {
 
             ACTION_DOWNLOAD_EPISODE -> {
                 val response = currentResponse ?: return
-                DownloadQueueManager.addToQueue(
-                    DownloadObjects.DownloadQueueItem(
-                        click.data,
-                        response.isMovie(),
-                        response.name,
-                        response.type,
-                        response.posterUrl,
-                        response.apiName,
-                        response.getId(),
-                        response.url,
-                    ).toWrapper()
-                )
+                // Let the user choose the exact available server/quality before queuing.
+                acquireSingleLink(
+                    click.data,
+                    LOADTYPE_INAPP_DOWNLOAD,
+                    txt(R.string.episode_action_download_mirror)
+                ) { (links, index) ->
+                    DownloadQueueManager.addToQueue(
+                        DownloadObjects.DownloadQueueItem(
+                            click.data,
+                            response.isMovie(),
+                            response.name,
+                            response.type,
+                            response.posterUrl,
+                            response.apiName,
+                            response.getId(),
+                            response.url,
+                            listOf(links.links[index]),
+                            links.subs,
+                        ).toWrapper()
+                    )
+                    showToast(R.string.download_started, Toast.LENGTH_SHORT)
+                }
             }
 
             ACTION_DOWNLOAD_MIRROR -> {
