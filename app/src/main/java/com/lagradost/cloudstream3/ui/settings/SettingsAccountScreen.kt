@@ -115,6 +115,11 @@ object SettingsAccountScreen : SearchableSettings, BiometricAuthenticator.Biomet
                     preference = settings.security.skipAccountSelection,
                     title = stringResource(R.string.skip_startup_account_select_pref),
                     icon = painterResource(R.drawable.ic_outline_account_circle_24)
+                ) + Preference.PreferenceItem.SwitchPreference(
+                    preference = settings.security.syncBookmarks,
+                    title = stringResource(R.string.sync_bookmarks_pref),
+                    subtitle = stringResource(R.string.sync_bookmarks_pref_summary),
+                    icon = painterResource(R.drawable.ic_baseline_bookmark_24)
                 ),
             ), Preference.PreferenceGroup(
                 enabled = hasSecurity && isLayout(PHONE),
