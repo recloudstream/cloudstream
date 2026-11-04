@@ -22,6 +22,8 @@ import com.lagradost.cloudstream3.actions.temp.MpvKtPreviewPackage
 import com.lagradost.cloudstream3.actions.temp.MpvPackage
 import com.lagradost.cloudstream3.actions.temp.MpvRxPackage
 import com.lagradost.cloudstream3.actions.temp.MpvYTDLPackage
+import com.lagradost.cloudstream3.actions.temp.MxPlayerPackage
+import com.lagradost.cloudstream3.actions.temp.MxPlayerProPackage
 import com.lagradost.cloudstream3.actions.temp.NextPlayerPackage
 import com.lagradost.cloudstream3.actions.temp.OnlyPlayer
 import com.lagradost.cloudstream3.actions.temp.PlayInBrowserAction
@@ -67,6 +69,8 @@ object VideoClickActionHolder {
         MpvKtPreviewPackage(),
         OnlyPlayer(),
         MpvRxPackage(),
+        MxPlayerPackage(),
+        MxPlayerProPackage(),
         // Always Ask option
         AlwaysAskAction(),
         // added by plugins
