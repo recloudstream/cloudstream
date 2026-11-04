@@ -1,3 +1,817 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s ఎపి %2$d</string>
+    <string name="cast_format" formatted="true">తారాగణం: %s</string>
+    <string name="next_episode_format" formatted="true">ఎపిసోడ్ %d విడుదల అవుతుంది</string>
+    <string name="next_season_episode_format" formatted="true">సీజన్ %1$d ఎపిసోడ్ %2$d విడుదల అవుతుంది</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dది %2$dగం %3$dని</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dగం %2$dనిమి</string>
+    <string name="next_episode_time_min_format" formatted="true">%dని</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dగం %2$dనిమి %3$dసె</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dనిమి %2$dసె</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dసె</string>
+    <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
+    <string name="result_poster_img_des">పోస్టర్</string>
+    <string name="search_poster_img_des">పోస్టర్</string>
+    <string name="episode_poster_img_des">ఎపిసోడ్ పోస్టర్</string>
+    <string name="home_main_poster_img_des">ప్రధాన పోస్టర్</string>
+    <string name="home_next_random_img_des">తదుపరి రాండమ్</string>
+    <string name="go_back_img_des">వెనక్కి వెళ్ళు</string>
+    <string name="play_from_beginning_img_des">ప్రారంభం నుండి ప్లే చేయండి</string>
+    <string name="home_change_provider_img_des">ప్రొవైడర్‌ని మార్చండి</string>
+    <string name="preview_background_img_des">ప్రివ్యూ బ్యాక్‌గ్రౌండ్</string>
+    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
+    <string name="player_speed_text_format" formatted="true">వేగం (%.2fx)</string>
+    <string name="rated_format" formatted="true">రేట్ చేయబడింది: %.1f</string>
+    <string name="new_update_format" formatted="true">కొత్త అప్‌డేట్ కనుగొనబడింది!\n%1$s -&gt; %2$s</string>
+    <string name="filler" formatted="true">పూరకం</string>
+    <string name="duration_format" formatted="true">%d నిమి</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">CloudStreamతో ప్లే చేయండి</string>
+    <string name="title_home">హోమ్</string>
+    <string name="title_search">సెర్చ్ చేయండి</string>
+    <string name="title_downloads">డౌన్‌లోడ్‌లు</string>
+    <string name="download_queue">డౌన్‌లోడ్ క్యూ</string>
+    <string name="title_settings">సెట్టింగ్‌లు</string>
+    <string name="search_hint">వెతకండి...</string>
+    <string name="search_hint_site" formatted="true">సెర్చ్ చేయండి %s...</string>
+    <string name="speech_recognition_unavailable">ప్రసంగ గుర్తింపు అందుబాటులో లేదు</string>
+    <string name="begin_speaking">మాట్లాడటం ప్రారంభించండి...</string>
+    <string name="no_data">డేటా లేదు</string>
+    <string name="episode_more_options_des">మరిన్ని ఎంపికలు</string>
+    <string name="next_episode">తదుపరి ఎపిసోడ్</string>
+    <string name="result_tags">శైలులు</string>
+    <string name="result_share">షేర్ చేయండి</string>
+    <string name="result_open_in_browser">బ్రౌజర్‌లో తెరవండి</string>
+    <string name="browser">బ్రౌజర్</string>
+    <string name="skip_loading">లోడ్ చేయడాన్ని దాటవేయి</string>
+    <string name="loading">లోడ్ అవుతోంది...</string>
+    <string name="type_watching">చూస్తున్నారు</string>
+    <string name="type_on_hold">ఆన్-హోల్డ్</string>
+    <string name="type_completed">పూర్తయింది</string>
+    <string name="type_dropped">పడిపోయింది</string>
+    <string name="type_plan_to_watch">చూడటానికి ప్లాన్ చేయండి</string>
+    <string name="type_re_watching">మళ్లీ చూడటం</string>
+    <string name="play_movie_button">సినిమాని ప్లే చేయండి</string>
+    <string name="play_trailer_button">ట్రైలర్ ప్లే చేయండి</string>
+    <string name="play_livestream_button">ప్రత్యక్ష ప్రసారాన్ని ప్లే చేయండి</string>
+    <string name="play_torrent_button">స్ట్రీమ్ టోరెంట్</string>
+    <string name="play_full_series_button">పూర్తి సిరీస్‌ని ప్లే చేయండి</string>
+    <string name="torrent_info">ఈ వీడియో టొరెంట్, దీని అర్థం మీ వీడియో కార్యాచరణను ట్రాక్ చేయవచ్చని అర్థం.\nకొనసాగించే ముందు మీరు టోరెంటింగ్‌ని అర్థం చేసుకున్నారని నిర్ధారించుకోండి.</string>
+    <string name="pick_source">మూలాలు</string>
+    <string name="pick_subtitle">ఉపశీర్షికలు</string>
+    <string name="reload_error">కనెక్షన్‌ని మళ్లీ ప్రయత్నించండి...</string>
+    <string name="go_back">వెనక్కి వెళ్ళు</string>
+    <string name="play_episode">ఎపిసోడ్ ప్లే చేయండి</string>
+    <!--<string name="need_storage">Allow to download episodes</string>-->
+    <string name="download">డౌన్‌లోడ్ చేయండి</string>
+    <string name="downloaded">డౌన్‌లోడ్ చేయబడింది</string>
+    <string name="downloading">డౌన్‌లోడ్ చేస్తోంది</string>
+    <string name="download_paused">డౌన్‌లోడ్ పాజ్ చేయబడింది</string>
+    <string name="download_started">డౌన్‌లోడ్ ప్రారంభించబడింది</string>
+    <string name="download_failed">డౌన్‌లోడ్ విఫలమైంది</string>
+    <string name="download_canceled">డౌన్‌లోడ్ రద్దు చేయబడింది</string>
+    <string name="download_done">డౌన్‌లోడ్ పూర్తయింది</string>
+    <string name="downloads_delete_select">తొలగించాల్సిన అంశాలను ఎంచుకోండి</string>
+    <string name="downloads_empty">ప్రస్తుతం డౌన్‌లోడ్‌లు లేవు.</string>
+    <string name="queue_empty_message">ప్రస్తుతం క్యూలో డౌన్‌లోడ్‌లు లేవు.</string>
+    <string name="offline_file">ఆఫ్‌లైన్‌లో చూడటానికి అందుబాటులో ఉంది</string>
+    <string name="select_all">అన్నీ ఎంచుకోండి</string>
+    <string name="deselect_all">అన్నీ ఎంపికను తీసివేయండి</string>
+    <string name="update_started">నవీకరణ ప్రారంభమైంది</string>
+    <string name="stream">నెట్‌వర్క్ స్ట్రీమ్</string>
+    <string name="open_local_video">స్థానిక వీడియోను తెరవండి</string>
+    <string name="error_loading_links_toast">లింక్‌లను లోడ్ చేయడంలో లోపం</string>
+    <string name="links_reloaded_toast">లింక్‌లు రీలోడ్ చేయబడ్డాయి</string>
+    <string name="download_storage_text">అంతర్గత నిల్వ</string>
+    <string name="app_dubbed_text">డబ్</string>
+    <string name="app_subbed_text">ఉప</string>
+    <string name="popup_delete_file">ఫైల్‌ను తొలగించండి</string>
+    <string name="popup_play_file">ఫైల్‌ని ప్లే చేయండి</string>
+    <string name="popup_resume_download">డౌన్‌లోడ్ పునఃప్రారంభించండి</string>
+    <string name="popup_pause_download">డౌన్‌లోడ్‌ను పాజ్ చేయండి</string>
+    <string name="home_more_info">మరింత సమాచారం</string>
+    <string name="home_expanded_hide">దాచు</string>
+    <string name="home_play">ప్లే చేయండి</string>
+    <string name="home_info">సమాచారం</string>
+    <string name="filter_bookmarks">బుక్‌మార్క్‌లను ఫిల్టర్ చేయండి</string>
+    <string name="error_bookmarks_text">బుక్‌మార్క్‌లు</string>
+    <string name="action_remove_from_bookmarks">తొలగించు</string>
+    <string name="action_add_to_bookmarks">వాచ్ స్థితిని సెట్ చేయండి</string>
+    <string name="sort_apply">దరఖాస్తు చేసుకోండి</string>
+    <string name="sort_copy">కాపీ చేయండి</string>
+    <string name="sort_close">మూసివేయి</string>
+    <string name="sort_clear">క్లియర్</string>
+    <string name="sort_save">సేవ్ చేయండి</string>
+    <string name="repo_copy_label">రిపోజిటరీ పేరు మరియు URL</string>
+    <string name="toast_copied">కాపీ చేయబడింది!</string>
+    <string name="subscribe_tooltip">కొత్త ఎపిసోడ్ నోటిఫికేషన్</string>
+    <string name="result_search_tooltip">ఇతర పొడిగింపులలో సెర్చ్ చేయండి</string>
+    <string name="recommendations_tooltip">సిఫార్సులను చూపించు</string>
+    <string name="player_speed">ప్లేయర్ స్పీడ్</string>
+    <string name="subtitles_settings">ఉపశీర్షిక సెట్టింగ్‌లు</string>
+    <string name="subs_text_color">టెక్స్ట్ రంగు</string>
+    <string name="subs_outline_color">అవుట్‌లైన్ రంగు</string>
+    <string name="subs_background_color">నేపథ్య రంగు</string>
+    <string name="subs_window_color">విండో రంగు</string>
+    <string name="subs_edge">అంచు</string>
+    <string name="subs_edge_type">అంచు రకం</string>
+    <string name="subs_subtitle_elevation">ఉపశీర్షిక ఎలివేషన్</string>
+    <string name="subs_font">ఫాంట్</string>
+    <string name="subs_font_size">ఫాంట్ పరిమాణం</string>
+    <string name="search_provider_text_providers">ప్రొవైడర్లను ఉపయోగించి సెర్చ్ చేయండి</string>
+    <string name="search_provider_text_types">రకాలను ఉపయోగించి సెర్చ్ చేయండి</string>
+    <string name="benene_count_text">%d డెవలప్‌లకు బెనెన్‌లు అందించబడ్డాయి</string>
+    <string name="benene_count_text_none">బెనిన్స్ ఇవ్వలేదు</string>
+    <string name="subs_auto_select_language">భాషని స్వయంచాలకంగా ఎంచుకోండి</string>
+    <string name="subs_download_languages">భాషలను డౌన్‌లోడ్ చేయండి</string>
+    <string name="subs_subtitle_languages">ఉపశీర్షిక భాష</string>
+    <string name="subs_hold_to_reset_to_default">డిఫాల్ట్‌కి రీసెట్ చేయడానికి పట్టుకోండి</string>
+    <string name="subs_import_text" formatted="true">ఫాంట్‌లను %sలో ఉంచడం ద్వారా వాటిని దిగుమతి చేయండి</string>
+    <string name="continue_watching">చూడటం కొనసాగించు</string>
+    <string name="action_remove_watching">తొలగించు</string>
+    <string name="action_open_watching">మరింత సమాచారం</string>
+    <string name="action_open_play">@string/home_play </string>
+    <string name="vpn_might_be_needed">ఈ ప్రొవైడర్ సరిగ్గా పని చేయడానికి VPN అవసరం కావచ్చు</string>
+    <string name="vpn_torrent">ఈ ప్రొవైడర్ టొరెంట్, VPN సిఫార్సు చేయబడింది</string>
+    <string name="provider_info_meta">మెటాడేటా సైట్ ద్వారా అందించబడలేదు, అది సైట్‌లో లేనట్లయితే వీడియో లోడింగ్ విఫలమవుతుంది.</string>
+    <string name="torrent_plot">వివరణ</string>
+    <string name="normal_no_plot">ప్లాట్లు కనుగొనబడలేదు</string>
+    <string name="torrent_no_plot">వివరణ కనుగొనబడలేదు</string>
+    <string name="show_log_cat">లాగ్‌క్యాట్ చూపు 🐈</string>
+    <string name="log_cat">లాగ్‌క్యాట్ 🐈</string>
+    <string name="test_log">లాగ్</string>
+    <string name="picture_in_picture">పిక్చర్-ఇన్-పిక్చర్</string>
+    <string name="picture_in_picture_des">ఇతర యాప్‌ల పైన చిన్న ప్లేయర్‌లో ప్లేబ్యాక్‌ను కొనసాగిస్తుంది</string>
+    <string name="player_size_settings">ప్లేయర్ పునఃపరిమాణం బటన్</string>
+    <string name="player_size_settings_des">నలుపు అంచులను తొలగించండి</string>
+    <string name="player_subtitles_settings">ఉపశీర్షికలు</string>
+    <string name="player_subtitles_settings_des">ప్లేయర్ ఉపశీర్షికల సెట్టింగ్‌లు</string>
+    <string name="chromecast_subtitles_settings">Chromecast ఉపశీర్షికలు</string>
+    <string name="chromecast_subtitles_settings_des">Chromecast ఉపశీర్షికల సెట్టింగ్‌లు</string>
+    <string name="eigengraumode_settings">ప్లేబ్యాక్ వేగం</string>
+    <string name="speed_setting_summary">ప్లేయర్‌లో స్పీడ్ ఆప్షన్‌ని జోడిస్తుంది</string>
+    <string name="swipe_to_seek_settings">వెతకడానికి స్వైప్ చేయండి</string>
+    <string name="swipe_to_seek_settings_des">వీడియోలో మీ స్థానాన్ని నియంత్రించడానికి ప్రక్క నుండి ప్రక్కకు స్వైప్ చేయండి</string>
+    <string name="swipe_to_change_settings">సెట్టింగ్‌లను మార్చడానికి స్వైప్ చేయండి</string>
+    <string name="swipe_to_change_settings_des">ప్రకాశం లేదా వాల్యూమ్‌ను మార్చడానికి ఎడమ లేదా కుడి వైపున పైకి లేదా క్రిందికి స్లైడ్ చేయండి</string>
+    <string name="autoplay_next_settings">తదుపరి ఎపిసోడ్‌ని ఆటోప్లే చేయండి</string>
+    <string name="autoplay_next_settings_des">ప్రస్తుత భాగం ముగిసిన తర్వాత తదుపరి ఎపిసోడ్‌ను ప్రారంభించండి</string>
+    <string name="start_paused_settings">ప్రారంభ వీడియోలు పాజ్ చేయబడ్డాయి</string>
+    <string name="start_paused_settings_des">మూలాలను ఎన్నుకునేటప్పుడు ఒత్తిడిని తగ్గించండి</string>
+    <string name="double_tap_to_seek_settings">వెతకడానికి రెండుసార్లు నొక్కండి</string>
+    <string name="double_tap_to_pause_settings">పాజ్ చేయడానికి రెండుసార్లు నొక్కండి</string>
+    <string name="double_tap_to_seek_amount_settings">ప్లేయర్ సీక్ మొత్తం (సెకన్లు)</string>
+    <string name="double_tap_to_seek_settings_des">ముందుకు లేదా వెనుకకు వెతకడానికి కుడి లేదా ఎడమ వైపున రెండుసార్లు నొక్కండి
+    </string>
+    <string name="double_tap_to_pause_settings_des">పాజ్ చేయడానికి మధ్యలో రెండుసార్లు నొక్కండి</string>
+    <string name="use_system_brightness_settings">సిస్టమ్ ప్రకాశాన్ని ఉపయోగించండి</string>
+    <string name="use_system_brightness_settings_des">చీకటికి బదులుగా యాప్ ప్లేయర్‌లో సిస్టమ్ బ్రైట్‌నెస్‌ని ఉపయోగించండి
+        అతివ్యాప్తి
+    </string>
+    <string name="extra_brightness_settings">అదనపు ప్రకాశం</string>
+    <string name="extra_brightness_settings_des">100% dఇస్‌ప్లే ప్రకాశం మించిపోయినప్పుడు బ్రైట్‌నెస్ ఫిల్టర్‌ని ప్రారంభించండి</string>
+    <string name="extra_brightness_key">అదనపు_ప్రకాశం_ప్రారంభించబడింది</string>
+    <string name="episode_sync_settings">వాచ్ పురోగతిని నవీకరించండి</string>
+    <string name="episode_sync_settings_des">మీ ప్రస్తుత ఎపిసోడ్ పురోగతిని స్వయంచాలకంగా సమకాలీకరించండి</string>
+    <string name="restore_settings">బ్యాకప్ నుండి డేటాను పునరుద్ధరించండి</string>
+    <string name="backup_settings">డేటాను బ్యాకప్ చేయండి</string>
+    <string name="backup_frequency">బ్యాకప్ ఫ్రీక్వెన్సీ</string>
+    <string name="restore_success">బ్యాకప్ ఫైల్ లోడ్ చేయబడింది</string>
+    <string name="restore_failed_format" formatted="true">ఫైల్ %s నుండి డేటాను పునరుద్ధరించడంలో విఫలమైంది</string>
+    <string name="backup_success">డేటా నిల్వ చేయబడింది</string>
+    <string name="backup_failed">నిల్వ అనుమతులు లేవు. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+    <string name="backup_failed_error_format">బ్యాకప్ చేయడంలో లోపం %s</string>
+    <string name="search">సెర్చ్ చేయండి</string>
+    <string name="library">లైబ్రరీ</string>
+    <string name="category_account">ఖాతాలు మరియు భద్రత</string>
+    <string name="category_updates">నవీకరణలు మరియు బ్యాకప్</string>
+    <string name="settings_info">సమాచారం</string>
+    <string name="advanced_search">అధునాతన సెర్చ్</string>
+    <string name="advanced_search_des">ప్రొవైడర్ ద్వారా వేరు చేయబడిన సెర్చ్ ఫలితాలను మీకు అందిస్తుంది</string>
+    <string name="search_suggestions">సెర్చ్ సూచనలు</string>
+    <string name="search_suggestions_des">టైప్ చేస్తున్నప్పుడు సెర్చ్ సూచనలను చూపండి</string>
+    <string name="clear_suggestions">సూచనలను క్లియర్ చేయండి</string>
+    <string name="show_fillers_settings">అనిమే కోసం ఫిల్లర్ ఎపిసోడ్‌ని చూపండి</string>
+    <string name="show_player_metadata_overlay">ప్లేయర్ మెటాడేటా అతివ్యాప్తిని చూపు</string>
+    <string name="show_trailers_settings">ట్రైలర్‌లను చూపించు</string>
+    <string name="kitsu_settings">కిట్సు నుండి పోస్టర్‌లను చూపించు</string>
+    <string name="show_cast_in_details">తారాగణం ప్యానెల్‌ను చూపించు</string>
+    <string name="pref_filter_search_quality">సెర్చ్ ఫలితాల్లో ఎంచుకున్న వీడియో నాణ్యతను దాచండి</string>
+    <string name="automatic_plugin_updates">స్వయంచాలక ప్లగిన్ నవీకరణలు</string>
+    <string name="automatic_plugin_download">ప్లగిన్‌లను స్వయంచాలకంగా డౌన్‌లోడ్ చేయండి</string>
+    <string name="automatic_plugin_download_mode_title">ప్లగిన్‌ల డౌన్‌లోడ్‌ను ఫిల్టర్ చేయడానికి మోడ్‌ను ఎంచుకోండి</string>
+    <string name="automatic_plugin_download_summary">జోడించిన రిపోజిటరీల నుండి ఇంకా ఇన్‌స్టాల్ చేయని అన్ని ప్లగిన్‌లను స్వయంచాలకంగా ఇన్‌స్టాల్ చేయండి.</string>
+    <string name="updates_settings">యాప్ అప్‌డేట్‌లను చూపండి</string>
+    <string name="updates_settings_des">యాప్‌ను ప్రారంభించిన తర్వాత ఆటోమేటిక్‌గా కొత్త అప్‌డేట్‌ల కోసం వెతకండి.</string>
+    <string name="redo_setup_process">సెటప్ ప్రక్రియను పునరావృతం చేయండి</string>
+    <string name="install_prerelease">ప్రీ-రిలీజ్ వెర్షన్‌ను ఇన్‌స్టాల్ చేయండి</string>
+    <string name="prerelease_already_installed">ప్రీ-రిలీజ్ ఇప్పటికే ఇన్‌స్టాల్ చేయబడింది.</string>
+    <string name="prerelease_install_failed">ప్రీ-రిలీజ్‌ని ఇన్‌స్టాల్ చేయడంలో విఫలమైంది.</string>
+    <string name="apk_installer_settings">APK ఇన్‌స్టాలర్</string>
+    <string name="apk_installer_settings_des">కొన్ని పరికరాలు కొత్త ప్యాకేజీ ఇన్‌స్టాలర్‌కు మద్దతు ఇవ్వవు. నవీకరణలు ఇన్‌స్టాల్ చేయకుంటే లెగసీ ఎంపికను ప్రయత్నించండి.</string>
+    <string name="github">గితుబ్</string>
+    <string name="lightnovel">అదే devs ద్వారా లైట్ నవల అనువర్తనం</string>
+    <string name="anim">అదే devs ద్వారా అనిమే యాప్</string>
+    <string name="discord">డిస్కార్డ్‌లో చేరండి</string>
+    <string name="benene">దేవ్‌లకు బెనిన్ ఇవ్వండి</string>
+    <string name="benene_des">బెనెన్ ఇచ్చారు</string>
+    <string name="app_language">యాప్ భాష</string>
+    <string name="no_chromecast_support_toast">ఈ ప్రొవైడర్‌కు Chromecast మద్దతు లేదు</string>
+    <string name="no_links_found_toast">లింక్‌లు ఏవీ కనుగొనబడలేదు</string>
+    <string name="copy_link_toast">లింక్ క్లిప్‌బోర్డ్‌కి కాపీ చేయబడింది</string>
+    <string name="play_episode_toast">ఎపిసోడ్ ప్లే చేయండి</string>
+    <string name="subs_default_reset_toast">డిఫాల్ట్ విలువకు రీసెట్ చేయండి</string>
+    <string name="season">సీజన్</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="no_season">సీజన్ లేదు</string>
+    <string name="episode">ఎపిసోడ్</string>
+    <string name="episodes">ఎపిసోడ్‌లు</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="episode_upcoming_format" formatted="true">%sలో రాబోయేది</string>
+    <string name="season_short">ఎస్</string>
+    <string name="episode_short">ఇ</string>
+    <string name="no_episodes_found">ఎపిసోడ్‌లు ఏవీ కనుగొనబడలేదు</string>
+    <string name="delete">తొలగించు</string>
+    <string name="delete_file">ఫైల్‌ను తొలగించండి</string>
+    <string name="delete_files">ఫైల్‌లను తొలగించండి</string>
+    <string name="delete_format" formatted="true">తొలగించు (%1$d | %2$s)</string>
+    <string name="cancel">రద్దు చేయి</string>
+    <string name="pause">పాజ్ చేయండి</string>
+    <string name="start">ప్రారంభించండి</string>
+    <string name="test_failed">విఫలమైంది</string>
+    <string name="test_passed">ఉత్తీర్ణులయ్యారు</string>
+    <string name="test_warning">హెచ్చరిక</string>
+    <string name="resume">పునఃప్రారంభించండి</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message" formatted="true">ఇది శాశ్వతంగా తొలగిస్తుంది %s\nమీరు ఖచ్చితంగా అనుకుంటున్నారా?</string>
+    <string name="delete_message_multiple" formatted="true">మీరు ఖచ్చితంగా క్రింది అంశాలను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">మీరు ఖచ్చితంగా %1$sలో క్రింది ఎపిసోడ్‌లను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">మీరు కింది సిరీస్‌లోని అన్ని ఎపిసోడ్‌లను కూడా శాశ్వతంగా తొలగిస్తారు:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">మీరు ఖచ్చితంగా కింది సిరీస్‌లోని అన్ని ఎపిసోడ్‌లను శాశ్వతంగా తొలగించాలనుకుంటున్నారా?\n\n%s</string>
+    <string name="resume_time_left" formatted="true">%dనిమి\nమిగిలింది</string>
+    <string name="resume_remaining" formatted="true">%s\nమిగిలింది</string>
+    <string name="status_ongoing">కొనసాగుతున్నది</string>
+    <string name="status_completed">పూర్తయింది</string>
+    <string name="status">స్థితి</string>
+    <string name="year">సంవత్సరం</string>
+    <string name="rating">రేటింగ్</string>
+    <string name="duration">వ్యవధి</string>
+    <string name="site">సైట్</string>
+    <string name="synopsis">సారాంశం</string>
+    <string name="queued">క్యూ కట్టారు</string>
+    <string name="no_subtitles">ఉపశీర్షికలు లేవు</string>
+    <string name="action_default">డిఫాల్ట్</string>
+    <string name="free_storage">ఉచిత</string>
+    <string name="used_storage">ఉపయోగించారు</string>
+    <string name="app_storage">యాప్</string>
+    <!--plural-->
+    <string name="movies">సినిమాలు</string>
+    <string name="tv_series">TV సిరీస్</string>
+    <string name="cartoons">కార్టూన్లు</string>
+    <string name="anime">అనిమే</string>
+    <string name="torrent">టొరెంట్స్</string>
+    <string name="documentaries">డాక్యుమెంటరీలు</string>
+    <string name="ova">OVA</string>
+    <string name="asian_drama">ఆసియా నాటకాలు</string>
+    <string name="livestreams">ప్రత్యక్ష ప్రసారాలు</string>
+    <string name="nsfw">NSFW</string>
+    <string name="others">ఇతరులు</string>
+    <!--singular-->
+    <string name="movies_singular">సినిమా</string>
+    <string name="tv_series_singular">సిరీస్</string>
+    <string name="cartoons_singular">కార్టూన్</string>
+    <string name="anime_singular">అనిమే</string>
+    <string name="ova_singular">OVA</string>
+    <string name="torrent_singular">టొరెంట్</string>
+    <string name="documentaries_singular">డాక్యుమెంటరీ</string>
+    <string name="asian_drama_singular">ఏషియన్ డ్రామా</string>
+    <string name="live_singular">ప్రత్యక్ష ప్రసారం</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="other_singular">వీడియో</string>
+    <string name="music_singular">సంగీతం</string>
+    <string name="audio_book_singular">ఆడియో బుక్</string>
+    <string name="custom_media_singular">మీడియా</string>
+    <string name="audio_singular">ఆడియో</string>
+    <string name="podcast_singular">పోడ్‌కాస్ట్</string>
+    <string name="video_singular">వీడియో</string>
+    <string name="source_error">మూల దోషం</string>
+    <string name="remote_error">రిమోట్ లోపం</string>
+    <string name="render_error">రెండరర్ లోపం</string>
+    <string name="encoding_error">ఎన్‌కోడింగ్ లోపం</string>
+    <string name="unsupported_error">మద్దతు లేని లోపం</string>
+    <string name="unexpected_error">ఊహించని ప్లేయర్ లోపం</string>
+    <string name="storage_error">డౌన్‌లోడ్ లోపం, నిల్వ అనుమతులను తనిఖీ చేయండి</string>
+    <string name="episode_action_chromecast_episode">Chromecast ఎపిసోడ్</string>
+    <string name="episode_action_chromecast_mirror">Chromecast అద్దం</string>
+    <string name="episode_action_cast_mirror">అద్దం వేయండి</string>
+    <string name="episode_action_play_in_app">యాప్‌లో ప్లే చేయండి</string>
+    <string name="episode_action_play_mirror">మిర్రర్ ప్లే చేయండి</string>"
+    <string name="episode_action_play_in_format">%sలో ప్లే చేయండి</string>
+    <string name="episode_action_auto_download">ఆటో డౌన్‌లోడ్</string>
+    <string name="episode_action_download_mirror">అద్దాన్ని డౌన్‌లోడ్ చేయండి</string>
+    <string name="episode_action_reload_links">లింక్‌లను రీలోడ్ చేయండి</string>
+    <string name="episode_action_download_subtitle">ఉపశీర్షికలను డౌన్‌లోడ్ చేయండి</string>
+    <string name="show_hd">నాణ్యత లేబుల్</string>
+    <string name="show_dub">డబ్ లేబుల్</string>
+    <string name="show_sub">ఉప లేబుల్</string>
+    <string name="show_rating">రేటింగ్ లేబుల్</string>
+    <string name="show_title">శీర్షిక</string>
+    <string name="show_episode_text">ఎపిసోడ్ టెక్స్ట్</string>
+    <string name="poster_ui_settings">పోస్టర్‌పై UI ఎలిమెంట్‌లను టోగుల్ చేయండి</string>
+    <string name="no_update_found">నవీకరణ కనుగొనబడలేదు</string>
+    <string name="check_for_update">నవీకరణ కోసం తనిఖీ చేయండి</string>
+    <string name="video_lock">తాళం వేయండి</string>
+    <string name="video_aspect_ratio_resize">పరిమాణం మార్చండి</string>
+    <string name="video_source">మూలం</string>
+    <string name="video_skip_op">OPని దాటవేయి</string>
+    <string name="dont_show_again">మళ్లీ చూపవద్దు\'</string>
+    <string name="skip_update">ఈ నవీకరణను దాటవేయి</string>
+    <string name="update">నవీకరించు</string>
+    <string name="watch_quality_pref">ప్రాధాన్య వాచ్ నాణ్యత (WiFi)</string>
+    <string name="watch_quality_pref_data">ప్రాధాన్య వాచ్ నాణ్యత (మొబైల్ డేటా)</string>
+    <string name="limit_title">వీడియో ప్లేయర్ శీర్షిక గరిష్ట అక్షరాలు</string>
+    <string name="limit_title_rez">ప్లేయర్ సమాచారాన్ని చూపించు</string>
+    <string name="video_buffer_size_settings">వీడియో బఫర్ పరిమాణం</string>
+    <string name="video_buffer_length_settings">వీడియో బఫర్ పొడవు</string>
+    <string name="video_buffer_disk_settings">డిస్క్‌లో వీడియో కాష్</string>
+    <string name="video_buffer_clear_settings">వీడియో మరియు ఇమేజ్ కాష్‌ని క్లియర్ చేయండి</string>
+    <string name="android_tv_interface_on_seek_settings">ప్లేయర్ చూపబడింది - మొత్తం సీక్</string>
+    <string name="android_tv_interface_on_seek_settings_summary">ప్లేయర్ కనిపించినప్పుడు ఉపయోగించబడుతుంది సీక్ మొత్తం</string>
+    <string name="android_tv_interface_off_seek_settings">ప్లేయర్ హిడెన్ - సీక్ అమౌంట్</string>
+    <string name="android_tv_interface_off_seek_settings_summary">ప్లేయర్ దాచబడినప్పుడు ఉపయోగించబడుతుంది</string>
+    <string name="video_ram_description">ఆండ్రాయిడ్ టీవీ వంటి తక్కువ మెమరీ ఉన్న పరికరాలలో చాలా ఎక్కువగా సెట్ చేస్తే క్రాష్‌లకు కారణమవుతుంది.</string>
+    <string name="video_disk_description">ఆండ్రాయిడ్ టీవీ వంటి తక్కువ స్టోరేజ్ స్పేస్ ఉన్న పరికరాలలో చాలా ఎక్కువగా సెట్ చేస్తే సమస్యలను కలిగిస్తుంది.</string>
+    <string name="dns_pref">HTTPS ద్వారా DNS</string>
+    <string name="dns_pref_summary">ISP బ్లాక్‌లను దాటవేయడానికి ఉపయోగపడుతుంది</string>
+    <string name="jsdelivr_proxy">GitHub ప్రాక్సీ</string>
+    <string name="jsdelivr_enabled">GitHubని చేరుకోవడం సాధ్యపడలేదు. jsDelivr ప్రాక్సీని ఆన్ చేస్తోంది...</string>
+    <string name="jsdelivr_proxy_summary">jsDelivr ఉపయోగించి ముడి గితుబ్ URLలను నిరోధించడాన్ని బైపాస్ చేయండి. అప్‌డేట్‌లు కొన్ని రోజులు ఆలస్యం కావడానికి కారణం కావచ్చు.</string>
+    <string name="add_site_pref">క్లోన్ సైట్</string>
+    <string name="remove_site_pref">సైట్‌ని తీసివేయండి</string>
+    <string name="add_site_summary">వేరే URLతో ఇప్పటికే ఉన్న సైట్ యొక్క క్లోన్‌ని జోడించండి</string>
+    <string name="download_path_pref">డౌన్‌లోడ్ మార్గం</string>
+    <string name="nginx_url_pref">NGINX సర్వర్ URL</string>
+    <string name="display_subbed_dubbed_settings">డబ్బింగ్/సబ్డ్ అనిమే డిస్‌ప్లే</string>
+    <string name="resize_fit">స్క్రీన్‌కి సరిపోతాయి</string>
+    <string name="resize_fill">సాగదీయండి</string>
+    <string name="resize_zoom">జూమ్ చేయండి</string>
+    <string name="legal_notice">నిరాకరణ</string>
+    <string name="pref_category_bypass">ISP బైపాస్‌లు</string>
+    <string name="pref_category_links">లింకులు</string>
+    <string name="pref_category_app_updates">యాప్ అప్‌డేట్‌లు</string>
+    <string name="pref_category_backup">బ్యాకప్</string>
+    <string name="pref_category_extensions">పొడిగింపులు</string>
+    <string name="pref_category_actions">చర్యలు</string>
+    <string name="pref_category_cache">కాష్</string>
+    <string name="pref_category_android_tv">ఆండ్రాయిడ్ టీవీ</string>
+    <string name="pref_category_gestures">సంజ్ఞలు</string>
+    <string name="pref_category_security">భద్రత</string>
+    <string name="pref_category_accounts">ఖాతాలు</string>
+    <string name="pref_category_player_features">ప్లేయర్ లక్షణాలు</string>
+    <string name="pref_category_subtitles">ఉపశీర్షికలు</string>
+    <string name="pref_category_player_layout">లేఅవుట్</string>
+    <string name="pref_category_defaults">డిఫాల్ట్‌లు</string>
+    <string name="pref_category_looks">కనిపిస్తోంది</string>
+    <string name="pref_category_ui_features">ఫీచర్లు</string>
+    <string name="category_general">జనరల్</string>
+    <string name="tv_layout_clock_settings">నిజ సమయ గడియారాన్ని చూపించు</string>
+    <string name="tv_layout_clock_settings_des">స్క్రీన్ పైభాగంలో నిజ సమయ గడియారాన్ని చూపండి. హోమ్‌పేజీ మరియు ప్లేయర్‌కు వర్తిస్తుంది</string>
+    <string name="random_button_settings">యాదృచ్ఛిక బటన్</string>
+    <string name="random_button_settings_desc">హోమ్‌పేజీ మరియు లైబ్రరీలో యాదృచ్ఛిక బటన్‌ను చూపండి</string>
+    <string name="provider_lang_settings">పొడిగింపు భాషలు</string>
+    <string name="app_layout">యాప్ లేఅవుట్</string>
+    <string name="preferred_media_settings">ఇష్టపడే మీడియా</string>
+    <string name="enable_nsfw_on_providers">మద్దతు ఉన్న పొడిగింపులలో NSFWని ప్రారంభించండి</string>
+    <string name="subtitles_encoding">ఉపశీర్షిక ఎన్‌కోడింగ్</string>
+    <string name="category_providers">ప్రొవైడర్లు</string>
+    <string name="category_provider_test">ప్రొవైడర్ పరీక్ష</string>
+    <string name="test_extensions">అన్ని పొడిగింపులను పరీక్షించండి</string>
+    <string name="test_extensions_summary">ఈ పరీక్ష డెవలపర్‌ల కోసం మాత్రమే ఉద్దేశించబడింది మరియు ఏదైనా పొడిగింపు పనిని ధృవీకరించదు లేదా తిరస్కరించదు.</string>
+    <string name="category_ui">లేఅవుట్</string>
+    <string name="automatic">ఆటో</string>
+    <string name="tv_layout">TV లేఅవుట్</string>
+    <string name="phone_layout">ఫోన్ లేఅవుట్</string>
+    <string name="emulator_layout">ఎమ్యులేటర్ లేఅవుట్</string>
+    <string name="primary_color_settings">ప్రాథమిక రంగు</string>
+    <string name="app_theme_settings">యాప్ థీమ్</string>
+    <string name="bottom_title_settings">పోస్టర్ టైటిల్ స్థానం</string>
+    <string name="bottom_title_settings_des">పోస్టర్ కింద టైటిల్ పెట్టండి</string>
+    <!-- account stuff -->
+    <string name="example_password">పాస్వర్డ్123</string>
+    <string name="example_username">వినియోగదారు పేరు</string>
+    <string name="example_email">hello@world.com</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="example_site_name">కొత్త సైట్ పేరు</string>
+    <string name="example_site_url">https://example.com</string>
+    <string name="example_lang_name">భాషా కోడ్ (en)</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
+    <string name="account">ఖాతా</string>
+    <string name="logout">లాగ్ అవుట్ చేయండి</string>
+    <string name="login">లాగిన్ చేయండి</string>
+    <string name="auth_locally">స్థానికంగా ప్రమాణీకరించండి</string>
+    <string name="switch_account">ఖాతాను మార్చండి</string>
+    <string name="add_account">ఖాతాను జోడించండి</string>
+    <string name="create_account">ఖాతాను సృష్టించండి</string>
+    <string name="add_sync">ట్రాకింగ్‌ని జోడించండి</string>
+    <string name="added_sync_format" formatted="true">%s జోడించబడింది</string>
+    <string name="upload_sync">సమకాలీకరించు</string>
+    <string name="sync_score">రేట్ చేయబడింది</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="authenticated_user" formatted="true">%s ప్రమాణీకరించబడింది</string>
+    <string name="authenticated_user_fail" formatted="true">%sలో లాగిన్ చేయడం సాధ్యపడలేదు</string>
+    <!-- ============ -->
+    <string name="disable">ఆపివేయి</string>
+    <string name="none">ఏదీ లేదు</string>
+    <string name="normal">సాధారణ</string>
+    <string name="all">అన్నీ</string>
+    <string name="max">గరిష్టంగా</string>
+    <string name="min">కనిష్ట</string>
+    <string name="subtitles_outline">రూపురేఖలు</string>
+    <string name="subtitles_depressed">అణగారిన</string>
+    <string name="subtitles_shadow">నీడ</string>
+    <string name="subtitles_raised">పెంచారు</string>
+    <string name="subtitle_offset">సబ్‌లను సమకాలీకరించండి</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
+    <string name="subtitle_offset_title">ఉపశీర్షిక ఆలస్యం</string>
+    <string name="subtitle_offset_extra_hint_later_format">ఉపశీర్షికలు %d ms చాలా ముందుగానే చూపబడితే దీన్ని ఉపయోగించండి</string>
+    <string name="subtitle_offset_extra_hint_before_format">ఉపశీర్షికలు %d ms చాలా ఆలస్యంగా చూపబడితే దీన్ని ఉపయోగించండి</string>
+    <string name="subtitle_offset_extra_hint_none_format">ఉపశీర్షిక ఆలస్యం లేదు</string>
+    <!--
+    Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
+    see:
+	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
+	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
+    -->
+    <string name="subtitles_example_text">త్వరిత గోధుమ నక్క సోమరి కుక్కపైకి దూకుతుంది</string>
+    <string name="recommended">సిఫార్సు చేయబడింది</string>
+    <string name="player_loaded_subtitles" formatted="true">లోడ్ చేయబడింది %s</string>
+    <string name="player_load_subtitles">ఫైల్ నుండి లోడ్ చేయండి</string>
+    <string name="player_load_subtitles_online">ఇంటర్నెట్ నుండి లోడ్ చేయండి</string>
+    <string name="player_load_one_subtitle_online">ముందుగా లోడ్ చేయండి</string>
+    <string name="downloaded_file">డౌన్‌లోడ్ చేసిన ఫైల్</string>
+    <string name="actor_main">ప్రధాన</string>
+    <string name="actor_supporting">సపోర్టింగ్</string>
+    <string name="actor_background">నేపథ్యం</string>
+    <string name="home_source">మూలం</string>
+    <string name="home_random">యాదృచ్ఛికంగా</string>
+    <string name="coming_soon">త్వరలో…</string>
+    <string name="quality_cam">కెమెరా</string>
+    <string name="quality_cam_rip">క్యామ్‌రిప్</string>
+    <string name="quality_cam_hd">CamHD</string>
+    <string name="quality_hq">ప్రధాన కార్యాలయం</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="quality_blueray">బ్లూ-రే</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="quality_4k">4K</string>
+    <string name="quality_sd">SD</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="quality_webrip">వెబ్</string>
+    <string name="poster_image">పోస్టర్ చిత్రం</string>
+    <string name="qr_image">QR కోడ్ చిత్రం</string>
+    <string name="category_player">ఆటగాడు</string>
+    <string name="resolution_and_title">రిజల్యూషన్ మరియు టైటిల్</string>
+    <string name="title">శీర్షిక</string>
+    <string name="resolution">రిజల్యూషన్</string>
+    <string name="video_info">మీడియా సమాచారం</string>
+    <string name="error_invalid_id">చెల్లని ID</string>
+    <string name="error_invalid_data">చెల్లని డేటా</string>
+    <string name="error_invalid_url">చెల్లని URL</string>
+    <string name="error">లోపం</string>
+    <string name="subtitles_remove_captions">ఉపశీర్షికల నుండి మూసివేయబడిన శీర్షికలను తీసివేయండి</string>
+    <string name="subtitles_remove_bloat">ఉపశీర్షికల నుండి ప్రకటనలను తీసివేయండి</string>
+    <string name="subtitles_filter_lang">ప్రాధాన్య మీడియా భాష ద్వారా ఫిల్టర్ చేయండి</string>
+    <string name="extras">ఎక్స్‌ట్రాలు</string>
+    <string name="trailer">ట్రైలర్</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="referer">రెఫరర్ (ఐచ్ఛికం)</string>
+    <string name="next">తదుపరి</string>
+    <string name="provider_languages_tip">ఈ భాషల్లో వీడియోలను చూడండి</string>
+    <string name="previous">మునుపటి</string>
+    <string name="skip_setup">సెటప్‌ని దాటవేయి</string>
+    <string name="app_layout_subtext">మీ పరికరానికి సరిపోయేలా యాప్ రూపాన్ని మార్చండి</string>
+    <string name="preferred_media_subtext">మీరు ఏమి చూడాలనుకుంటున్నారు</string>
+    <string name="setup_done">పూర్తయింది</string>
+    <string name="extensions">పొడిగింపులు</string>
+    <string name="add_repository">రిపోజిటరీని జోడించండి</string>
+    <string name="repository_name_hint">రిపోజిటరీ పేరు (ఐచ్ఛికం)</string>
+    <string name="repository_url_hint">రిపోజిటరీ URL లేదా షార్ట్‌కోడ్</string>
+    <string name="plugin_loaded">ప్లగిన్ లోడ్ చేయబడింది</string>
+    <string name="plugin_downloaded">ప్లగిన్ డౌన్‌లోడ్ చేయబడింది</string>
+    <string name="plugin_deleted">ప్లగిన్ తొలగించబడింది</string>
+    <string name="plugin_load_fail" formatted="true">%sని లోడ్ చేయడం సాధ్యపడలేదు</string>
+    <string name="is_adult">18+</string>
+    <string name="batch_download_start_format" formatted="true">డౌన్‌లోడ్ చేయడం ప్రారంభించబడింది %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">డౌన్‌లోడ్ చేయబడింది %1$d %2$s</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">మొత్తం %s ఇప్పటికే డౌన్‌లోడ్ చేయబడ్డాయి</string>
+    <string name="no_plugins_found_error">రిపోజిటరీలో ప్లగిన్‌లు ఏవీ కనుగొనబడలేదు</string>
+    <string name="no_repository_found_error">రిపోజిటరీ కనుగొనబడలేదు, URLని తనిఖీ చేసి, VPNని ప్రయత్నించండి</string>
+    <string name="batch_download">బ్యాచ్ డౌన్‌లోడ్</string>
+    <string name="plugin_singular">ప్లగిన్</string>
+    <string name="plugin">ప్లగిన్లు</string>
+    <string name="delete_repository_plugins">ఇది అన్ని రిపోజిటరీ ప్లగిన్‌లను కూడా తొలగిస్తుంది</string>
+    <string name="delete_repository">రిపోజిటరీని తొలగించండి</string>
+    <string name="delete_plugin">ప్లగిన్‌ను తొలగించండి</string>
+    <string name="setup_extensions_subtext">మీరు ఉపయోగించాలనుకుంటున్న సైట్‌ల జాబితాను డౌన్‌లోడ్ చేయండి</string>
+    <string name="plugins_downloaded" formatted="true">డౌన్‌లోడ్ చేయబడింది: %d</string>
+    <string name="plugins_disabled" formatted="true">నిలిపివేయబడింది: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">డౌన్‌లోడ్ చేయబడలేదు: %d</string>
+    <string name="plugins_updated" formatted="true">%d ప్లగిన్‌లు నవీకరించబడ్డాయి</string>
+    <string name="blank_repo_message">CloudStreamలో డిఫాల్ట్‌గా సైట్‌లు ఏవీ ఇన్‌స్టాల్ చేయబడలేదు. మీరు రిపోజిటరీల నుండి సైట్‌లను ఇన్‌స్టాల్ చేయాలి.
+\n
+\nమా డిస్కార్డ్‌లో చేరండి లేదా ఆన్‌లైన్‌లో సెర్చ్ చేయండి.</string>
+    <string name="view_public_repositories_button">కమ్యూనిటీ రిపోజిటరీలను వీక్షించండి</string>
+    <string name="view_public_repositories_button_short">పబ్లిక్ జాబితా</string>
+    <string name="uppercase_all_subtitles">అన్ని ఉపశీర్షికలను పెద్ద అక్షరం</string>
+    <string name="download_all_plugins_from_repo">హెచ్చరిక: మూడవ పక్షం పొడిగింపులను ఉపయోగించడం కోసం క్లౌడ్‌స్ట్రీమ్ ఎటువంటి బాధ్యత తీసుకోదు మరియు వాటికి ఎటువంటి మద్దతును అందించదు!</string>
+    <string name="single_plugin_disabled" formatted="true">%s (డిజేబుల్ చేయబడింది)</string>
+    <string name="tracks">ట్రాక్స్</string>
+    <string name="compressor">కంప్రెసర్</string>
+    <string name="compressor_setting">డైనమిక్ రేంజ్ కంప్రెసర్</string>
+    <string name="compressor_setting_summary">ప్లేయర్‌లో కంప్రెసర్ నియంత్రణలను చూపండి (లౌడ్/నిశ్శబ్ద ఆడియోను బ్యాలెన్స్ చేయడంలో సహాయపడుతుంది)</string>
+    <string name="compressor_on">ఆన్</string>
+    <string name="compressor_on_format">ఆన్ · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">ఆఫ్</string>
+    <string name="compressor_preset_light">కాంతి</string>
+    <string name="compressor_preset_dialog">డైలాగ్ బూస్ట్</string>
+    <string name="compressor_preset_heavy">భారీ</string>
+    <string name="compressor_threshold_label">థ్రెషోల్డ్: %d dB</string>
+    <string name="compressor_makeup_label">మేకప్ లాభం: +%d dB</string>
+    <string name="compressor_threshold_hint">%d dB కంటే బిగ్గరగా ధ్వనిస్తుంది</string>
+    <string name="compressor_makeup_hint">మొత్తం వాల్యూమ్‌ను +%d dB ద్వారా పెంచుతుంది</string>
+    <string name="audio_tracks">ఆడియో ట్రాక్‌లు</string>
+    <string name="video_tracks">వీడియో ట్రాక్‌లు</string>
+    <string name="apply_on_restart">మార్పులను చూడటానికి యాప్‌ని రీస్టార్ట్ చేయండి.</string>
+    <string name="restart">పునఃప్రారంభించండి</string>
+    <string name="stop">ఆపు</string>
+    <string name="safe_mode_title">సేఫ్ మోడ్ ఆన్ చేయబడింది</string>
+    <string name="safe_mode_description">క్రాష్ కారణంగా అన్ని ఎక్స్‌టెన్షన్‌లు ఆఫ్ చేయబడ్డాయి.</string>
+    <string name="safe_mode_crash_info">క్రాష్ సమాచారాన్ని వీక్షించండి</string>
+    <string name="extension_rating" formatted="true">రేటింగ్: %s</string>
+    <string name="extension_description">వివరణ</string>
+    <string name="extension_version">వెర్షన్</string>
+    <string name="extension_status">స్థితి</string>
+    <string name="extension_size">పరిమాణం</string>
+    <string name="extension_authors">రచయితలు</string>
+    <string name="extension_types">మద్దతు ఇచ్చారు</string>
+    <string name="extension_language">భాష</string>
+    <string name="extension_install_first">ముందుగా పొడిగింపును ఇన్‌స్టాల్ చేయండి</string>
+    <string name="hls_playlist">HLS ప్లేజాబితా</string>
+    <string name="player_pref">ఇష్టపడే వీడియో ప్లేయర్</string>
+    <string name="player_settings_play_in_app">అంతర్గత ఆటగాడు</string>
+    <string name="player_settings_always_ask">ఎప్పుడూ అడగండి</string>
+    <string name="player_settings_select_cast_device">ప్రసార పరికరాన్ని ఎంచుకోండి</string>
+    <string name="app_not_found_error">యాప్ కనుగొనబడలేదు</string>
+    <string name="all_languages_preference">అన్ని భాషలు</string>
+    <string name="skip_type_format" formatted="true">దాటవేయి %s</string>
+    <string name="skip_type_op">తెరవడం</string>
+    <string name="skip_type_ed">ముగింపు</string>
+    <string name="skip_type_recap">రీక్యాప్</string>
+    <string name="skip_type_mixed_ed">మిశ్రమ ముగింపు</string>
+    <string name="skip_type_mixed_op">మిక్స్డ్ ఓపెనింగ్</string>
+    <string name="skip_type_credits">క్రెడిట్స్</string>
+    <string name="skip_type_preview">ప్రివ్యూ</string>
+    <string name="skip_type_intro">పరిచయం</string>
+    <string name="clear_history">చరిత్రను క్లియర్ చేయండి</string>
+    <string name="history">చరిత్ర</string>
+    <string name="enable_skip_op_from_database_des">తెరవడం/ముగించడం కోసం స్కిప్ పాప్‌అప్‌లను చూపండి</string>
+    <string name="clipboard_too_large">చాలా ఎక్కువ వచనం. క్లిప్‌బోర్డ్‌లో సేవ్ చేయడం సాధ్యపడలేదు.</string>
+    <string name="clipboard_permission_error">క్లిప్‌బోర్డ్‌ను యాక్సెస్ చేయడంలో లోపం, దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+    <string name="clipboard_unknown_error">కాపీ చేయడంలో లోపం ఏర్పడింది, దయచేసి లాగ్‌క్యాట్‌ని కాపీ చేసి, యాప్ సపోర్ట్‌ని సంప్రదించండి.</string>
+    <string name="action_mark_as_watched">వీక్షించినట్లు గుర్తు పెట్టండి</string>
+    <string name="action_remove_from_watched">వీక్షించిన వాటి నుండి తీసివేయండి</string>
+    <string name="confirm_exit_dialog">మీరు ఖచ్చితంగా నిష్క్రమించాలనుకుంటున్నారా\?</string>
+    <string name="yes">అవును</string>
+    <string name="no">నం</string>
+    <string name="ok">సరే</string>
+    <string name="dismiss">తొలగించు</string>
+    <string name="open_downloaded_repo">రిపోజిటరీని తెరవండి</string>
+    <string name="battery_dialog_title">బ్యాటరీ ఆప్టిమైజేషన్‌ని నిలిపివేయండి</string>
+    <string name="battery_dialog_message">సబ్‌స్క్రయిబ్ చేసిన వారికి అంతరాయం లేని డౌన్‌లోడ్‌లు మరియు నోటిఫికేషన్‌లను నిర్ధారించడానికి
+        TV కార్యక్రమాలు, CloudStreamకి నేపథ్యంలో రన్ చేయడానికి అనుమతి అవసరం. "సరే" నొక్కడం ద్వారా, మీకు\'అభ్యర్థన డైలాగ్ చూపబడుతుంది.
+        దయచేసి \'అనుమతించు\' నొక్కండి.\n\nదయచేసి, ఈ అనుమతి అంటే CS3 మీ బ్యాటరీని ఖాళీ చేస్తుందని కాదు. ఇది అవసరమైనప్పుడు మాత్రమే బ్యాక్‌గ్రౌండ్‌లో పనిచేస్తుంది
+        అధికారిక పొడిగింపుల నుండి నోటిఫికేషన్‌లను స్వీకరించేటప్పుడు లేదా వీడియోలను డౌన్‌లోడ్ చేస్తున్నప్పుడు.</string>
+    <string name="app_unrestricted_toast">యాప్ బ్యాటరీ వినియోగం ఇప్పటికే అపరిమితంకు సెట్ చేయబడింది</string>
+    <string name="app_info_intent_error">CloudStream\' యొక్క అనువర్తన సమాచారాన్ని తెరవడం సాధ్యపడలేదు.</string>
+    <string name="update_notification_downloading">యాప్ అప్‌డేట్‌ని డౌన్‌లోడ్ చేస్తోంది…</string>
+    <string name="update_notification_installing">యాప్ అప్‌డేట్‌ని ఇన్‌స్టాల్ చేస్తోంది...</string>
+    <string name="update_notification_failed">యాప్ యొక్క కొత్త వెర్షన్‌ని ఇన్‌స్టాల్ చేయడం సాధ్యపడలేదు</string>
+    <string name="apk_installer_legacy">వారసత్వం</string>
+    <string name="apk_installer_package_installer">ప్యాకేజీ ఇన్‌స్టాలర్</string>
+    <string name="delayed_update_notice">నిష్క్రమించిన తర్వాత యాప్ అప్‌డేట్ చేయబడుతుంది</string>
+    <string name="sort_by">క్రమబద్ధీకరించు</string>
+    <string name="sort">క్రమబద్ధీకరించు</string>
+    <string name="sort_rating_desc">రేటింగ్ (ఎక్కువ నుండి తక్కువ)</string>
+    <string name="sort_rating_asc">రేటింగ్ (తక్కువ నుండి ఎక్కువ)</string>
+    <string name="sort_updated_new">నవీకరించబడింది (కొత్త నుండి పాతది)</string>
+    <string name="sort_updated_old">నవీకరించబడింది (పాతది నుండి కొత్తది)</string>
+    <string name="sort_alphabetical_a">అక్షరక్రమం (A నుండి Z)</string>
+    <string name="sort_alphabetical_z">అక్షరక్రమం (Z నుండి A)</string>
+    <string name="sort_episodes_number_asc">ఎపిసోడ్ (ఆరోహణ)</string>
+    <string name="sort_episodes_number_desc">ఎపిసోడ్ (అవరోహణ)</string>
+    <string name="sort_episodes_rating_high_low">రేటింగ్ (అత్యధిక)</string>
+    <string name="sort_episodes_rating_low_high">రేటింగ్ (అత్యల్ప)</string>
+    <string name="sort_episodes_date_newest">ప్రసార తేదీ (కొత్తది)</string>
+    <string name="sort_episodes_date_oldest">ప్రసార తేదీ (పాతది)</string>
+    <string name="sort_button_episode">ఎపి %s</string>
+    <string name="sort_button_rating">రేటింగ్ %s</string>
+    <string name="sort_button_date">తేదీ %s</string>
+    <string name="select_library">లైబ్రరీని ఎంచుకోండి</string>
+    <string name="open_with">దీనితో తెరవండి</string>
+    <string name="empty_library_no_accounts_message">మీ లైబ్రరీ ఖాళీగా ఉంది :(
+\nలైబ్రరీ ఖాతాలో లాగిన్ చేయండి లేదా మీ స్థానిక లైబ్రరీకి ప్రదర్శనలను జోడించండి.</string>
+    <string name="empty_library_logged_in_message">ఈ జాబితా ఖాళీగా ఉంది. మరొకదానికి మారడానికి ప్రయత్నించండి.</string>
+    <string name="safe_mode_file">సురక్షిత మోడ్ ఫైల్ కనుగొనబడింది!\nఫైల్ తీసివేయబడే వరకు స్టార్టప్‌లో ఎటువంటి పొడిగింపులను లోడ్ చేయడం లేదు.</string>
+    <string name="revert">తిరిగి మార్చు</string>
+    <string name="subscription_in_progress_notification">సభ్యత్వం పొందిన షోలను నవీకరిస్తోంది</string>
+    <string name="subscription_list_name">సభ్యత్వం పొందారు</string>
+    <string name="subscription_new">%sకి సభ్యత్వం పొందారు</string>
+    <string name="subscription_deleted">%s నుండి సభ్యత్వం తీసివేయబడింది</string>
+    <string name="subscription_episode_released">ఎపిసోడ్ %d విడుదలైంది!</string>
+    <string name="action_subscribe">సభ్యత్వం పొందండి</string>
+    <string name="action_unsubscribe">చందాను తీసివేయండి</string>
+    <string name="profile_number">ప్రొఫైల్ %d</string>
+    <string name="profile_settings">ప్రొఫైల్ సెట్టింగ్‌లు</string>
+    <string name="profile_hide_negative_sources">ప్రతికూల ప్రాధాన్యతతో మూలాలను దాచండి</string>
+    <string name="profile_hide_error_sources">లోపాలతో మూలాలను దాచండి</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d దాచిన లింక్</item>
+        <item quantity="other">%d దాచిన లింక్‌లు</item>
+    </plurals>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">మొబైల్ డేటా</string>
+    <string name="set_default">డిఫాల్ట్‌గా సెట్ చేయండి</string>
+    <string name="use">ఉపయోగించండి</string>
+    <string name="edit">సవరించు</string>
+    <string name="source_priority">మూల ప్రాధాన్యత</string>
+    <string name="source_priority_help">ప్లేయర్‌లో వీడియో మూలాలను ఎలా క్రమబద్ధీకరించాలో నిర్ణయించండి</string>
+    <string name="profiles">ప్రొఫైల్స్</string>
+    <string name="help">సహాయం</string>
+    <string name="quality_profile_help">
+        ఇక్కడ మీరు మూలాధారాలను ఎలా ఆర్డర్ చేయాలో మార్చవచ్చు. వీడియోకు ఎక్కువ ప్రాధాన్యత ఉన్నట్లయితే అది సోర్స్ ఎంపికలో ఎక్కువగా కనిపిస్తుంది.
+        మూలాధారం ప్రాధాన్యత మరియు నాణ్యత ప్రాధాన్యత మొత్తం వీడియో ప్రాధాన్యత.
+\n\nమూలం A: 3
+        \nనాణ్యత B: 7
+        \nకలిపి వీడియో ప్రాధాన్యత 10 ఉంటుంది.
+
+        \n\nగమనిక: మొత్తం 10 లేదా అంతకంటే ఎక్కువ ఉంటే, ఆ లింక్ లోడ్ అయినప్పుడు ప్లేయర్ స్వయంచాలకంగా లోడ్ చేయడాన్ని దాటవేస్తుంది!
+    </string>
+    <string name="qualities">గుణాలు</string>
+    <string name="profile_background_des">ప్రొఫైల్ నేపథ్యం</string>
+    <string name="unable_to_inflate">UI సరిగ్గా సృష్టించబడలేదు, ఇది ఒక ప్రధాన బగ్ మరియు వెంటనే నివేదించబడాలి %s</string>
+    <string name="already_voted">మీరు ఇప్పటికే ఓటు వేశారు</string>
+    <string name="favorites_list_name">ఇష్టమైనవి</string>
+    <string name="favorite_added">%s ఇష్టమైన వాటికి జోడించబడింది</string>
+    <string name="favorite_removed">ఇష్టమైన వాటి నుండి %s తీసివేయబడింది</string>
+    <string name="action_add_to_favorites">ఇష్టమైన వాటికి జోడించండి</string>
+    <string name="action_remove_from_favorites">ఇష్టమైన వాటి నుండి తీసివేయండి</string>
+    <string name="duplicate_title">సంభావ్య నకిలీ కనుగొనబడింది</string>
+    <string name="duplicate_add">జోడించు</string>
+    <string name="duplicate_replace">భర్తీ చేయండి</string>
+    <string name="duplicate_replace_all">అన్నింటినీ భర్తీ చేయండి</string>
+    <string name="duplicate_message_single" formatted="true">
+        మీ లైబ్రరీలో సంభావ్య నకిలీ అంశం ఇప్పటికే ఉన్నట్లు కనిపిస్తోంది: \'%s.\'
+
+        \n\nమీరు ఈ అంశాన్ని ఏమైనప్పటికీ జోడించాలనుకుంటున్నారా, ఇప్పటికే ఉన్న దాన్ని భర్తీ చేయాలనుకుంటున్నారా లేదా చర్యను రద్దు చేయాలనుకుంటున్నారా?
+    </string>
+    <string name="duplicate_message_multiple" formatted="true">
+        మీ లైబ్రరీలో సంభావ్య నకిలీ అంశాలు కనుగొనబడ్డాయి:
+
+        \n\n%s
+
+\n\nమీరు ఈ అంశాన్ని ఏమైనప్పటికీ జోడించాలనుకుంటున్నారా, ఇప్పటికే ఉన్న వాటిని భర్తీ చేయాలనుకుంటున్నారా లేదా చర్యను రద్దు చేయాలనుకుంటున్నారా?
+    </string>
+    <string name="enter_pin">PINని నమోదు చేయండి</string>
+    <string name="enter_pin_with_name" formatted="true">%s కోసం PINని నమోదు చేయండి</string>
+    <string name="enter_current_pin">ప్రస్తుత పిన్‌ని నమోదు చేయండి</string>
+    <string name="lock_profile">ప్రొఫైల్‌ను లాక్ చేయండి</string>
+    <string name="pin">పిన్</string>
+    <string name="pin_error_incorrect">తప్పు పిన్. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+    <string name="pin_error_length">పిన్ తప్పనిసరిగా 4 అక్షరాలు ఉండాలి</string>
+    <string name="select_an_account">ఖాతాను ఎంచుకోండి</string>
+    <string name="no_account">ఖాతా లేదు</string>
+    <string name="manage_accounts">ఖాతాలను నిర్వహించండి</string>
+    <string name="edit_account">ఖాతాను సవరించండి</string>
+    <string name="logged_account" formatted="true">%s వలె లాగిన్ చేసారు</string>
+    <string name="skip_startup_account_select_pref">ప్రారంభంలో ఖాతా ఎంపికను దాటవేయండి</string>
+    <string name="use_default_account">డిఫాల్ట్ ఖాతాను ఉపయోగించండి</string>
+    <string name="rotate_video">తిప్పండి</string>
+    <string name="rotate_video_desc">స్క్రీన్ ఓరియంటేషన్ కోసం టోగుల్ బటన్‌ను ప్రదర్శించండి</string>
+    <string name="auto_rotate_video_desc">వీడియో ఓరియంటేషన్ ఆధారంగా స్క్రీన్ ఓరియంటేషన్ యొక్క స్వయంచాలక మార్పిడిని ప్రారంభించండి</string>
+    <string name="auto_rotate_video">ఆటో రొటేట్</string>
+    <string name="favorite">ఇష్టమైనది</string>
+    <string name="unfavorite">ఇష్టమైనది కాదు</string>
+    <!-- For Biometrics -->
+    <string name="biometric_authentication_title">CloudStreamని అన్‌లాక్ చేయండి</string>
+    <string name="biometric_setting">బయోమెట్రిక్స్‌తో లాక్ చేయండి</string>
+    <string name="password_pin_authentication_title">పాస్‌వర్డ్/పిన్ ప్రమాణీకరణ</string>
+    <string name="biometric_unsupported">ఈ పరికరంలో బయోమెట్రిక్ ప్రమాణీకరణకు మద్దతు లేదు</string>
+    <string name="biometric_setting_summary">ఫింగర్‌ప్రింట్, ఫేస్ ఐడి, పిన్, ప్యాటర్న్ మరియు పాస్‌వర్డ్‌తో యాప్‌ను అన్‌లాక్ చేయండి.</string>
+    <string name="biometric_prompt_description">కొన్ని విఫల ప్రయత్నాల తర్వాత, ప్రాంప్ట్ మూసివేయబడుతుంది. మళ్లీ ప్రయత్నించడానికి యాప్‌ని రీస్టార్ట్ చేయండి.</string>
+    <string name="biometric_warning">మీ CloudStream డేటా ఇప్పుడు బ్యాకప్ చేయబడింది. దీని సంభావ్యత చాలా తక్కువగా ఉన్నప్పటికీ, అన్ని పరికరాలు భిన్నంగా ప్రవర్తించగలవు. అరుదైన సందర్భంలో, మీరు యాప్‌ను యాక్సెస్ చేయకుండా లాక్ చేయబడితే, యాప్ డేటాను పూర్తిగా క్లియర్ చేయండి మరియు బ్యాకప్ నుండి పునరుద్ధరించండి. దీని వల్ల కలిగే అసౌకర్యానికి మేము చాలా చింతిస్తున్నాము.</string>
+    <string name="reset_btn">రీసెట్ చేయండి</string>
+    <string name="cs3wiki">CloudStream వికీ</string>
+    <string name="device_pin_url_message">స్మార్ట్‌ఫోన్ లేదా కంప్యూటర్‌లో <b>%s</b>కి వెళ్లి, పై కోడ్‌ను నమోదు చేయండి.</string>
+    <string name="device_pin_error_message">డివైస్ PIN కోడ్ తెచ్చుకోలేకపోయాము, లోకళ్ ఆథెంటికేషన్ ప్రయత్నించండి</string>
+    <string name="device_pin_expired_message">PIN కోడ్ ఇప్పుడు గడువు ముగిసింది!</string>
+    <string name="device_pin_counter_text">కోడ్ గడువు %1$dనిమి %2$dసెకన్లలో ముగుస్తుంది</string>
+    <string name="sort_release_date_new">విడుదల తేదీ (కొత్త నుండి పాత)</string>
+    <string name="sort_release_date_old">విడుదల తేదీ (పాత నుండి కొత్తది)</string>
+    <string name="hide_player_control_names">ప్లేయర్\' నియంత్రణల పేర్లను దాచండి</string>
+    <string name="preview_seekbar">సీక్‌బార్ ప్రివ్యూ</string>
+    <string name="preview_seekbar_desc">సీక్‌బార్‌లో ప్రివ్యూ థంబ్‌నెయిల్‌ని ప్రారంభించండి</string>
+    <string name="no_subtitles_loaded">ఇంకా ఉపశీర్షికలు ఏవీ లోడ్ చేయబడలేదు</string>
+    <string name="backup_path_title">బ్యాకప్ ఫోల్డర్ స్థానం</string>
+    <string name="custom">కస్టమ్</string>
+    <!--confirm exit dialog-->
+    <string name="confirm_before_exiting_title">నిష్క్రమించే ముందు నిర్ధారించండి</string>
+    <string name="confirm_before_exiting_desc">యాప్ నుండి నిష్క్రమించే ముందు డైలాగ్‌ని చూపండి</string>
+    <!--confirm exit dialog-->
+    <string name="show">చూపించు</string>
+    <string name="dont_show">చూపవద్దు\'</string>
+    <string name="subs_edge_size">అంచు పరిమాణం</string>
+    <string name="torrent_preferred_media">సెట్టింగ్‌లు/ప్రొవైడర్‌లు/ప్రాధాన్య మీడియాలో టొరెంట్‌ని ప్రారంభించండి</string>
+    <string name="torrent_not_accepted">అనువర్తనాన్ని పునఃప్రారంభించండి మరియు కొనసాగించడానికి స్ట్రీమ్ టోరెంట్ పాప్-అప్‌ని అంగీకరించండి.</string>
+    <string name="software_decoding">సాఫ్ట్‌వేర్ డీకోడింగ్</string>
+    <string name="software_decoding_desc">సాఫ్ట్‌వేర్ డీకోడింగ్ మీ పరికరం ద్వారా సపోర్ట్ చేయని వీడియో ఫైల్‌లను ప్లే చేయడానికి ప్లేయర్‌ని అనుమతిస్తుంది, అయితే అధిక రిజల్యూషన్‌లో వెనుకబడి లేదా అస్థిర ప్లేబ్యాక్‌కు కారణం కావచ్చు.</string>
+    <string name="volume_exceeded_100">వాల్యూమ్ 100% మించిపోయింది</string>
+    <string name="slide_up_again_to_exceed_100">100% దాటి వెళ్లడానికి మళ్లీ పైకి జారండి</string>
+    <string name="update_plugins">ప్లగిన్‌లను నవీకరించండి</string>
+    <!--Manual Update Button-->
+    <string name="update_plugins_manually">ప్లగిన్‌లను మాన్యువల్‌గా అప్‌డేట్ చేయండి</string>
+    <string name="starting_plugin_update_manually">ప్లగిన్ నవీకరణ ప్రక్రియను ప్రారంభిస్తోంది!</string>
+    <string name="plugins_updated_manually">%d ప్లగిన్(లు) విజయవంతంగా నవీకరించబడింది</string>
+    <string name="no_plugins_updated_manually">ప్లగిన్‌లు ఏవీ నవీకరించబడలేదు.</string>
+    <string name="player_notification_channel_name">ప్లేయర్ నోటిఫికేషన్‌లు</string>
+    <string name="player_notification_channel_description">నేపథ్యం నుండి ప్లేబ్యాక్‌ని నియంత్రించడం కోసం ప్లేయర్ నోటిఫికేషన్</string>
+    <string name="subtitles_from_embedded">పొందుపరిచారు</string>
+    <string name="subtitles_from_online">ఆన్‌లైన్</string>
+    <string name="all_subtitles_bold">అన్ని ఉపశీర్షికలను బోల్డ్‌గా చేయండి</string>
+    <string name="all_subtitles_italic">అన్ని ఉపశీర్షికలను ఇటాలిక్‌గా చేయండి</string>
+    <string name="background_radius">నేపథ్య వ్యాసార్థం</string>
+    <string name="background">నేపథ్యం</string>
+    <string name="download_parallel_settings_des">సమాంతరంగా డౌన్‌లోడ్ చేయగల అనేక విభిన్న అంశాలు</string>
+    <string name="parallel_downloads">సమాంతర డౌన్‌లోడ్‌లు</string>
+    <string name="concurrent_connections">ఏకకాల కనెక్షన్లు</string>
+    <string name="concurrent_connections_settings_des">డౌన్‌లోడ్ చేస్తున్నప్పుడు ప్రతి డౌన్‌లోడ్ ఎన్ని ఏకకాల కనెక్షన్‌లను ఉపయోగించవచ్చు</string>
+    <string name="go_to_downloads">డౌన్‌లోడ్‌లకు వెళ్లండి</string>
+    <string name="no_internet_connection">
+        ఇంటర్నెట్ కనెక్షన్ లేదు.
+        \n\nదయచేసి ఇంటర్నెట్‌కి కనెక్ట్ చేసి, మళ్లీ ప్రయత్నించండి లేదా మీరు ఆఫ్‌లైన్‌లో ఉన్నప్పుడు మీ డౌన్‌లోడ్‌లను చూడండి.
+    </string>
+    <string name="overscan_settings_des">స్క్రీన్ సరిహద్దులను మారుస్తుంది</string>
+    <string name="overscan_settings">ఓవర్‌స్కాన్</string>
+    <string name="poster_size_settings_des">పోస్టర్ల పరిమాణాన్ని మారుస్తుంది</string>
+    <string name="poster_size_settings">పోస్టర్ పరిమాణం</string>
+    <string name="speedup_title">లాంగ్‌ప్రెస్ స్పీడ్ టోగుల్</string>
+    <string name="speedup_summary">2x వేగాన్ని పొందడానికి పట్టుకోండి</string>
+    <string name="edit_profile_image_title">ప్రొఫైల్ చిత్రాన్ని సవరించండి</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">చిత్రం పికర్</string>
+    <string name="edit_profile_image_default">డిఫాల్ట్ చిత్రాలు</string>
+    <string name="edit_profile_image_hint">ప్రొఫైల్ ఇమేజ్ URLని నమోదు చేయండి</string>
+    <string name="edit_profile_image_error_empty">URL ఏదీ కనుగొనబడలేదు</string>
+    <string name="edit_profile_image_error_invalid">చెల్లని URL లేదా చిత్రం</string>
+    <string name="edit_profile_image_success">చిత్రం విజయవంతంగా నవీకరించబడింది</string>
+    <string name="action_mark_watched_up_to_this_episode">ఈ ఎపిసోడ్ వరకు చూసినట్లుగా మార్క్ చేయండి</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">ఈ ఎపిసోడ్ వరకు చూసిన వాటిని తీసివేయండి</string>
+    <string name="action_reload">రీలోడ్ చేయబడింది</string>
+    <string name="reload_provider">రీలోడ్ ప్రొవైడర్</string>
+    <string name="name">పేరు</string>
+    <string name="source_name">మూలం పేరు</string>
+    <string name="resolution_and_name">రిజల్యూషన్ మరియు పేరు</string>
+    <string name="download_all">అన్నింటినీ డౌన్‌లోడ్ చేయండి</string>
+    <string name="cancel_all">అన్నింటినీ రద్దు చేయండి</string>
+    <string name="download_episode_range">మీరు %s ఎపిసోడ్‌ని డౌన్‌లోడ్ చేయాలనుకుంటున్నారా?</string>
+    <string name="cancel_queue_message">మీరు క్యూలో ఉన్న అన్ని డౌన్‌లోడ్‌లను రద్దు చేయాలనుకుంటున్నారా?</string>
+    <string name="subs_subtitle_alignment">ఉపశీర్షిక సమలేఖనం</string>
+    <string name="bottom_left">దిగువ ఎడమ</string>
+    <string name="bottom_center">దిగువ కేంద్రం</string>
+    <string name="bottom_right">దిగువ కుడి</string>
+    <string name="middle_left">మధ్య ఎడమ</string>
+    <string name="middle_center">మధ్య కేంద్రం</string>
+    <string name="middle_right">మధ్య కుడి</string>
+    <string name="top_left">ఎగువ ఎడమ</string>
+    <string name="top_center">టాప్ సెంటర్</string>
+    <string name="top_right">ఎగువ కుడి</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d సక్రియ డౌన్‌లోడ్</item>
+        <item quantity="other">%d సక్రియ డౌన్‌లోడ్‌లు</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d డౌన్‌లోడ్ క్యూలో ఉంది</item>
+        <item quantity="other">%d డౌన్‌లోడ్‌లు క్యూలో ఉన్నాయి</item>
+    </plurals>
+    <string name="player_is_live">ప్రత్యక్షం</string>
+    <string name="installed_plugins">ఇన్‌స్టాల్ చేయబడిన ప్లగిన్‌లు</string>
 </resources>
