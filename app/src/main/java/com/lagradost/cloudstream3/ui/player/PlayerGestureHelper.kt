@@ -22,6 +22,7 @@ import android.view.WindowInsets
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.TextView
 import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -40,7 +41,6 @@ import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.Vector2
 import kotlin.math.abs
@@ -128,12 +128,20 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     var swipeHorizontalEnabled: Boolean = false
     var extraBrightnessEnabled: Boolean = false
     var speedupEnabled: Boolean = false
+    /** Configured long-press speed (see [PlaybackSpeeds.getHoldSpeed] for the escalation). */
+    var speedupSpeed: Float = PlaybackSpeeds.holdSpeedFromPercent(PlaybackSpeeds.DEFAULT_HOLD_SPEED_PERCENT)
 
     /** Hold / speed-up */
     val holdHandler = Handler(Looper.getMainLooper())
     var hasTriggeredSpeedUp = false
+    /** Speed that was active before the hold started, restored on release. */
+    private var speedBeforeHold = 1.0f
     val holdRunnable = Runnable {
-        playerView.player.setPlaybackSpeed(2.0f)
+        // If we are already at (or above) the long-press speed, go faster: 2x -> 4x -> 8x...
+        speedBeforeHold = playerView.player.getPlaybackSpeed()
+        val holdSpeed = PlaybackSpeeds.getHoldSpeed(speedBeforeHold, speedupSpeed)
+        playerView.player.setPlaybackSpeed(holdSpeed)
+        updateSpeedUpText(holdSpeed)
         showOrHideSpeedUp(true)
         playerView.callbacks?.onHoldSpeedUp(true)
         hasTriggeredSpeedUp = true
@@ -219,7 +227,13 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             swipeVerticalEnabled = sm.getBoolean(context.getString(R.string.swipe_vertical_enabled_key), true)
             swipeHorizontalEnabled = sm.getBoolean(context.getString(R.string.swipe_enabled_key), true)
             extraBrightnessEnabled = sm.getBoolean(context.getString(R.string.extra_brightness_key), false)
-            speedupEnabled = sm.getBoolean(context.getString(R.string.speedup_key), false)
+            speedupEnabled = sm.getBoolean(context.getString(R.string.speedup_key), true)
+            speedupSpeed = PlaybackSpeeds.holdSpeedFromPercent(
+                sm.getInt(
+                    context.getString(R.string.speedup_speed_key),
+                    PlaybackSpeeds.DEFAULT_HOLD_SPEED_PERCENT
+                )
+            )
             doubleTapEnabled = sm.getBoolean(context.getString(R.string.double_tap_enabled_key), false)
             doubleTapPauseEnabled = sm.getBoolean(context.getString(R.string.double_tap_pause_enabled_key), false)
             fastForwardTime = sm.getInt(context.getString(R.string.double_tap_seek_time_key), 10).toLong() * 1000L
@@ -281,6 +295,11 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     }
 
     /** Speed-up */
+
+    /** Shows the current hold speed (e.g. "4x") next to the icon on the speed-up indicator. */
+    private fun updateSpeedUpText(speed: Float) {
+        (playerView.playerSpeedupButton as? TextView)?.text = PlaybackSpeeds.format(speed)
+    }
 
     fun showOrHideSpeedUp(show: Boolean) {
         playerView.playerSpeedupButton?.let { btn ->
@@ -1164,7 +1183,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                 holdHandler.removeCallbacks(holdRunnable)
                 if (hasTriggeredSpeedUp) {
-                    playerView.player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
+                    playerView.player.setPlaybackSpeed(speedBeforeHold)
                     showOrHideSpeedUp(false)
                     playerView.callbacks?.onHoldSpeedUp(false)
                     hasTriggeredSpeedUp = false
