@@ -53,6 +53,12 @@
             android:key="@string/subtitle_settings_chromecast_key"
             android:title="@string/chromecast_subtitles_settings"
             app:summary="@string/chromecast_subtitles_settings_des" />
+        <SwitchPreference
+            android:icon="@drawable/ic_outline_subtitles_24"
+            android:summary="@string/libass_subtitles_settings_des"
+            android:title="@string/libass_subtitles_settings"
+            app:defaultValue="true"
+            app:key="@string/libass_subtitles_key" />
     </PreferenceCategory>
 
 

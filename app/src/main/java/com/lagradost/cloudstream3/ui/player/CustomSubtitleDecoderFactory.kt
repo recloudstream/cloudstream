@@ -36,7 +36,11 @@ import java.nio.charset.Charset
  * enough to identify the subtitle format.
  */
 @OptIn(UnstableApi::class)
-class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
+class CustomDecoder(
+    private val fallbackFormat: Format?,
+    /** If not null ASS/SSA subtitles are rendered by libass */
+    private val assSupport: LibassSubtitleSupport? = null
+) : SubtitleParser {
     companion object {
         fun updateForcedEncoding(context: Context) {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
@@ -292,6 +296,8 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
         output: Consumer<CuesWithTiming>
     ) {
         val currentStyle = style
+        // False when libass renders this subtitle
+        var forwardCues = true
         val customOutput = Consumer<CuesWithTiming> { cue ->
             val newCue =
                 CuesWithTiming(cue.cues, cue.startTimeUs, cue.durationUs)
@@ -312,7 +318,9 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                     newCue.durationUs
                 )
 
-            output.accept(updatedCues)
+            if (forwardCues) {
+                output.accept(updatedCues)
+            }
         }
         Log.i(TAG, "Parse subtitle, current parser: $realDecoder")
         try {
@@ -337,6 +345,27 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                     }
                 }
                 val array = str.toByteArray()
+
+                // Let libass render ASS/SSA
+                if (assSupport != null && fallbackFormat != null && realDecoder is SsaParser) {
+                    val handledByLibass = try {
+                        if (fallbackFormat.initializationData.isEmpty()) {
+                            // Whole external .ass/.ssa file
+                            assSupport.loadFullSubtitle(fallbackFormat, array)
+                        } else {
+                            // Single dialogue from a container, the extractor already sent it to libass
+                            assSupport.hasTrack(fallbackFormat.id)
+                        }
+                    } catch (t: Throwable) {
+                        logError(t)
+                        false
+                    }
+                    if (handledByLibass) {
+                        Log.i(TAG, "Subtitle rendered by libass")
+                        forwardCues = false
+                    }
+                }
+
                 realDecoder?.parse(
                     array,
                     minOf(array.size, offset),
@@ -363,7 +392,9 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
 
 /** See https://github.com/google/ExoPlayer/blob/release-v2/library/core/src/main/java/com/google/android/exoplayer2/text/SubtitleDecoderFactory.java */
 @OptIn(UnstableApi::class)
-class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
+class CustomSubtitleDecoderFactory(
+    private val assSupport: LibassSubtitleSupport? = null
+) : SubtitleDecoderFactory {
 
     override fun supportsFormat(format: Format): Boolean {
         return listOf(
@@ -393,7 +424,7 @@ class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
      * Do not save state in the decoder which you want to reset (e.g subtitle offset)
      */
     override fun createDecoder(format: Format): SubtitleDecoder {
-        val parser = CustomDecoder(format)
+        val parser = CustomDecoder(format, assSupport)
         // Allow garbage collection if player releases the decoder
         latestDecoder = WeakReference(parser)
 

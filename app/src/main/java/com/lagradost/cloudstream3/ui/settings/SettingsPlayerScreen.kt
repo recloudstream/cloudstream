@@ -78,6 +78,12 @@ object SettingsPlayerScreen : SearchableSettings {
                         onClick = {
                             ChromecastSubtitlesFragment.push(activity, false)
                         }),
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.player.libassEnabled,
+                        title = stringResource(R.string.libass_subtitles_settings),
+                        subtitle = stringResource(R.string.libass_subtitles_settings_des),
+                        icon = painterResource(R.drawable.ic_outline_subtitles_24),
+                    ),
                 ),
             ),
             Preference.PreferenceGroup(
