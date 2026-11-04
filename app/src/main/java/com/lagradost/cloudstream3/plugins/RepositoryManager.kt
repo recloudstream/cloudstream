@@ -1,5 +1,13 @@
+
 package com.lagradost.cloudstream3.plugins
 
+import okhttp3.Dns
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.dnsoverhttps.DnsOverHttps
+import java.net.InetAddress
+import java.net.UnknownHostException
 import android.content.Context
 import androidx.annotation.WorkerThread
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -129,6 +137,64 @@ object RepositoryManager {
         return "https://cdn.jsdelivr.net/gh/$user/$repo@$rest"
     }
 
+    /*
+     * Resolve cutt.ly using system DNS first and Cloudflare DNS-over-HTTPS
+     * as a fallback when system DNS resolution fails.
+     */
+    private fun resolveCuttlyFallback(shortCode: String): String? {
+        return try {
+            val bootstrapClient = OkHttpClient.Builder().build()
+
+            val cloudflareDns = DnsOverHttps.Builder()
+                .client(bootstrapClient)
+                .url("https://cloudflare-dns.com/dns-query".toHttpUrl())
+                .bootstrapDnsHosts(
+                    InetAddress.getByName("1.1.1.1"),
+                    InetAddress.getByName("1.0.0.1")
+                )
+                .build()
+
+            val fallbackDns = object : Dns {
+                override fun lookup(hostname: String): List<InetAddress> {
+                    return try {
+                        Dns.SYSTEM.lookup(hostname)
+                    } catch (e: UnknownHostException) {
+                        cloudflareDns.lookup(hostname)
+                    }
+                }
+            }
+
+            val client = bootstrapClient.newBuilder()
+                .dns(fallbackDns)
+                .followRedirects(false)
+                .followSslRedirects(false)
+                .callTimeout(15, TimeUnit.SECONDS)
+                .build()
+
+            val request = Request.Builder()
+                .url("https://cutt.ly/$shortCode")
+                .get()
+                .build()
+
+            client.newCall(request).execute().use { response ->
+                val location = response.header("Location")
+
+                if (
+                    location.isNullOrBlank() ||
+                    location.startsWith("https://cutt.ly/404") ||
+                    location.trimEnd('/') == "https://cutt.ly"
+                ) {
+                    null
+                } else {
+                    location
+                }
+            }
+        } catch (e: Exception) {
+            logError(e)
+            null
+        }
+    }
+
     suspend fun parseRepoUrl(url: String): String? {
         val fixedUrl = url.trim()
         return if (fixedUrl.contains("^https?://".toRegex())) {
@@ -148,8 +214,17 @@ object RepositoryManager {
                     if (url.removeSuffix("/") == "https://py.md") return@safeAsync null
                     return@safeAsync url
                 } else {
-                    val response = app.get("https://cutt.ly/${fixedUrl}", allowRedirects = false)
-                    val url = response.headers["Location"] ?: return@safeAsync null
+                    val url = try {
+                        val response = app.get(
+                            "https://cutt.ly/$fixedUrl",
+                            allowRedirects = false
+                        )
+                        response.headers["Location"]
+                    } catch (e: Exception) {
+                        null
+                    } ?: resolveCuttlyFallback(fixedUrl)
+                        ?: return@safeAsync null
+
                     if (url.startsWith("https://cutt.ly/404")) return@safeAsync null
                     if (url.removeSuffix("/") == "https://cutt.ly") return@safeAsync null
                     return@safeAsync url
