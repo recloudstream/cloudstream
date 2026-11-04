@@ -356,6 +356,7 @@ object CommonActivity {
                 "Dracula" -> R.style.DraculaMode
                 "Lavender" -> R.style.LavenderMode
                 "SilentBlue" -> R.style.SilentBlueMode
+                "Cinema" -> R.style.CinemaMode
 
                 else -> R.style.AppTheme
             }
@@ -377,6 +378,7 @@ object CommonActivity {
                 "Green" -> R.style.OverlayPrimaryColorGreen
                 "GreenApple" -> R.style.OverlayPrimaryColorGreenApple
                 "Red" -> R.style.OverlayPrimaryColorRed
+                "CinemaRed" -> R.style.OverlayPrimaryColorCinemaRed
                 "Banana" -> R.style.OverlayPrimaryColorBanana
                 "Party" -> R.style.OverlayPrimaryColorParty
                 "Pink" -> R.style.OverlayPrimaryColorPink

@@ -198,6 +198,9 @@ class GeneralPreferences(preferences: PreferenceStore) {
     /** Please note that it used R.array.dns_pref before, this was a bug and caused this setting to be language sensitive **/
     val dns = preferences.getInt("dns_key", 0)
 
+    /** DNS-over-HTTPS url used when [dns] is set to custom (9) */
+    val customDnsUrl = preferences.getString("custom_dns_url_key", "")
+
     /** Very weird setKey based usage, just having this setting might not do it */
     val jsdelivrProxy = preferences.getBoolean("jsdelivr_proxy_key", false)
 

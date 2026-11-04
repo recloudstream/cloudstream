@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.home
 import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,8 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.FragmentHomeHeadBinding
+import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.getDisplayName
+import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
 import com.lagradost.cloudstream3.databinding.FragmentHomeHeadTvBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugException
@@ -58,6 +61,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarMargin
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import androidx.core.graphics.toColorInt
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
@@ -529,6 +533,29 @@ class HomeParentItemAdapterPreview(
 
             fixPaddingStatusbarMargin(topPadding)
 
+            (binding as? FragmentHomeHeadBinding)?.apply {
+                // The hero cards start below the top bar, so they need the same status bar offset
+                fixPaddingStatusbarMargin(previewViewpager)
+                fixPaddingStatusbarMargin(homePreviewShimmer)
+
+                // Tablets align the hero buttons with the left aligned title
+                if (root.resources.configuration.smallestScreenWidthDp >= 600) {
+                    homePreviewTitleHolder.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+                    homePreviewTitleHolder.setPaddingRelative(
+                        root.resources.getDimensionPixelSize(R.dimen.home_hero_margin) + 24.toPx,
+                        0, 0, 0
+                    )
+                }
+
+                val changeApiListener = View.OnClickListener { view ->
+                    view.context.selectHomepage(viewModel.apiName.value) { api ->
+                        viewModel.loadAndCancel(api, forceReload = true, fromUI = true)
+                    }
+                }
+                homeHeadChangeApi.setOnClickListener(changeApiListener)
+                alternateHomeHeadChangeApi.setOnClickListener(changeApiListener)
+            }
+
             for ((chip, watch) in toggleList) {
                 chip.isChecked = false
                 chip.setOnCheckedChangeListener { _, isChecked ->
@@ -797,6 +824,13 @@ class HomeParentItemAdapterPreview(
                         binding.homePreviewReloadProvider.isGone = (name == noneApi.name)
                     }
                 }*/
+                (binding as? FragmentHomeHeadBinding)?.apply {
+                    observe(viewModel.apiName) { name ->
+                        val displayName = homeHeadChangeApi.context.getDisplayName(name) ?: name
+                        homeHeadChangeApi.text = displayName
+                        alternateHomeHeadChangeApi.text = displayName
+                    }
+                }
                 observe(viewModel.resumeWatching) {
                     updateResume(it)
                 }

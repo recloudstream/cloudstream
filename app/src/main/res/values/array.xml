@@ -24,6 +24,7 @@
         <item>Quad9</item>
         <item>DNS.SB</item>
         <item>Canadian Shield</item>
+        <item>@string/custom_dns</item>
     </array>
     <array name="dns_pref_values">
         <item>0</item>
@@ -35,6 +36,7 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
+        <item>9</item>
     </array>
 
     <array name="apk_installer_pref">
@@ -277,6 +279,7 @@
         <item>Lavender</item>
         <item>Material You</item>
         <item>Material You (Secondary)</item>
+        <item>Cinema Red</item>
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
@@ -301,6 +304,7 @@
         <item>Lavender</item>
         <item>Monet</item>
         <item>Monet2</item>
+        <item>CinemaRed</item>
     </string-array>
 
     <string-array name="themes_names">
@@ -313,6 +317,7 @@
         <item>Dracula</item>
         <item>Lavender Dreams</item>
         <item>Silent Blue</item>
+        <item>Cinema Black</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
@@ -324,6 +329,7 @@
         <item>Dracula</item>
         <item>Lavender</item>
         <item>SilentBlue</item>
+        <item>Cinema</item>
     </string-array>
 
     <string-array name="extension_statuses">

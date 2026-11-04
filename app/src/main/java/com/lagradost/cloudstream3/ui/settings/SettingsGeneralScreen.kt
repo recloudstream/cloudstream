@@ -4,11 +4,16 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.integerArrayResource
 import androidx.compose.ui.res.painterResource
@@ -34,6 +39,9 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.compose.ActionDialog
+import com.lagradost.cloudstream4.compose.BlackButton
+import com.lagradost.cloudstream4.compose.BlackTextField
+import com.lagradost.cloudstream4.compose.WhiteButton
 import com.lagradost.cloudstream4.compose.PHONE
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.rememberAppSettings
@@ -44,6 +52,10 @@ import com.mihon.presentation.settings.SearchableSettings
 import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentMap
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+
+/** Value of the custom entry in R.array.dns_pref_values */
+private const val CUSTOM_DNS = 9
 
 object SettingsGeneralScreen : SearchableSettings {
     @Composable
@@ -104,6 +116,54 @@ object SettingsGeneralScreen : SearchableSettings {
                     // The og impl never modified it to true?
                     // settings.general.batterOptimization.set(true)
                     context.showRequestIgnoreBatteryOptDialog()
+                }
+            )
+        }
+
+        val customDnsUrl by settings.general.customDnsUrl.collectAsState()
+        var isCustomDnsShown by remember { mutableStateOf(false) }
+
+        fun reloadClients() {
+            (CloudStreamApp.context)?.let { ctx ->
+                app.initClient(ctx, ignoreSSL = false)
+                @OptIn(UnsafeSSL::class)
+                insecureApp.initClient(ctx, ignoreSSL = true)
+            }
+        }
+
+        if (isCustomDnsShown) {
+            var input by remember { mutableStateOf(customDnsUrl) }
+            AlertDialog(
+                containerColor = MaterialTheme.colorScheme.background,
+                onDismissRequest = { isCustomDnsShown = false },
+                title = { Text(text = stringResource(R.string.custom_dns_pref)) },
+                text = {
+                    BlackTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = input,
+                        placeHolder = stringResource(R.string.custom_dns_hint),
+                        singleLine = true,
+                        onValueChange = { input = it.trim() }
+                    )
+                },
+                confirmButton = {
+                    WhiteButton(text = stringResource(R.string.ok), onClick = {
+                        val url = input.toHttpUrlOrNull()
+                        if (url == null || !url.isHttps) {
+                            showToast(R.string.custom_dns_invalid)
+                            return@WhiteButton
+                        }
+                        isCustomDnsShown = false
+                        // Must set the value before initClient is called
+                        settings.general.customDnsUrl.set(input)
+                        settings.general.dns.set(CUSTOM_DNS)
+                        reloadClients()
+                    })
+                },
+                dismissButton = {
+                    BlackButton(text = stringResource(R.string.cancel), onClick = {
+                        isCustomDnsShown = false
+                    })
                 }
             )
         }
@@ -223,14 +283,20 @@ object SettingsGeneralScreen : SearchableSettings {
                             stringArrayResource(R.array.dns_pref)
                         ).toMap(),
                         onValueChanged = { newValue ->
-                            settings.general.dns.set(newValue) // Must set the value before initClient is called
-                            (CloudStreamApp.context)?.let { ctx ->
-                                app.initClient(ctx, ignoreSSL = false)
-                                @OptIn(UnsafeSSL::class)
-                                insecureApp.initClient(ctx, ignoreSSL = true)
+                            if (newValue == CUSTOM_DNS && customDnsUrl.isBlank()) {
+                                isCustomDnsShown = true
+                                return@ListPreference false
                             }
+                            settings.general.dns.set(newValue) // Must set the value before initClient is called
+                            reloadClients()
                             return@ListPreference true
                         },
+                    ),
+                    Preference.PreferenceItem.TextPreference(
+                        title = stringResource(R.string.custom_dns_pref),
+                        subtitle = customDnsUrl.ifBlank { stringResource(R.string.custom_dns_pref_summary) },
+                        icon = painterResource(R.drawable.dns_24px),
+                        onClick = { isCustomDnsShown = true }
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         title = stringResource(R.string.jsdelivr_proxy),
