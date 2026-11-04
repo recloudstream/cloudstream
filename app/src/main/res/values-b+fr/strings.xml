@@ -764,7 +764,8 @@
     <string name="compressor_threshold_label">Décibels max: %d dB</string>
     <string name="compressor_makeup_hint">Augmente le volume total de +%d dB</string>
     <string name="background">Arrière plan</string>
-    <string name="edit_profile_image_url">URL</string>
+    <string name="edit_profile_image_url">Url</string>
     <string name="edit_profile_image_picker">Choisir une image</string>
     <string name="edit_profile_image_default">Images par défaut</string>
+    <string name="compressor_threshold_hint">Les sons plus fort que %d dB seront baisser</string>
 </resources>

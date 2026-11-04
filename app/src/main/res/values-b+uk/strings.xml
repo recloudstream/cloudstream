@@ -771,4 +771,5 @@
     <string name="edit_profile_image_url">URL</string>
     <string name="edit_profile_image_picker">Вибір зображення</string>
     <string name="edit_profile_image_default">Типові зображення</string>
+    <string name="installed_plugins">Встановлені плагіни</string>
 </resources>
