@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.QuickSearchBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -42,6 +43,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.filterSearchResultByFilm
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -55,22 +57,30 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
     companion object {
         const val AUTOSEARCH_KEY = "autosearch"
         const val PROVIDER_KEY = "providers"
+        const val TV_TYPE_KEY = "tv_type"
+
+        private val ANIME_TYPES = setOf(TvType.Anime, TvType.AnimeMovie, TvType.OVA)
 
         fun pushSearch(
             autoSearch: String? = null,
-            providers: Array<String>? = null
+            providers: Array<String>? = null,
+            type: TvType? = null
         ) {
-            pushSearch(activity, autoSearch, providers)
+            pushSearch(activity, autoSearch, providers, type)
         }
 
         fun pushSearch(
             activity: Activity?,
             autoSearch: String? = null,
-            providers: Array<String>? = null
+            providers: Array<String>? = null,
+            type: TvType? = null
         ) {
             activity.navigate(R.id.global_to_navigation_quick_search, Bundle().apply {
                 providers?.let {
                     putStringArray(PROVIDER_KEY, it)
+                }
+                type?.let {
+                    putString(TV_TYPE_KEY, it.name)
                 }
                 autoSearch?.let {
                     putString(
@@ -89,6 +99,7 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
     }
 
     private var providers: Set<String>? = null
+    private var searchType: TvType? = null
     private lateinit var searchViewModel: SearchViewModel
 
     private var bottomSheetDialog: BottomSheetDialog? = null
@@ -121,22 +132,40 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
     }
 
     fun search(context: Context?, query: String, isQuickSearch: Boolean): Boolean {
-        (providers ?: context?.filterProviderByPreferredMedia(hasHomePageIsRequired = false)
-            ?.map { it.name }?.toSet())?.let { active ->
-            searchViewModel.searchAndCancel(
-                query = query,
-                ignoreSettings = false,
-                providersActive = active,
-                isQuickSearch = isQuickSearch
-            )
-            return true
+        val explicitProviders = providers
+        val active = explicitProviders ?: run {
+            val selected = DataStoreHelper.searchPreferenceProviders.toSet()
+            val preferredMediaApis =
+                context?.filterProviderByPreferredMedia(hasHomePageIsRequired = false).orEmpty()
+            val typeProviders = searchType?.let { type ->
+                preferredMediaApis.filter { api ->
+                    val types = api.supportedTypes
+                    types.contains(type) ||
+                        (type in ANIME_TYPES && types.any { it in ANIME_TYPES })
+                }.map { it.name }.toSet()
+            }.orEmpty()
+
+            (selected + typeProviders).ifEmpty {
+                preferredMediaApis.map { it.name }.toSet()
+            }
         }
-        return false
+        if (active.isEmpty()) return false
+
+        searchViewModel.searchAndCancel(
+            query = query,
+            ignoreSettings = false,
+            providersActive = active,
+            isQuickSearch = isQuickSearch
+        )
+        return true
     }
 
     override fun onBindingCreated(binding: QuickSearchBinding) {
         arguments?.getStringArray(PROVIDER_KEY)?.let {
             providers = it.toSet()
+        }
+        arguments?.getString(TV_TYPE_KEY)?.let { name ->
+            searchType = runCatching { TvType.valueOf(name) }.getOrNull()
         }
 
         val isSingleProvider = providers?.size == 1
