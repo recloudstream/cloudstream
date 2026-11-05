@@ -1206,8 +1206,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subtitlesGrouped =
                     subtitlesWithGroup.groupBy({ it.first }, { it.second }).map { (key, value) ->
-                        key to value.sortedBy { it.nameSuffix.toIntOrNull() ?: 0 }
-                    }.toMap()
+                        key to sortSubs(value)
+                    }.sortedBy { it.first }
+                        .toMap()
                 val subtitlesGroupedList = subtitlesGrouped.entries.toList()
 
                 val subtitles = subtitlesGrouped.map { it.key.html() }

@@ -364,7 +364,7 @@ object AppContextUtils {
     }
 
     /** Sort subtitles by names */
-    fun sortSubs(subs: Set<SubtitleData>): List<SubtitleData> {
+    fun sortSubs(subs: Collection<SubtitleData>): List<SubtitleData> {
         // Be aware, sorting by "$originalName $nameSuffix" causes "a (b) 1" < "a 1",
         // where "originalName then nameSuffix" preserves "a 1" < "a (b) 1", because we do not compare '(' and '1'.
         return subs
