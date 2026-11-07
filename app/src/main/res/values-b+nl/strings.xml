@@ -380,7 +380,7 @@
     <string name="action_mark_as_watched">Markeer als bekeken</string>
     <string name="history">Geschiedenis</string>
     <string name="play_trailer_button">Speel Trailer</string>
-    <string name="autoplay_next_settings_des">Start de volgende episode wanneer deze afgelopen is</string>
+    <string name="autoplay_next_settings_des">Start de volgende aflevering wanneer deze afgelopen is</string>
     <string name="autoplay_next_settings">Volgende episode automatisch afspelen</string>
     <string name="update_started">Update Gestart</string>
     <string name="library">Bibliotheek</string>
@@ -695,4 +695,6 @@
     <string name="subtitles_from_online">Online</string>
     <string name="download_parallel_settings_des">Hoeveel verschillende items kunnen in parallel gedownload worden</string>
     <string name="parallel_downloads">Parallel downloads</string>
+    <string name="subs_edge">Rand</string>
+    <string name="start_paused_settings">Gepauzeerde video\'s starten</string>
 </resources>
