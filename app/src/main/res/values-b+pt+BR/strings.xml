@@ -748,19 +748,19 @@
         <item quantity="many">%d downloads na sequência</item>
         <item quantity="other">%d downloads na sequência</item>
     </plurals>
-    <string name="show_player_metadata_overlay">Mostrar sobreposição de metadados do reprodutor</string>
+    <string name="show_player_metadata_overlay">Mostrar Dados de Usuário</string>
     <string name="video_singular">Vídeo</string>
     <string name="skip_type_preview">Visualização</string>
     <string name="player_is_live">Ao vivo</string>
     <string name="tv_layout_clock_settings">Mostrar relógio em tempo real</string>
-    <string name="tv_layout_clock_settings_des">Exiba um relógio em tempo real na parte superior da tela. Aplica-se à página inicial e ao player</string>
-    <string name="profile_settings">Configurações de perfil</string>
-    <string name="profile_hide_negative_sources">Ocultar fontes com prioridade negativa</string>
+    <string name="tv_layout_clock_settings_des">Mostre um relógio em tempo real no topo da tela. Aplica-se à página inicial e ao jogador</string>
+    <string name="profile_settings">Configuração de perfil</string>
+    <string name="profile_hide_negative_sources">Oculta fontes com menos prioridade</string>
     <string name="profile_hide_error_sources">Ocultar fontes com erros</string>
     <plurals name="links_hidden">
-        <item quantity="one">%d link oculto</item>
-        <item quantity="many">%d link ocultos</item>
-        <item quantity="other">%d link ocultos</item>
+        <item quantity="one">%d links ocultos</item>
+        <item quantity="many">%d links ocultos</item>
+        <item quantity="other">%d links ocultos</item>
     </plurals>
     <string name="subs_edge">Borda</string>
     <string name="log_cat">Logcat 🐈</string>
@@ -769,4 +769,19 @@
     <string name="background">Fundo</string>
     <string name="compressor">Compressor</string>
     <string name="compressor_setting">Compressor de faixa dinâmica</string>
+    <string name="compressor_setting_summary">Mostrar controles do compressor no player (ajuda a equilibrar áudio alto/silencioso)</string>
+    <string name="compressor_on">Ligado</string>
+    <string name="compressor_on_format">Ligado · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Desligado</string>
+    <string name="compressor_preset_light">Suave</string>
+    <string name="compressor_preset_dialog">Impulso de diálogo</string>
+    <string name="compressor_preset_heavy">Pesado</string>
+    <string name="compressor_threshold_label">Limiar: %d dB</string>
+    <string name="compressor_makeup_label">Ganho de Composição: +%d dB</string>
+    <string name="compressor_threshold_hint">Sons mais altos que %d dB são reduzidos</string>
+    <string name="compressor_makeup_hint">Aumenta o volume total em +%d dB</string>
+    <string name="edit_profile_image_url">Página</string>
+    <string name="edit_profile_image_picker">Seletor de imagens</string>
+    <string name="edit_profile_image_default">Imagens padrão</string>
+    <string name="installed_plugins">Plugins instalados</string>
 </resources>
