@@ -834,7 +834,8 @@ class CS3IPlayer : IPlayer {
 
             // These are extra headers the browser like to insert, not sure if we want to include them
             // for WIDEVINE/drm as well? Do that if someone gets 404 and creates an issue.
-            val headers = refererMap + link.headers // Adds the headers from the provider, e.g Authorization
+            val headers =
+                refererMap + link.headers // Adds the headers from the provider, e.g Authorization
 
             return source.apply {
                 setDefaultRequestProperties(headers)
@@ -1111,10 +1112,13 @@ class CS3IPlayer : IPlayer {
                         context.getString(R.string.software_decoding_key),
                         -1
                     )
+                    val isAudioOnly = current == 3 || current == 4
                     val (isSoftwareDecodingEnabled, isSoftwareDecodingPreferred) = when (current) {
                         0 -> true to false // HW+SW, aka on but prefer hw
                         2 -> true to true // SW+HW, aka on but prefer sw
                         1 -> false to false // HW, aka off
+                        3 -> true to true // HW+ but prefer sw audio
+                        4 -> true to false // HW+ but prefer hw audio
                         // -1 = automatic
                         // We do not want tv to have software decoding, because of crashes
                         else -> isLayout(PHONE or EMULATOR) to false
@@ -1127,38 +1131,52 @@ class CS3IPlayer : IPlayer {
                         context.getString(R.string.compressor_enabled_key),
                         false
                     )
-                    compressor = if (isCompressorEnabled) DynamicRangeCompressor().apply { restoreSavedSettings() } else null
+                    compressor =
+                        if (isCompressorEnabled) DynamicRangeCompressor().apply { restoreSavedSettings() } else null
 
-                    val factory = if (isSoftwareDecodingEnabled) {
-                        FixedNextRenderersFactory(context, compressor).apply {
-                            setEnableDecoderFallback(true)
-                            setExtensionRendererMode(
-                                if (isSoftwareDecodingPreferred)
-                                    DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
-                                else
-                                    DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
-                            )
-                        }
-                    } else {
-                        val activeCompressor = compressor
-                        if (activeCompressor == null) {
-                            // no nextlib = EXTENSION_RENDERER_MODE_OFF, no compressor = fully default sink
-                            DefaultRenderersFactory(context)
+                    val factory =
+                        if (isAudioOnly) {
+                            FixedNextRenderersFactoryWithoutVideo(context, compressor).apply {
+                                setEnableDecoderFallback(true)
+                                setExtensionRendererMode(
+                                    if (isSoftwareDecodingPreferred)
+                                        DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+                                    else
+                                        DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+                                )
+                            }
+                        } else if (isSoftwareDecodingEnabled) {
+                            FixedNextRenderersFactory(context, compressor).apply {
+                                setEnableDecoderFallback(true)
+                                setExtensionRendererMode(
+                                    if (isSoftwareDecodingPreferred)
+                                        DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+                                    else
+                                        DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+                                )
+                            }
                         } else {
-                            object : DefaultRenderersFactory(context) {
-                                @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-                                override fun buildAudioSink(
-                                    ctx: Context,
-                                    enableFloatOutput: Boolean,
-                                    enableAudioTrackPlaybackParams: Boolean
-                                ) = DefaultAudioSink.Builder(ctx)
-                                    .setEnableFloatOutput(enableFloatOutput)
-                                    .setEnableAudioOutputPlaybackParameters(enableAudioTrackPlaybackParams)
-                                    .setAudioProcessors(arrayOf<AudioProcessor>(activeCompressor))
-                                    .build()
+                            val activeCompressor = compressor
+                            if (activeCompressor == null) {
+                                // no nextlib = EXTENSION_RENDERER_MODE_OFF, no compressor = fully default sink
+                                DefaultRenderersFactory(context)
+                            } else {
+                                object : DefaultRenderersFactory(context) {
+                                    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+                                    override fun buildAudioSink(
+                                        ctx: Context,
+                                        enableFloatOutput: Boolean,
+                                        enableAudioTrackPlaybackParams: Boolean
+                                    ) = DefaultAudioSink.Builder(ctx)
+                                        .setEnableFloatOutput(enableFloatOutput)
+                                        .setEnableAudioOutputPlaybackParameters(
+                                            enableAudioTrackPlaybackParams
+                                        )
+                                        .setAudioProcessors(arrayOf<AudioProcessor>(activeCompressor))
+                                        .build()
+                                }
                             }
                         }
-                    }
 
                     val style = CustomDecoder.style
                     // Custom TextOutput to apply cue styling and rules to all subtitles
@@ -1602,7 +1620,9 @@ class CS3IPlayer : IPlayer {
                             val position = exoPlayer?.currentPosition ?: exoPlayer?.duration ?: 0
 
                             // Seek to live head
-                            val aheadOfLive = LiveHelper.getLiveManager(exoPlayer)?.getTimeAheadOfLive(position) ?: 0
+                            val aheadOfLive =
+                                LiveHelper.getLiveManager(exoPlayer)?.getTimeAheadOfLive(position)
+                                    ?: 0
 
                             if (aheadOfLive > 100) {
                                 exoPlayer?.seekTo(position - aheadOfLive)
