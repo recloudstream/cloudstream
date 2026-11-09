@@ -430,7 +430,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
             resultEpisodes.setRecycledViewPool(EpisodeAdapter.sharedPool)
             resultEpisodes.adapter =
                 EpisodeAdapter(
-                    false,
+                    true,
                     { episodeClick ->
                         viewModel.handleAction(episodeClick)
                     },

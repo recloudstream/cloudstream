@@ -1376,6 +1376,7 @@ class ResultViewModel2 : ViewModel() {
                     listOf(
                         txt(R.string.episode_action_auto_download) to ACTION_DOWNLOAD_EPISODE,
                         txt(R.string.episode_action_download_mirror) to ACTION_DOWNLOAD_MIRROR,
+                        txt("Send to Nova Server (192.168.1.9)") to 9999,
                         txt(R.string.episode_action_download_subtitle) to ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR,
                         txt(R.string.episode_action_reload_links) to ACTION_RELOAD_EPISODE,
                     )
@@ -1486,6 +1487,57 @@ class ResultViewModel2 : ViewModel() {
                         response.url,
                     ).toWrapper()
                 )
+            }
+
+            9999 -> {
+                val response = currentResponse ?: return@launchSafe
+                acquireSingleLink(
+                    click.data,
+                    LOADTYPE_INAPP_DOWNLOAD,
+                    txt("Send to Nova Server (Choose Source & Quality)")
+                ) { (result, index) ->
+                    ioSafe {
+                        val link = result.links[index]
+                        val fullTitle = activity?.getNameFull(
+                            click.data.name,
+                            click.data.episode,
+                            click.data.season
+                        ) ?: response.name
+
+                        val success = try {
+                            val payload = org.json.JSONObject().apply {
+                                put("title", fullTitle)
+                                put("url", link.url)
+                                put("referer", link.referer)
+                                put("quality", Qualities.getStringByInt(link.quality))
+                                put("type", link.type.name)
+                                val headersJson = org.json.JSONObject()
+                                link.headers.forEach { (k, v) -> headersJson.put(k, v) }
+                                put("headers", headersJson)
+                            }
+                            val res = app.post(
+                                "http://192.168.1.9:8765/api/download",
+                                headers = mapOf(
+                                    "Authorization" to "Bearer nova-cloudstream-secure-token-2026",
+                                    "Content-Type" to "application/json"
+                                ),
+                                data = payload.toString()
+                            )
+                            res.isSuccessful
+                        } catch (e: Exception) {
+                            com.lagradost.cloudstream3.mvvm.logError(e)
+                            false
+                        }
+
+                        main {
+                            if (success) {
+                                showToast("Queued on Nova Server: " + fullTitle, Toast.LENGTH_LONG)
+                            } else {
+                                showToast("Failed to connect to Nova Server", Toast.LENGTH_SHORT)
+                            }
+                        }
+                    }
+                }
             }
 
             ACTION_DOWNLOAD_MIRROR -> {
