@@ -1,13 +1,11 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
-@Prerelease
 open class HubuCloud: ExtractorApi() {
     override val name: String = "Hubu"
     override val mainUrl: String = "https://hubu.cloud"

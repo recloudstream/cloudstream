@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.extractors.helper
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.Log
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
