@@ -1490,7 +1490,7 @@ class ResultViewModel2 : ViewModel() {
             }
 
             9999 -> {
-                val response = currentResponse ?: return@launchSafe
+                val response = currentResponse ?: return
                 acquireSingleLink(
                     click.data,
                     LOADTYPE_INAPP_DOWNLOAD,
@@ -1515,15 +1515,20 @@ class ResultViewModel2 : ViewModel() {
                                 link.headers.forEach { (k, v) -> headersJson.put(k, v) }
                                 put("headers", headersJson)
                             }
-                            val res = app.post(
-                                "http://192.168.1.9:8765/api/download",
-                                headers = mapOf(
-                                    "Authorization" to "Bearer nova-cloudstream-secure-token-2026",
-                                    "Content-Type" to "application/json"
-                                ),
-                                data = payload.toString()
-                            )
-                            res.isSuccessful
+                            val conn = (java.net.URL("http://192.168.1.9:8765/api/download").openConnection() as java.net.HttpURLConnection).apply {
+                                requestMethod = "POST"
+                                setRequestProperty("Authorization", "Bearer nova-cloudstream-secure-token-2026")
+                                setRequestProperty("Content-Type", "application/json")
+                                doOutput = true
+                                connectTimeout = 5000
+                                readTimeout = 5000
+                            }
+                            conn.outputStream.use { os ->
+                                os.write(payload.toString().toByteArray(Charsets.UTF_8))
+                            }
+                            val code = conn.responseCode
+                            conn.disconnect()
+                            code in 200..299
                         } catch (e: Exception) {
                             com.lagradost.cloudstream3.mvvm.logError(e)
                             false
