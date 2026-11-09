@@ -26,6 +26,9 @@ import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.request.bitmapConfig
 import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.fallback
+import coil3.request.placeholder
 import coil3.util.DebugLogger
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.USER_AGENT
@@ -58,6 +61,7 @@ object ImageLoader {
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
             .components {
+                add(ImageDecodingPreferenceInterceptor())
                 add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) }))
                 if (isBrokenHardware) {
                     add(BitmapFactoryDecoder.Factory())
@@ -98,13 +102,19 @@ object ImageLoader {
     ) {
         // clear image to avoid loading & flickering issue at fast scrolling (~recycler view/lazy column)
         this.dispose()
-        if (imageData == null) return
+        if (imageData == null || (imageData is String && imageData.isBlank())) {
+            this.setImageResource(com.lagradost.cloudstream3.R.drawable.default_cover)
+            return
+        }
         // setImageResource is better than coil3 on resources due to attr
         if (imageData is Int) {
             this.setImageResource(imageData); return
         }
         // headers can be overridden by extensions.
         this.load(imageData, SingletonImageLoader.get(context)) {
+            placeholder { getImageFromDrawable(context, com.lagradost.cloudstream3.R.drawable.default_cover) }
+            error { getImageFromDrawable(context, com.lagradost.cloudstream3.R.drawable.default_cover) }
+            fallback { getImageFromDrawable(context, com.lagradost.cloudstream3.R.drawable.default_cover) }
             this.httpHeaders(NetworkHeaders.Builder().also { headerBuilder ->
                 headerBuilder["User-Agent"] = USER_AGENT
                 headers?.forEach { (key, value) ->

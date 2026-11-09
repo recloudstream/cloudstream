@@ -1,0 +1,7 @@
+<resources>
+    <string name="image_loading_options_title">Carga de imágenes</string>
+    <string name="image_decoding_title">Decodificación de imágenes</string>
+    <string name="image_decoding_automatic">Automática</string>
+    <string name="image_decoding_software">Compatibilidad por software</string>
+    <string name="image_decoding_summary">Choose software decoding for hardware compatibility problems. Automatic keeps the current image loader behavior.</string>
+</resources>
