@@ -65,6 +65,7 @@ import coil3.compose.AsyncImage
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.Account
 import com.lagradost.cloudstream4.compose.ActionDialog
@@ -430,7 +431,7 @@ object AccountScreen {
                                 DropdownMenuItem(
                                     text = { Text(text = stringResource(R.string.edit_profile_image_picker)) },
                                     onClick = {
-                                        selectFileSelector.launch(arrayOf("image/*"))
+                                        selectFileSelector.launchSafe(arrayOf("image/*"))
                                         selectProfileImage = false
                                     }
                                 )

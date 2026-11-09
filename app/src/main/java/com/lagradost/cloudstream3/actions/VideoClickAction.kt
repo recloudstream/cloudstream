@@ -34,6 +34,7 @@ import com.lagradost.cloudstream3.actions.temp.fcast.FcastAction
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
@@ -143,7 +144,7 @@ abstract class VideoClickAction {
         }
 
         uiThread {
-            MainActivity.activityResultLauncher?.launch(intent,options)
+            MainActivity.activityResultLauncher?.launchSafe(intent, options)
         }
     }
 

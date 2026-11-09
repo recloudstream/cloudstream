@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
@@ -126,11 +127,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
             ) {
                 // Last = custom
                 if (it == dirs.size) {
-                    try {
-                        pathPicker.launch(Uri.EMPTY)
-                    } catch (e: Exception) {
-                        logError(e)
-                    }
+                    pathPicker.launchSafe(Uri.EMPTY)
                 } else {
                     // Sets both visual and actual paths.
                     // path = used uri
@@ -245,7 +242,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                 return@setOnPreferenceClickListener true
             }
         }
-        
+
         getPref(R.string.install_prerelease_key)?.let { pref ->
             pref.isVisible = BuildConfig.FLAVOR == "stable"
             pref.setOnPreferenceClickListener {

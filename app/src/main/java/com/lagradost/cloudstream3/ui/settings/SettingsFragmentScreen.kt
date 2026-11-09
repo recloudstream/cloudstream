@@ -1,7 +1,9 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
@@ -64,10 +66,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityOptionsCompat
 import coil3.compose.AsyncImage
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.activity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.profileImages
 import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
@@ -95,6 +100,18 @@ import java.util.Locale
 import java.util.TimeZone
 
 object SettingsFragmentScreen : Screen {
+    fun <I> ActivityResultLauncher<I>.launchSafe(input : I, options: ActivityOptionsCompat? = null) {
+        try {
+            this.launch(input = input, options = options)
+        } catch (_ : ActivityNotFoundException) {
+            showToast(R.string.app_not_found_error)
+        } catch (t : Throwable) {
+            /** This should not ever happen, but again Java is wack */
+            showToast(t.toString())
+            logError(t)
+        }
+    }
+
     val screens = persistentListOf(
         SettingsNavigation(
             title = R.string.category_general,

@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.MainActivityScreen
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.services.BackupWorkManager
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
 import com.lagradost.cloudstream3.utils.InAppUpdater.installPreReleaseIfNeeded
@@ -162,7 +163,7 @@ object SettingsUpdatesScreen : SearchableSettings {
                             // This is not a ListPreference because the old selection system is
                             // broken af. This needs to be refactored to QuickNovels download path
                             // system.
-                            selectFileSelector.launch(Uri.EMPTY)
+                            selectFileSelector.launchSafe(Uri.EMPTY)
                         }
                     ),
                     Preference.PreferenceItem.TextPreference(

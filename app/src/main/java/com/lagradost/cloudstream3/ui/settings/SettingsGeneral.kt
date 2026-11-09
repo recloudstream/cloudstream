@@ -37,6 +37,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestricted
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.showBatteryOptimizationDialog
@@ -402,11 +403,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 {}) {
                 // Last = custom
                 if (it == dirs.size) {
-                    try {
-                        pathPicker.launch(Uri.EMPTY)
-                    } catch (e: Exception) {
-                        logError(e)
-                    }
+                    pathPicker.launchSafe(Uri.EMPTY)
                 } else {
                     // Sets both visual and actual paths.
                     // key = used path
