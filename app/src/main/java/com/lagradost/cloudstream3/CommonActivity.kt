@@ -50,6 +50,7 @@ import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginAdapter
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
@@ -280,7 +281,7 @@ object CommonActivity {
             ) { isGranted: Boolean ->
                 Log.d(TAG, "Notification permission: $isGranted")
             }
-            requestPermissionLauncher.launch(
+            requestPermissionLauncher.launchSafe(
                 Manifest.permission.POST_NOTIFICATIONS
             )
         }

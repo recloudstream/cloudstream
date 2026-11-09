@@ -40,6 +40,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
@@ -306,7 +307,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             .addCategory(Intent.CATEGORY_OPENABLE)
             .addFlags(FLAG_GRANT_READ_URI_PERMISSION) // Request temporary access
         safe {
-            videoResultLauncher.launch(
+            videoResultLauncher.launchSafe(
                 Intent.createChooser(
                     intent,
                     getString(R.string.open_local_video)
