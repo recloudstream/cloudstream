@@ -5,7 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.LiveStreamLoadResponse
 import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.MovieLoadResponse
+import com.lagradost.cloudstream3.TvSeriesLoadResponse
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
@@ -14,6 +20,7 @@ import com.lagradost.cloudstream3.ui.player.source_priority.ProfileSettings
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper.getLinkPriority
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
@@ -314,6 +321,90 @@ class PlayerGeneratorViewModel : ViewModel() {
     fun loadThisEpisode(index: Int) {
         episodeIndex = index
         loadLinks()
+    }
+
+    /**
+     * Switches the current player to a recent live channel.
+     *
+     * The generator is rebuilt from the stored provider reference so the provider can
+     * re-extract the stream. A fresh in-memory cache is used when available; expired or
+     * failing links are handled by forcing a clear and reloading.
+     */
+    fun loadLiveRecent(recent: ResultEpisode, pageUrl: String? = null): Boolean {
+        if (!recent.tvType.isLiveStream()) return false
+
+        val api = getApiFromNameNull(recent.apiName) ?: return false
+        val page = ResultViewModel2.LoadResponseFromSearch(
+            name = recent.headerName,
+            url = pageUrl ?: recent.data,
+            apiName = api.name,
+            type = TvType.Live,
+            posterUrl = recent.poster,
+            id = recent.parentId,
+        )
+
+        // Use the in-memory link cache if available; re-extract only when needed.
+        forceClearCache = false
+        attachGenerator(RepoLinkGenerator(listOf(recent), page = page), 0)
+        loadLinks()
+        return true
+    }
+
+    /**
+     * Re-extracts the current live channel after its link expired.
+     *
+     * When [usePageFallback] is true the channel page is loaded again to obtain a
+     * fresh provider reference. This covers providers that sign the final URL inside
+     * [com.lagradost.cloudstream3.MainAPI.load] instead of loadLinks.
+     */
+    fun reloadLiveChannel(usePageFallback: Boolean = false) {
+        val genState = state.generatorState ?: return
+        val current = genState.meta as? ResultEpisode ?: return
+        if (!current.tvType.isLiveStream()) return
+
+        val pageUrl = genState.response?.url
+        if (!usePageFallback || pageUrl.isNullOrBlank()) {
+            forceClearCache = true
+            loadLinks()
+            return
+        }
+
+        viewModelScope.launchSafe {
+            val api = getApiFromNameNull(current.apiName)
+            if (api == null) {
+                forceClearCache = true
+                loadLinks()
+                return@launchSafe
+            }
+
+            val response = (safeApiCall { api.load(pageUrl) } as? Resource.Success)?.value
+            if (response == null) {
+                forceClearCache = true
+                loadLinks()
+                return@launchSafe
+            }
+
+            val freshData = when (response) {
+                is LiveStreamLoadResponse -> response.dataUrl
+                is MovieLoadResponse -> response.dataUrl
+                is TvSeriesLoadResponse -> response.episodes.firstOrNull {
+                    it.data == current.data || it.name == current.name
+                }?.data ?: response.episodes.firstOrNull()?.data
+
+                else -> null
+            }
+
+            if (freshData.isNullOrBlank()) {
+                forceClearCache = true
+                loadLinks()
+                return@launchSafe
+            }
+
+            val fresh = current.copy(data = freshData)
+            forceClearCache = true
+            attachGenerator(RepoLinkGenerator(listOf(fresh), page = response), 0)
+            loadLinks()
+        }
     }
 
     fun attachGenerator(newGenerator: VideoGenerator<*>, index: Int) {
