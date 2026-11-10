@@ -34,8 +34,11 @@ jobs:
           COMPILE_SDK=$(python3 -c 'import tomllib; print(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["compileSdk"])')
           set -o pipefail
           SDKMANAGER="${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
-          "$SDKMANAGER" --list --channel=3 | grep 'platforms;android-' | tee "$RUNNER_TEMP/gradle-build.log"
-          "$SDKMANAGER" --channel=3 "platforms;android-${COMPILE_SDK}" 2>&1 | tee -a "$RUNNER_TEMP/gradle-build.log"
+          # API 37+ platform packages include a minor version, even for .0.
+          if (( COMPILE_SDK >= 37 )); then
+            COMPILE_SDK="${COMPILE_SDK}.0"
+          fi
+          "$SDKMANAGER" "platforms;android-${COMPILE_SDK}" 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
