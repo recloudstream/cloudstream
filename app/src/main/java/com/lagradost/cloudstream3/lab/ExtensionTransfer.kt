@@ -43,7 +43,7 @@ object ExtensionTransfer {
             downloadProgress(total, length)
         }
         writeStream.flush()
-        if (md != null && !md.digest().contentEquals(digest!!.digest)) {
+        if (md != null && !md.digest().contentEquals(digest.digest)) {
             throw DigestException("Extension digest mismatch")
         }
     }

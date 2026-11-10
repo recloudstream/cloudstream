@@ -75,7 +75,10 @@ jobs:
           profile: pixel_2
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
-          script: set -o pipefail; ./gradlew :app:connectedStableDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.lagradost.cloudstream3.lab.ProviderHostSmokeTest --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
+          script: bash -o pipefail -c './gradlew :app:connectedStableDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.lagradost.cloudstream3.lab.ProviderHostSmokeTest --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"'
+
+      - name: Verify focused tests executed
+        run: python3 scripts/verify-test-results.py
 
       - name: Verify release signing identity
         shell: bash
