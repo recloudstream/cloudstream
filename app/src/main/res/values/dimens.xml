@@ -2,7 +2,10 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="rounded_image_radius">10dp</dimen>
+    <dimen name="rounded_image_radius">6dp</dimen>
+    <dimen name="home_top_bar_height">56dp</dimen>
+    <dimen name="home_hero_height">560dp</dimen>
+    <dimen name="home_hero_margin">16dp</dimen>
     <dimen name="rounded_button_radius">4dp</dimen>
 
     <dimen name="navbar_height">0dp</dimen>

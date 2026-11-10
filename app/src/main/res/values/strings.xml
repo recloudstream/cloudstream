@@ -347,6 +347,11 @@
     <string name="video_disk_description">Causes problems if set too high on devices with low storage space, such as Android TV.</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
+    <string name="custom_dns">Custom</string>
+    <string name="custom_dns_pref">Custom DNS server</string>
+    <string name="custom_dns_pref_summary">Enter your own DNS-over-HTTPS address</string>
+    <string name="custom_dns_hint">https://dns.example.com/dns-query</string>
+    <string name="custom_dns_invalid">Enter a valid https:// DNS-over-HTTPS address</string>
     <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="jsdelivr_enabled">Could not reach GitHub. Turning on jsDelivr proxy…</string>
     <string name="jsdelivr_proxy_summary">Bypass blocking of raw github URLs using jsDelivr. May cause updates to be delayed by few days.</string>

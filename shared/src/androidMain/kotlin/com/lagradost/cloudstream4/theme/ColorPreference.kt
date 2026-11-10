@@ -16,6 +16,7 @@ fun perfToMode(perf: String?) =
         "Dracula" -> CloudStreamThemeMode.Dracula
         "Lavender" -> CloudStreamThemeMode.Lavender
         "SilentBlue" -> CloudStreamThemeMode.SilentBlue
+        "Cinema" -> CloudStreamThemeMode.Cinema
         "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             CloudStreamThemeMode.Dynamic
         } else {
@@ -46,6 +47,7 @@ fun perfToColor(perf : String?) = when (perf) {
     "DandelionYellow" -> CloudStreamPrimaryColor.DANDELION_YELLOW
     "CoolBlue" -> CloudStreamPrimaryColor.COOL_BLUE
     "Lavender" -> CloudStreamPrimaryColor.LAVENDER
+    "CinemaRed" -> CloudStreamPrimaryColor.CINEMA_RED
     "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         CloudStreamPrimaryColor.DYNAMIC
     } else {
