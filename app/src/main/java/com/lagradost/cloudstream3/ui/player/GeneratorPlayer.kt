@@ -1644,10 +1644,24 @@ class GeneratorPlayer : FullScreenPlayer() {
         // reloads the channel page to get a fresh provider reference.
         val usePageFallback = liveRetryCount > 0
         liveRetryCount++
-        showToast(R.string.reconnecting_live, Toast.LENGTH_SHORT)
+        notifyLiveRetry(exception)
         releasePlayer()
         viewModel.reloadLiveChannel(usePageFallback)
         return true
+    }
+
+    /**
+     * Keeps the standard playback error diagnostics visible (error name and code, e.g.
+     * 2004) while an automatic live retry runs, followed by the reconnecting notice.
+     * Both are shown in a single toast because [showToast] cancels the previous one.
+     */
+    private fun notifyLiveRetry(exception: Throwable) {
+        val error = playerHostView?.playerErrorMessage(exception)
+        val reconnect = context?.getString(R.string.reconnecting_live)
+        val message = listOfNotNull(error, reconnect).joinToString("\n")
+        if (message.isNotBlank()) {
+            showToast(message, Toast.LENGTH_LONG)
+        }
     }
 
     /**
