@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Prevent removed media-app code and dependencies from returning to the lab host."""
 from pathlib import Path
-import re
+import argparse
+import zipfile
 import xml.etree.ElementTree as ET
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--apk', type=Path)
+args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 source = root / 'app/src/main/java/com/lagradost/cloudstream3'
 for forbidden in ['MainActivity.kt', 'MainActivityScreen.kt', 'actions', 'services', 'receivers',
@@ -36,3 +40,16 @@ assert not (root / 'docs/build.gradle.kts').exists()
 for path in (root / 'app/src/main/res').rglob('*.xml'):
     ET.parse(path)
 print('PASS: extension-only source, dependencies, manifest, two-tab navigation and resource XML')
+
+if args.apk:
+    with zipfile.ZipFile(args.apk) as apk:
+        for name in apk.namelist():
+            assert not any(token in name.lower() for token in ['libffmpeg', 'libavcodec', 'libavformat']), name
+            if name.endswith('.dex'):
+                dex = apk.read(name)
+                for token in [b'Lcom/lagradost/cloudstream3/MainActivity;',
+                              b'Lcom/lagradost/cloudstream3/ui/player/',
+                              b'Lcom/lagradost/cloudstream3/ui/account/',
+                              b'Landroidx/media3/exoplayer/']:
+                    assert token not in dex, f'{token!r} remains in {name}'
+    print('PASS: release APK contains no legacy player/account activity classes or FFmpeg binaries')

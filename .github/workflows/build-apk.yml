@@ -61,6 +61,22 @@ jobs:
           export BUILD_VERSION_CODE=$((100000 + BUILD_VERSION_CODE))
           ./gradlew :app:testStableDebugUnitTest --tests "com.lagradost.cloudstream3.lab.*" :app:assembleStableRelease --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
 
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Smoke-test host and real dex plugin loading
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          script: set -o pipefail; ./gradlew :app:connectedStableDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.lagradost.cloudstream3.lab.ProviderHostSmokeTest --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
+
       - name: Verify release signing identity
         shell: bash
         run: |
@@ -70,6 +86,7 @@ jobs:
           "$APKSIGNER" verify --verbose --print-certs "$APK" 2>&1 | tee signing-report.txt "$RUNNER_TEMP/gradle-build.log"
           EXPECTED=60906f79806981d39426f7604ca88cf97941166281d6e806f44d87102018af34
           grep -F "Signer #1 certificate SHA-256 digest: $EXPECTED" signing-report.txt
+          python3 scripts/check-lab-scope.py --apk "$APK"
 
       - name: Report build failure details
         if: failure()
@@ -96,4 +113,17 @@ jobs:
             app/build/outputs/apk/stable/release/*.apk
             signing-report.txt
           if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: extension-lab-test-reports-${{ github.run_number }}
+          path: |
+            app/build/test-results/
+            app/build/reports/tests/
+            app/build/reports/androidTests/
+            app/build/outputs/androidTest-results/
+          if-no-files-found: ignore
           retention-days: 14
