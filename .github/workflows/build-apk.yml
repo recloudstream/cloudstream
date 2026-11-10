@@ -32,7 +32,8 @@ jobs:
         shell: bash
         run: |
           COMPILE_SDK=$(python3 -c 'import tomllib; print(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["compileSdk"])')
-          sdkmanager "platforms;android-${COMPILE_SDK}"
+          set -o pipefail
+          sdkmanager "platforms;android-${COMPILE_SDK}" 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
