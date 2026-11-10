@@ -1376,7 +1376,7 @@ class ResultViewModel2 : ViewModel() {
                     listOf(
                         txt(R.string.episode_action_auto_download) to ACTION_DOWNLOAD_EPISODE,
                         txt(R.string.episode_action_download_mirror) to ACTION_DOWNLOAD_MIRROR,
-                        txt("Send to Nova Server (192.168.1.9)") to 9999,
+                        txt("Download (Nova Server / USB Fallback)") to 9999,
                         txt(R.string.episode_action_download_subtitle) to ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR,
                         txt(R.string.episode_action_reload_links) to ACTION_RELOAD_EPISODE,
                     )
@@ -1487,14 +1487,12 @@ class ResultViewModel2 : ViewModel() {
                         response.url,
                     ).toWrapper()
                 )
-            }
-
-            9999 -> {
+            }            9999 -> {
                 val response = currentResponse ?: return
                 acquireSingleLink(
                     click.data,
                     LOADTYPE_INAPP_DOWNLOAD,
-                    txt("Send to Nova Server (Choose Source & Quality)")
+                    txt("Download: Choose Source & Quality")
                 ) { (result, index) ->
                     ioSafe {
                         val link = result.links[index]
@@ -1504,7 +1502,8 @@ class ResultViewModel2 : ViewModel() {
                             click.data.season
                         ) ?: response.name
 
-                        val success = try {
+                        var novaSuccess = false
+                        try {
                             val payload = org.json.JSONObject().apply {
                                 put("title", fullTitle)
                                 put("url", link.url)
@@ -1520,25 +1519,53 @@ class ResultViewModel2 : ViewModel() {
                                 setRequestProperty("Authorization", "Bearer nova-cloudstream-secure-token-2026")
                                 setRequestProperty("Content-Type", "application/json")
                                 doOutput = true
-                                connectTimeout = 5000
-                                readTimeout = 5000
+                                connectTimeout = 4000
+                                readTimeout = 4000
                             }
                             conn.outputStream.use { os ->
                                 os.write(payload.toString().toByteArray(Charsets.UTF_8))
                             }
                             val code = conn.responseCode
                             conn.disconnect()
-                            code in 200..299
+                            novaSuccess = (code in 200..299)
                         } catch (e: Exception) {
                             com.lagradost.cloudstream3.mvvm.logError(e)
-                            false
+                            novaSuccess = false
                         }
 
                         main {
-                            if (success) {
+                            if (novaSuccess) {
                                 showToast("Queued on Nova Server: " + fullTitle, Toast.LENGTH_LONG)
                             } else {
-                                showToast("Failed to connect to Nova Server", Toast.LENGTH_SHORT)
+                                // Fallback: Nova server unavailable -> Detect connected USB storage on TV
+                                val ctx = activity ?: com.lagradost.cloudstream3.AcActivity.context
+                                if (ctx != null) {
+                                    val extDirs = ctx.getExternalFilesDirs("")
+                                    // Index 0 is internal flash; index 1+ are external USB / SD card mounts
+                                    val usbDir = if (extDirs.size > 1 && extDirs[1] != null) extDirs[1]?.path else null
+
+                                    if (!usbDir.isNullOrBlank()) {
+                                        val settings = androidx.preference.PreferenceManager.getDefaultSharedPreferences(ctx)
+                                        settings.edit().putString(ctx.getString(R.string.download_path_key), usbDir).apply()
+                                        settings.edit().putString(ctx.getString(R.string.download_path_key_visual), usbDir).apply()
+                                    }
+                                }
+
+                                DownloadQueueManager.addToQueue(
+                                    DownloadObjects.DownloadQueueItem(
+                                        click.data,
+                                        response.isMovie(),
+                                        response.name,
+                                        response.type,
+                                        response.posterUrl,
+                                        response.apiName,
+                                        response.getId(),
+                                        response.url,
+                                        listOf(link),
+                                        result.subs,
+                                    ).toWrapper()
+                                )
+                                showToast("Nova unreachable! Downloading to TV USB storage: " + fullTitle, Toast.LENGTH_LONG)
                             }
                         }
                     }
