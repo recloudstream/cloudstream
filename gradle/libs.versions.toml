@@ -65,7 +65,7 @@ lifecycleViewmodelCompose = "2.11.0"
 jvmTarget = "11"
 jdkToolchain = "17"
 minSdk = "23"
-compileSdk = "37"
+compileSdk = "36"
 targetSdk = "36"
 
 versionCode = "68"
