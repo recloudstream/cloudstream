@@ -56,7 +56,12 @@ jobs:
             const fs = require('fs');
             const path = `${process.env.RUNNER_TEMP}/gradle-build.log`;
             if (fs.existsSync(path)) {
-              core.error(fs.readFileSync(path, 'utf8').slice(-50000));
+              const log = fs.readFileSync(path, 'utf8');
+              const failure = log.indexOf('FAILURE: Build failed');
+              const details = failure >= 0 ? log.slice(failure, failure + 24000) : log.slice(-12000);
+              for (let i = 0; i < details.length; i += 3000) {
+                core.error(details.slice(i, i + 3000));
+              }
             }
 
       - name: Upload APK
