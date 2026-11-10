@@ -54,7 +54,7 @@ jobs:
         run: |
           set -o pipefail
           export BUILD_VERSION_CODE=$((100000 + BUILD_VERSION_CODE))
-          ./gradlew :app:testStableReleaseUnitTest --tests "com.lagradost.cloudstream3.lab.ManualProviderRunnerTest" :app:assembleStableRelease --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
+          ./gradlew :app:testStableDebugUnitTest --tests "com.lagradost.cloudstream3.lab.ManualProviderRunnerTest" :app:assembleStableRelease --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
 
       - name: Report build failure details
         if: failure()
