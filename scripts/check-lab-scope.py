@@ -22,6 +22,9 @@ for dependency in ['bundles.media3', 'bundles.nextlib', 'libs.video', 'libs.torr
     assert dependency not in text, dependency
 android = '{http://schemas.android.com/apk/res/android}'
 manifest = ET.parse(root / 'app/src/main/AndroidManifest.xml').getroot()
+assert {e.get(android + 'name') for e in manifest.findall('uses-permission')} == {
+    'android.permission.INTERNET', 'android.permission.ACCESS_NETWORK_STATE'
+}
 application = manifest.find('application')
 assert [e.get(android + 'name') for e in application.findall('activity')] == ['.lab.ExtensionLabActivity']
 assert not application.findall('service')

@@ -181,61 +181,68 @@ object AndroidRepositoryManager : RepositoryManager {
          * Because if the file digest is correct, then why do we need to do a network connection?
          * */
         if (isFileDigest(file, source.digest)) {
+            check(PluginManager.loadPlugin(context, file, PluginData(
+                source.internalName, source.pluginUrl, true, file.absolutePath, PLUGIN_VERSION_NOT_SET
+            ))) { "Unable to load plugin ${source.internalName}" }
             return@withContext file.absolutePath
         }
 
         val tempFile = File.createTempFile(file.name, ".tmp", context.cacheDir)
 
-        tempFile.outputStream().use { writeStream ->
-            app.get(convertRawGitUrl(source.pluginUrl)).body.use { body ->
-                val readStream = body.byteStream()
-                ExtensionTransfer.transfer(
-                    writeStream = writeStream,
-                    readStream = readStream,
-                    length = source.size,
-                    downloadProgress = downloadProgress,
-                    digest = source.digest
+        try {
+            tempFile.outputStream().use { writeStream ->
+                app.get(convertRawGitUrl(source.pluginUrl)).body.use { body ->
+                    val readStream = body.byteStream()
+                    ExtensionTransfer.transfer(
+                        writeStream = writeStream,
+                        readStream = readStream,
+                        length = source.size,
+                        downloadProgress = downloadProgress,
+                        digest = source.digest
+                    )
+                }
+            }
+
+            // Always load the plugin
+            unloadPlugin(file.absolutePath)
+
+            file.delete() // delete if we somehow already have this downloaded?
+            file.parentFile?.mkdirs() // make the directories as Files.move needs this to work
+
+            try {
+                Files.move(
+                    tempFile.toPath(),
+                    file.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING,
+                    StandardCopyOption.ATOMIC_MOVE
+                )
+            } catch (_: AtomicMoveNotSupportedException) {
+                Files.move(
+                    tempFile.toPath(),
+                    file.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING
                 )
             }
-        }
 
-        // Always load the plugin
-        unloadPlugin(file.absolutePath)
-
-        file.delete() // delete if we somehow already have this downloaded?
-        file.parentFile?.mkdirs() // make the directories as Files.move needs this to work
-
-        try {
-            Files.move(
-                tempFile.toPath(),
-                file.toPath(),
-                StandardCopyOption.REPLACE_EXISTING,
-                StandardCopyOption.ATOMIC_MOVE
+            val result = PluginManager.loadPlugin(
+                context = context,
+                file = file,
+                data = PluginData(
+                    internalName = source.internalName,
+                    url = source.pluginUrl,
+                    isOnline = true,
+                    filePath = file.absolutePath,
+                    version = PLUGIN_VERSION_NOT_SET
+                )
             )
-        } catch (_: AtomicMoveNotSupportedException) {
-            Files.move(
-                tempFile.toPath(),
-                file.toPath(),
-                StandardCopyOption.REPLACE_EXISTING
-            )
-        }
+            if (!result) {
+                throw ErrorLoadingException("Unable to load plugin ${source.internalName}")
+            }
 
-        val result = PluginManager.loadPlugin(
-            context = context,
-            file = file,
-            data = PluginData(
-                internalName = source.internalName,
-                url = source.pluginUrl,
-                isOnline = true,
-                filePath = file.absolutePath,
-                version = PLUGIN_VERSION_NOT_SET
-            )
-        )
-        if (!result) {
-            throw ErrorLoadingException("Unable to load plugin ${source.internalName}")
+            return@withContext file.absolutePath
+        } finally {
+            tempFile.delete()
         }
-
-        return@withContext file.absolutePath
     }
 
     override fun getLocalPlugins(localUuid: Uuid): List<Plugin> {
