@@ -14,7 +14,7 @@ concurrency:
 jobs:
   build:
     name: Build installable debug APK
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
       - name: Checkout source
@@ -27,9 +27,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
 
       - name: Install project Android platform
         shell: bash
@@ -45,7 +42,21 @@ jobs:
 
       # Debug builds use Android's generated debug keystore, not upstream secrets.
       - name: Build stable debug APK
-        run: ./gradlew :app:assembleStableDebug --no-daemon --stacktrace
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleStableDebug --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
+
+      - name: Report build failure details
+        if: failure()
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const path = `${process.env.RUNNER_TEMP}/gradle-build.log`;
+            if (fs.existsSync(path)) {
+              core.error(fs.readFileSync(path, 'utf8').slice(-50000));
+            }
 
       - name: Upload APK
         uses: actions/upload-artifact@v7
