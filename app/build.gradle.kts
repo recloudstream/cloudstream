@@ -85,6 +85,14 @@ android {
     }
 
     signingConfigs {
+        create("extensionLab") {
+            storeFile = rootProject.file("signing/extension-lab.p12")
+            storeType = "PKCS12"
+            storePassword = "extension-lab-public-key"
+            keyAlias = "extensionlab"
+            keyPassword = "extension-lab-public-key"
+        }
+
         // We just use SIGNING_KEY_ALIAS here since it won't change
         // so won't kill the configuration cache.
         if (System.getenv("SIGNING_KEY_ALIAS") != null) {
@@ -103,10 +111,11 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.lagradost.cloudstream3"
+        applicationId = "com.lagradost.cloudstream3.extensionlab"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = libs.versions.versionCode.get().toInt()
+        versionCode = System.getenv("BUILD_VERSION_CODE")?.toInt()
+            ?: libs.versions.versionCode.get().toInt()
         versionName = libs.versions.versionName.get()
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
@@ -144,6 +153,7 @@ android {
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("extensionLab")
             isDebuggable = false
             isMinifyEnabled = false
             isShrinkResources = false

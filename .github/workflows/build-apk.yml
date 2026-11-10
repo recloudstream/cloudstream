@@ -1,0 +1,93 @@
+name: Build Android APK
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build signed release APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install project Android platform
+        shell: bash
+        run: |
+          COMPILE_SDK=$(python3 -c 'import tomllib; print(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["compileSdk"])')
+          set -o pipefail
+          SDKMANAGER="${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
+          # API 37+ platform packages include a minor version, even for .0.
+          if (( COMPILE_SDK >= 37 )); then
+            COMPILE_SDK="${COMPILE_SDK}.0"
+          fi
+          "$SDKMANAGER" "platforms;android-${COMPILE_SDK}" 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
+      # Deliberately public, fixed personal-testing key; see signing/README.md.
+      - name: Build stable release APK
+        env:
+          BUILD_VERSION_CODE: ${{ github.run_number }}
+        shell: bash
+        run: |
+          set -o pipefail
+          export BUILD_VERSION_CODE=$((100000 + BUILD_VERSION_CODE))
+          ./gradlew :app:testStableReleaseUnitTest --tests "com.lagradost.cloudstream3.lab.ManualProviderRunnerTest" :app:assembleStableRelease --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
+
+      - name: Report build failure details
+        if: failure()
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const path = `${process.env.RUNNER_TEMP}/gradle-build.log`;
+            if (fs.existsSync(path)) {
+              const log = fs.readFileSync(path, 'utf8');
+              const failure = log.indexOf('FAILURE: Build failed');
+              const details = failure >= 0 ? log.slice(failure, failure + 24000) : log.slice(-12000);
+              for (let i = 0; i < details.length; i += 3000) {
+                core.error(details.slice(i, i + 3000));
+              }
+            }
+
+      - name: Verify release signing identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          APKSIGNER=$(find "${ANDROID_HOME}/build-tools" -name apksigner -type f | sort -V | tail -1)
+          APK=$(find app/build/outputs/apk/stable/release -name '*.apk' -type f | head -1)
+          "$APKSIGNER" verify --verbose --print-certs "$APK" | tee signing-report.txt
+          EXPECTED=60906f79806981d39426f7604ca88cf97941166281d6e806f44d87102018af34
+          grep -F "Signer #1 certificate SHA-256 digest: $EXPECTED" signing-report.txt
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: extension-lab-release-${{ github.run_number }}
+          path: |
+            app/build/outputs/apk/stable/release/*.apk
+            signing-report.txt
+          if-no-files-found: error
+          retention-days: 14
