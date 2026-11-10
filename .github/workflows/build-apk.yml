@@ -22,6 +22,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Check extension-only scope
+        run: python3 scripts/check-lab-scope.py
+
       - name: Set up JDK 17
         uses: actions/setup-java@v5
         with:
@@ -42,6 +45,8 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
 
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
@@ -54,7 +59,7 @@ jobs:
         run: |
           set -o pipefail
           export BUILD_VERSION_CODE=$((100000 + BUILD_VERSION_CODE))
-          ./gradlew :app:testStableDebugUnitTest --tests "com.lagradost.cloudstream3.lab.ManualProviderRunnerTest" :app:assembleStableRelease --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
+          ./gradlew :app:testStableDebugUnitTest --tests "com.lagradost.cloudstream3.lab.*" :app:assembleStableRelease --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
 
       - name: Verify release signing identity
         shell: bash
@@ -76,7 +81,8 @@ jobs:
             if (fs.existsSync(path)) {
               const log = fs.readFileSync(path, 'utf8');
               const failure = log.indexOf('FAILURE: Build failed');
-              const details = failure >= 0 ? log.slice(failure, failure + 24000) : log.slice(-12000);
+              const compilerErrors = log.split('\n').filter(line => /(^e:|error:|Android resource linking failed)/.test(line)).join('\n');
+              const details = compilerErrors + '\n' + (failure >= 0 ? log.slice(failure, failure + 18000) : log.slice(-12000));
               for (let i = 0; i < details.length; i += 3000) {
                 core.error(details.slice(i, i + 3000));
               }

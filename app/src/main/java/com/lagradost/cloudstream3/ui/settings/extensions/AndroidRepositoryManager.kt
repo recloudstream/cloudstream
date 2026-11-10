@@ -20,8 +20,8 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.convertRawGitUrl
 import com.lagradost.cloudstream3.plugins.RepositoryManager.parseRepoUrl
 import com.lagradost.cloudstream3.plugins.RepositoryManager.removeRepository
 import com.lagradost.cloudstream3.plugins.SitePlugin
-import com.lagradost.cloudstream3.ui.settings.ApkUpdater
-import com.lagradost.cloudstream3.ui.settings.ApkUpdater.isFileDigest
+import com.lagradost.cloudstream3.lab.ExtensionTransfer
+import com.lagradost.cloudstream3.lab.ExtensionTransfer.isFileDigest
 import com.lagradost.cloudstream4.viewmodels.DigestPair
 import com.lagradost.cloudstream4.viewmodels.Plugin
 import com.lagradost.cloudstream4.viewmodels.PluginDownloadSource
@@ -189,7 +189,7 @@ object AndroidRepositoryManager : RepositoryManager {
         tempFile.outputStream().use { writeStream ->
             app.get(convertRawGitUrl(source.pluginUrl)).body.use { body ->
                 val readStream = body.byteStream()
-                ApkUpdater.transfer(
+                ExtensionTransfer.transfer(
                     writeStream = writeStream,
                     readStream = readStream,
                     length = source.size,

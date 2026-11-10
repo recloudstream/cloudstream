@@ -4,11 +4,11 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical" android:background="?attr/primaryGrayBackground">
     <androidx.fragment.app.FragmentContainerView
-        android:id="@id/nav_host_fragment"
+        android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
         app:defaultNavHost="true" app:navGraph="@navigation/extension_lab_navigation" />
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@id/nav_view" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:id="@+id/nav_view" android:layout_width="match_parent" android:layout_height="wrap_content"
         app:menu="@menu/extension_lab_menu" app:labelVisibilityMode="labeled" />
 </LinearLayout>

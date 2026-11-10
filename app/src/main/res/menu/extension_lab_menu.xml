@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/lab_home" android:icon="@drawable/home_icon_selector" android:title="Home" />
-    <item android:id="@id/navigation_settings_extensions" android:icon="@drawable/extension_24px" android:title="Extensions" />
+    <item android:id="@+id/navigation_settings_extensions" android:icon="@drawable/extension_24px" android:title="Extensions" />
 </menu>

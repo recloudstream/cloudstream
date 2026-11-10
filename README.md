@@ -1,112 +1,51 @@
-# CloudStream
+# Extension Lab
 
-**⚠️ Warning: By default, this app doesn't provide any video sources; you have to install extensions to add functionality to the app.**
-<p align="left"><a href="https://github.com/recloudstream/cloudstream/releases/download/pre-release/app-prerelease-release.apk"><img src=".github/images/download-cloudstream-pre.png" alt="Download Cloudstream Pre-Release" width=430/></a></p>
+Android host for installing/managing CloudStream-compatible provider extensions
+and manually calling their APIs. There is no media browser or player.
 
-[![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)
+## Two tabs
 
+- **Home:** select an installed provider and a method, enter the required values,
+  then run it and inspect the returned JSON or error. Supports `getMainPage`,
+  `search`, paginated search, `quickSearch`, `load`, and `loadLinks`. Stream URLs,
+  headers and subtitles are displayed as data, never played.
+- **Extensions:** add repositories; download, update and remove extensions; inspect
+  installed extensions or import a local `.cs3`/`.zip` provider extension.
 
-## Table of Contents: 
-+ [About Us:](#about_us)
-+ [Installation Steps:](#install_rules)
-+ [Contributing:](#contributing)
-+ [Issues:](#issues)
-  + [Bugs Reports:](#bug_report)
-  + [Enhancement:](#enhancment)
-+ [Extension Development:](#extensions)
-+ [Language Support:](#languages)
-+ [Further Sources](#contact_and_sources)
+## Build
 
+GitHub Actions workflow **Build Android APK** builds a signed `stableRelease` APK,
+executes focused unit tests and checks its fixed signing certificate. Download the
+`extension-lab-release-*` artifact from a successful workflow run.
 
-<a id="about_us"></a>
+Local build (JDK 17 and Android SDK platform 37.0 required):
 
-## About us: 
+```sh
+./gradlew :app:testStableDebugUnitTest :app:assembleStableRelease
+```
 
-**CloudStream is a media center that prioritizes and emphasizes complete freedom and flexibility for users and developers.** 
+For an update over a CI-installed APK, set `BUILD_VERSION_CODE` to a number above
+its installed version code. See [signing/README.md](signing/README.md).
 
-CloudStream is an extension-based multimedia player with tracking support. There are extensions to view videos from: 
+**The committed signing key is deliberately public, for personal testing only.**
+It is not a secure production signing identity. Never regenerate it per build.
 
-+ [Librevox (audio-books)](https://librivox.org/) 
-+ [Youtube](https://www.youtube.com/)
-+ [Twitch](https://www.twitch.tv/)
-+ [iptv-org (A collection of publicly available IPTV (Internet Protocol television) channels from all over the world.)](https://github.com/iptv-org/iptv) 
-+ [nginx](https://nginx.org/)
-+ And more... 
+## Structure
 
+- `app`: extension-only Android host, repository manager and manual tester.
+- `library`: provider/extractor API, parsers, networking helpers and shared models.
+  This is retained because downloaded extensions call these APIs dynamically.
+- `shared`: Compose extension UI support, theme, settings store and state handling.
 
-**Please don't create illegal extensions or use any that host any copyrighted media.** For more details about our stance on the DMCA and EUCD, you can read about it on our organization: [reCloudStream](https://github.com/recloudstream)
+Legacy playback, accounts, browsing, media downloads, casting, app-update UI,
+onboarding, automatic provider-test UI, desktop app and upstream publishing
+workflows have been removed. Provider/extractor plugins are supported; plugins
+requiring the removed media-app UI or video-click action APIs are not.
 
-#### Important Copyright Note: 
+Only install extensions you trust: they execute code in the app. Responses may
+contain private URLs/tokens; take care when copying or sharing them.
 
-Our documentation is unmaintained and open to contributions; therefore, apps and sources, extensions in recommended sources, and recommended apps are not officially moderated or endorsed by CloudStream; if you or another copyright owner identify an extension that breaches your copyright, please let us know. 
+Based on CloudStream. Original contributor credits and GPL-3.0 licensing are
+preserved in the source history and [LICENSE](LICENSE).
 
-
-#### Features:
-+ **AdFree**, No ads whatsoever
-+ No tracking/analytics
-+ Bookmarks
-+ Phone and TV support
-+ Chromecast
-+ Extension system for personal customization
-
-
-<a id="install_rules"></a>
-
-## Installation: 
-
-Our documentation provides the steps to install and configure CloudStream for your streaming needs.
-
-[Getting Started With CloudStream:](https://recloudstream.github.io/csdocs/)
-
-<a id="contributing"></a>
-
-## Contributing:
-We **happily** accept any contributions to our project. To find out where you can start contributing towards the project, please look [at our issues tab](/cloudstream/issues)
-
-
-
-<a id="issues"></a> 
- 
-### Issues: 
-While we **actively** accept issues and pull requests, we do require you fill out an [template](https://github.com/recloudstream/cloudstream/issues/new/choose) for issues. These include the following:
-
-<a id="bug_report"></a>
-
-- [Bug Report Template: ](https://github.com/recloudstream/cloudstream/issues/new?assignees=&labels=bug&projects=&template=application-bug.yml)
-  - For bug reports, we want as much info as possible, including your downloaded version of CloudeStream, device and updated version (if possible, current API),
-    expected behavior of the program, and the actual behavior that the program did, most importantly we require clear, reproducible steps of the bug. If your bug can't be       reproduced, it is unlikely we'll work on your issue.
-    
-<a id="enhancment"></a>
-  
-- [Feature Request Template: ](https://github.com/recloudstream/cloudstream/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.yml)
-  - Before adding a feature request, please check to see if a feature request already has been requested.  
-
-
-### Extensions:
- 
-**Further details on creating extensions for CloudStream are found in our documentation.**
-
-[Guide: For Extension Developers](https://recloudstream.github.io/csdocs/devs/gettingstarted/) 
-
-<a id="contact_and_sources"></a>
-
-## Further Sources: 
-
-As well as providing clear install steps, our [website](https://dweb.link/ipns/cloudstream.on.fleek.co/) includes a wide variety of other tools, such as: 
-- [Troubleshooting](https://recloudstream.github.io/csdocs/troubleshooting/)
-- [Further CloudStream Repositories](https://recloudstream.github.io/csdocs/repositories/) 
-- Set-Up for other devices, such as:
-  - [Android TV](https://recloudstream.github.io/csdocs/other-devices/tv/)
-  - [Windows](https://recloudstream.github.io/csdocs/other-devices/windows/)
-  - [Linux](https://recloudstream.github.io/csdocs/other-devices/linux/)
-- And more...
-
-<a id="languages"> </a>  
-
-### Supported languages:
-
-Even if you can't contribute to the code or documentation, we always look for those who can contribute to translation and language support. Your contribution is exceptionally appreciated; you can check our translation from the figure below. 
-
-<a href="https://hosted.weblate.org/engage/cloudstream/">
-  <img src="https://hosted.weblate.org/widgets/cloudstream/-/app/multi-auto.svg" alt="Translation status" />
-</a>
+[Details and validation](docs/EXTENSION-LAB.md)

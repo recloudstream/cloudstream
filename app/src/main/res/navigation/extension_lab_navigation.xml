@@ -2,13 +2,13 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/extension_lab_navigation" app:startDestination="@id/lab_home">
-    <fragment android:id="@id/lab_home" android:name="com.lagradost.cloudstream3.lab.ProviderTesterFragment" android:label="Home" />
-    <fragment android:id="@id/navigation_settings_extensions"
+    <fragment android:id="@+id/lab_home" android:name="com.lagradost.cloudstream3.lab.ProviderTesterFragment" android:label="Home" />
+    <fragment android:id="@+id/navigation_settings_extensions"
         android:name="com.lagradost.cloudstream3.ui.settings.extensions.ExtensionsFragment2" android:label="Extensions">
-        <action android:id="@id/navigation_settings_extensions_to_navigation_settings_plugins" app:destination="@id/navigation_settings_plugins" />
+        <action android:id="@+id/navigation_settings_extensions_to_navigation_settings_plugins" app:destination="@id/navigation_settings_plugins" />
     </fragment>
-    <fragment android:id="@id/navigation_settings_plugins"
-        android:name="com.lagradost.cloudstream3.ui.settings.extensions.PluginsFragment" android:label="Installed extensions" />
+    <fragment android:id="@+id/navigation_settings_plugins"
+        android:name="com.lagradost.cloudstream3.lab.InstalledPluginsFragment" android:label="Installed extensions" />
     <!-- Existing extension-manager test shortcut now opens the manual tester, never an automatic test. -->
-    <fragment android:id="@id/navigation_test_providers" android:name="com.lagradost.cloudstream3.lab.ProviderTesterFragment" android:label="Manual provider tester" />
+    <fragment android:id="@+id/navigation_test_providers" android:name="com.lagradost.cloudstream3.lab.ProviderTesterFragment" android:label="Manual provider tester" />
 </navigation>

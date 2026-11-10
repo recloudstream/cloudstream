@@ -7,7 +7,7 @@ import androidx.annotation.StringRes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.AppContextUtils.html
+import androidx.core.text.HtmlCompat
 
 sealed class UiText {
     companion object {
@@ -119,6 +119,6 @@ fun TextView?.setTextHtml(text: UiText?) {
     } else {
         val str = text.asStringNull(context)
         this.isGone = str.isNullOrBlank()
-        this.text = str.html()
+        this.text = str?.let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY) }
     }
 }

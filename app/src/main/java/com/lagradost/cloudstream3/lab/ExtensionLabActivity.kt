@@ -10,11 +10,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.CommonActivity
-import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.network.initClient
-import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.plugins.PluginManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +29,6 @@ class ExtensionLabActivity : AppCompatActivity() {
         CommonActivity.loadThemes(this)
         super.onCreate(savedInstanceState)
         CommonActivity.setActivityInstance(this)
-        updateTv()
         app.initClient(this, ignoreSSL = false)
         setContentView(R.layout.activity_extension_lab)
         val root = findViewById<android.view.View>(android.R.id.content)
@@ -50,7 +47,6 @@ class ExtensionLabActivity : AppCompatActivity() {
                     PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(this@ExtensionLabActivity, false)
                     APIHolder.initAll()
                 }
-                MainActivity.afterPluginsLoadedEvent.invoke(true)
             } catch (cancelled: kotlinx.coroutines.CancellationException) {
                 throw cancelled
             } catch (error: Throwable) {

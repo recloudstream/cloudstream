@@ -94,6 +94,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.findNavController
+import com.lagradost.cloudstream3.lab.ExtensionUi.navigate
 import coil3.compose.AsyncImage
 import com.fasterxml.jackson.core.JacksonException
 import com.lagradost.cloudstream3.BuildConfig
@@ -103,12 +104,8 @@ import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen
-import com.lagradost.cloudstream3.ui.settings.SettingsProvidersScreen.toStringRes
-import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter.Companion.SHAREABLE_REPO_SEPARATOR
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
-import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream4.compose.ActionDialog
 import com.lagradost.cloudstream4.compose.BlackButton
 import com.lagradost.cloudstream4.compose.BlackTextField
@@ -522,9 +519,7 @@ object ExtensionsScreen : Screen {
         val activity = activity ?: return
         activity.findNavController(R.id.nav_host_fragment).navigate(
             R.id.navigation_settings_extensions_to_navigation_settings_plugins,
-            PluginsFragment.newLocalInstance(
-                activity.getString(R.string.extensions),
-            )
+            null
         )
     }
 
@@ -616,7 +611,7 @@ object ExtensionsScreen : Screen {
         ) {
             item(key = "header") {
                 Spacer(modifier = Modifier.height(MaterialTheme.padding.medium))
-                SettingsFragmentScreen.SettingsSearch(textState)
+                ExtensionSearch(textState)
             }
             if (state.searchPlugins) {
                 item(key = "filter") {
