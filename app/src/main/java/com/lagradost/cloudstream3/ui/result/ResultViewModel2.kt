@@ -1538,7 +1538,7 @@ class ResultViewModel2 : ViewModel() {
                                 showToast("Queued on Nova Server: " + fullTitle, Toast.LENGTH_LONG)
                             } else {
                                 // Fallback: Nova server unavailable -> Detect connected USB storage on TV
-                                val ctx = activity ?: com.lagradost.cloudstream3.AcActivity.context
+                                val ctx = activity ?: com.lagradost.cloudstream3.CloudStreamApp.context
                                 if (ctx != null) {
                                     val extDirs = ctx.getExternalFilesDirs("")
                                     // Index 0 is internal flash; index 1+ are external USB / SD card mounts
