@@ -38,7 +38,7 @@ jobs:
           if (( COMPILE_SDK >= 37 )); then
             COMPILE_SDK="${COMPILE_SDK}.0"
           fi
-          "$SDKMANAGER" "platforms;android-${COMPILE_SDK}" 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
+          "$SDKMANAGER" "platforms;android-${COMPILE_SDK}" "build-tools;36.0.0" 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -56,6 +56,16 @@ jobs:
           export BUILD_VERSION_CODE=$((100000 + BUILD_VERSION_CODE))
           ./gradlew :app:testStableDebugUnitTest --tests "com.lagradost.cloudstream3.lab.ManualProviderRunnerTest" :app:assembleStableRelease --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/gradle-build.log"
 
+      - name: Verify release signing identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          APKSIGNER="${ANDROID_HOME}/build-tools/36.0.0/apksigner"
+          APK=$(find app/build/outputs/apk/stable/release -name '*.apk' -type f | head -1)
+          "$APKSIGNER" verify --verbose --print-certs "$APK" 2>&1 | tee signing-report.txt "$RUNNER_TEMP/gradle-build.log"
+          EXPECTED=60906f79806981d39426f7604ca88cf97941166281d6e806f44d87102018af34
+          grep -F "Signer #1 certificate SHA-256 digest: $EXPECTED" signing-report.txt
+
       - name: Report build failure details
         if: failure()
         uses: actions/github-script@v9
@@ -71,16 +81,6 @@ jobs:
                 core.error(details.slice(i, i + 3000));
               }
             }
-
-      - name: Verify release signing identity
-        shell: bash
-        run: |
-          set -euo pipefail
-          APKSIGNER=$(find "${ANDROID_HOME}/build-tools" -name apksigner -type f | sort -V | tail -1)
-          APK=$(find app/build/outputs/apk/stable/release -name '*.apk' -type f | head -1)
-          "$APKSIGNER" verify --verbose --print-certs "$APK" | tee signing-report.txt
-          EXPECTED=60906f79806981d39426f7604ca88cf97941166281d6e806f44d87102018af34
-          grep -F "Signer #1 certificate SHA-256 digest: $EXPECTED" signing-report.txt
 
       - name: Upload APK
         uses: actions/upload-artifact@v7
