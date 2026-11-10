@@ -56,6 +56,9 @@
         <package android:name="com.brouken.player" />
         <package android:name="dev.anilbeesetti.nextplayer" />
         <package android:name="com.instantbits.cast.webvideo" />
+        <!-- MX Player variants -->
+        <package android:name="com.mxtech.videoplayer.ad" />
+        <package android:name="com.mxtech.videoplayer.pro" />
         <package android:name="com.gianlu.aria2android" />
         
         <!-- Torrent clients -->
