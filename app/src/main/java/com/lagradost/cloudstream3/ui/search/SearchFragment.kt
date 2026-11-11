@@ -471,9 +471,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     it.value.let { data ->
                         val list = data.list
                         if (list.isNotEmpty()) {
-                            (binding.searchAutofitResults.adapter as? SearchAdapter)?.submitList(
-                                list
-                            )
+                            val isHorizontal = data.isHorizontalImages
+                            binding.searchAutofitResults.spanCount = view?.context?.getSpanCount(isHorizontal) ?: currentSpan
+                            (binding.searchAutofitResults.adapter as? SearchAdapter)?.apply {
+                                this.isHorizontal = isHorizontal
+                                submitList(list)
+                            }
                         }
                     }
                     searchExitIcon?.alpha = 1f
@@ -514,7 +517,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
                         val homePageList = HomePageList(
                             providerName,
-                            dataListFiltered
+                            dataListFiltered,
+                            isHorizontalImages = providerData.isHorizontalImages
                         )
 
                         HomeViewModel.ExpandableHomepageList(
