@@ -1812,6 +1812,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         return openEpisodesOverlay()
     }
 
+    /** Live streams keep playing while the recent channels overlay is open. */
+    override fun shouldPauseForEpisodesOverlay(): Boolean {
+        return (currentMeta as? ResultEpisode)?.tvType?.isLiveStream() != true
+    }
+
     private fun getNextLink(): DisplayLink? {
         val links = viewModel.state.sortLinks(currentQualityProfile)
         val currentIndex = links.indexOfFirst { it.link == currentSelectedLink }
@@ -2290,7 +2295,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         (playerBinding?.playerEpisodeList?.adapter as? EpisodeAdapter)?.submitList(episodes)
 
         if (episodes.size < 2) {
-            playerBinding?.playerEpisodeOverlay?.isGone = true
+            closeEpisodesOverlay()
         }
     }
 
@@ -2323,7 +2328,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun reconnectCurrentChannel() {
-        playerBinding?.playerEpisodeOverlay?.isGone = true
+        closeEpisodesOverlay()
         releasePlayer()
         viewModel.reloadLiveChannel(false)
     }
@@ -2401,10 +2406,10 @@ class GeneratorPlayer : FullScreenPlayer() {
      * channel that is already playing only closes the overlay.
      */
     private fun openLiveRecent(selected: ResultEpisode, current: ResultEpisode?) {
-        val overlay = playerBinding?.playerEpisodeOverlay ?: return
+        if (playerBinding?.playerEpisodeOverlay == null) return
 
         if (current != null && liveKey(selected) == liveKey(current)) {
-            overlay.isGone = true
+            closeEpisodesOverlay()
             return
         }
 
@@ -2418,8 +2423,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         isNextEpisode = false
+        closeEpisodesOverlay()
         releasePlayer()
-        overlay.isGone = true
     }
 
     private fun getOverlayCurrentIndex(
