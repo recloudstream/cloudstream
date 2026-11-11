@@ -32,6 +32,7 @@ import androidx.core.app.PendingIntentCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.text.toSpanned
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -159,6 +160,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         /** Bounded automatic reconnects for expired live links. */
         private const val MAX_LIVE_RETRIES = 2
+
+        /** Frame attempts used to move TV focus into the overlay list while it lays out. */
+        private const val OVERLAY_FOCUS_ATTEMPTS = 5
 
         private val generators = ConcurrentHashMap<String, VideoGenerator<*>>()
         fun newInstance(
@@ -2453,11 +2457,25 @@ class GeneratorPlayer : FullScreenPlayer() {
         list.scrollToPosition(index)
         if (!isLayout(TV)) return
 
-        // Ensure focus on tv
+        // The overlay is still GONE here, so wait for the list to be laid out before
+        // moving the TV focus into it.
+        list.doOnNextLayout {
+            focusOverlayItem(list, index, OVERLAY_FOCUS_ATTEMPTS)
+        }
+    }
+
+    /**
+     * Moves the TV focus to the overlay item. The list may still be populating after
+     * [scrollToOverlayIndex], so retry a bounded number of frames before giving up.
+     */
+    private fun focusOverlayItem(list: RecyclerView, index: Int, attemptsLeft: Int) {
         list.post {
-            list.findViewHolderForAdapterPosition(index)?.itemView?.let { itemView ->
+            val itemView = list.findViewHolderForAdapterPosition(index)?.itemView
+            if (itemView != null && itemView.isShown) {
                 itemView.isFocusableInTouchMode = true
                 itemView.requestFocus()
+            } else if (attemptsLeft > 0) {
+                focusOverlayItem(list, index, attemptsLeft - 1)
             }
         }
     }

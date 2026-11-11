@@ -1315,7 +1315,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             KeyEvent.KEYCODE_DPAD_DOWN_RIGHT,
             KeyEvent.KEYCODE_DPAD_UP_LEFT,
             KeyEvent.KEYCODE_DPAD_UP_RIGHT -> {
-                if (!isShowing) {
+                // Let the episode/recents overlay navigate its own list.
+                if (!isShowing && !isShowingEpisodeOverlay) {
                     return true
                 } else {
                     autoHide()
