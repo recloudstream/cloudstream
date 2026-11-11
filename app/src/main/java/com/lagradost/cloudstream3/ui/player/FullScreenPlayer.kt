@@ -1282,10 +1282,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             KeyEvent.KEYCODE_MENU,
             KeyEvent.KEYCODE_SETTINGS -> {
-                if (isLocked || !isThereEpisodes()) {
+                if (!openEpisodesOverlay()) {
                     return null
                 }
-                toggleEpisodesOverlay(true)
             }
 
             else -> return null // Avoid capturing all input
@@ -1618,6 +1617,16 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         // acting on them would reset auto-detected orientation to landscape.
         if (width <= 0 || height <= 0) return
         updateOrientation()
+    }
+
+    /**
+     * Opens the episodes/recents overlay when the player is unlocked and there is
+     * something to show. Returns false when the overlay cannot be opened.
+     */
+    protected fun openEpisodesOverlay(): Boolean {
+        if (isLocked || !isThereEpisodes()) return false
+        toggleEpisodesOverlay(true)
+        return true
     }
 
     private fun toggleEpisodesOverlay(show: Boolean) {

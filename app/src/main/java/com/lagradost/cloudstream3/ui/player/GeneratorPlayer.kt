@@ -1779,6 +1779,9 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun nextEpisode() {
+        // Live channels have no next episode, so CH+/CH- open the recent channels overlay.
+        if (openLiveRecentsOverlay()) return
+
         if (viewModel.hasNextEpisode() == true) {
             isNextEpisode = true
             releasePlayer()
@@ -1787,11 +1790,22 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun prevEpisode() {
+        if (openLiveRecentsOverlay()) return
+
         if (viewModel.hasPrevEpisode() == true) {
             isNextEpisode = true
             releasePlayer()
             viewModel.loadLinksPrev()
         }
+    }
+
+    /**
+     * Opens the recent channels overlay when a live channel is playing. Used by the
+     * CH+/CH- keys, which have no next/previous episode to switch to on live streams.
+     */
+    private fun openLiveRecentsOverlay(): Boolean {
+        if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() != true) return false
+        return openEpisodesOverlay()
     }
 
     private fun getNextLink(): DisplayLink? {
