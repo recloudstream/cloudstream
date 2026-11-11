@@ -814,4 +814,10 @@
     </plurals>
     <string name="player_is_live">Live</string>
     <string name="installed_plugins">Installed plugins</string>
+    <string name="live_recents">Recent channels</string>
+    <string name="remove_from_recents">Remove from recents</string>
+    <string name="clear_live_recents">Clear recent channels</string>
+    <string name="reconnect_channel">Reconnect channel</string>
+    <string name="reconnecting_live">Reconnecting live channel…</string>
+    <string name="live_recents_provider_missing">The provider for this channel is not available</string>
 </resources>

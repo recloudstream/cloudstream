@@ -116,6 +116,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
     private var isShowingEpisodeOverlay: Boolean = false
     private var previousPlayStatus: Boolean = false
+    private var pausedForEpisodesOverlay: Boolean = false
 
     override fun fixLayout(view: View) = Unit
 
@@ -1079,6 +1080,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     override fun onAutoHideUI() {
+        // Keep the controls (and the open overlay) visible while browsing.
+        if (isShowingEpisodeOverlay) return
         if (player.getIsPlaying()) onClickChange()
     }
 
@@ -1282,10 +1285,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             KeyEvent.KEYCODE_MENU,
             KeyEvent.KEYCODE_SETTINGS -> {
-                if (isLocked || !isThereEpisodes()) {
+                if (!openEpisodesOverlay()) {
                     return null
                 }
-                toggleEpisodesOverlay(true)
             }
 
             else -> return null // Avoid capturing all input
@@ -1316,7 +1318,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             KeyEvent.KEYCODE_DPAD_DOWN_RIGHT,
             KeyEvent.KEYCODE_DPAD_UP_LEFT,
             KeyEvent.KEYCODE_DPAD_UP_RIGHT -> {
-                if (!isShowing) {
+                // Let the episode/recents overlay navigate its own list.
+                if (!isShowing && !isShowingEpisodeOverlay) {
                     return true
                 } else {
                     autoHide()
@@ -1620,15 +1623,42 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         updateOrientation()
     }
 
+    /**
+     * Whether playback must pause while the episodes/recents overlay is open.
+     * Live streams override this to keep playing while browsing channels.
+     */
+    protected open fun shouldPauseForEpisodesOverlay(): Boolean = true
+
+    /**
+     * Opens the episodes/recents overlay when the player is unlocked and there is
+     * something to show. Returns false when the overlay cannot be opened.
+     */
+    protected fun openEpisodesOverlay(): Boolean {
+        if (isLocked || !isThereEpisodes()) return false
+        toggleEpisodesOverlay(true)
+        return true
+    }
+
+    /** Closes the episodes/recents overlay and restores playback if it was paused. */
+    protected fun closeEpisodesOverlay() {
+        if (isShowingEpisodeOverlay) toggleEpisodesOverlay(false)
+    }
+
     private fun toggleEpisodesOverlay(show: Boolean) {
         if (show && !isShowingEpisodeOverlay) {
             previousPlayStatus = player.getIsPlaying()
-            player.handleEvent(CSPlayerEvent.Pause)
+            pausedForEpisodesOverlay = shouldPauseForEpisodesOverlay()
+            if (pausedForEpisodesOverlay) {
+                player.handleEvent(CSPlayerEvent.Pause)
+            }
             showEpisodesOverlay()
             isShowingEpisodeOverlay = true
             animateEpisodesOverlay(true)
         } else if (isShowingEpisodeOverlay) {
-            if (previousPlayStatus) player.handleEvent(CSPlayerEvent.Play)
+            if (pausedForEpisodesOverlay && previousPlayStatus) {
+                player.handleEvent(CSPlayerEvent.Play)
+            }
+            pausedForEpisodesOverlay = false
             isShowingEpisodeOverlay = false
             animateEpisodesOverlay(false)
         }
