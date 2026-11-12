@@ -87,7 +87,7 @@
     <string name="player_speed">Tốc độ phát</string>
     <string name="subtitles_settings">Cài đặt phụ đề</string>
     <string name="subs_text_color">Màu chữ</string>
-    <string name="subs_outline_color">Màu viền</string>
+    <string name="subs_outline_color">Màu viền ngoài</string>
     <string name="subs_background_color">Màu nền</string>
     <string name="subs_window_color">Màu cửa sổ</string>
     <string name="subs_edge_type">Kiểu viền</string>
@@ -175,8 +175,8 @@
     <string name="episodes">Tập</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
-    <string name="season_short">Mùa</string>
-    <string name="episode_short">Tập</string>
+    <string name="season_short">M</string>
+    <string name="episode_short">T</string>
     <string name="no_episodes_found">Không có tập nào</string>
     <string name="delete_file">Xóa Tệp</string>
     <string name="delete">Xóa</string>
@@ -214,8 +214,8 @@
     <string name="nsfw">NSFW</string>
     <string name="others">Khác</string>
     <!--singular-->
-    <string name="movies_singular">Phim Lẻ</string>
-    <string name="tv_series_singular">Phim Bộ</string>
+    <string name="movies_singular">Phim</string>
+    <string name="tv_series_singular">Loạt phim</string>
     <string name="cartoons_singular">Hoạt Hình</string>
     <string name="anime_singular">Anime</string>
     <string name="ova_singular">OVA</string>
@@ -257,7 +257,7 @@
     <string name="limit_title_rez">Hiển thị thông tin trình phát</string>
     <string name="video_buffer_size_settings">Kích thước bộ đệm video</string>
     <string name="video_buffer_length_settings">Thời lượng bộ đệm video</string>
-    <string name="video_buffer_disk_settings">Bộ nhớ đệm video trên thiết bị</string>
+    <string name="video_buffer_disk_settings">Bộ nhớ đệm video trên đĩa</string>
     <string name="video_buffer_clear_settings">Xoá bộ nhớ đệm hình ảnh và video</string>
     <string name="video_ram_description">Sẽ gây lỗi nếu đặt quá cao trên thiết bị có bộ nhớ thấp như Android TV.</string>
     <string name="video_disk_description">Sẽ gây lỗi nếu đặt quá cao trên thiết bị có dung lượng lưu trữ thấp như Android TV.</string>
@@ -282,11 +282,11 @@
     <string name="enable_nsfw_on_providers">Kích hoạt NSFW trên các Tiện ích mở rộng được hỗ trợ</string>
     <string name="subtitles_encoding">Mã hoá phụ đề</string>
     <string name="category_providers">Nguồn phim</string>
-    <string name="category_ui">Giao diện</string>
+    <string name="category_ui">Bố cục</string>
     <string name="automatic">Tự động</string>
-    <string name="tv_layout">Giao diện TV</string>
-    <string name="phone_layout">Giao diện điện thoại</string>
-    <string name="emulator_layout">Giao diện giả lập</string>
+    <string name="tv_layout">Bố cục TV</string>
+    <string name="phone_layout">Bố cục điện thoại</string>
+    <string name="emulator_layout">Bố cục giả lập</string>
     <string name="primary_color_settings">Màu chính</string>
     <string name="app_theme_settings">Chủ đề ứng dụng</string>
     <string name="bottom_title_settings">Vị trí tên phim</string>
@@ -304,7 +304,7 @@
     <string name="logout">Đăng xuất</string>
     <string name="login">Đăng nhập</string>
     <string name="switch_account">Đổi tài khoản</string>
-    <string name="add_account">Thêm tài khoản</string>
+    <string name="add_account">Thêm</string>
     <string name="create_account">Tạo tài khoản</string>
     <string name="add_sync">Thêm theo dõi</string>
     <string name="added_sync_format" formatted="true">Đã thêm %s</string>
@@ -351,7 +351,7 @@
     <string name="coming_soon">Sắp có…</string>
     <string name="quality_cam">Cam</string>
     <string name="quality_cam_rip">CamRip</string>
-    <string name="quality_cam_hd">Bản HD(Đẹp)</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -484,7 +484,7 @@
     <string name="apk_installer_legacy">Chế độ tương thích cũ</string>
     <string name="sort_updated_new">Đã cập nhật (Mới đến Cũ)</string>
     <string name="sort_updated_old">Đã cập nhật (Cũ đến Mới)</string>
-    <string name="empty_library_no_accounts_message">Thư viện của bạn đang trống :( \nĐăng nhập vào tài khoản thư viện hoặc thêm phim vào thư viện cục bộ.</string>
+    <string name="empty_library_no_accounts_message">Thư viện của bạn đang trống :( \nĐăng nhập vào tài khoản thư viện hoặc thêm các chương trình vào thư viện cục bộ.</string>
     <string name="open_with">Mở bằng</string>
     <string name="provider_info_meta">Siêu dữ liệu không được cung cấp bởi trang web, video sẽ không tải được nếu nó không tồn tại trên trang web.</string>
     <string name="apk_installer_package_installer">Trình cài đặt gói</string>
@@ -556,7 +556,7 @@
     <string name="select_an_account">Chọn hồ sơ của bạn</string>
     <string name="duplicate_message_single">Có vẻ như một mục có khả năng trùng lặp đã tồn tại trong thư viện của bạn: \'%s.\' \n \nBạn vẫn muốn thêm mục này, thay thế mục hiện có hay hủy hành động?</string>
     <string name="enter_pin">Nhập mã PIN</string>
-    <string name="pin">PIN</string>
+    <string name="pin">Mã PIN</string>
     <string name="enter_current_pin">Nhập mã PIN hiện tại</string>
     <string name="logged_account" formatted="true">Đã đăng nhập với tư cách %s</string>
     <string name="enter_pin_with_name" formatted="true">Nhập mã PIN cho %s</string>
@@ -640,7 +640,7 @@
     <string name="show">Hiển thị</string>
     <string name="backup_path_title">Vị trí thư mục sao lưu</string>
     <string name="custom">Tuỳ chỉnh</string>
-    <string name="subs_edge_size">Kích thước cạnh</string>
+    <string name="subs_edge_size">Kích thước viền</string>
     <string name="torrent_info">Video này là Torrent, điều này có nghĩa là hoạt động video của bạn có thể được theo dõi.\nHãy đảm bảo rằng bạn hiểu về Torrent trước khi tiếp tục.</string>
     <string name="encoding_error">Lỗi mã hóa</string>
     <string name="software_decoding_desc">Giải mã phần mềm cho phép phát các tệp video không được thiết bị của bạn hỗ trợ, nhưng có thể gây ra phản hồi chậm hoặc phát lại không ổn định ở độ phân giải cao.</string>
@@ -670,10 +670,10 @@
     <string name="begin_speaking">Bắt đầu nói…</string>
     <string name="speech_recognition_unavailable">Tìm kiếm giọng nói không khả dụng</string>
     <string name="subtitles_from_online">Trực tuyến</string>
-    <string name="background_radius">Bo tròn nền</string>
+    <string name="background_radius">Bo góc nền</string>
     <string name="volume_exceeded_100">Âm lượng đã vượt quá 100%</string>
     <string name="slide_up_again_to_exceed_100">Vuốt lên lần nữa để vượt quá 100%</string>
-    <string name="subtitles_from_embedded">Được nhúng</string>
+    <string name="subtitles_from_embedded">Nhúng sẵn</string>
     <string name="all_subtitles_bold">Làm tất cả phụ đề in đậm</string>
     <string name="all_subtitles_italic">Làm tất cả phụ đề in nghiêng</string>
     <string name="player_settings_always_ask">Luôn hỏi</string>
@@ -759,7 +759,7 @@
     <string name="log_cat">Nhật ký gỡ lỗi</string>
     <string name="start_paused_settings">Phát video đang dừng</string>
     <string name="background">Nền</string>
-    <string name="subs_edge">Góc</string>
+    <string name="subs_edge">Viền</string>
     <string name="start_paused_settings_des">Giảm bớt căng thẳng khi chọn nguồn phát</string>
     <string name="compressor">Bộ nén âm thanh</string>
     <string name="compressor_setting">Bộ nén dải động âm thanh</string>
