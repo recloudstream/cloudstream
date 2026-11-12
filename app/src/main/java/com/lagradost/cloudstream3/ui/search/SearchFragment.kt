@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.doOnLayout
+import android.content.Context
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -40,6 +41,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.databinding.DialogNotificationsBinding
 import com.lagradost.cloudstream3.databinding.FragmentSearchBinding
 import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -67,6 +69,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferre
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiSettings
+import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
@@ -407,6 +411,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
             }
         }
 
+        binding.searchNotification.setOnClickListener { searchView ->
+            searchView?.context?.let { ctx ->
+                showNotificationsDialog(ctx)
+            }
+        }
+
         val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val isAdvancedSearch = settingsManager?.getBoolean("advanced_search", true) ?: true
         val isSearchSuggestionsEnabled = settingsManager?.getBoolean("search_suggestions_enabled", true) ?: true
@@ -416,6 +426,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         if (!isLayout(PHONE)) {
             binding.searchFilter.isFocusable = true
             binding.searchFilter.isFocusableInTouchMode = true
+            binding.searchNotification.isFocusable = true
+            binding.searchNotification.isFocusableInTouchMode = true
         }
 
         // Hide suggestions when search view loses focus (phone only)
@@ -700,5 +712,57 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         }
 
         searchViewModel.updateHistory()
+    }
+
+    private fun showNotificationsDialog(ctx: Context) {
+        val builder = BottomSheetDialog(ctx)
+        builder.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        val dialogBinding = DialogNotificationsBinding.inflate(
+            builder.layoutInflater,
+            null,
+            false
+        )
+        builder.setContentView(dialogBinding.root)
+
+        val subscriptions = DataStoreHelper.getAllSubscriptions().toMutableList()
+
+        fun updateVisibility() {
+            val isEmpty = subscriptions.isEmpty()
+            dialogBinding.notificationEmptyState.isVisible = isEmpty
+            dialogBinding.notificationRecyclerView.isVisible = !isEmpty
+        }
+
+        var adapter: NotificationAdapter? = null
+        adapter = NotificationAdapter(
+            onItemClick = { item ->
+                builder.dismissSafe()
+                activity?.loadSearchResult(item)
+            },
+            onDeleteClick = { item ->
+                DataStoreHelper.removeSubscribedData(item.id)
+                subscriptions.remove(item)
+                adapter?.submitList(subscriptions.toList())
+                updateVisibility()
+                showToast(ctx.getString(R.string.subscription_deleted, item.name))
+            }
+        )
+
+        dialogBinding.notificationRecyclerView.layoutManager = LinearLayoutManager(ctx)
+        dialogBinding.notificationRecyclerView.adapter = adapter
+        adapter.submitList(subscriptions.toList())
+
+        updateVisibility()
+
+        dialogBinding.notificationClose.setOnClickListener {
+            builder.dismissSafe()
+        }
+
+        dialogBinding.notificationViewLibraryBtt.setOnClickListener {
+            builder.dismissSafe()
+            activity?.navigate(R.id.navigation_library)
+        }
+
+        builder.show()
     }
 }

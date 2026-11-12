@@ -10,7 +10,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.PROVIDER_STATUS_BETA_ONLY
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
+import com.lagradost.cloudstream3.PROVIDER_STATUS_OK
+import com.lagradost.cloudstream3.PROVIDER_STATUS_SLOW
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
@@ -243,25 +246,61 @@ class PluginsViewModel : ViewModel() {
     }
 
     private fun List<PluginViewData>.sortByQuery(query: String?): List<PluginViewData> {
+        val selectedLangsLower = selectedLanguages.map { it.lowercase() }
+
+        fun getHealthRankScore(item: PluginViewData): Int {
+            val status = item.pluginWrapper.plugin.status
+            var score = 0
+
+            // 1. Downloaded plugins get priority as user installed them
+            if (item.isDownloaded) {
+                score += 1000
+            }
+
+            // 2. Health status rank (OK > SLOW > BETA > DOWN)
+            score += when (status) {
+                PROVIDER_STATUS_OK -> 400
+                PROVIDER_STATUS_SLOW -> 200
+                PROVIDER_STATUS_BETA_ONLY -> 100
+                PROVIDER_STATUS_DOWN -> -500 // Disabled/Down providers pushed to bottom
+                else -> 0
+            }
+
+            // 3. Preferred language bonus
+            val lang = item.pluginWrapper.plugin.language?.lowercase()
+            if (lang != null && selectedLangsLower.contains(lang)) {
+                score += 50
+            }
+
+            return score
+        }
+
         return if (query.isNullOrBlank()) {
-            // Return list to base state if no query
-            this.sortedBy { it.pluginWrapper.plugin.name }
+            this.sortedWith(
+                compareByDescending<PluginViewData> { getHealthRankScore(it) }
+                    .thenBy { it.pluginWrapper.plugin.name.lowercase() }
+            )
         } else {
-            this.mapNotNull {
+            this.mapNotNull { item ->
                 // Try matching name
-                val score = Levenshtein.partialRatio(
-                    it.pluginWrapper.plugin.name.lowercase(),
+                val nameScore = Levenshtein.partialRatio(
+                    item.pluginWrapper.plugin.name.lowercase(),
                     query.lowercase()
-                ).takeIf { score -> score > 80 } ?:
-                // Fallback to description, but limit characters to reduce lag
-                it.pluginWrapper.plugin.description?.lowercase()?.take(64)
-                    ?.let { description ->
-                        Levenshtein.partialRatio(
-                            description,
-                            query.lowercase()
-                        )
-                    }?.takeIf { score -> score > 80 } ?: return@mapNotNull null
-                it to score
+                ).takeIf { score -> score > 80 }
+
+                val descScore = if (nameScore == null) {
+                    item.pluginWrapper.plugin.description?.lowercase()?.take(64)
+                        ?.let { description ->
+                            Levenshtein.partialRatio(
+                                description,
+                                query.lowercase()
+                            )
+                        }?.takeIf { score -> score > 80 }
+                } else null
+
+                val searchScore = nameScore ?: descScore ?: return@mapNotNull null
+                val totalScore = searchScore + (getHealthRankScore(item) / 10)
+                item to totalScore
             }.sortedBy {
                 -it.second
             }.map { it.first }

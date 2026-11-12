@@ -329,12 +329,16 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             if (!preventAutoSwitching) activateSwitchOnHls(text?.toString(), binding)
         }
 
-        (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager)?.primaryClip?.getItemAt(
-            0
-        )?.text?.toString()?.let { copy ->
-            val fixedText = copy.trim()
-            binding.streamUrl.setText(fixedText)
-            activateSwitchOnHls(fixedText, binding)
+        safe {
+            val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+            val primaryClip = clipboard?.primaryClip
+            if (primaryClip != null && primaryClip.itemCount > 0) {
+                primaryClip.getItemAt(0)?.text?.toString()?.let { copy ->
+                    val fixedText = copy.trim()
+                    binding.streamUrl.setText(fixedText)
+                    activateSwitchOnHls(fixedText, binding)
+                }
+            }
         }
 
         binding.applyBtt.setOnClickListener {

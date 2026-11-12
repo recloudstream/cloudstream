@@ -270,6 +270,7 @@ class EpisodeAdapter(
                     episodeDescript.apply {
                         text = item.description.html()
                         isGone = text.isNullOrBlank()
+                        maxLines = 4
 
                         var isExpanded = false
                         setOnClickListener {

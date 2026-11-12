@@ -131,6 +131,13 @@ object RepositoryManager {
 
     suspend fun parseRepoUrl(url: String): String? {
         val fixedUrl = url.trim()
+        val githubRepoRegex = Regex("""^https?://github\.com/([A-Za-z0-9_-]+)/([A-Za-z0-9_-]+)/?.*$""", RegexOption.IGNORE_CASE)
+        val ghMatch = githubRepoRegex.find(fixedUrl)
+        if (ghMatch != null && !fixedUrl.endsWith(".json")) {
+            val (user, repoName) = ghMatch.destructured
+            return "https://raw.githubusercontent.com/$user/$repoName/builds/repo.json"
+        }
+
         return if (fixedUrl.contains("^https?://".toRegex())) {
             fixedUrl
         } else if (fixedUrl.contains("^(cloudstreamrepo://)|(https://cs\\.repo/\\??)".toRegex())) {
@@ -239,8 +246,18 @@ object RepositoryManager {
         }
     }
 
+    val LIVE_HUB_REPO = RepositoryData(
+        iconUrl = "https://raw.githubusercontent.com/sika200581/cloudstream-live-hub/builds/icon.png",
+        name = "CloudStream Live Hub (Kick/Twitch/YouTube)",
+        url = "https://raw.githubusercontent.com/sika200581/cloudstream-live-hub/builds/repo.json"
+    )
+
     fun getRepositories(): Array<RepositoryData> {
-        return getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+        val repos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+        if (repos.isEmpty()) {
+            return arrayOf(LIVE_HUB_REPO)
+        }
+        return repos
     }
 
     // Don't want to read before we write in another thread

@@ -6,11 +6,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
+import com.lagradost.cloudstream3.PROVIDER_STATUS_BETA_ONLY
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
+import com.lagradost.cloudstream3.PROVIDER_STATUS_OK
+import com.lagradost.cloudstream3.PROVIDER_STATUS_SLOW
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.RepositoryItemBinding
@@ -24,6 +28,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
@@ -171,23 +176,23 @@ class PluginAdapter(
 
         //val oldRecycleCount = (holder as? RepositoryViewHolderState)?.recycleCount
 
-        binding.extVotes.isVisible = false
-
-        // Disable this for now as the vote api is down, this will also significantly improve the lag
-        // from doing all these network requests
-        /*if (!isLocal) {
-            ioSafe {
-                metadata.getVotes().main { votes ->
-                    val currentRecycleCount = (holder as? RepositoryViewHolderState)?.recycleCount
-
-                    // Only set the text if the view is correctly rendered
-                    if (currentRecycleCount == oldRecycleCount) {
-                        binding.extVotes.setText(txt(R.string.extension_rating, prettyCount(votes)))
-                        binding.extVotes.isVisible = true
-                    }
-                }
+        val statusArray = itemView.context.resources.getStringArray(R.array.extension_statuses)
+        val statusInt = metadata.status
+        if (statusInt in statusArray.indices) {
+            val statusName = statusArray[statusInt]
+            binding.extVotes.isVisible = true
+            binding.extVotes.text = "• $statusName"
+            val statusColor = when (statusInt) {
+                PROVIDER_STATUS_OK -> itemView.context.colorFromAttribute(R.attr.colorPrimary)
+                PROVIDER_STATUS_SLOW -> ContextCompat.getColor(itemView.context, R.color.adultColor)
+                PROVIDER_STATUS_BETA_ONLY -> itemView.context.colorFromAttribute(R.attr.grayTextColor)
+                PROVIDER_STATUS_DOWN -> ContextCompat.getColor(itemView.context, R.color.adultColor)
+                else -> itemView.context.colorFromAttribute(R.attr.grayTextColor)
             }
-        }*/
+            binding.extVotes.setTextColor(statusColor)
+        } else {
+            binding.extVotes.isVisible = false
+        }
 
         if (metadata.fileSize != null) {
             binding.extFilesize.isVisible = true
