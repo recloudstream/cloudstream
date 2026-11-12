@@ -332,7 +332,7 @@
     <string name="error_invalid_url">URL inválido</string>
     <string name="error">Erro</string>
     <string name="subtitles_remove_captions">Remover legendas ocultas(CC) das legendas</string>
-    <string name="subtitles_remove_bloat">Remover bloat das legendas</string>
+    <string name="subtitles_remove_bloat">Remover anúncios das legendas</string>
     <string name="subtitles_filter_lang">Filtrar por linguagem preferida</string>
     <string name="trailer">Trailer</string>
     <string name="next">Próximo</string>
@@ -485,8 +485,8 @@
     <string name="pref_category_subtitles">Legendas</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="quality_ts">TS</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">Gravação de Cinema</string>
+    <string name="quality_cam_hd">Gravação HD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_tc">TC</string>
@@ -643,7 +643,7 @@
     <string name="sort_episodes_date_oldest">Data de exibição (mais antiga)</string>
     <string name="update_plugins">Atualizar plugins</string>
     <string name="starting_plugin_update_manually">A iniciar o processo de atualização do plugin!</string>
-    <string name="plugins_updated_manually">Atualização bem-sucedida para %d plugin(s)!</string>
+    <string name="plugins_updated_manually">Atualização bem-sucedida para %d plugin(s)</string>
     <string name="no_plugins_updated_manually">Nenhum plugin foi atualizado.</string>
     <string name="update_plugins_manually">Atualizar plugins manualmente</string>
     <string name="speech_recognition_unavailable">O reconhecimento de fala não está disponível</string>
@@ -737,4 +737,36 @@
     <string name="video_singular">Vídeo</string>
     <string name="skip_type_preview">Pré-visualização</string>
     <string name="player_is_live">Ao Vivo</string>
+    <string name="subs_edge">Canto</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Começar vídeos pausados</string>
+    <string name="start_paused_settings_des">Reduza o estresse ao selecionar fontes</string>
+    <string name="tv_layout_clock_settings">Mostrar relógio com tempo real</string>
+    <string name="tv_layout_clock_settings_des">Mostrar um relógio com tempo real no topo da tela. Se aplica a página inicial e o player</string>
+    <string name="compressor">Compressor</string>
+    <string name="compressor_setting">Compressor de Faixa Dinâmica</string>
+    <string name="compressor_setting_summary">Mostrar controles do compressor no player (ajuda a balancear áudio baixo/alto)</string>
+    <string name="compressor_on">Ligado</string>
+    <string name="compressor_on_format">Ligado · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Desligado</string>
+    <string name="compressor_preset_light">Leve</string>
+    <string name="compressor_preset_dialog">Aumentar Diálogo</string>
+    <string name="compressor_preset_heavy">Pesado</string>
+    <string name="compressor_threshold_label">Limite: %d dB</string>
+    <string name="compressor_makeup_label">Compensar Ganho: +%d dB</string>
+    <string name="compressor_threshold_hint">Soa mais alto que %d dB é abaixado</string>
+    <string name="compressor_makeup_hint">Aumentar o volume geral em +%d dB</string>
+    <string name="profile_settings">Opções de Perfil</string>
+    <string name="profile_hide_negative_sources">Esconder fontes com prioridade negativa</string>
+    <string name="profile_hide_error_sources">Esconder fontes com erros</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d link escondido</item>
+        <item quantity="many">%d Links escondidos</item>
+        <item quantity="other">%d Links escondidos</item>
+    </plurals>
+    <string name="background">Fundo</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">Selecionador de imagem</string>
+    <string name="edit_profile_image_default">Imagens padrão</string>
+    <string name="installed_plugins">Plugins instalados</string>
 </resources>
