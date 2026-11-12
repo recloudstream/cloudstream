@@ -1137,6 +1137,7 @@ enum class TvType(value: Int?) {
     Audio(16),
     Podcast(17),
     Video(18),
+    ShortDrama(19),
 }
 
 enum class AutoDownloadMode(val value: Int) {
@@ -2165,7 +2166,8 @@ fun TvType?.isEpisodeBased(): Boolean {
         TvType.Anime,
         TvType.AsianDrama,
         TvType.Cartoon,
-        TvType.TvSeries -> true
+        TvType.TvSeries,
+        TvType.ShortDrama -> true
 
         else -> false
     }
@@ -2202,6 +2204,7 @@ fun TvType.getFolderPrefix(): String {
         TvType.Torrent -> "Torrents"
         TvType.TvSeries -> "TVSeries"
         TvType.Video -> "Videos"
+        TvType.ShortDrama -> "ShortDramas"
     }
 }
 

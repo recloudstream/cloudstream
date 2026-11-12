@@ -241,6 +241,23 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         throw NotImplementedError()
     }
 
+    open fun openMultiView() {
+        val act = activity as? androidx.appcompat.app.AppCompatActivity ?: return
+        val activeLink = player.getCurrentLink()
+        val activeTitle = playerBinding?.playerVideoTitle?.text?.toString()?.takeIf { it.isNotBlank() } ?: activeLink?.name ?: "Main Stream"
+
+        if (activeLink != null) {
+            MultiPlayerManager.setMainStream(activeLink, activeTitle)
+        }
+
+        player.handleEvent(CSPlayerEvent.Pause)
+
+        act.supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, MultiViewPlayerFragment())
+            .addToBackStack("MultiViewPlayer")
+            .commit()
+    }
+
     open fun showTracksDialogue() {
         throw NotImplementedError()
     }
@@ -1547,6 +1564,10 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             playerSourcesBtt.setOnClickListener {
                 showMirrorsDialogue()
+            }
+
+            view?.findViewById<View>(R.id.player_multiview_btn)?.setOnClickListener {
+                openMultiView()
             }
 
             playerTracksBtt.setOnClickListener {

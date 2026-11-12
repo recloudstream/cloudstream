@@ -272,8 +272,14 @@ class DownloadQueueService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onTimeout(reason: Int) {
-        stopSelf()
         Log.e(TAG, "Service stopped due to timeout: $reason")
+        isRunning = false
+        _downloadInstances.value.forEach { instance ->
+            safe {
+                instance.cancelDownload()
+            }
+        }
+        stopSelf()
     }
 
 }

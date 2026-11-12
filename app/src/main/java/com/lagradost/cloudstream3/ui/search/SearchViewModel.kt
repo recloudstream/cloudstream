@@ -26,6 +26,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
+import java.util.concurrent.ConcurrentHashMap
+
+
 data class ExpandableSearchList(
     var list: List<SearchResponse>, var currentPage: Int, var hasNext: Boolean,
 )
@@ -52,9 +55,12 @@ class SearchViewModel : ViewModel() {
     private var repos = apis.withLock { apis.map { APIRepository(it) } }
 
     fun clearSearch() {
+        synchronized(expandableSearches) {
+            currentSearchIndex++
+            expandableSearches.clear()
+        }
         _searchResponse.postValue(Resource.Success(ExpandableSearchList(emptyList(), 0, false)))
         _currentSearch.postValue(emptyMap())
-        expandableSearches.clear()
     }
 
     var lastQuery: String? = null
@@ -62,7 +68,7 @@ class SearchViewModel : ViewModel() {
     /** Save which providers can searched again and which search result page they are on.
      * Maps provider name to search list.
      * @see [HomeViewModel.expandable] */
-    private val expandableSearches: MutableMap<String, ExpandableSearchList> = mutableMapOf()
+    private val expandableSearches: MutableMap<String, ExpandableSearchList> = ConcurrentHashMap()
 
     private var currentSearchIndex = 0
     private var onGoingSearch: Job? = null
@@ -77,7 +83,9 @@ class SearchViewModel : ViewModel() {
         ignoreSettings: Boolean = false,
         isQuickSearch: Boolean = false,
     ) {
-        currentSearchIndex++
+        synchronized(expandableSearches) {
+            currentSearchIndex++
+        }
         onGoingSearch?.cancel()
         onGoingSearch = search(query, providersActive, ignoreSettings, isQuickSearch)
     }
@@ -125,10 +133,12 @@ class SearchViewModel : ViewModel() {
         if (lock.contains(name)) return null
         val query = lastQuery ?: return null
         val repo = repos.find { it.name == name } ?: return null
+        val currentIndex = currentSearchIndex
 
         lock += name
 
-        expandableSearches[name]?.let { current ->
+        val current = synchronized(expandableSearches) { expandableSearches[name] }
+        if (current != null) {
             debugAssert({ !current.hasNext }) {
                 "Expand called when not needed"
             }
@@ -137,39 +147,48 @@ class SearchViewModel : ViewModel() {
             val next = repo.search(query, nextPage)
             if (next is Resource.Success) {
                 val nextValue = next.value
-                expandableSearches[name]?.apply {
-                    this.hasNext = nextValue.hasNext
-                    this.currentPage = nextPage
-
-                    debugWarning({ nextValue.items.any { outer -> this.list.any { it.url == outer.url } } }) {
-                        "Expanded search contained an item that was previously already in the list.\nQuery = $query, ${nextValue.items} = ${this.list}"
+                val snapshot = synchronized(expandableSearches) {
+                    if (currentSearchIndex != currentIndex || lastQuery != query) {
+                        return@synchronized null
                     }
+                    val existing = expandableSearches[name] ?: return@synchronized null
+                    val newList = (existing.list + nextValue.items).distinctBy { it.url }
+                    expandableSearches[name] = ExpandableSearchList(newList, nextPage, nextValue.hasNext)
+                    expandableSearches.mapValues { entry ->
+                        entry.value.copy(list = entry.value.list.toList())
+                    }
+                }
 
-                    // just to be sure we are not adding the same shit for some reason
-                    // Avoids weird behavior in the recyclerview by recreating the list
-                    this.list = (this.list + nextValue.items).distinctBy { it.url }
-                } ?: debugWarning {
-                    "Expanded an item not in search load named $name, current list is ${expandableSearches.keys}"
+                if (snapshot != null) {
+                    synchronized(expandableSearches) {
+                        if (currentSearchIndex == currentIndex && lastQuery == query) {
+                            _searchResponse.postValue(Resource.Success(bundleSearch(snapshot)))
+                            _currentSearch.postValue(snapshot)
+                        }
+                    }
                 }
             } else {
-                current.hasNext = false
+                synchronized(expandableSearches) {
+                    if (currentSearchIndex == currentIndex && lastQuery == query) {
+                        expandableSearches[name]?.hasNext = false
+                    }
+                }
             }
-
-            _searchResponse.postValue(Resource.Success(bundleSearch(expandableSearches)))
-            _currentSearch.postValue(expandableSearches)
         }
 
         lock -= name
 
-        val item = expandableSearches[name] ?: return null
+        val item = synchronized(expandableSearches) {
+            expandableSearches[name]?.let { it.copy(list = it.list.toList()) }
+        } ?: return null
         return HomeViewModel.ExpandableHomepageList(
-            HomePageList(name, item.list),
+            HomePageList(name, item.list.toList()),
             item.currentPage,
             item.hasNext
         )
     }
 
-    private fun bundleSearch(lists: MutableMap<String, ExpandableSearchList>): ExpandableSearchList {
+    private fun bundleSearch(lists: Map<String, ExpandableSearchList>): ExpandableSearchList {
         if (lists.size == 1) {
             return lists.values.first()
         }
@@ -208,47 +227,81 @@ class SearchViewModel : ViewModel() {
                 return@launchSafe
             }
 
-            if (!isQuickSearch) {
-                val key = query.hashCode().toString()
-                setKey(
-                    "$currentAccount/$SEARCH_HISTORY_KEY",
-                    key,
-                    SearchHistoryItem(
-                        searchedAt = System.currentTimeMillis(),
-                        searchText = query,
-                        type = emptyList(), // TODO implement tv type
-                        key = key,
-                    )
-                )
-            }
+            if (!isQuickSearch) saveSearchHistory(query)
 
-            _searchResponse.postValue(Resource.Loading())
-            _currentSearch.postValue(emptyMap())
-            expandableSearches.clear()
-
+            resetSearchState()
             lastQuery = query
 
             withContext(Dispatchers.IO) { // This interrupts UI otherwise
-                repos.filter { a ->
-                    (ignoreSettings || (providersActive.isEmpty() || providersActive.contains(a.name))) && (!isQuickSearch || a.hasQuickSearch)
-                }.amap { a -> // Parallel
-                    val search = if (isQuickSearch) a.quickSearch(query) else a.search(query, 1)
+                executeParallelSearch(query, providersActive, ignoreSettings, isQuickSearch, currentIndex)
+                postFinalSearchResult(currentIndex)
+            }
+        }
+
+    private fun saveSearchHistory(query: String) {
+        val key = query.hashCode().toString()
+        setKey(
+            "$currentAccount/$SEARCH_HISTORY_KEY",
+            key,
+            SearchHistoryItem(
+                searchedAt = System.currentTimeMillis(),
+                searchText = query,
+                type = emptyList(), // TODO implement tv type
+                key = key,
+            )
+        )
+    }
+
+    private fun resetSearchState() {
+        _searchResponse.postValue(Resource.Loading())
+        _currentSearch.postValue(emptyMap())
+        synchronized(expandableSearches) { expandableSearches.clear() }
+    }
+
+    private suspend fun executeParallelSearch(
+        query: String,
+        providersActive: Set<String>,
+        ignoreSettings: Boolean,
+        isQuickSearch: Boolean,
+        currentIndex: Int,
+    ) {
+        repos.filter { a ->
+            (ignoreSettings || providersActive.isEmpty() || providersActive.contains(a.name)) &&
+                    (!isQuickSearch || a.hasQuickSearch)
+        }.amap { a -> // Parallel
+            val search = if (isQuickSearch) a.quickSearch(query) else a.search(query, 1)
+            if (search is Resource.Success) {
+                val searchValue = search.value
+                val snapshot = synchronized(expandableSearches) {
                     if (currentSearchIndex != currentIndex) return@amap
-                    if (search is Resource.Success) {
-                        val searchValue = search.value
-                        expandableSearches[a.name] =
-                            ExpandableSearchList(searchValue.items, 1, searchValue.hasNext)
+                    expandableSearches[a.name] =
+                        ExpandableSearchList(searchValue.items.toList(), 1, searchValue.hasNext)
+                    expandableSearches.mapValues { entry ->
+                        entry.value.copy(list = entry.value.list.toList())
                     }
-
-                    _currentSearch.postValue(expandableSearches)
                 }
+                synchronized(expandableSearches) {
+                    if (currentSearchIndex == currentIndex) {
+                        _currentSearch.postValue(snapshot)
+                    }
+                }
+            }
+        }
+    }
 
-                if (currentSearchIndex != currentIndex) return@withContext // this should prevent rewrite of existing data bug
-
-                _currentSearch.postValue(expandableSearches)
-                val list = bundleSearch(expandableSearches)
-
+    private fun postFinalSearchResult(currentIndex: Int) {
+        val finalSnapshot = synchronized(expandableSearches) {
+            if (currentSearchIndex != currentIndex) return
+            expandableSearches.mapValues { entry ->
+                entry.value.copy(list = entry.value.list.toList())
+            }
+        }
+        synchronized(expandableSearches) {
+            if (currentSearchIndex == currentIndex) {
+                _currentSearch.postValue(finalSnapshot)
+                val list = bundleSearch(finalSnapshot)
                 _searchResponse.postValue(Resource.Success(list))
             }
         }
+    }
 }

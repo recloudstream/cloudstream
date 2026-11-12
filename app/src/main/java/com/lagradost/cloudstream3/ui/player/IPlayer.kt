@@ -211,6 +211,9 @@ interface IPlayer {
     fun setPlaybackSpeed(speed: Float)
 
     fun getIsPlaying(): Boolean
+    var volume: Float
+    fun getCurrentLink(): ExtractorLink? = null
+    fun getExoPlayer(): androidx.media3.exoplayer.ExoPlayer? = null
     /** Current player duration in milliseconds */
     fun getDuration(): Long?
     /** Current player position in milliseconds */

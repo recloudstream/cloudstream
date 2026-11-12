@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <!-- Poster thumbnail -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="45dp"
+        android:layout_height="65dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <ImageView
+            android:id="@+id/item_poster"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/search_icon" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Info column -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/item_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?attr/textColor"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="The Ordinary Jackpot" />
+
+            <TextView
+                android:id="@+id/item_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/outline_drawable_less"
+                android:backgroundTint="?attr/colorAccent"
+                android:paddingStart="5dp"
+                android:paddingTop="1dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="1dp"
+                android:text="@string/new_episode_badge"
+                android:textColor="?attr/white"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/item_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/grayTextColor"
+            android:textSize="12sp"
+            tools:text="Subscribed • Provider Name" />
+    </LinearLayout>
+
+    <!-- Delete/Unsubscribe button -->
+    <ImageView
+        android:id="@+id/item_delete"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="4dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/sort_clear"
+        android:focusable="true"
+        android:src="@drawable/ic_baseline_close_24"
+        app:tint="?attr/grayTextColor" />
+
+</LinearLayout>
