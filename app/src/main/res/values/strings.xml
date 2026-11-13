@@ -158,6 +158,11 @@
     <string name="swipe_to_change_settings_des">Slide up or down on the left or right side to change brightness or volume</string>
     <string name="autoplay_next_settings">Autoplay next episode</string>
     <string name="autoplay_next_settings_des">Start the next episode when the current one ends</string>
+    <string name="auto_skip_popup_settings">Auto skip</string>
+    <string name="auto_skip_popup_settings_des">Automatically skip openings and endings after a countdown. Cancel by tapping the screen or pressing any key.</string>
+    <string name="auto_skip_countdown_settings">Auto-skip countdown (Seconds)</string>
+    <string name="auto_skip_countdown_settings_des">How long to wait before automatically skipping. Set to 0 to skip instantly</string>
+    <string name="auto_skip_types_settings">Auto-skip types</string>
     <string name="start_paused_settings">Start videos paused</string>
     <string name="start_paused_settings_des">Reduce stress when selecting sources</string>
     <string name="double_tap_to_seek_settings">Double tap to seek</string>
@@ -582,6 +587,7 @@
     <string name="skip_type_credits">Credits</string>
     <string name="skip_type_preview">Preview</string>
     <string name="skip_type_intro">Intro</string>
+    <string name="skip_chapter_countdown_format" formatted="true">%1$s (%2$d)</string>
     <string name="clear_history">Clear history</string>
     <string name="history">History</string>
     <string name="enable_skip_op_from_database_des">Show skip popups for opening/ending</string>
