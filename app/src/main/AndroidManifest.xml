@@ -57,6 +57,7 @@
         <package android:name="dev.anilbeesetti.nextplayer" />
         <package android:name="com.instantbits.cast.webvideo" />
         <package android:name="com.gianlu.aria2android" />
+        <package android:name="org.xbmc.kodi" />
         
         <!-- Torrent clients -->
         <package android:name="org.proninyaroslav.libretorrent" />

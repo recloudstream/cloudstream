@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.temp.BiglyBTPackage
 import com.lagradost.cloudstream3.actions.temp.CopyClipboardAction
 import com.lagradost.cloudstream3.actions.temp.JustPlayerPackage
+import com.lagradost.cloudstream3.actions.temp.KodiPackage
 import com.lagradost.cloudstream3.actions.temp.LibreTorrentPackage
 import com.lagradost.cloudstream3.actions.temp.MpvExPackage
 import com.lagradost.cloudstream3.actions.temp.MpvKtPackage
@@ -45,6 +46,10 @@ import java.util.concurrent.Callable
 import java.util.concurrent.FutureTask
 
 object VideoClickActionHolder {
+    /**
+     * To avoid supporting malicious apps, we have a requirement on the app
+     * being open source, popular and not brand new.
+     */
     val allVideoClickActions = atomicListOf(
         // Default
         PlayInBrowserAction(),
@@ -52,21 +57,98 @@ object VideoClickActionHolder {
         ViewM3U8Action(),
         PlayMirrorAction(),
         // main support external apps
+        /**
+         * Source: https://github.com/videolan/vlc-android/
+         * Stars: 4.1k
+         * Date: Jul 2, 2012
+         */
         VlcPackage(),
+        /**
+         * Source: https://github.com/mpv-android/mpv-android/
+         * Stars: 3.7k
+         * Date: Apr 20, 2016
+         */
         MpvPackage(),
+        /**
+         * Source: https://github.com/xbmc/xbmc/
+         * Stars: 21.5k
+         * Date: Oct 1, 2013
+         */
+        KodiPackage,
+        /**
+         * Source: https://github.com/marlboro-advance/mpvEx/
+         * Stars: 2.8k
+         * Date: Nov 12, 2025
+         */
         MpvExPackage(),
+        /**
+         * Source: https://github.com/anilbeesetti/nextplayer/
+         * Stars: 4.7k
+         * Date: May 19, 2023
+         */
         NextPlayerPackage(),
+        /**
+         * Source: https://github.com/moneytoo/Player/
+         * Stars: 2.8k
+         * Date: Nov 16, 2020
+         */
         JustPlayerPackage(),
+        /**
+         * Mirror: https://github.com/futo-org/fcast/
+         * Source: https://gitlab.futo.org/videostreaming/fcast/
+         * Stars: 700
+         * Date: Sep 5, 2024
+         */
         FcastAction(),
+        /**
+         * Source: https://github.com/proninyaroslav/libretorrent/
+         * Stars: 4.1k
+         * Date: Feb 5, 2021
+         */
         LibreTorrentPackage(),
+        /**
+         * Source: https://github.com/BiglySoftware/BiglyBT-Android/
+         * Stars: 500
+         * Date: Nov 15, 2017
+         */
         BiglyBTPackage(),
         // forks/backup apps
+        /**
+         * See VLC
+         */
         VlcNightlyPackage(),
+        /**
+         * Source: Proprietary https://www.webvideocaster.com/home/
+         * Reason: The built-in video caster is terrible, and no good FOSS alternatives exist.
+         * If a FOSS caster is found, this should be replaced.
+         */
         WebVideoCastPackage(),
+        /**
+         * Source: https://github.com/mpv-android/mpv-android/pull/58/
+         * See MPV
+         */
         MpvYTDLPackage(),
+        /**
+         * Source: https://github.com/abdallahmehiz/mpvKt/
+         * Stars: 1.3k
+         * Date: Aug 18, 2024
+         */
         MpvKtPackage(),
+        /**
+         * See MPV KT
+         */
         MpvKtPreviewPackage(),
+        /**
+         * Source: https://github.com/Kindness-Kismet/only_player/
+         * Stars: 500
+         * Date: Mar 8, 2026
+         */
         OnlyPlayer(),
+        /**
+         * Source: https://github.com/Riteshp2001/mpvRx/
+         * Stars: 900
+         * Date: Apr 29, 2026
+         */
         MpvRxPackage(),
         // Always Ask option
         AlwaysAskAction(),
