@@ -774,4 +774,5 @@
     <string name="edit_profile_image_default">Domyślne obrazy</string>
     <string name="edit_profile_image_url">Adres URL</string>
     <string name="edit_profile_image_picker">Wybór obrazu</string>
+    <string name="installed_plugins">Zainstalowane wtyczki</string>
 </resources>

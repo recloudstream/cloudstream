@@ -768,4 +768,8 @@
     <string name="compressor_threshold_hint">Звуки громче %d дБ приглушаются</string>
     <string name="compressor_makeup_hint">Повышает общую громкость на +%d дБ</string>
     <string name="background">Фон</string>
+    <string name="edit_profile_image_url">URL-адрес</string>
+    <string name="edit_profile_image_picker">Выбор изображения</string>
+    <string name="edit_profile_image_default">Изображения по умолчанию</string>
+    <string name="installed_plugins">Установленные плагины</string>
 </resources>

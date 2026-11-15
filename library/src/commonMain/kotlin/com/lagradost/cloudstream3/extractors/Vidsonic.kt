@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
@@ -17,7 +16,6 @@ open class Vixeo : Vidsonic() {
     override val name: String = "Vixeo"
     override val mainUrl: String = "https://vixeo.io"
 
-    @Prerelease
     override fun extractEncodedVideoUrl(response: NiceResponse): String {
         // Vixeo encodes the stream URL as Base64 instead of inlining it into JavaScript
         val dataConfigBase64 = response.document.select("#streamsonic-player-root").attr("data-config")
@@ -27,13 +25,11 @@ open class Vixeo : Vidsonic() {
     }
 }
 
-@Prerelease
 open class Vidsonic : ExtractorApi() {
     override val name: String = "Vidsonic"
     override val mainUrl: String = "https://vidsonic.net"
     override val requiresReferer: Boolean = false
 
-    @Prerelease
     open fun extractEncodedVideoUrl(response: NiceResponse): String {
         return response.text
             .substringAfter("const _0x1 = ")

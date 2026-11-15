@@ -99,6 +99,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
@@ -872,23 +873,19 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun openSubPicker() {
-        try {
-            subsPathPicker.launch(
-                arrayOf(
-                    "text/plain",
-                    "text/str",
-                    "application/octet-stream",
-                    MimeTypes.TEXT_UNKNOWN,
-                    MimeTypes.TEXT_VTT,
-                    MimeTypes.TEXT_SSA,
-                    MimeTypes.APPLICATION_TTML,
-                    MimeTypes.APPLICATION_MP4VTT,
-                    MimeTypes.APPLICATION_SUBRIP,
-                )
+        subsPathPicker.launchSafe(
+            arrayOf(
+                "text/plain",
+                "text/str",
+                "application/octet-stream",
+                MimeTypes.TEXT_UNKNOWN,
+                MimeTypes.TEXT_VTT,
+                MimeTypes.TEXT_SSA,
+                MimeTypes.APPLICATION_TTML,
+                MimeTypes.APPLICATION_MP4VTT,
+                MimeTypes.APPLICATION_SUBRIP,
             )
-        } catch (e: Exception) {
-            logError(e)
-        }
+        )
     }
 
     @MainThread
@@ -1136,7 +1133,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                     // Always display current linkFooter
                     val sortedLinks = viewModel.state.sortLinks(qualityProfile)
 
-                    filteredLinks = sortedLinks.filter { it.shouldUseLink || it.link == currentLinkUsed }
+                    filteredLinks =
+                        sortedLinks.filter { it.shouldUseLink || it.link == currentLinkUsed }
 
                     if (sortedLinks.isEmpty()) {
                         sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.isGone =
@@ -1601,7 +1599,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun noLinksFound() {
         viewModel.forceClearCache = true
-        val hiddenLinks = viewModel.state.sortLinks(currentQualityProfile).count { !it.shouldUseLink }
+        val hiddenLinks =
+            viewModel.state.sortLinks(currentQualityProfile).count { !it.shouldUseLink }
 
         context?.let { ctx ->
             // Display that there are hidden links to the user.
@@ -2465,7 +2464,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
             // Set up TV clock visibility
             if (isLayout(TV)) {
-                val showTvClock = settingsManager.getBoolean(ctx.getString(R.string.tv_layout_clock_key), false)
+                val showTvClock =
+                    settingsManager.getBoolean(ctx.getString(R.string.tv_layout_clock_key), false)
                 playerBinding?.playerVideoClock?.isVisible = showTvClock
             } else {
                 playerBinding?.playerVideoClock?.isVisible = false

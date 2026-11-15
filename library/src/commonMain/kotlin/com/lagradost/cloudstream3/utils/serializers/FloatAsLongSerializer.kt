@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils.serializers
 
-import com.lagradost.cloudstream3.Prerelease
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -25,7 +24,6 @@ import kotlinx.serialization.json.longOrNull
  *       @SerialName("timestamp") val timestamp: Long = 0L,
  *   )
  */
-@Prerelease
 object FloatAsLongSerializer : KSerializer<Long> {
 
     override val descriptor: SerialDescriptor =

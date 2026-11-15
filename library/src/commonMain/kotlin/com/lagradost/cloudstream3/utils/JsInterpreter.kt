@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
 import androidx.annotation.VisibleForTesting
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.StringUtils.decodeUrl
 import com.lagradost.cloudstream3.utils.StringUtils.encodeUrl
