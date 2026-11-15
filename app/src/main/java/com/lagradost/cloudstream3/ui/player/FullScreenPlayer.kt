@@ -238,10 +238,12 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     open fun showMirrorsDialogue() {
+        onPlayerInteraction()
         throw NotImplementedError()
     }
 
     open fun showTracksDialogue() {
+        onPlayerInteraction()
         throw NotImplementedError()
     }
 
@@ -250,10 +252,12 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         loadResponse: LoadResponse?,
         dismissCallback: (() -> Unit)
     ) {
+        onPlayerInteraction()
         throw NotImplementedError()
     }
 
     open fun showEpisodesOverlay() {
+        onPlayerInteraction()
         throw NotImplementedError()
     }
 
@@ -508,6 +512,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     private fun showSubtitleOffsetDialog() {
+        onPlayerInteraction()
         val ctx = context ?: return
         // Pause player because the subtitles cannot be continuously updated to follow playback.
         player.handleEvent(
@@ -644,6 +649,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     private fun showSpeedDialog() {
+        onPlayerInteraction()
         val act = activity ?: return
         val isPlaying = player.getIsPlaying()
         player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
@@ -714,6 +720,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     // this is the standard, expected suppression for this obtainStyledAttributes pattern.
     @SuppressLint("ResourceType")
     private fun showCompressorDialog() {
+        onPlayerInteraction()
         val act = activity ?: return
         val compressor = (player as? CS3IPlayer)?.compressor ?: return
 
@@ -1098,7 +1105,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
      * (tap, swipe or key press). Lets subclasses abort automatic actions
      * such as the auto-skip countdown.
      */
-    protected open fun onPlayerInteraction() {}
+    override fun onPlayerInteraction() {}
 
     override fun onSingleTap() {
         onPlayerInteraction()
@@ -1505,64 +1512,77 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
 
             playerRotateBtt.setOnClickListener {
+                onPlayerInteraction()
                 autoHide()
                 toggleRotate()
             }
 
             // init clicks
             playerResizeBtt.setOnClickListener {
+                onPlayerInteraction()
                 autoHide()
                 nextResize()
             }
 
             playerSpeedBtt.setOnClickListener {
+                onPlayerInteraction()
                 autoHide()
                 showSpeedDialog()
             }
 
             playerCompressorBtt.setOnClickListener {
+                onPlayerInteraction()
                 autoHide()
                 showCompressorDialog()
             }
 
             playerSkipOp.setOnClickListener {
+                onPlayerInteraction()
                 autoHide()
                 skipOp()
             }
 
             playerSkipEpisode.setOnClickListener {
+                onPlayerInteraction()
                 autoHide()
                 player.handleEvent(CSPlayerEvent.NextEpisode)
             }
 
             playerGoForward.setOnClickListener {
+                onPlayerInteraction()
                 autoHide()
                 player.handleEvent(CSPlayerEvent.NextEpisode)
             }
 
             playerRestart.setOnClickListener {
+                onPlayerInteraction()
                 autoHide()
                 player.handleEvent(CSPlayerEvent.Restart)
             }
 
             playerLock.setOnClickListener {
+                onPlayerInteraction()
                 autoHide()
                 toggleLock()
             }
 
             playerSubtitleOffsetBtt.setOnClickListener {
+                onPlayerInteraction()
                 showSubtitleOffsetDialog()
             }
 
             playerGoBack.setOnClickListener {
+                onPlayerInteraction()
                 activity?.popCurrentPage("FullScreenPlayer")
             }
 
             playerSourcesBtt.setOnClickListener {
+                onPlayerInteraction()
                 showMirrorsDialogue()
             }
 
             playerTracksBtt.setOnClickListener {
+                onPlayerInteraction()
                 showTracksDialogue()
             }
 
@@ -1576,6 +1596,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             @SuppressLint("ClickableViewAccessibility")
             exoProgress.setOnTouchListener { _, event ->
+                onPlayerInteraction()
                 // this makes the bar not disappear when sliding
                 when (event.action) {
                     MotionEvent.ACTION_DOWN,
@@ -1590,6 +1611,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 return@setOnTouchListener false
             }
             playerEpisodesButton.setOnClickListener {
+                onPlayerInteraction()
                 toggleEpisodesOverlay(show = true)
             }
         }
@@ -1634,6 +1656,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     private fun toggleEpisodesOverlay(show: Boolean) {
+        if (show) onPlayerInteraction()
         if (show && !isShowingEpisodeOverlay) {
             previousPlayStatus = player.getIsPlaying()
             player.handleEvent(CSPlayerEvent.Pause)
