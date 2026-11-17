@@ -78,7 +78,7 @@ class LibassSubtitleSupport private constructor(
 
         /** Returns null if disabled in settings or libass could not be loaded */
         fun createIfEnabled(context: Context): LibassSubtitleSupport? {
-            if (!isEnabled(context)) return null
+            if (!isEnabled(context) || !LibassNative.load()) return null
             return try {
                 val library = LibassNative.libraryInit()
                 if (library == 0L) return null
@@ -90,7 +90,6 @@ class LibassSubtitleSupport private constructor(
                 }
                 LibassSubtitleSupport(library, renderer)
             } catch (t: Throwable) {
-                // UnsatisfiedLinkError if the native library is missing
                 logError(t)
                 null
             }
@@ -165,8 +164,6 @@ class LibassSubtitleSupport private constructor(
         this.player = player
         player.addListener(this)
     }
-
-    // region Rendering
 
     private val renderThread = HandlerThread("LibassRender").apply { start() }
     private val renderHandler = Handler(renderThread.looper)
@@ -293,10 +290,6 @@ class LibassSubtitleSupport private constructor(
         }
     }
 
-    // endregion
-
-    // region Overlay
-
     /** Where the overlay goes, it is only added once an ASS track is found */
     @Volatile
     private var overlayPlayerView: androidx.media3.ui.PlayerView? = null
@@ -404,10 +397,6 @@ class LibassSubtitleSupport private constructor(
             canvas.drawBitmap(bitmap, null, destination, paint)
         }
     }
-
-    // endregion
-
-    // region Tracks
 
     /** libass draws the track, so no cues are needed */
     private object NoOpSubtitleParser : SubtitleParser {
@@ -536,10 +525,6 @@ class LibassSubtitleSupport private constructor(
         return true
     }
 
-    // endregion
-
-    // region Player.Listener
-
     override fun onTracksChanged(tracks: Tracks) {
         if (released) return
         selectedTrackId = tracks.groups.firstNotNullOfOrNull { group ->
@@ -564,8 +549,6 @@ class LibassSubtitleSupport private constructor(
         videoHeight = videoSize.height
         requestRender(force = true)
     }
-
-    // endregion
 
     /** Call on the main thread after the player has been released */
     fun release() {

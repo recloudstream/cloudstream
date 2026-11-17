@@ -1,17 +1,31 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.graphics.Bitmap
+import com.lagradost.cloudstream3.mvvm.logError
 
 /**
  * JNI bindings for libass, see src/main/cpp/libass_jni.c
+ *
+ * [load] must return true before any other function is called.
  *
  * Handles are native pointers, 0 is null. Calls using the same library (or anything created
  * from it) must not run at the same time.
  */
 internal object LibassNative {
-    init {
-        System.loadLibrary("cs3ass")
+    /** Loaded on first use, a static initializer can cause issues on some devices */
+    private val loaded: Boolean by lazy {
+        try {
+            System.loadLibrary("cs3ass")
+            true
+        } catch (t: Throwable) {
+            // UnsatisfiedLinkError if the library is missing or can not be loaded on this device
+            logError(t)
+            false
+        }
     }
+
+    /** Loads libcs3ass.so on the first call, returns false if it can not be used */
+    fun load(): Boolean = loaded
 
     external fun libraryInit(): Long
     external fun libraryDone(library: Long)
