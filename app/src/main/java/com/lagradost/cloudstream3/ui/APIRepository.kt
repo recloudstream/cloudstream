@@ -66,6 +66,11 @@ class APIRepository(val api: MainAPI) {
         private var cacheIndex: Int = 0
         const val CACHE_SIZE = 20
 
+        fun clearLoadCache() {
+            cache.clear()
+            cacheIndex = 0
+        }
+
         fun getTimeout(desired: Long?): Long {
             return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
         }

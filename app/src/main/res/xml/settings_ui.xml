@@ -35,15 +35,15 @@
             app:showSeekBarValue="true" />
 
         <SeekBarPreference
-            android:defaultValue="0"
+            android:defaultValue="100"
             android:icon="@drawable/baseline_grid_view_24"
             android:key="@string/poster_size_key"
-            android:max="15"
+            android:max="250"
             android:summary="@string/poster_size_settings_des"
             android:title="@string/poster_size_settings"
             app:adjustable="true"
-            app:min="0"
-            app:seekBarIncrement="1"
+            app:min="10"
+            app:seekBarIncrement="10"
             app:showSeekBarValue="true" />
     </PreferenceCategory>
 

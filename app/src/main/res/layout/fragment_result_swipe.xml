@@ -106,6 +106,19 @@
                 app:tint="?attr/textColor" />
 
             <ImageView
+                    android:id="@+id/result_reload"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="5dp"
+                    android:elevation="10dp"
+                    android:tooltipText="@string/reload_show"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_reload_24"
+                    android:layout_gravity="end|center_vertical"
+                    android:contentDescription="@string/reload_show"
+                    app:tint="?attr/textColor" />
+
+            <ImageView
                     android:nextFocusUp="@id/result_back"
                     android:nextFocusDown="@id/result_description"
                     android:nextFocusLeft="@id/result_favorite"

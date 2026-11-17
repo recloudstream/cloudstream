@@ -816,4 +816,6 @@
     <string name="installed_plugins">Installed plugins</string>
     <string name="show_banner_settings">Show featured banner</string>
     <string name="show_banner_settings_des">Show the big banner card at the top of the Home screen</string>
+    <string name="reload_show">Reload</string>
+    <string name="show_reloaded">Reloaded</string>
 </resources>

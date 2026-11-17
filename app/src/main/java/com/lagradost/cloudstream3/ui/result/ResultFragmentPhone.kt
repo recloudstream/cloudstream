@@ -434,6 +434,24 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
         syncModel = ViewModelProvider(this)[SyncViewModel::class.java]
         updateUIEvent += ::updateUI
 
+        binding.resultReload.setOnClickListener {
+            com.lagradost.cloudstream3.ui.APIRepository.clearLoadCache()
+            val stored = getStoredData() ?: return@setOnClickListener
+            viewModel.load(
+                activity,
+                stored.url,
+                stored.apiName,
+                stored.showFillers,
+                stored.dubStatus,
+                null
+            )
+            context?.let { ctx ->
+                android.widget.Toast.makeText(
+                    ctx, ctx.getString(R.string.show_reloaded), android.widget.Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         resultBinding = binding.fragmentResult
         recommendationBinding = binding.resultRecommendations
         syncBinding = binding.resultSync

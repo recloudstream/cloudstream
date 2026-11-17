@@ -263,7 +263,8 @@ object SettingsUIScreen : SearchableSettings {
                         preference = settings.ui.posterSize,
                         title = stringResource(R.string.poster_size_settings),
                         subtitle = stringResource(R.string.poster_size_settings_des),
-                        valueRange = 0..15,
+                        valueRange = 10..250,
+                        steps = 23,
                         icon = painterResource(R.drawable.baseline_grid_view_24),
                         onValueChanged = { newValue ->
                             HomeChildItemAdapter.sharedPool.clear()

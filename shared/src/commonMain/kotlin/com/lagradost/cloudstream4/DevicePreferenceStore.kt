@@ -100,7 +100,7 @@ class UIPreferences(preferences: PreferenceStore) {
         "overscan_key", 0
     )
     val posterSize = preferences.getInt(
-        "poster_size_key", 0
+        "poster_size_percent_key", 100
     )
     val posterShowHd = preferences.getBoolean(
         "show_hd_key", true
