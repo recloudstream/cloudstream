@@ -18,7 +18,7 @@ import com.lagradost.cloudstream3.utils.txt
  * https://github.com/Riteshp2001/mpvRx/blob/00e0c5e803ab53e5757426cbf2248448ba1f49bf/app/src/main/java/app/gyrolet/mpvrx/utils/media/MediaUtils.kt#L132
  * https://github.com/Riteshp2001/mpvRx/blob/00e0c5e803ab53e5757426cbf2248448ba1f49bf/app/src/main/java/app/gyrolet/mpvrx/utils/media/MediaUtils.kt#L56
  * */
-class MpvRxPackage : OpenInAppAction(
+object MpvRxPackage : OpenInAppAction(
     appName = txt("mpvRx"),
     packageName = "app.gyrolet.mpvrx",
     intentClass = "app.gyrolet.mpvrx.ui.player.PlayerActivity"

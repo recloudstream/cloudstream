@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.actions.temp.MpvPackage
 import com.lagradost.cloudstream3.actions.temp.MpvRxPackage
 import com.lagradost.cloudstream3.actions.temp.MpvYTDLPackage
 import com.lagradost.cloudstream3.actions.temp.NextPlayerPackage
+import com.lagradost.cloudstream3.actions.temp.NovaPlayer
 import com.lagradost.cloudstream3.actions.temp.OnlyPlayer
 import com.lagradost.cloudstream3.actions.temp.PlayInBrowserAction
 import com.lagradost.cloudstream3.actions.temp.PlayMirrorAction
@@ -52,23 +53,23 @@ object VideoClickActionHolder {
      */
     val allVideoClickActions = atomicListOf(
         // Default
-        PlayInBrowserAction(),
-        CopyClipboardAction(),
-        ViewM3U8Action(),
-        PlayMirrorAction(),
+        PlayInBrowserAction,
+        CopyClipboardAction,
+        ViewM3U8Action,
+        PlayMirrorAction,
         // main support external apps
         /**
          * Source: https://github.com/videolan/vlc-android/
          * Stars: 4.1k
          * Date: Jul 2, 2012
          */
-        VlcPackage(),
+        VlcPackage,
         /**
          * Source: https://github.com/mpv-android/mpv-android/
          * Stars: 3.7k
          * Date: Apr 20, 2016
          */
-        MpvPackage(),
+        MpvPackage,
         /**
          * Source: https://github.com/xbmc/xbmc/
          * Stars: 21.5k
@@ -80,78 +81,84 @@ object VideoClickActionHolder {
          * Stars: 2.8k
          * Date: Nov 12, 2025
          */
-        MpvExPackage(),
+        MpvExPackage,
         /**
          * Source: https://github.com/anilbeesetti/nextplayer/
          * Stars: 4.7k
          * Date: May 19, 2023
          */
-        NextPlayerPackage(),
+        NextPlayerPackage,
         /**
          * Source: https://github.com/moneytoo/Player/
          * Stars: 2.8k
          * Date: Nov 16, 2020
          */
-        JustPlayerPackage(),
+        JustPlayerPackage,
         /**
          * Mirror: https://github.com/futo-org/fcast/
          * Source: https://gitlab.futo.org/videostreaming/fcast/
          * Stars: 700
          * Date: Sep 5, 2024
          */
-        FcastAction(),
+        FcastAction,
         /**
          * Source: https://github.com/proninyaroslav/libretorrent/
          * Stars: 4.1k
          * Date: Feb 5, 2021
          */
-        LibreTorrentPackage(),
+        LibreTorrentPackage,
         /**
          * Source: https://github.com/BiglySoftware/BiglyBT-Android/
          * Stars: 500
          * Date: Nov 15, 2017
          */
-        BiglyBTPackage(),
+        BiglyBTPackage,
+        /**
+         * Source: https://github.com/nova-video-player/aos-AVP
+         * Stars: 4.8k
+         * Date: Aug 26, 2018
+         */
+        NovaPlayer,
         // forks/backup apps
         /**
          * See VLC
          */
-        VlcNightlyPackage(),
+        VlcNightlyPackage,
         /**
          * Source: Proprietary https://www.webvideocaster.com/home/
          * Reason: The built-in video caster is terrible, and no good FOSS alternatives exist.
          * If a FOSS caster is found, this should be replaced.
          */
-        WebVideoCastPackage(),
+        WebVideoCastPackage,
         /**
          * Source: https://github.com/mpv-android/mpv-android/pull/58/
          * See MPV
          */
-        MpvYTDLPackage(),
+        MpvYTDLPackage,
         /**
          * Source: https://github.com/abdallahmehiz/mpvKt/
          * Stars: 1.3k
          * Date: Aug 18, 2024
          */
-        MpvKtPackage(),
+        MpvKtPackage,
         /**
          * See MPV KT
          */
-        MpvKtPreviewPackage(),
+        MpvKtPreviewPackage,
         /**
          * Source: https://github.com/Kindness-Kismet/only_player/
          * Stars: 500
          * Date: Mar 8, 2026
          */
-        OnlyPlayer(),
+        OnlyPlayer,
         /**
          * Source: https://github.com/Riteshp2001/mpvRx/
          * Stars: 900
          * Date: Apr 29, 2026
          */
-        MpvRxPackage(),
+        MpvRxPackage,
         // Always Ask option
-        AlwaysAskAction(),
+        AlwaysAskAction,
         // added by plugins
         // ...
     )

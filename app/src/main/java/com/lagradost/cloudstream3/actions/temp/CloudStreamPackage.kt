@@ -36,22 +36,22 @@ import kotlinx.serialization.Serializable
  * These are passed as LINKS_EXTRA and SUBTITLE_EXTRA respectively
  */
 @Suppress("Unused")
-class CloudStreamPackage : OpenInAppAction(
+object CloudStreamPackage : OpenInAppAction(
     appName = txt("CloudStream"),
     packageName = BuildConfig.APPLICATION_ID, //"com.lagradost.cloudstream3" or "com.lagradost.cloudstream3.prerelease"
     intentClass = "com.lagradost.cloudstream3.ui.player.DownloadedPlayerActivity"
 ) {
     override val oneSource: Boolean = false
 
-    companion object {
-        const val SUBTITLE_EXTRA: String = "subs" // Json of an array of MinimalVideoLink
-        const val LINKS_EXTRA: String = "links" // Json of an array of MinimalSubtitleLink
-        const val TITLE_EXTRA: String = "title" // Unused (String)
-        const val ID_EXTRA: String =
-            "id" // Identification number for the video(s), used to store start time (Int)
-        const val POSITION_EXTRA: String = "pos" // Start time in MS (Long)
-        const val DURATION_EXTRA: String = "dur" // Duration time in MS (Long)
-    }
+    const val SUBTITLE_EXTRA: String = "subs" // Json of an array of MinimalVideoLink
+    const val LINKS_EXTRA: String = "links" // Json of an array of MinimalSubtitleLink
+    const val TITLE_EXTRA: String = "title" // Unused (String)
+    const val ID_EXTRA: String =
+        "id" // Identification number for the video(s), used to store start time (Int)
+    const val POSITION_EXTRA: String = "pos" // Start time in MS (Long)
+    const val DURATION_EXTRA: String = "dur" // Duration time in MS (Long)
+    const val POSITION_EXTRA_ALT: String = "position" // Start time in MS (Long)
+    const val DURATION_EXTRA_ALT: String = "duration" // Duration time in MS (Long)
 
     @Serializable
     @SkipSerializationTest //.Uri has issues with Jackson
@@ -122,9 +122,7 @@ class CloudStreamPackage : OpenInAppAction(
             originalName = name ?: "Unknown",
             headers = headers,
             origin = SubtitleOrigin.URL,
-            languageCode = fromCodeToLangTagIETF(name) ?:
-                           fromLanguageToTagIETF(name, true) ?:
-                           name,
+            languageCode = fromCodeToLangTagIETF(name) ?: fromLanguageToTagIETF(name, true) ?: name,
         )
     }
 
@@ -137,8 +135,9 @@ class CloudStreamPackage : OpenInAppAction(
     ) {
         intent.apply {
             val position = getViewPos(video.id)?.position
-            if (position != null)
+            if (position != null) {
                 putExtra(POSITION_EXTRA, position)
+            }
 
             putExtra(ID_EXTRA, video.id)
             putExtra(TITLE_EXTRA, video.name)

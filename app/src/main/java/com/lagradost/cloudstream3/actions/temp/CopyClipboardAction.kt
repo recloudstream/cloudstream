@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 
-class CopyClipboardAction: VideoClickAction() {
+object CopyClipboardAction: VideoClickAction() {
     override val name = txt("Copy to clipboard")
 
     override val oneSource = true
