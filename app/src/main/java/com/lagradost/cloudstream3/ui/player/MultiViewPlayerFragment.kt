@@ -286,20 +286,25 @@ class MultiViewPlayerFragment : BaseFragment<FragmentMultiviewPlayerBinding>(
         MultiPlayerManager.releaseAll()
 
         activity?.let { act ->
-            act.supportFragmentManager.popBackStack("MultiViewPlayer", androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            val popSuccess = try {
+                act.supportFragmentManager.popBackStackImmediate("MultiViewPlayer", androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            } catch (_: Throwable) {
+                false
+            }
+
             if (activeLink != null) {
-                val intentData = GeneratorPlayer.newInstance(
-                    ExtractorLinkGenerator(listOf(activeLink), emptyList()), 0
-                )
-                try {
-                    act.findNavController(R.id.nav_host_fragment)?.navigate(
-                        R.id.global_to_navigation_player,
-                        intentData
+                val navController = try { act.findNavController(R.id.nav_host_fragment) } catch (_: Throwable) { null }
+                if (navController?.currentDestination?.id != R.id.navigation_player) {
+                    val intentData = GeneratorPlayer.newInstance(
+                        ExtractorLinkGenerator(listOf(activeLink), emptyList()), 0
                     )
-                } catch (_: Throwable) {
-                    act.popCurrentPage("MultiViewPlayer")
+                    try {
+                        navController?.navigate(R.id.global_to_navigation_player, intentData)
+                    } catch (_: Throwable) {
+                        if (!popSuccess) act.popCurrentPage("MultiViewPlayer")
+                    }
                 }
-            } else {
+            } else if (!popSuccess) {
                 act.popCurrentPage("MultiViewPlayer")
             }
         } ?: dispatchBackPressed()
