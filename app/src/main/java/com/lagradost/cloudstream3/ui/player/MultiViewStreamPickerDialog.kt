@@ -21,7 +21,7 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.amap
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -31,6 +31,14 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
+import org.json.JSONObject
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class MultiViewStreamPickerDialog(
     val maxCapacity: Int = 4,
@@ -40,14 +48,19 @@ class MultiViewStreamPickerDialog(
     private val selectedItems = mutableSetOf<SearchResponse>()
     private var allStreams = mutableListOf<SearchResponse>()
     private var filteredStreams = mutableListOf<SearchResponse>()
+    private var localStreams = mutableListOf<SearchResponse>()
     private val searchRequestId = AtomicInteger(0)
+    private val extensionSearchMutex = Mutex()
+    private var extensionSearchJob: Job? = null
 
     // View references promoted to fields so helper methods can access them
     private var slotCounter: TextView? = null
     private var confirmBtn: TextView? = null
     private var gridRecycler: RecyclerView? = null
     private var searchInput: EditText? = null
+    private var addUrlBtn: TextView? = null
     private var chipGroup: com.google.android.material.chip.ChipGroup? = null
+    private var lastResolutionError: String? = null
 
     private val categoryMap = mutableMapOf<String, MutableList<SearchResponse>>()
     private var currentCategoryFilter: String? = null
@@ -82,6 +95,7 @@ class MultiViewStreamPickerDialog(
         confirmBtn = dialogView.findViewById(R.id.kick_confirm_btn)
         gridRecycler = dialogView.findViewById(R.id.kick_streams_grid)
         searchInput = dialogView.findViewById(R.id.kick_search_input)
+        addUrlBtn = dialogView.findViewById(R.id.kick_add_url_btn)
         chipGroup = dialogView.findViewById(R.id.picker_category_chip_group)
 
         updateCounter()
@@ -90,8 +104,8 @@ class MultiViewStreamPickerDialog(
 
         val adapter = setupAdapter()
         populateLocalStreams()
-        loadRemoteStreamsAsync()
         setupSearchInput()
+        setupAddUrlButton()
         setupConfirmButton()
 
         return dialogView
@@ -120,8 +134,44 @@ class MultiViewStreamPickerDialog(
             filteredStreams.addAll(categoryFiltered.distinctBy { it.url }.filter {
                 it.name.lowercase().contains(query) || it.apiName.lowercase().contains(query)
             })
+            directStreamFromUrl(searchInput?.text?.toString()?.trim().orEmpty())?.let { directStream ->
+                if (filteredStreams.none { it.url == directStream.url }) {
+                    filteredStreams.add(0, directStream)
+                }
+            }
         }
         gridRecycler?.adapter?.notifyDataSetChanged()
+    }
+
+    private fun directStreamFromUrl(url: String): SearchResponse? {
+        if (!url.startsWith("https://", ignoreCase = true) &&
+            !url.startsWith("http://", ignoreCase = true)
+        ) return null
+
+        val host = Uri.parse(url).host?.lowercase() ?: return null
+        val providerName = when {
+            host == "kick.com" || host.endsWith(".kick.com") -> "Kick"
+            host == "twitch.tv" || host.endsWith(".twitch.tv") -> "Twitch"
+            host == "youtube.com" || host.endsWith(".youtube.com") ||
+                host == "youtu.be" || host.endsWith(".youtu.be") -> "YouTube"
+            else -> return null
+        }
+
+        val title = Uri.parse(url).pathSegments?.lastOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?.let { segment ->
+                try { java.net.URLDecoder.decode(segment, "UTF-8") } catch (_: Throwable) { segment }
+            } ?: providerName
+
+        @Suppress("DEPRECATION_ERROR")
+        return com.lagradost.cloudstream3.LiveSearchResponse(
+            name = "$providerName: $title",
+            url = url,
+            apiName = "Direct stream URL ($providerName)",
+            type = com.lagradost.cloudstream3.TvType.Live,
+            posterUrl = null,
+            id = url.hashCode()
+        )
     }
 
     private fun updateCategoryChips() {
@@ -163,7 +213,7 @@ class MultiViewStreamPickerDialog(
 
     // STEP 1: INSTANT LOCAL POPULATION (0ms Delay on Main Thread)
     private fun populateLocalStreams() {
-        val localStreams = mutableListOf<SearchResponse>()
+        val streams = mutableListOf<SearchResponse>()
 
         // 1. In-memory matches from current provider (MultiPlayerManager.availableEpisodes)
         MultiPlayerManager.availableEpisodes.forEach { ep ->
@@ -177,7 +227,7 @@ class MultiViewStreamPickerDialog(
                 posterUrl = ep.poster,
                 id = ep.id
             )
-            localStreams.add(searchItem)
+            streams.add(searchItem)
             val category = ep.headerName.takeIf { it.isNotBlank() } ?: ep.apiName
             categoryMap.getOrPut(category) { mutableListOf() }.add(searchItem)
             categoryMap.getOrPut(ep.apiName) { mutableListOf() }.add(searchItem)
@@ -185,7 +235,7 @@ class MultiViewStreamPickerDialog(
 
         // Keep the exact list from the home section the user opened available at the top.
         MultiPlayerManager.currentHomeSectionStreams.forEach { searchItem ->
-            localStreams.add(searchItem)
+            streams.add(searchItem)
             val sectionName = MultiPlayerManager.currentHomeSectionName
             if (!sectionName.isNullOrBlank()) {
                 categoryMap.getOrPut(sectionName) { mutableListOf() }.add(searchItem)
@@ -203,13 +253,13 @@ class MultiViewStreamPickerDialog(
                 posterUrl = null,
                 id = sourceLink.url.hashCode()
             )
-            localStreams.add(searchItem)
+            streams.add(searchItem)
             categoryMap.getOrPut("Sources") { mutableListOf() }.add(searchItem)
         }
 
         // 3. Bookmarks & Favorites
         val bookmarks = DataStoreHelper.getAllBookmarkedData()
-        localStreams.addAll(bookmarks)
+        streams.addAll(bookmarks)
         if (bookmarks.isNotEmpty()) {
             categoryMap.getOrPut("Bookmarks") { mutableListOf() }.addAll(bookmarks)
         }
@@ -224,99 +274,103 @@ class MultiViewStreamPickerDialog(
                 posterUrl = fav.posterUrl,
                 id = fav.id
             )
-            localStreams.add(searchItem)
+            streams.add(searchItem)
             categoryMap.getOrPut("Favorites") { mutableListOf() }.add(searchItem)
         }
 
         // Instantly display local streams with 0ms delay!
+        localStreams = streams.distinctBy { it.url }.toMutableList()
         allStreams.clear()
-        allStreams.addAll(localStreams.distinctBy { it.url })
+        allStreams.addAll(localStreams)
         filteredStreams.clear()
         filteredStreams.addAll(allStreams)
         updateCategoryChips()
         gridRecycler?.adapter?.notifyDataSetChanged()
     }
 
-    // STEP 2 & 3: ASYNCHRONOUS BACKGROUND MULTI-PAGE SCRAPING & AUTO LIVE SEARCH
-    private fun loadRemoteStreamsAsync() {
-        ioSafe {
-            val remoteStreams = mutableListOf<SearchResponse>()
+    private fun setupSearchInput() {
+        searchInput?.doOnTextChanged { text, _, _, _ ->
+            val query = text?.toString()?.trim() ?: ""
+            applyFilter()
+            val requestId = searchRequestId.incrementAndGet()
+            extensionSearchJob?.cancel()
 
-            // A. Fetch Page 1 and Page 2 for active extensions
-            APIHolder.apis.forEach { api ->
-                for (page in 1..2) {
-                    try {
-                        val repo = APIRepository(api)
-                        val mainPageRes = repo.getMainPage(page)
-                        if (mainPageRes is com.lagradost.cloudstream3.mvvm.Resource.Success) {
-                            mainPageRes.value.filterNotNull().flatMap { it.items }.forEach { homePageList ->
-                                val catName = homePageList.name
-                                val list = categoryMap.getOrPut(catName) { mutableListOf() }
-                                list.addAll(homePageList.list)
-                                categoryMap.getOrPut(api.name) { mutableListOf() }.addAll(homePageList.list)
-                                remoteStreams.addAll(homePageList.list)
+            // Do not launch one request against every extension just because the picker opened.
+            // Direct platform URLs are handled by the Add URL action and need no extension search.
+            if (query.length < 2 || directStreamFromUrl(query) != null) {
+                allStreams = localStreams.toMutableList()
+                applyFilter()
+                return@doOnTextChanged
+            }
+
+            extensionSearchJob = ioSafe {
+                delay(500)
+                extensionSearchMutex.withLock {
+                    val results = mutableListOf<SearchResponse>()
+                    val seenUrls = localStreams.mapTo(mutableSetOf()) { it.url }
+
+                    // Search every installed extension, but one at a time and with a result cap.
+                    // This avoids the previous eager multi-page crawl and unbounded fan-out.
+                    for (api in APIHolder.apis) {
+                        currentCoroutineContext().ensureActive()
+                        if (searchRequestId.get() != requestId) return@withLock
+                        if (results.size >= MAX_REMOTE_SEARCH_RESULTS) break
+
+                        val response = try {
+                            APIRepository(api).search(query, 1)
+                        } catch (cancelled: CancellationException) {
+                            throw cancelled
+                        } catch (_: Throwable) {
+                            null
+                        }
+                        val items = (response as? com.lagradost.cloudstream3.mvvm.Resource.Success)
+                            ?.value?.items.orEmpty()
+                        items.take(MAX_RESULTS_PER_EXTENSION).forEach { item ->
+                            if (results.size < MAX_REMOTE_SEARCH_RESULTS && seenUrls.add(item.url)) {
+                                results.add(item)
                             }
                         }
-                    } catch (_: Throwable) {}
-                }
-            }
+                    }
 
-            // B. Auto Live Query Execution ("live" & "vs") across all extensions
-            listOf("live", "vs").forEach { query ->
-                try {
-                    val searchResults = APIHolder.apis.amap { api ->
-                        val repo = APIRepository(api)
-                        val searchRes = try { repo.search(query, 1) } catch (_: Throwable) { null }
-                        when (searchRes) {
-                            is com.lagradost.cloudstream3.mvvm.Resource.Success -> searchRes.value.items
-                            else -> emptyList()
+                    currentCoroutineContext().ensureActive()
+                    if (searchRequestId.get() == requestId && results.isNotEmpty()) {
+                        main {
+                            if (!isAdded || view == null || searchRequestId.get() != requestId) return@main
+                            allStreams = (localStreams + results).distinctBy { it.url }.toMutableList()
+                            applyFilter()
                         }
-                    }.flatten()
-                    remoteStreams.addAll(searchResults)
-                } catch (_: Throwable) {}
-            }
-
-            if (remoteStreams.isNotEmpty()) {
-                main {
-                    if (!isAdded || view == null) return@main
-                    allStreams.addAll(remoteStreams)
-                    allStreams = allStreams.distinctBy { it.url }.toMutableList()
-                    updateCategoryChips()
-                    applyFilter()
+                    }
                 }
             }
         }
     }
 
-    private fun setupSearchInput() {
-        searchInput?.doOnTextChanged { text, _, _, _ ->
-            val query = text?.toString()?.trim() ?: ""
-            applyFilter()
-
-            if (query.length >= 2) {
-                val requestId = searchRequestId.incrementAndGet()
-                ioSafe {
-                    val searchResults = APIHolder.apis.amap { api ->
-                        val repo = APIRepository(api)
-                        val searchRes = try { repo.search(query, 1) } catch (_: Throwable) { null }
-                        when (searchRes) {
-                            is com.lagradost.cloudstream3.mvvm.Resource.Success -> searchRes.value.items
-                            else -> emptyList()
-                        }
-                    }.flatten()
-
-                    if (searchRequestId.get() == requestId && searchResults.isNotEmpty()) {
-                        main {
-                            if (searchRequestId.get() != requestId) return@main
-                            allStreams.addAll(searchResults)
-                            allStreams = allStreams.distinctBy { it.url }.toMutableList()
-                            applyFilter()
-                        }
-                    }
-                }
-            } else {
-                searchRequestId.incrementAndGet()
+    private fun setupAddUrlButton() {
+        addUrlBtn?.setOnClickListener {
+            val url = searchInput?.text?.toString()?.trim().orEmpty()
+            val stream = directStreamFromUrl(url)
+            if (stream == null) {
+                Toast.makeText(
+                    context,
+                    "Paste a Kick, Twitch, or YouTube stream URL first",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
             }
+
+            if (selectedItems.any { it.url.equals(stream.url, ignoreCase = true) }) {
+                Toast.makeText(context, "This stream is already selected", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (selectedItems.size >= maxCapacity) {
+                Toast.makeText(context, "Maximum $maxCapacity streams selected", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            selectedItems.add(stream)
+            updateCounter()
+            gridRecycler?.adapter?.notifyDataSetChanged()
+            Toast.makeText(context, "${stream.name.substringBefore(':')} added", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -331,12 +385,21 @@ class MultiViewStreamPickerDialog(
             confirmBtn?.isEnabled = false
             confirmBtn?.text = "Loading..."
             val itemsToLoad = selectedItems.toList()
+            lastResolutionError = null
 
             ioSafe {
                 val batchResult = resolveSelectedItems(itemsToLoad)
                 main {
                     if (!isAdded) return@main
-                    onStreamsBatchSelected(batchResult)
+                    if (batchResult.size < itemsToLoad.size) {
+                        Toast.makeText(
+                            context,
+                            lastResolutionError
+                                ?: "Could not resolve one or more streams. Make sure Kick channels are live.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    if (batchResult.isNotEmpty()) onStreamsBatchSelected(batchResult)
                     dismiss()
                 }
             }
@@ -351,7 +414,14 @@ class MultiViewStreamPickerDialog(
         items.forEach { item ->
             val channelName = item.name
             val channelUrl = item.url
+            val directProvider = directStreamFromUrl(channelUrl)?.apiName
+                ?.substringAfterLast('(')
+                ?.substringBefore(')')
             val api = APIHolder.getApiFromNameNull(item.apiName)
+                ?: directProvider?.let { provider ->
+                    APIHolder.apis.firstOrNull { it.name.contains(provider, ignoreCase = true) }
+                        ?: APIHolder.apis.firstOrNull { it.name.contains("Live Hub", ignoreCase = true) }
+                }
             val extractedLinks = mutableListOf<ExtractorLink>()
 
             if (api != null) {
@@ -365,14 +435,24 @@ class MultiViewStreamPickerDialog(
                 }
             }
 
-            if (extractedLinks.isEmpty()) {
-                val (resolvedUrl, _) = resolveLiveStreamUrlAndHeaders(channelUrl)
+            val (resolvedUrl, headers) = if (extractedLinks.isEmpty()) {
+                try {
+                    resolveLiveStreamUrlAndHeaders(channelUrl)
+                } catch (t: Throwable) {
+                    android.util.Log.e("MultiViewPicker", "Could not resolve stream ${item.name}: $t")
+                    lastResolutionError = t.message ?: "Could not resolve ${item.name}"
+                    return@forEach
+                }
+            } else {
+                channelUrl to emptyMap()
+            }
+
+            if (extractedLinks.isEmpty() && !resolvedUrl.contains(".m3u8", ignoreCase = true)) {
                 try {
                     loadExtractor(resolvedUrl, subtitleCallback = {}, callback = { extractedLinks.add(it) })
                 } catch (_: Throwable) {}
             }
 
-            val (resolvedUrl, headers) = resolveLiveStreamUrlAndHeaders(channelUrl)
             val isM3u8 = resolvedUrl.contains(".m3u8") || resolvedUrl.contains("m3u8") ||
                     resolvedUrl.contains("playback.kick.com") || resolvedUrl.contains("twitch")
             val linkType = if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
@@ -394,38 +474,51 @@ class MultiViewStreamPickerDialog(
 
     override fun onDestroyView() {
         searchRequestId.incrementAndGet()
+        extensionSearchJob?.cancel()
+        extensionSearchJob = null
         super.onDestroyView()
     }
 
-    private fun resolveLiveStreamUrlAndHeaders(url: String): Pair<String, Map<String, String>> {
+    private companion object {
+        const val MAX_RESULTS_PER_EXTENSION = 10
+        const val MAX_REMOTE_SEARCH_RESULTS = 120
+    }
+
+    private suspend fun resolveLiveStreamUrlAndHeaders(url: String): Pair<String, Map<String, String>> {
         val cleanUrl = url.trim()
 
         val kickRegex = Regex("""(?:https?://)?(?:www\.)?kick\.com/([a-zA-Z0-9_-]+)""", RegexOption.IGNORE_CASE)
         val kickMatch = kickRegex.find(cleanUrl)
         if (kickMatch != null) {
             val channel = kickMatch.groupValues[1].lowercase()
-            if (channel != "api" && channel != "categories" && channel != "video") {
-                val streamUrl = "https://playback.kick.com/livestream/$channel/index.m3u8"
+            if (channel !in setOf("api", "categories", "video", "videos")) {
                 val headers = mapOf(
                     "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                     "Referer" to "https://kick.com/",
-                    "Origin" to "https://kick.com"
+                    "Origin" to "https://kick.com",
+                    "Accept" to "application/json, text/plain, */*"
                 )
-                return streamUrl to headers
+                val channelResponse = app.get(
+                    "https://kick.com/api/v2/channels/$channel",
+                    headers = headers
+                ).text
+                val channelData = JSONObject(channelResponse)
+                val liveData = channelData.optJSONObject("livestream")
+                    ?: throw IllegalStateException("Kick channel $channel is offline")
+                val playbackUrl = liveData.optString("playback_url")
+                    .takeIf { it.startsWith("https://") }
+                    ?: channelData.optString("playback_url").takeIf { it.startsWith("https://") }
+                    ?: throw IllegalStateException("Kick did not return a playback URL for $channel")
+                return playbackUrl to headers
             }
         }
 
         val twitchRegex = Regex("""(?:https?://)?(?:www\.)?twitch\.tv/([a-zA-Z0-9_-]+)""", RegexOption.IGNORE_CASE)
         val twitchMatch = twitchRegex.find(cleanUrl)
         if (twitchMatch != null) {
-            val channel = twitchMatch.groupValues[1].lowercase()
-            val streamUrl = "https://pstream.m3u8.workers.dev/twitch/$channel"
-            val headers = mapOf(
-                "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                "Referer" to "https://twitch.tv/",
-                "Origin" to "https://twitch.tv"
+            throw IllegalStateException(
+                "Twitch could not resolve this channel. Install or update the Twitch Discover or Live Hub extension."
             )
-            return streamUrl to headers
         }
 
         val defaultHeaders = mapOf(

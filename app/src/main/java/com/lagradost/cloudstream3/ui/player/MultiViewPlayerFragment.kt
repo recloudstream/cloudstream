@@ -50,6 +50,10 @@ class MultiViewPlayerFragment : BaseFragment<FragmentMultiviewPlayerBinding>(
 
         binding.btnMode1plus2.setOnClickListener {
             currentMode = MultiViewMode.FOCUS_1PLUS2
+            if (activeFocusSlotIndex > 2) {
+                activeFocusSlotIndex = 0
+                MultiPlayerManager.setFocusedSlot(0)
+            }
             updateAllSlots(binding)
             applyLayoutMode(binding)
         }
@@ -308,6 +312,7 @@ class MultiViewPlayerFragment : BaseFragment<FragmentMultiviewPlayerBinding>(
                 .setTitle("Switch to Single Stream?")
                 .setMessage("Only 1 stream is active. Would you like to return to full-screen player mode?")
                 .setPositiveButton(R.string.yes) { _, _ ->
+                    if (!isAdded) return@setPositiveButton
                     android.util.Log.d("MultiViewPlayer", "User clicked YES - returning to single player")
                     returnToSinglePlayer()
                 }
@@ -507,6 +512,7 @@ class MultiViewPlayerFragment : BaseFragment<FragmentMultiviewPlayerBinding>(
     }
 
     override fun onDestroyView() {
+        MultiPlayerManager.slots.forEach { it.playerView = null }
         MultiPlayerManager.releaseAll()
         super.onDestroyView()
     }

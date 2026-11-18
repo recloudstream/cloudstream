@@ -17,11 +17,11 @@ data class MultiStreamSlot(
     var initialLink: ExtractorLink? = null,
     var player: CS3IPlayer? = null,
     var playerView: PlayerView? = null,
-    val attemptedSourceUrls: MutableSet<String> = mutableSetOf(),
 )
 
 object MultiPlayerManager {
     const val MAX_SLOTS = 9
+    private const val MULTIVIEW_TARGET_BUFFER_BYTES = 8L * 1024L * 1024L
 
     var availableSources: List<ExtractorLink> = emptyList()
     var availableEpisodes: List<ResultEpisode> = emptyList()
@@ -68,8 +68,6 @@ object MultiPlayerManager {
         slot0.isMuted = false
         slot0.isFocused = true
         slot0.initialLink = link
-        slot0.attemptedSourceUrls.clear()
-        slot0.attemptedSourceUrls.add(link.url)
     }
 
     fun getSlot(index: Int): MultiStreamSlot? {
@@ -77,17 +75,15 @@ object MultiPlayerManager {
         return slots[index]
     }
 
-    private fun handleSlotStreamError(slotIndex: Int, context: Context) {
+    private fun handleSlotStreamError(slotIndex: Int) {
         val slot = getSlot(slotIndex) ?: return
-        val alternativeSource = availableSources.firstOrNull {
-            it.url != slot.url && it.url !in slot.attemptedSourceUrls
-        }
-        if (alternativeSource != null && slot.playerView != null) {
-            android.util.Log.d("MultiPlayerManager", "Slot $slotIndex stream failed. Auto-switching to live extension feed: ${alternativeSource.name}")
-            loadStream(context, slotIndex, alternativeSource.name, alternativeSource, slot.playerView!!)
-        } else {
-            setSlotOffline(slotIndex)
-        }
+        // availableSources belongs to the main player, not this multiview slot.
+        // Reusing it here can make several unrelated slots switch to the same stream.
+        android.util.Log.w(
+            "MultiPlayerManager",
+            "Slot $slotIndex stream failed (${slot.title}). Marking this slot offline instead of reusing the main player's source."
+        )
+        setSlotOffline(slotIndex)
     }
 
     fun loadStream(
@@ -101,15 +97,20 @@ object MultiPlayerManager {
         if (slotIndex !in 0 until MAX_SLOTS) return
 
         val slot = slots[slotIndex]
-        if (slot.url != link.url) slot.attemptedSourceUrls.clear()
-        slot.attemptedSourceUrls.add(link.url)
         slot.title = title
         slot.url = link.url
         slot.initialLink = link
         slot.isOffline = false
         slot.playerView = playerView
 
-        val player = slot.player ?: CS3IPlayer().also { slot.player = it }
+        val player = slot.player ?: CS3IPlayer().also {
+            // Multiview can keep up to nine decoders alive. Bound each player's
+            // forward buffers and discard old live media so one slot cannot
+            // consume the process heap needed by the other streams.
+            it.cacheSize = MULTIVIEW_TARGET_BUFFER_BYTES
+            it.backBufferMs = 0L
+            slot.player = it
+        }
         player.initCallbacks(
             eventHandler = { event ->
                 if (slot.player !== player || slot.url != link.url) return@initCallbacks
@@ -117,8 +118,8 @@ object MultiPlayerManager {
                     playerView.player = event.player as? ExoPlayer ?: player.getExoPlayer()
                     player.volume = if (slot.isMuted) 0f else 1f
                 } else if (event is ErrorEvent) {
-                    android.util.Log.w("MultiPlayerManager", "Slot $slotIndex playback error: ${event.error}. Attempting extension feed fallback...")
-                    handleSlotStreamError(slotIndex, context)
+                    android.util.Log.w("MultiPlayerManager", "Slot $slotIndex playback error: ${event.error}")
+                    handleSlotStreamError(slotIndex)
                 } else if (event is VideoEndedEvent) {
                     setSlotOffline(slotIndex)
                 }
@@ -220,7 +221,6 @@ object MultiPlayerManager {
         slot.isMuted = true
         slot.isFocused = false
         slot.initialLink = null
-        slot.attemptedSourceUrls.clear()
         if (activeFocusSlotIndex == slotIndex) {
             val nextFocus = slots.firstOrNull { it.slotIndex != slotIndex && it.url != null && !it.isOffline }
             activeFocusSlotIndex = nextFocus?.slotIndex ?: 0
