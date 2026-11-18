@@ -130,8 +130,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.getImageBitmapFromUrl
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
-import com.lagradost.cloudstream3.utils.videoskip.SkipType
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
+import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -2104,26 +2104,17 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun isAutoSkipEnabled(timestamp: VideoSkipStamp): Boolean {
         val ctx = context ?: return false
-        val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
-        if (!prefs.getBoolean(ctx.getString(R.string.auto_skip_popup_key), false)) {
-            return false
-        }
+        val playerSettings = AppSettings(ctx).player
+
+        if (!playerSettings.autoSkipEnabled.get()) return false
 
         // The user can select which skip types are automatically skipped
-        val enabledTypes = prefs.getStringSet(
-            ctx.getString(R.string.auto_skip_types_key),
-            SkipType.entries.map { it.name }.toSet()
-        ).orEmpty()
-
-        return timestamp.timestamp.type.name in enabledTypes
+        return timestamp.timestamp.type.name in playerSettings.autoSkipTypes.get()
     }
 
     private fun getAutoSkipCountdownSeconds(): Int {
         val ctx = context ?: return DEFAULT_AUTO_SKIP_COUNTDOWN_SECONDS
-        return PreferenceManager.getDefaultSharedPreferences(ctx).getInt(
-            ctx.getString(R.string.auto_skip_countdown_key),
-            DEFAULT_AUTO_SKIP_COUNTDOWN_SECONDS
-        )
+        return AppSettings(ctx).player.autoSkipCountdown.get()
     }
 
     private fun cancelAutoSkipCountdown() {
