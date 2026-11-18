@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.utils.videoskip.SkipType
 import com.mihon.common.preference.PreferenceStore
 import com.mihon.common.preference.getEnumSet
 
@@ -156,13 +157,6 @@ class ProviderPreferences(preferences: PreferenceStore) {
 }
 
 class PlayerPreferences(preferences: PreferenceStore) {
-    companion object {
-        /** Keep in sync with SkipType enum names */
-        private val defaultAutoSkipTypes = setOf(
-            "Opening", "Ending", "Recap", "MixedOpening", "MixedEnding", "Credits", "Intro", "Preview"
-        )
-    }
-
     val episodeSync = preferences.getBoolean("episode_sync_enabled_key", true)
     val defaultPlayer = preferences.getString("player_default_key", "")
     val limitPlayerTitle = preferences.getInt("prefer_limit_title_key", 0)
@@ -180,7 +174,7 @@ class PlayerPreferences(preferences: PreferenceStore) {
     val skipOpEnabled = preferences.getBoolean("enable_skip_op_from_database", true)
     val autoSkipEnabled = preferences.getBoolean("auto_skip_popup_key", false)
     val autoSkipCountdown = preferences.getInt("auto_skip_countdown_key", 5)
-    val autoSkipTypes = preferences.getStringSet("auto_skip_types_key", defaultAutoSkipTypes)
+    val autoSkipTypes = preferences.getEnumSet("auto_skip_types_key", SkipType.entries.toSet())
     val autoRotateEnabled = preferences.getBoolean("auto_rotate_video_key", true)
     val rotateButtonEnabled = preferences.getBoolean("rotate_video_key", false)
     val previewBarEnabled = preferences.getBoolean("preview_seekbar_key", true)

@@ -2109,7 +2109,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         if (!playerSettings.autoSkipEnabled.get()) return false
 
         // The user can select which skip types are automatically skipped
-        return timestamp.timestamp.type.name in playerSettings.autoSkipTypes.get()
+        return timestamp.timestamp.type in playerSettings.autoSkipTypes.get()
     }
 
     private fun getAutoSkipCountdownSeconds(): Int {

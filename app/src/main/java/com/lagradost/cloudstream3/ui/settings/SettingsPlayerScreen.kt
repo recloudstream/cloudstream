@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.videoskip.SkipType
+import com.lagradost.cloudstream3.utils.videoskip.res
 import com.lagradost.cloudstream4.compose.EMULATOR
 import com.lagradost.cloudstream4.compose.PHONE
 import com.lagradost.cloudstream4.compose.TV
@@ -182,7 +183,7 @@ object SettingsPlayerScreen : SearchableSettings {
                         preference = settings.player.autoSkipTypes,
                         title = stringResource(R.string.auto_skip_types_settings),
                         icon = painterResource(R.drawable.filter_alt_24px),
-                        entries = SkipType.entries.associate { it.name to stringResource(it.res) },
+                        entries = SkipType.entries.associateWith { stringResource(it.res) },
                         enabled = autoSkipEnabled,
                     ),
                     Preference.PreferenceItem.SwitchPreference(
