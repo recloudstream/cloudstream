@@ -43,6 +43,7 @@ object InAppUpdater {
 
     private const val PRERELEASE_PACKAGE_NAME = "com.lagradost.cloudstream3.prerelease"
     private const val LOG_TAG = "InAppUpdater"
+    private const val STREAMX_UPDATER_ENABLED = false
 
     @Serializable
     private data class GithubAsset(
@@ -250,6 +251,8 @@ object InAppUpdater {
     suspend fun Activity.runAutoUpdate(
         checkAutoUpdate: Boolean = true, installPrerelease: Boolean = false
     ): Boolean {
+        // StreamX: never self-update from the upstream CloudStream releases.
+        if (!STREAMX_UPDATER_ENABLED) return false
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val autoUpdateEnabled =
             settingsManager.getBoolean(getString(R.string.auto_update_key), true)

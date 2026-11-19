@@ -97,9 +97,15 @@ data class PluginWrapper(
 
 object RepositoryManager {
     const val ONLINE_PLUGINS_FOLDER = "Extensions"
-    val PREBUILT_REPOSITORIES: Array<RepositoryData> by lazy {
-        getKey<Array<RepositoryData>>("PREBUILT_REPOSITORIES") ?: emptyArray()
-    }
+
+    /**
+     * StreamX: the only repository this app uses. It is managed by the admin
+     * from the StreamX admin panel. Change this URL to your own deployment.
+     */
+    const val MANAGED_REPO_URL = "https://streamx-tau.vercel.app/api/v1/app-repo/repo.json"
+
+    val PREBUILT_REPOSITORIES: Array<RepositoryData> =
+        arrayOf(RepositoryData("StreamX Plugins", MANAGED_REPO_URL))
     private val GH_REGEX =
         Regex("^https://raw.githubusercontent.com/([A-Za-z0-9-]+)/([A-Za-z0-9_.-]+)/(.*)$")
 
@@ -239,13 +245,16 @@ object RepositoryManager {
         }
     }
 
+    // StreamX: users cannot add their own repositories, only the managed one exists.
     fun getRepositories(): Array<RepositoryData> {
-        return getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+        return emptyArray()
     }
 
     // Don't want to read before we write in another thread
     private val repoLock = Mutex()
     suspend fun addRepository(repository: RepositoryData) {
+        // StreamX: adding user repositories is disabled.
+        if (true) return
         repoLock.withLock {
             // No duplicates, but we want the new repository instead of the old one
             var currentRepos = getRepositories()

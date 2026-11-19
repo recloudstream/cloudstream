@@ -331,8 +331,9 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
 
         val isTv = isLayout(TV)
         binding.apply {
-            addRepoButton.isGone = isTv
-            addRepoButtonImageviewHolder.isVisible = isTv
+            // StreamX: repositories are managed by the admin, users cannot add any.
+            addRepoButton.isGone = true
+            addRepoButtonImageviewHolder.isVisible = false
 
             // Band-aid for Fire TV
             pluginStorageAppbar.isFocusableInTouchMode = isTv
