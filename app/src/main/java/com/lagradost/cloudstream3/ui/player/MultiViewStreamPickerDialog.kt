@@ -104,6 +104,7 @@ class MultiViewStreamPickerDialog(
 
         val adapter = setupAdapter()
         populateLocalStreams()
+        loadRemoteStreamsAsync()
         setupSearchInput()
         setupAddUrlButton()
         setupConfirmButton()
@@ -185,10 +186,75 @@ class MultiViewStreamPickerDialog(
                 isChecked = catName == (currentCategoryFilter ?: "All")
                 setOnClickListener {
                     currentCategoryFilter = catName
+                    val existing = categoryMap[catName]
+                    if (existing.isNullOrEmpty() && catName != "All") {
+                        val matchingApi = APIHolder.apis.firstOrNull { it.name.equals(catName, ignoreCase = true) }
+                        if (matchingApi != null) {
+                            fetchCategoryStreamsAsync(matchingApi, catName)
+                        }
+                    }
                     applyFilter()
                 }
             }
             chipGroup?.addView(chip)
+        }
+    }
+
+    private fun loadRemoteStreamsAsync() {
+        ioSafe {
+            val remoteStreams = mutableListOf<SearchResponse>()
+            APIHolder.apis.forEach { api ->
+                try {
+                    val repo = APIRepository(api)
+                    val mainPageRes = repo.getMainPage(1)
+                    if (mainPageRes is com.lagradost.cloudstream3.mvvm.Resource.Success) {
+                        mainPageRes.value.filterNotNull().flatMap { it.items }.forEach { homePageList ->
+                            val catName = homePageList.name
+                            categoryMap.getOrPut(catName) { mutableListOf() }.addAll(homePageList.list)
+                            categoryMap.getOrPut(api.name) { mutableListOf() }.addAll(homePageList.list)
+                            remoteStreams.addAll(homePageList.list)
+                        }
+                    }
+                } catch (_: Throwable) {}
+            }
+
+            if (remoteStreams.isNotEmpty()) {
+                main {
+                    if (!isAdded || view == null) return@main
+                    allStreams.addAll(remoteStreams)
+                    allStreams = allStreams.distinctBy { it.url }.toMutableList()
+                    updateCategoryChips()
+                    applyFilter()
+                }
+            }
+        }
+    }
+
+    private fun fetchCategoryStreamsAsync(api: MainAPI, categoryName: String) {
+        ioSafe {
+            val fetched = mutableListOf<SearchResponse>()
+            try {
+                val repo = APIRepository(api)
+                val mainPageRes = repo.getMainPage(1)
+                if (mainPageRes is com.lagradost.cloudstream3.mvvm.Resource.Success) {
+                    mainPageRes.value.filterNotNull().flatMap { it.items }.forEach { homePageList ->
+                        fetched.addAll(homePageList.list)
+                    }
+                }
+            } catch (_: Throwable) {}
+
+            if (fetched.isNotEmpty()) {
+                main {
+                    if (!isAdded || view == null) return@main
+                    categoryMap.getOrPut(categoryName) { mutableListOf() }.addAll(fetched)
+                    categoryMap.getOrPut(api.name) { mutableListOf() }.addAll(fetched)
+                    allStreams.addAll(fetched)
+                    allStreams = allStreams.distinctBy { it.url }.toMutableList()
+                    if (currentCategoryFilter == categoryName) {
+                        applyFilter()
+                    }
+                }
+            }
         }
     }
 
