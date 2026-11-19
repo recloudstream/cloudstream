@@ -31,6 +31,8 @@ import androidx.media3.extractor.text.CuesWithTiming
 import androidx.media3.extractor.text.SubtitleParser
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream4.AppSettings
+import com.lagradost.libass.LibassNative
+import androidx.media3.extractor.mkv.UpdatedMatroskaExtractor
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -78,7 +80,9 @@ class LibassSubtitleSupport private constructor(
 
         /** Returns null if disabled in settings or libass could not be loaded */
         fun createIfEnabled(context: Context): LibassSubtitleSupport? {
-            if (!isEnabled(context) || !LibassNative.load()) return null
+            if (!isEnabled(context) || LibassNative.load().isFailure) {
+                return null
+            }
             return try {
                 val library = LibassNative.libraryInit()
                 if (library == 0L) return null
