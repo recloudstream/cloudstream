@@ -1,4 +1,4 @@
-name: StreamX APK
+name: Flixy APK
 on:
   workflow_dispatch:
 jobs:
@@ -15,5 +15,5 @@ jobs:
       - run: ./gradlew assembleStableDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: streamx-apk
+          name: flixy-apk
           path: app/build/outputs/apk/**/*.apk
