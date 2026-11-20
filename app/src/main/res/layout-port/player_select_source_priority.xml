@@ -31,7 +31,6 @@
                 android:textColor="?attr/textColor"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/settings_btt"
                 style="@style/WhiteButton"
