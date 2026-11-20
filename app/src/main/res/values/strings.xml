@@ -743,7 +743,12 @@
     <string name="torrent_preferred_media">Enable torrent in Settings/Providers/Preferred media</string>
     <string name="torrent_not_accepted">Restart app and accept Stream Torrent pop-up to proceed.</string>
     <string name="software_decoding">Software decoding</string>
+    <string name="hardware_decoding">Hardware decoding</string>
+    <string name="hardware_then_software_decoding">Hardware, fallback Software</string>
+    <string name="software_decoding_video">Video software decoding</string>
+    <string name="software_decoding_audio">Audio software decoding</string>
     <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your device, but may cause laggy or unstable playback on high resolution.</string>
+    <string name="software_decoding_audio_desc">Audio software decoding enables more audio formats, fixes some no audio issues</string>
     <string name="volume_exceeded_100">Volume has exceeded 100%</string>
     <string name="slide_up_again_to_exceed_100">Slide up again to go beyond 100%</string>
     <string name="update_plugins">Update Plugins</string>
