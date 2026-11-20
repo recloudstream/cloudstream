@@ -20,7 +20,7 @@ class DataPreferenceStore(private val sharedPreferences: SharedPreferences) : Pr
     )
 
     companion object {
-        private val keyFlow: MutableSharedFlow<String?> =
+        val keyFlow: MutableSharedFlow<String?> =
             MutableSharedFlow(extraBufferCapacity = 16)
     }
 
@@ -47,13 +47,6 @@ class DataPreferenceStore(private val sharedPreferences: SharedPreferences) : Pr
     override fun getStringSet(key: String, defaultValue: Set<String>): PreferenceData<Set<String>> {
         return DataPreference.StringSetPrimitive(sharedPreferences, keyFlow, key, defaultValue)
     }
-
-    inline fun <reified T : Any> getJson(key: String, defaultValue: T): PreferenceData<T> =
-        getObjectFromString(key, defaultValue, serializer = { obj ->
-            obj.toJsonLiteral()
-        }, deserializer = { json ->
-            parseJson<T>(json)
-        })
 
     override fun <T> getObjectFromString(
         key: String,

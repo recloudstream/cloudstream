@@ -26,6 +26,74 @@ import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.check
 import org.jetbrains.compose.resources.painterResource
 
+@Composable
+fun FocusButton(
+    transparent: Boolean,
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var hasFocus by remember { mutableStateOf(false) }
+
+    val targetColor =
+        if (hasFocus) {
+            Colors.whiteButton
+        } else if (transparent) {
+            Colors.blackTransparentButton
+        } else {
+            Colors.blackButton
+        }
+
+    /*val containerColor by animateColorAsState(targetValue = targetColor.containerColor)
+    val contentColor by animateColorAsState(targetValue = targetColor.contentColor)
+    val animatedColor = ButtonColors(
+        containerColor = containerColor,
+        contentColor = contentColor,
+        disabledContainerColor = targetColor.disabledContainerColor,
+        disabledContentColor = targetColor.disabledContentColor
+    )*/
+
+    Button(
+        onClick = onClick,
+        colors = targetColor,
+        modifier = modifier.onFocusChanged { newFocus ->
+            hasFocus = newFocus.hasFocus
+        },
+    ) {
+        Text(text = text)
+    }
+}
+
+@Composable
+fun FocusIconButton(
+    transparent: Boolean = true,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource? = null,
+    shape: Shape = IconButtonDefaults.standardShape,
+    content: @Composable () -> Unit,
+) {
+    var hasFocus by remember { mutableStateOf(false) }
+
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.onFocusChanged { newFocus ->
+            hasFocus = newFocus.isFocused
+        },
+        enabled = enabled,
+        colors = if (hasFocus) {
+            Colors.whiteIcon
+        } else if (transparent) {
+            Colors.blackTransparentIcon
+        } else {
+            Colors.blackIcon
+        },
+        interactionSource = interactionSource,
+        shape = shape,
+        content = content
+    )
+}
 
 @Composable
 fun WhiteButton(

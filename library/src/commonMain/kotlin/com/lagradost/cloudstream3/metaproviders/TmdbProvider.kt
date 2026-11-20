@@ -3,10 +3,8 @@ package com.lagradost.cloudstream3.metaproviders
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.Actor
-import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.Episode
 import com.lagradost.cloudstream3.ErrorLoadingException
-import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
@@ -15,22 +13,20 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.MovieLoadResponse
-import com.lagradost.cloudstream3.MovieSearchResponse
 import com.lagradost.cloudstream3.ProviderType
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
-import com.lagradost.cloudstream3.TvSeriesSearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.addDate
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mainPageOf
 import com.lagradost.cloudstream3.newEpisode
 import com.lagradost.cloudstream3.newHomePageResponse
 import com.lagradost.cloudstream3.newMovieLoadResponse
 import com.lagradost.cloudstream3.newMovieSearchResponse
 import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
-import com.lagradost.cloudstream3.runAllAsync
 import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -117,9 +113,14 @@ open class TmdbProvider : MainAPI() {
         @JsonProperty("first_air_date") @SerialName("first_air_date") val firstAirDate: String? = null,
         @JsonProperty("media_type") @SerialName("media_type") val mediaType: String? = null, // for multi-search
     ) {
-        @get:JsonIgnore val isTv get() = name != null || mediaType == "tv"
-        @get:JsonIgnore val displayTitle get() = title ?: originalTitle ?: name ?: originalName ?: ""
-        @get:JsonIgnore val year get() = (releaseDate ?: firstAirDate)?.take(4)?.toIntOrNull()
+        @get:JsonIgnore
+        val isTv get() = name != null || mediaType == "tv"
+
+        @get:JsonIgnore
+        val displayTitle get() = title ?: originalTitle ?: name ?: originalName ?: ""
+
+        @get:JsonIgnore
+        val year get() = (releaseDate ?: firstAirDate)?.take(4)?.toIntOrNull()
     }
 
     @Serializable
@@ -194,6 +195,7 @@ open class TmdbProvider : MainAPI() {
         @JsonProperty("original_name") @SerialName("original_name") val originalName: String? = null,
         @JsonProperty("overview") @SerialName("overview") val overview: String? = null,
         @JsonProperty("poster_path") @SerialName("poster_path") val posterPath: String? = null,
+        @JsonProperty("backdrop_path") @SerialName("backdrop_path") val backdropPath: String? = null,
         @JsonProperty("first_air_date") @SerialName("first_air_date") val firstAirDate: String? = null,
         @JsonProperty("vote_average") @SerialName("vote_average") val voteAverage: Double? = null,
         @JsonProperty("genres") @SerialName("genres") val genres: List<TmdbGenre>? = null,
@@ -206,8 +208,11 @@ open class TmdbProvider : MainAPI() {
         @JsonProperty("similar") @SerialName("similar") val similar: TmdbPageResult? = null,
         @JsonProperty("content_ratings") @SerialName("content_ratings") val contentRatings: TmdbContentRatings? = null,
     ) {
-        @get:JsonIgnore val displayTitle get() = name ?: originalName ?: ""
-        @get:JsonIgnore val year get() = firstAirDate?.take(4)?.toIntOrNull()
+        @get:JsonIgnore
+        val displayTitle get() = name ?: originalName ?: ""
+
+        @get:JsonIgnore
+        val year get() = firstAirDate?.take(4)?.toIntOrNull()
     }
 
     @Serializable
@@ -217,6 +222,7 @@ open class TmdbProvider : MainAPI() {
         @JsonProperty("original_title") @SerialName("original_title") val originalTitle: String? = null,
         @JsonProperty("overview") @SerialName("overview") val overview: String? = null,
         @JsonProperty("poster_path") @SerialName("poster_path") val posterPath: String? = null,
+        @JsonProperty("backdrop_path") @SerialName("backdrop_path") val backdropPath: String? = null,
         @JsonProperty("release_date") @SerialName("release_date") val releaseDate: String? = null,
         @JsonProperty("vote_average") @SerialName("vote_average") val voteAverage: Double? = null,
         @JsonProperty("genres") @SerialName("genres") val genres: List<TmdbGenre>? = null,
@@ -229,8 +235,11 @@ open class TmdbProvider : MainAPI() {
         @JsonProperty("similar") @SerialName("similar") val similar: TmdbPageResult? = null,
         @JsonProperty("release_dates") @SerialName("release_dates") val releaseDates: TmdbReleaseDates? = null,
     ) {
-        @get:JsonIgnore val displayTitle get() = title ?: originalTitle ?: ""
-        @get:JsonIgnore val year get() = releaseDate?.take(4)?.toIntOrNull()
+        @get:JsonIgnore
+        val displayTitle get() = title ?: originalTitle ?: ""
+
+        @get:JsonIgnore
+        val year get() = releaseDate?.take(4)?.toIntOrNull()
     }
 
     private fun getImageUrl(link: String?): String? {
@@ -243,7 +252,10 @@ open class TmdbProvider : MainAPI() {
         else "https://www.themoviedb.org/movie/${id ?: -1}"
     }
 
-    private suspend fun getApi(path: String, extraParams: Map<String, String> = emptyMap()): String {
+    private suspend fun getApi(
+        path: String,
+        extraParams: Map<String, String> = emptyMap()
+    ): String {
         val params = buildMap {
             put("api_key", tmdbApiKey)
             putAll(extraParams)
@@ -358,6 +370,7 @@ open class TmdbProvider : MainAPI() {
             episodes,
         ) {
             posterUrl = getImageUrl(posterPath)
+            backgroundPosterUrl = getImageUrl(backdropPath)
             this.year = this@toLoadResponse.year
             plot = overview
             addImdbId(externalIds?.imdbId)
@@ -387,6 +400,7 @@ open class TmdbProvider : MainAPI() {
             ).toJson()
         ) {
             posterUrl = getImageUrl(posterPath)
+            backgroundPosterUrl = getImageUrl(backdropPath)
             this.year = this@toLoadResponse.year
             plot = overview
             addImdbId(imdbId ?: externalIds?.imdbId)
@@ -404,42 +418,36 @@ open class TmdbProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        var discoverMovies: List<MovieSearchResponse> = listOf()
-        var discoverSeries: List<TvSeriesSearchResponse> = listOf()
-        var topMovies: List<MovieSearchResponse> = listOf()
-        var topSeries: List<TvSeriesSearchResponse> = listOf()
-        runAllAsync(
-            {
-                discoverMovies = parseJson<TmdbPageResult>(
-                    getApi("/discover/movie", mapOf("page" to "$page"))
-                ).results?.map { it.toSearchResponse() as MovieSearchResponse } ?: listOf()
-            },
-            {
-                discoverSeries = parseJson<TmdbPageResult>(
-                    getApi("/discover/tv", mapOf("page" to "$page"))
-                ).results?.map { it.toSearchResponse() as TvSeriesSearchResponse } ?: listOf()
-            },
-            {
-                topMovies = parseJson<TmdbPageResult>(
-                    getApi("/movie/top_rated", mapOf("page" to "$page", "language" to "en-US", "region" to "US"))
-                ).results?.map { it.toSearchResponse() as MovieSearchResponse } ?: listOf()
-            },
-            {
-                topSeries = parseJson<TmdbPageResult>(
-                    getApi("/tv/top_rated", mapOf("page" to "$page", "language" to "en-US"))
-                ).results?.map { it.toSearchResponse() as TvSeriesSearchResponse } ?: listOf()
-            },
-        )
+    override val mainPage = mainPageOf(
+        "0" to "Popular Movies",
+        "1" to "Popular Series",
+        "2" to "Top Movies",
+        "3" to "Top Series",
+    )
 
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
+        val list = when (request.data.toIntOrNull()) {
+            0 -> {
+                getApi("/discover/movie", mapOf("page" to "$page"))
+            }
+            1 -> {
+                getApi("/discover/tv", mapOf("page" to "$page"))
+            }
+            2 -> {
+                getApi(
+                    "/movie/top_rated",
+                    mapOf("page" to "$page", "language" to "en-US", "region" to "US")
+                )
+            }
+            3 -> {
+                getApi("/tv/top_rated", mapOf("page" to "$page", "language" to "en-US"))
+            }
+            else -> null
+        }
         return newHomePageResponse(
-            listOf(
-                HomePageList("Popular Movies", discoverMovies),
-                HomePageList("Popular Series", discoverSeries),
-                HomePageList("Top Movies", topMovies),
-                HomePageList("Top Series", topSeries),
-            )
-        )
+            request.name,
+            list?.let { parseJson<TmdbPageResult>(it) }?.results?.map { it.toSearchResponse() }
+                ?: emptyList())
     }
 
     open fun loadFromImdb(imdb: String, seasons: List<TmdbSeasonSummary>): LoadResponse? = null

@@ -22,6 +22,7 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.collections.immutable.toPersistentSet
+import kotlin.uuid.Uuid
 
 /** Default filter function by matching the name, useful for local search */
 @Immutable
@@ -104,6 +105,12 @@ data class SortByName<Value>(
         if (p0 == null) return -1
         if (p1 == null) return 1
         return transform(p0).compareTo(transform(p1), ignoreCase)
+    }
+}
+
+fun <T> sortByUuid(keyExtractor: ((T) -> Uuid)): Comparator<T> {
+    return Comparator { c1: T, c2: T ->
+        keyExtractor(c1).compareTo(keyExtractor(c2))
     }
 }
 

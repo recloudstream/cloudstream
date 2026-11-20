@@ -1,5 +1,8 @@
 package com.mihon.common.preference
 
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJsonLiteral
+
 interface PreferenceStore {
 
     fun getString(key: String, defaultValue: String = ""): PreferenceData<String>
@@ -37,6 +40,13 @@ interface PreferenceStore {
 
     fun getAll(): Map<String, *>
 }
+
+inline fun <reified T : Any> PreferenceStore.getJson(key: String, defaultValue: T): PreferenceData<T> =
+    getObjectFromString(key, defaultValue, serializer = { obj ->
+        obj.toJsonLiteral()
+    }, deserializer = { json ->
+        parseJson<T>(json)
+    })
 
 fun PreferenceStore.getLongArray(
     key: String,
