@@ -96,7 +96,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
     protected var androidTVInterfaceOffSeekTime = 10000L
     protected var androidTVInterfaceOnSeekTime = 30000L
-    protected var playBackSpeedEnabled = false
+    protected var playBackSpeedEnabled = true
     protected var playerResizeEnabled = false
     protected var playerRotateEnabled = false
     protected var rotatedManually = false
@@ -639,7 +639,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         binding.speedText.text = "%.2fx".format(speed).replace(".0x", "x")
         // Android crashes if you don't round to an exact step size
         binding.speedBar.value =
-            (speed.coerceIn(0.1f, 2.0f) / binding.speedBar.stepSize).roundToInt()
+            (speed.coerceIn(PlaybackSpeeds.MIN_SPEED, PlaybackSpeeds.MAX_DIALOG_SPEED) / binding.speedBar.stepSize).roundToInt()
                 .toFloat() * binding.speedBar.stepSize
     }
 
@@ -655,10 +655,15 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         updateSpeedDialogBinding(binding)
         for ((view, speed) in arrayOf(
             binding.speed25 to 0.25f,
+            binding.speed50 to 0.5f,
+            binding.speed75 to 0.75f,
             binding.speed100 to 1.0f,
             binding.speed125 to 1.25f,
             binding.speed150 to 1.5f,
+            binding.speed175 to 1.75f,
             binding.speed200 to 2.0f,
+            binding.speed300 to 3.0f,
+            binding.speed400 to 4.0f,
         )) {
             view.setOnClickListener {
                 setPlayBackSpeed(speed)
@@ -667,12 +672,12 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
 
         binding.speedMinus.setOnClickListener {
-            setPlayBackSpeed(maxOf((player.getPlaybackSpeed() - 0.1f), 0.1f))
+            setPlayBackSpeed(maxOf(player.getPlaybackSpeed() - 0.1f, PlaybackSpeeds.MIN_SPEED))
             updateSpeedDialogBinding(binding)
         }
 
         binding.speedPlus.setOnClickListener {
-            setPlayBackSpeed(minOf((player.getPlaybackSpeed() + 0.1f), 2.0f))
+            setPlayBackSpeed(minOf(player.getPlaybackSpeed() + 0.1f, PlaybackSpeeds.MAX_DIALOG_SPEED))
             updateSpeedDialogBinding(binding)
         }
 
@@ -1410,7 +1415,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
                 playBackSpeedEnabled = settingsManager.getBoolean(
                     ctx.getString(R.string.playback_speed_enabled_key),
-                    false
+                    true
                 )
                 playBackCompressorEnabled = settingsManager.getBoolean(
                     ctx.getString(R.string.compressor_enabled_key),
