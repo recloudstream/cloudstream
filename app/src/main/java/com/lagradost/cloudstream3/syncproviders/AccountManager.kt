@@ -74,23 +74,33 @@ abstract class AccountManager {
             SubtitleRepo(subSourceApi)
         )
 
-        fun updateAccountIds() {
-            val ids = mutableMapOf<String, Int>()
+        /**
+         * Reloads the active profile's authentication state into the in-memory caches.
+         *
+         * Auth tokens and selected account IDs are stored per profile, but AuthRepo reads
+         * from these shared caches. Both caches must therefore be refreshed when the
+         * selected profile changes.
+         */
+        fun updateCurrentAccount() {
+            val accountCache = mutableMapOf<String, Array<AuthData>>()
+            val idCache = mutableMapOf<String, Int>()
             for (api in allApis) {
-                ids.put(
-                    api.idPrefix,
-                    getKey<Int>(
-                        ACCOUNT_IDS,
-                        "${api.idPrefix}/${DataStoreHelper.currentAccount}",
-                        NONE_ID
-                    ) ?: NONE_ID
-                )
+                accountCache[api.idPrefix] = accounts(api.idPrefix)
+                idCache[api.idPrefix] = getKey<Int>(
+                    ACCOUNT_IDS,
+                    "${api.idPrefix}/${DataStoreHelper.currentAccount}",
+                    NONE_ID
+                ) ?: NONE_ID
+            }
+            synchronized(cachedAccounts) {
+                cachedAccounts.clear()
+                cachedAccounts.putAll(accountCache)
             }
             synchronized(cachedAccountIds) {
-                cachedAccountIds = ids
+                cachedAccountIds.clear()
+                cachedAccountIds.putAll(idCache)
             }
         }
-
         init {
             val data = mutableMapOf<String, Array<AuthData>>()
             val ids = mutableMapOf<String, Int>()
