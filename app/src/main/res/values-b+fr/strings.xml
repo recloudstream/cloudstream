@@ -23,7 +23,7 @@
     <string name="type_dropped">Abandonné</string>
     <string name="type_plan_to_watch">À regarder</string>
     <string name="play_movie_button">Lire</string>
-    <string name="play_torrent_button">Streamer le Torrent</string>
+    <string name="play_torrent_button">Jouer le Torrent</string>
     <string name="pick_source">Sources</string>
     <string name="pick_subtitle">Sous-titres</string>
     <string name="reload_error">Réessayer la connection…</string>
@@ -241,7 +241,7 @@
     <string name="normal_no_plot">Aucune trace trouvée</string>
     <string name="torrent_no_plot">Aucune description trouvée</string>
     <string name="show_log_cat">Afficher le Logcat 🐈</string>
-    <string name="picture_in_picture">Picture-in-picture</string>
+    <string name="picture_in_picture">Lecteur miniature flottant</string>
     <string name="picture_in_picture_des">Poursuite de la lecture dans un lecteur miniature au-dessus d\'autres applications</string>
     <string name="player_size_settings">Bouton de redimensionnement du lecteur</string>
     <string name="player_size_settings_des">Supprimer les bordures noires</string>
@@ -250,7 +250,7 @@
     <string name="chromecast_subtitles_settings">Sous-titres Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Paramètres des sous-titres Chromecast</string>
     <string name="eigengraumode_settings">Vitesse de lecture</string>
-    <string name="swipe_to_seek_settings">Balayez pour chercher</string>
+    <string name="swipe_to_seek_settings">Glisser vers le haut ou le bas depuis le côté gauche ou droit pour modifier la luminosité ou le volume</string>
     <string name="swipe_to_seek_settings_des">Balayez d\'un côté ou de l\'autre pour contrôler la position dans la vidéo</string>
     <string name="swipe_to_change_settings">Balayez pour modifier les paramètres</string>
     <string name="swipe_to_change_settings_des">Glissez vers le haut ou le bas depuis le côté gauche ou droit pour modifier la luminosité ou le volume</string>
@@ -360,7 +360,7 @@
     <string name="nsfw">NSFW</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/ ??</string>
+    <string name="sync_total_episodes_none">/ ??a</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="quality_sd">SD</string>
     <string name="quality_uhd">UHD</string>
@@ -761,11 +761,13 @@
     <string name="compressor_preset_light">Légère</string>
     <string name="compressor_preset_dialog">Booster les dialogues</string>
     <string name="compressor_preset_heavy">Lourd</string>
-    <string name="compressor_threshold_label">Décibels max: %d dB</string>
+    <string name="compressor_threshold_label">Décibels max : %d dB</string>
     <string name="compressor_makeup_hint">Augmente le volume total de +%d dB</string>
     <string name="background">Arrière plan</string>
     <string name="edit_profile_image_url">Url</string>
     <string name="edit_profile_image_picker">Choisir une image</string>
     <string name="edit_profile_image_default">Images par défaut</string>
-    <string name="compressor_threshold_hint">Les sons plus fort que %d dB seront baisser</string>
+    <string name="compressor_threshold_hint">Les sons plus fort que %d dB seront baissée</string>
+    <string name="installed_plugins">Modules installés</string>
+    <string name="compressor_makeup_label">Montage de Gain : +%d dB</string>
 </resources>
