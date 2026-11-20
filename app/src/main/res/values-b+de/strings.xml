@@ -365,7 +365,7 @@
     <string name="error_invalid_url">Ungültige URL</string>
     <string name="error">Fehler</string>
     <string name="subtitles_remove_captions">Softsubs aus Untertiteln entfernen</string>
-    <string name="subtitles_remove_bloat">Entfernt Schrott aus Untertiteln (z.B. Werbung)</string>
+    <string name="subtitles_remove_bloat">Werbung aus Untertiteln entfernen</string>
     <string name="subtitles_filter_lang">Nach bevorzugter Mediensprache filtern</string>
     <string name="extras">Extras</string>
     <string name="trailer">Trailer</string>
@@ -744,4 +744,5 @@
         <item quantity="one">%d ausgeblendeter Link</item>
         <item quantity="other">%d ausgeblendete Links</item>
     </plurals>
+    <string name="subs_edge">Rand</string>
 </resources>

@@ -764,7 +764,7 @@
     <string name="compressor_makeup_hint">Aumenta el volumen general en +%d dB</string>
     <string name="compressor_threshold_hint">Sonidos más fuertes que %d dB son rechazados</string>
     <string name="background">Fondo</string>
-    <string name="edit_profile_image_url">URL</string>
+    <string name="edit_profile_image_url">Url</string>
     <string name="edit_profile_image_picker">Selector de imágenes</string>
     <string name="edit_profile_image_default">Imágenes por defecto</string>
     <string name="installed_plugins">Complementos instalados</string>
