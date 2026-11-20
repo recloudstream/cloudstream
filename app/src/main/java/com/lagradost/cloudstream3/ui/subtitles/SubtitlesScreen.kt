@@ -44,12 +44,9 @@ import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.defau
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.saveStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.subtitleStyleState
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-import com.lagradost.cloudstream3.utils.AppUtils.toJsonLiteral
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
 import com.lagradost.cloudstream4.compose.ActionDialog
-import com.mihon.common.preference.AndroidPreferenceStore
-import com.mihon.common.preference.DataPreferenceStore
+import com.lagradost.cloudstream4.rememberDatabase
 import com.mihon.common.preference.StatePreferenceStore
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
@@ -173,17 +170,12 @@ object SubtitlesScreen : SearchableSettings {
     @Composable
     override fun getPreferences(): List<Preference> {
         val store = StatePreferenceStore(subtitleStyleState)
-        val dataStore = DataPreferenceStore(LocalContext.current)
-        val androidStore = AndroidPreferenceStore(LocalContext.current)
+        val db = rememberDatabase()
 
-        val subtitlesFilterSubLang = androidStore.getBoolean("filter_sub_lang_key", false)
-        val autoSelectSubtitles = dataStore.getString(SUBTITLE_AUTO_SELECT_KEY, "en")
-        val downloadSubsLanguage =
-            dataStore.getObjectFromString(SUBTITLE_DOWNLOAD_KEY, setOf("en"), serializer = { obj ->
-                obj.toList().toJsonLiteral()
-            }, deserializer = { json ->
-                parseJson<List<String>>(json).toSet()
-            })
+        /** This is a bit wonky due to backwards compatibility */
+        val subtitlesFilterSubLang = db.settings.general.subtitlesFilterSubLanguage
+        val autoSelectSubtitles = db.general.autoSelectSubtitles
+        val downloadSubsLanguage = db.general.downloadSubsLanguage
 
         val subtitleFileSelector =
             rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->

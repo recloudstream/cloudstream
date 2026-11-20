@@ -557,14 +557,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }*/
 
         binding?.apply {
-            navRailView.isVisible = isNavVisible && isLandscape()
+            navRailView.isVisible = isNavVisible && isLandscape() && !isLayout(TV)
             navView.isVisible = isNavVisible && !isLandscape()
             navHostFragment.apply {
-                val marginPx = resources.getDimensionPixelSize(R.dimen.nav_rail_view_width)
+                //val marginPx = resources.getDimensionPixelSize(R.dimen.nav_rail_view_width)
                 layoutParams =
                     (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                        marginStart =
-                            if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
+                        marginStart = 0
+                            //if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
                     }
             }
 
