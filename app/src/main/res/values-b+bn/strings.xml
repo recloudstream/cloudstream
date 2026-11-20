@@ -247,7 +247,7 @@
     <string name="video_skip_op">ওপেনিং স্কিপ করুন</string>
     <string name="video_buffer_disk_settings">ডিক্সের ভিডিও ক্যাশ</string>
     <string name="video_buffer_clear_settings">ভিডিও এবং ইমেজ ক্যাশ পরিস্কার করুন</string>
-    <string name="video_ram_description">অ্যান্ড্রয়েড টিভির মতো, কম মেমরির ডিভাইসে খুব বেশি সেট করা হলে ক্র্যাশ করবে</string>
+    <string name="video_ram_description">অ্যান্ড্রয়েড টিভির মতো, কম মেমরির ডিভাইসে খুব বেশি সেট করা হলে ক্র্যাশ করবে।</string>
     <string name="dns_pref">ডিএনএস ওভার এইচটিটিপিএস</string>
     <string name="add_site_summary">একটি ভিন্ন URL সহ একটি বিদ্যমান সাইটের, একটি ক্লোন যোগ করুন</string>
     <string name="resize_fit">স্ক্রিনে ফিট করুন</string>
@@ -578,7 +578,7 @@
     <string name="dismiss">বাতিল</string>
     <string name="open_downloaded_repo">রিপোজিটরি খুলুন</string>
     <string name="battery_dialog_title">ব্যাটারি অপ্টিমাইজেশন নিষ্ক্রিয় করুন</string>
-    <string name="battery_dialog_message">সাবস্ক্রাইব করা টিভি শোগুলোর নিরবচ্ছিন্ন ডাউনলোড এবং নোটিফিকেশন নিশ্চিত করতে CloudStream-এর ব্যাকগ্রাউন্ডে চলার অনুমতি প্রয়োজন। ঠিক আছে চাপলে একটি অনুমতির ডায়ালগ দেখানো হবে।\n\nঅনুগ্রহ করে \'অনুমতি দিন\' চাপুন।\n\nমনে রাখবেন, এই অনুমতির কারণে CS3 আপনার অতিরিক্ত ব্যাটারি খরচ করবে না। এটি কেবল প্রয়োজনের সময়ই ব্যাকগ্রাউন্ডে কাজ করবে, যেমন অফিসিয়াল এক্সটেনশন থেকে ভিডিও ডাউনলোড বা নোটিফিকেশন প্রাপ্তির সময়।</string>
+    <string name="battery_dialog_message">সাবস্ক্রাইব করা টিভি শো-এর জন্য নিরবচ্ছিন্ন ডাউনলোড ও নোটিফিকেশন নিশ্চিত করতে, CloudStream-কে ব্যাকগ্রাউন্ডে চলার অনুমতি প্রয়োজন। OK চাপলে আপনাকে একটি অনুরোধ ডায়ালগ দেখানো হবে। অনুগ্রহ করে \'Allow\' চাপুন।\n\nঅনুগ্রহ করে মনে রাখবেন, এই অনুমতির অর্থ এই নয় যে CS3 আপনার ব্যাটারি শেষ করে দেবে। এটি কেবল প্রয়োজন হলে ব্যাকগ্রাউন্ডে চলবে, যেমন নোটিফিকেশন গ্রহণ বা অফিসিয়াল এক্সটেনশন থেকে ভিডিও ডাউনলোডের সময়।</string>
     <string name="app_unrestricted_toast">অ্যাপের ব্যাটারি ব্যবহার ইতোমধ্যে সীমাবদ্ধতাহীন হিসেবে সেট করা আছে</string>
     <string name="app_info_intent_error">CloudStream-এর অ্যাপের তথ্য খোলা যাচ্ছে না।</string>
     <string name="update_notification_downloading">অ্যাপ আপডেট ডাউনলোড হচ্ছে…</string>
@@ -606,7 +606,7 @@
     <string name="sort_button_date">তারিখ %s</string>
     <string name="select_library">লাইব্রেরি নির্বাচন করুন</string>
     <string name="open_with">এর মাধ্যমে খুলুন</string>
-    <string name="empty_library_no_accounts_message">আপনার লাইব্রেরি খালি :(\n\nএকটি লাইব্রেরি অ্যাকাউন্টে লগইন করুন অথবা আপনার স্থানীয় লাইব্রেরিতে শো যোগ করুন।</string>
+    <string name="empty_library_no_accounts_message">আপনার লাইব্রেরি খালি :( \nএকটি লাইব্রেরি অ্যাকাউন্টে লগইন করুন অথবা আপনার স্থানীয় লাইব্রেরিতে শো যোগ করুন।</string>
     <string name="empty_library_logged_in_message">এই তালিকাটি খালি। অন্য একটিতে পরিবর্তন করে চেষ্টা করুন।</string>
     <string name="safe_mode_file">সেফ মোড ফাইল পাওয়া গেছে!\nফাইলটি না সরানো পর্যন্ত স্টার্টআপে কোনো এক্সটেনশন লোড করা হবে না।</string>
     <string name="revert">পূর্বাবস্থায় ফেরান</string>
@@ -634,7 +634,7 @@
     <string name="source_priority_help">প্লেয়ারে ভিডিওর উৎসগুলো কীভাবে সাজানো হবে তা নির্ধারণ করুন</string>
     <string name="profiles">প্রোফাইলসমূহ</string>
     <string name="help">সাহায্য</string>
-    <string name="quality_profile_help">এখানে আপনি উৎসগুলোর অগ্রাধিকার ক্রম পরিবর্তন করতে পারেন। কোনো ভিডিওর অগ্রাধিকার বেশি হলে সেটি উৎস নির্বাচনের তালিকায় সবার উপরে থাকবে।\n\nউৎসের অগ্রাধিকার এবং কোয়ালিটির অগ্রাধিকারের যোগফল হলো ভিডিওর অগ্রাধিকার।\n\nউৎস A: 3\nকোয়ালিটি B: 7\nসম্মিলিত ভিডিও অগ্রাধিকার হবে 10।\n\nমনে রাখবেন: যোগফল 10 বা তার বেশি হলে সেই লিঙ্ক লোড হওয়ার সময় প্লেয়ার স্বয়ংক্রিয়ভাবে লোডিং এড়িয়ে যাবে!</string>
+    <string name="quality_profile_help">এখানে আপনি উৎসগুলোর ক্রম কীভাবে সাজানো হবে তা পরিবর্তন করতে পারেন। কোনো ভিডিওর প্রায়োরিটি বেশি হলে উৎস নির্বাচনে সেটি উপরে দেখাবে। উৎসের প্রায়োরিটি এবং কোয়ালিটি প্রায়োরিটির যোগফলই হলো ভিডিও প্রায়োরিটি।\n\nউৎস A: 3\nকোয়ালিটি B: 7\nএর সম্মিলিত ভিডিও প্রায়োরিটি হবে 10।\n\nদ্রষ্টব্য: যোগফল 10 বা তার বেশি হলে, সেই লিংক লোড হওয়ার সময় প্লেয়ার স্বয়ংক্রিয়ভাবে লোডিং এড়িয়ে যাবে!</string>
     <string name="qualities">কোয়ালিটিসমূহ</string>
     <string name="profile_background_des">প্রোফাইলের ব্যাকগ্রাউন্ড</string>
     <string name="unable_to_inflate">UI সঠিকভাবে তৈরি করা যায়নি, এটি একটি গুরুতর ত্রুটি এবং অবিলম্বে রিপোর্ট করা উচিত %s</string>
@@ -679,7 +679,7 @@
     <string name="biometric_warning">আপনার CloudStream ডেটা এখন ব্যাকআপ করা হয়েছে। এমনটি ঘটার সম্ভাবনা অত্যন্ত কম হলেও প্রতিটি ডিভাইস ভিন্নভাবে আচরণ করতে পারে। বিরল ক্ষেত্রে যদি অ্যাপ অ্যাক্সেস করা থেকে লক হয়ে যান, তবে সম্পূর্ণ অ্যাপ ডেটা পরিষ্কার করুন এবং ব্যাকআপ থেকে পুনরুদ্ধার করুন। এর ফলে উদ্ভূত যেকোনো অসুবিধার জন্য আমরা আন্তরিকভাবে দুঃখিত।</string>
     <string name="reset_btn">রিসেট</string>
     <string name="cs3wiki">CloudStream উইকি</string>
-    <string name="device_pin_url_message">ভিজিট করুন</string>
+    <string name="device_pin_url_message"><b>%s</b> আপনার স্মার্টফোন বা কম্পিউটারে ভিজিট করুন এবং উপরের কোডটি প্রবেশ করান</string>
     <string name="device_pin_error_message">ডিভাইসের PIN কোড পাওয়া যাচ্ছে না, স্থানীয় প্রমাণীকরণ চেষ্টা করুন</string>
     <string name="device_pin_expired_message">PIN কোডের মেয়াদ শেষ হয়েছে!</string>
     <string name="device_pin_counter_text">কোডের মেয়াদ শেষ হতে বাকি: %1$dm %2$ds</string>
@@ -728,7 +728,7 @@
     <string name="speedup_title">চাপ দিয়ে গতি বাড়ানো</string>
     <string name="speedup_summary">২ গুণ গতি পেতে চেপে ধরে রাখুন</string>
     <string name="edit_profile_image_title">প্রোফাইল ছবি সম্পাদনা করুন</string>
-    <string name="edit_profile_image_url">URL</string>
+    <string name="edit_profile_image_url">Url</string>
     <string name="edit_profile_image_picker">ছবি নির্বাচক</string>
     <string name="edit_profile_image_default">ডিফল্ট ছবিসমূহ</string>
     <string name="edit_profile_image_hint">প্রোফাইল ছবির URL লিখুন</string>
@@ -765,4 +765,5 @@
         <item quantity="other">%dটি ডাউনলোড কিউতে আছে</item>
     </plurals>
     <string name="player_is_live">সরাসরি</string>
+    <string name="installed_plugins">ইনস্টল করা প্লাগইন</string>
 </resources>

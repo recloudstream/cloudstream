@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.network
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.mvvm.safe

@@ -761,4 +761,21 @@
     <string name="background">Nền</string>
     <string name="subs_edge">Góc</string>
     <string name="start_paused_settings_des">Giảm bớt căng thẳng khi chọn nguồn phát</string>
+    <string name="compressor">Bộ nén âm thanh</string>
+    <string name="compressor_setting">Bộ nén dải động âm thanh</string>
+    <string name="compressor_setting_summary">Hiển thị nút điều khiển bộ nén âm thanh trong trình phát (giúp cân bằng âm thanh lớn/nhỏ)</string>
+    <string name="compressor_on">Bật</string>
+    <string name="compressor_on_format">Bật · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Tắt</string>
+    <string name="compressor_preset_light">Nhẹ</string>
+    <string name="compressor_preset_dialog">Tăng âm lượng lời thoại</string>
+    <string name="compressor_preset_heavy">Mạnh</string>
+    <string name="compressor_threshold_label">Ngưỡng: %d dB</string>
+    <string name="compressor_makeup_label">Bù Độ lợi: +%d dB</string>
+    <string name="compressor_threshold_hint">Âm thanh lớn hơn %d dB sẽ bị chỉnh nhỏ lại</string>
+    <string name="compressor_makeup_hint">Tăng tổng thể âm lượng +%d dB</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">Trình chọn ảnh</string>
+    <string name="edit_profile_image_default">Ảnh mặc định</string>
+    <string name="installed_plugins">Tiện ích mở rộng đã cài đặt</string>
 </resources>

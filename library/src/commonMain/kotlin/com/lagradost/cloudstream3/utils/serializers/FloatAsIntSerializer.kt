@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils.serializers
 
-import com.lagradost.cloudstream3.Prerelease
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -25,7 +24,6 @@ import kotlinx.serialization.json.intOrNull
  *       @SerialName("count") val count: Int = 0,
  *   )
  */
-@Prerelease
 object FloatAsIntSerializer : KSerializer<Int> {
 
     override val descriptor: SerialDescriptor =

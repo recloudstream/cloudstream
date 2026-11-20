@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils.serializers
 
-import com.lagradost.cloudstream3.Prerelease
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
@@ -27,7 +26,6 @@ import kotlinx.serialization.json.decodeFromJsonElement
  *       @SerialName("title") val title: String? = null,
  *   )
  */
-@Prerelease
 object NullableStringSerializer : KSerializer<String?> {
 
     override val descriptor: SerialDescriptor =

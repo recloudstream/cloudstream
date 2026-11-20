@@ -32,7 +32,7 @@
     <string name="download_queue">Radhë shkarkimesh</string>
     <string name="title_settings">Cilësimet</string>
     <string name="search_hint">Kërko…</string>
-    <string name="search_hint_site" formatted="true">Kërko %s…</string>
+    <string name="search_hint_site" formatted="true">Kërko në %s…</string>
     <string name="speech_recognition_unavailable">Njohja e të folurit nuk është e disponueshme</string>
     <string name="begin_speaking">Fillo të flasësh…</string>
     <string name="no_data">Nuk ka të dhëna</string>
@@ -165,7 +165,7 @@
     <string name="episode_sync_settings">Përditëso progresin e shikimit</string>
     <string name="episode_sync_settings_des">Sinkronizo automatikisht progresin e episodit aktual</string>
     <string name="restore_settings">Rikthe të dhënat nga kopja rezervë</string>
-    <string name="backup_settings">Të dhënat e kopjes rezervë</string>
+    <string name="backup_settings">Kopjo të dhënat</string>
     <string name="backup_frequency">Shpeshtësia e kopjimit rezervë</string>
     <string name="restore_success">Kopja rezervë u ngarkua</string>
     <string name="restore_failed_format" formatted="true">Dështoi rikthimi i të dhënave nga skedari %s</string>
@@ -175,7 +175,7 @@
     <string name="search">Kërko</string>
     <string name="library">Bilblioteka</string>
     <string name="category_account">Llogaritë dhe Siguria</string>
-    <string name="category_updates">Përditësime dhe Kopje Rezervë</string>
+    <string name="category_updates">Përditësimet dhe Kopja Rezervë</string>
     <string name="settings_info">Informacion</string>
     <string name="advanced_search">Kërkim i avancuar</string>
     <string name="advanced_search_des">Tregon rezultatet e kërkimit të ndara sipas ofruesit</string>
@@ -254,7 +254,7 @@
     <string name="queued">në rradhë</string>
     <string name="no_subtitles">Pa titra</string>
     <string name="action_default">Parazgjedhur</string>
-    <string name="free_storage">Falas</string>
+    <string name="free_storage">Të lira</string>
     <string name="used_storage">Përdorur</string>
     <string name="app_storage">Aplikacion</string>
     <string name="movies">Filmat</string>
@@ -310,7 +310,7 @@
     <string name="poster_ui_settings">Zgjidh elementët e ndërfaqes mbi poster</string>
     <string name="no_update_found">Nuk u gjet asnjë përditësim</string>
     <string name="check_for_update">Kontrollo për përditësime</string>
-    <string name="video_lock">Çelës</string>
+    <string name="video_lock">Kyç</string>
     <string name="video_aspect_ratio_resize">Ndrysho madhësinë</string>
     <string name="video_source">Burimi</string>
     <string name="video_skip_op">Kalo Intron</string>
@@ -440,8 +440,8 @@
     <string name="home_random">Rastësor</string>
     <string name="coming_soon">Së shpejti…</string>
     <string name="quality_cam">Kamera</string>
-    <string name="quality_cam_rip">Kamera</string>
-    <string name="quality_cam_hd">Kamera</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -467,7 +467,7 @@
     <string name="error_invalid_url">URL e pavlefshme</string>
     <string name="error">Gabim</string>
     <string name="subtitles_remove_captions">Hiq titrat e mbyllura</string>
-    <string name="subtitles_remove_bloat">Hiq të tepërtat nga titrat</string>
+    <string name="subtitles_remove_bloat">Hiq reklamat nga titrat</string>
     <string name="subtitles_filter_lang">Filtro sipas gjuhës së preferuar të medias</string>
     <string name="extras">Ekstra</string>
     <string name="trailer">Traileri</string>
@@ -744,4 +744,26 @@
     </plurals>
     <string name="tv_layout_clock_settings">Shfaq orën në kohë reale</string>
     <string name="tv_layout_clock_settings_des">Shfaq një orë në krye të ekranit. Aplikohet në faqen kryesore dhe në luajtës</string>
+    <string name="subs_edge">Konturi</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings">Nis videot në pauzë</string>
+    <string name="start_paused_settings_des">Zvogëlo stresin kur zgjedh burimet</string>
+    <string name="compressor">Kompresor</string>
+    <string name="compressor_setting">Kompresor i gamës dinamike</string>
+    <string name="compressor_setting_summary">Shfaq kontrollet e kompresorit në luajtës (ndihmon në balancimin e zërave të lartë/të ulët)</string>
+    <string name="compressor_on">Ndezur</string>
+    <string name="compressor_on_format">Ndezur · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Fikur</string>
+    <string name="compressor_preset_light">I lehtë</string>
+    <string name="compressor_preset_dialog">Përforcues i dialogut</string>
+    <string name="compressor_preset_heavy">I rëndë</string>
+    <string name="compressor_threshold_label">Niveli i aktivizimit: %d dB</string>
+    <string name="compressor_makeup_label">Kompensimi i volumit: +%d dB</string>
+    <string name="compressor_threshold_hint">Zërat më të lartë se %d dB ulen</string>
+    <string name="compressor_makeup_hint">Rrit volumin e përgjithshëm me +%d dB</string>
+    <string name="background">Sfondi</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">Zgjidh imazhin</string>
+    <string name="edit_profile_image_default">Imazhet e parazgjedhura</string>
+    <string name="installed_plugins">Shtesat e instaluara</string>
 </resources>

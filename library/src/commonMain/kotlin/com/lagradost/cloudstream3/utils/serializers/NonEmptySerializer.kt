@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils.serializers
 
-import com.lagradost.cloudstream3.Prerelease
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement

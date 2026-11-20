@@ -788,7 +788,6 @@ fun sortUrls(urls: Set<ExtractorLink>): List<ExtractorLink> {
  * splitUrlParameters(Url("https://example.com/path?foo=bar&baz=qux"))
  * // returns {"foo": "bar", "baz": "qux"}
  */
-@Prerelease
 fun splitUrlParameters(url: Url): Map<String, String> {
     return url.parameters.entries().associate { (key, values) -> key to values.firstOrNull().orEmpty() }
 }
@@ -807,7 +806,6 @@ fun splitUrlParameters(url: Url): Map<String, String> {
  * splitUrlParameters("https://example.com/path?foo=bar&baz=qux")
  * // returns {"foo": "bar", "baz": "qux"}
  */
-@Prerelease
 fun splitUrlParameters(url: String): Map<String, String> {
     return splitUrlParameters(Url(url))
 }
