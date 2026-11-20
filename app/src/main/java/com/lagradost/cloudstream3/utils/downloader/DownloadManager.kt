@@ -71,7 +71,6 @@ import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.CreateNotific
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadEpisodeMetadata
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadItem
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadResumePackage
-import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadStatus
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadedFileInfo
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadedFileInfoResult
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.LazyStreamDownloadResponse
@@ -167,33 +166,64 @@ object VideoDownloadManager {
         Stop,
     }
 
+    sealed interface DownloadStatus {
+        /** if you should retry with the same args and hope for a better result */
+        val retrySame: Boolean
 
-    /** Invalid input, just skip to the next one as the same args will give the same error */
-    private val DOWNLOAD_INVALID_INPUT =
-        DownloadStatus(retrySame = false, tryNext = true, success = false)
+        /** if you should try the next mirror */
+        val tryNext: Boolean
 
-    /** no need to try any other mirror as we have downloaded the file */
-    private val DOWNLOAD_SUCCESS =
-        DownloadStatus(retrySame = false, tryNext = false, success = true)
+        /** if the result is what the user intended */
+        val success: Boolean
 
-    /** the user pressed stop, so no need to download anything else */
-    private val DOWNLOAD_STOPPED =
-        DownloadStatus(retrySame = false, tryNext = false, success = true)
+        /** Invalid input, just skip to the next one as the same args will give the same error */
+        data object InvalidInput : DownloadStatus {
+            override val retrySame = false
+            override val tryNext = true
+            override val success = false
+        }
 
-    /** the process failed due to some reason, so we retry and also try the next mirror */
-    private val DOWNLOAD_FAILED = DownloadStatus(retrySame = true, tryNext = true, success = false)
+        /** no need to try any other mirror as we have downloaded the file */
+        data object Success : DownloadStatus {
+            override val retrySame = false
+            override val tryNext = false
+            override val success = true
+        }
 
-    /** The download only downloaded partial */
-    private val DOWNLOAD_PARTIAL_SUCCESS =
-        DownloadStatus(retrySame = true, tryNext = false, success = true)
+        /** the user pressed stop, so no need to download anything else */
+        data object Stopped : DownloadStatus {
+            override val retrySame = false
+            override val tryNext = false
+            override val success = true
+        }
+
+        /** the process failed due to some reason, so we retry and also try the next mirror */
+        data class Failed(
+            val cause: Throwable? = null
+        ) : DownloadStatus {
+            override val retrySame: Boolean = true
+            override val tryNext: Boolean = true
+            override val success: Boolean = false
+        }
+
+        /** The download only downloaded partial */
+        data object PartialSuccess : DownloadStatus {
+            override val retrySame = true
+            override val tryNext = false
+            override val success = true
+        }
+
+        /** bad config, skip all mirrors as every call to download will have the same bad config */
+        data object BadConfig : DownloadStatus {
+            override val retrySame = false
+            override val tryNext = false
+            override val success = false
+        }
+    }
+
 
     /** 50MB minimum size */
     const val DOWNLOAD_PARTIAL_MIN_SIZE = 1_048_576L * 50L
-
-    /** bad config, skip all mirrors as every call to download will have the same bad config */
-    private val DOWNLOAD_BAD_CONFIG =
-        DownloadStatus(retrySame = false, tryNext = false, success = false)
-
     const val KEY_RESUME_PACKAGES = "download_resume_2"
     const val KEY_DOWNLOAD_INFO = "download_info"
 
@@ -562,10 +592,10 @@ object VideoDownloadManager {
         }
 
         /** Returns the appropriate failed status based on download progress */
-        fun failedStatus() = if (this.bytesWritten > DOWNLOAD_PARTIAL_MIN_SIZE)
-            DOWNLOAD_PARTIAL_SUCCESS
+        fun failedStatus(throwable: Throwable?) = if (this.bytesWritten > DOWNLOAD_PARTIAL_MIN_SIZE)
+            DownloadStatus.PartialSuccess
         else
-            DOWNLOAD_FAILED
+            DownloadStatus.Failed(throwable)
 
         val approxTotalBytes: Long
             get() = totalBytes ?: hlsTotal?.let { total ->
@@ -992,6 +1022,7 @@ object VideoDownloadManager {
 
 
     /** download a file that consist of a single stream of data*/
+    @Throws
     suspend fun downloadThing(
         context: Context,
         link: IDownloadableMinimum,
@@ -1007,7 +1038,7 @@ object VideoDownloadManager {
         minimumSize: Long = 100
     ): DownloadStatus = withContext(Dispatchers.IO) {
         if (parallelConnections < 1) {
-            return@withContext DOWNLOAD_INVALID_INPUT
+            return@withContext DownloadStatus.InvalidInput
         }
 
         var fileStream: OutputStream? = null
@@ -1024,7 +1055,7 @@ object VideoDownloadManager {
             // get the file path
             val (baseFile, basePath) = context.getBasePath()
             val displayName = getDisplayName(name, extension)
-            if (baseFile == null) return@withContext DOWNLOAD_BAD_CONFIG
+            if (baseFile == null) return@withContext DownloadStatus.BadConfig
 
             // set up the download file
             var stream = setupStream(baseFile, name, folder, extension, tryResume)
@@ -1050,7 +1081,7 @@ object VideoDownloadManager {
                 fileStream.closeQuietly()
                 metadata.onDelete()
                 stream.delete()
-                return@withContext DOWNLOAD_INVALID_INPUT
+                return@withContext DownloadStatus.InvalidInput
             }
 
             // if we have an output stream that cant be resumed then we delete the entire file
@@ -1217,7 +1248,7 @@ object VideoDownloadManager {
             if (!stream.exists) metadata.type = DownloadType.IsStopped
 
             if (metadata.type == DownloadType.IsFailed) {
-                return@withContext metadata.failedStatus()
+                return@withContext metadata.failedStatus(null)
             }
 
             if (metadata.type == DownloadType.IsStopped) {
@@ -1225,7 +1256,7 @@ object VideoDownloadManager {
                 fileStream.closeQuietly()
                 metadata.onDelete()
                 stream.delete()
-                return@withContext DOWNLOAD_STOPPED
+                return@withContext DownloadStatus.Stopped
             }
 
             // in case the head request lies about content-size,
@@ -1235,25 +1266,23 @@ object VideoDownloadManager {
                 fileStream.closeQuietly()
                 metadata.onDelete()
                 stream.delete()
-                return@withContext DOWNLOAD_INVALID_INPUT
+                return@withContext DownloadStatus.InvalidInput
             }
 
             metadata.type = DownloadType.IsDone
-            return@withContext DOWNLOAD_SUCCESS
+            return@withContext DownloadStatus.Success
         } catch (e: IOException) {
             // some sort of IO error, this usually happens when storage access is revoked
             // we just rethrow it
-            showToast(R.string.error_file_io_toast)
             logError(e)
             throw e
         } catch (t: Throwable) {
             // some sort of network error, will error
             logError(t)
-            showToast(R.string.error_file_unknown_toast)
             // note that when failing we don't want to delete the file,
             // only user interaction has that power
             metadata.type = DownloadType.IsFailed
-            return@withContext metadata.failedStatus()
+            return@withContext metadata.failedStatus(t)
         } finally {
             fileStream?.closeQuietly()
             //requestStream?.closeQuietly()
@@ -1271,7 +1300,7 @@ object VideoDownloadManager {
         createNotificationCallback: (CreateNotificationMetadata) -> Unit,
         parallelConnections: Int = 3
     ): DownloadStatus = withContext(Dispatchers.IO) {
-        if (parallelConnections < 1) return@withContext DOWNLOAD_INVALID_INPUT
+        if (parallelConnections < 1) return@withContext DownloadStatus.InvalidInput
 
         val metadata = DownloadMetaData(
             createNotificationCallback = createNotificationCallback,
@@ -1288,7 +1317,7 @@ object VideoDownloadManager {
 
             // set up the file data
             val (baseFile, basePath) = context.getBasePath()
-            if (baseFile == null) return@withContext DOWNLOAD_BAD_CONFIG
+            if (baseFile == null) return@withContext DownloadStatus.BadConfig
 
             val displayName = getDisplayName(name, extension)
             val stream =
@@ -1446,7 +1475,7 @@ object VideoDownloadManager {
             if (!stream.exists) metadata.type = DownloadType.IsStopped
 
             if (metadata.type == DownloadType.IsFailed) {
-                return@withContext metadata.failedStatus()
+                return@withContext metadata.failedStatus(null)
             }
 
             if (metadata.type == DownloadType.IsStopped) {
@@ -1454,15 +1483,15 @@ object VideoDownloadManager {
                 fileStream.closeQuietly()
                 metadata.onDelete()
                 stream.delete()
-                return@withContext DOWNLOAD_STOPPED
+                return@withContext DownloadStatus.Stopped
             }
 
             metadata.type = DownloadType.IsDone
-            return@withContext DOWNLOAD_SUCCESS
+            return@withContext DownloadStatus.Success
         } catch (t: Throwable) {
             logError(t)
             metadata.type = DownloadType.IsFailed
-            return@withContext metadata.failedStatus()
+            return@withContext metadata.failedStatus(t)
         } finally {
             fileStream?.closeQuietly()
             metadata.close()
@@ -1484,7 +1513,7 @@ object VideoDownloadManager {
     ): DownloadStatus {
         // no support for these file formats
         if (link.type == ExtractorLinkType.MAGNET || link.type == ExtractorLinkType.TORRENT || link.type == ExtractorLinkType.DASH) {
-            return DOWNLOAD_INVALID_INPUT
+            return DownloadStatus.InvalidInput
         }
 
         val name = getFileName(context, ep)
@@ -1554,8 +1583,8 @@ object VideoDownloadManager {
 
                 else -> throw IllegalArgumentException("Unsupported download type")
             }
-        } catch (_: Throwable) {
-            return DOWNLOAD_FAILED
+        } catch (t: Throwable) {
+            return DownloadStatus.Failed(t)
         } finally {
             extractorJob.cancel()
         }
@@ -1820,8 +1849,33 @@ object VideoDownloadManager {
                         isCompleted = true
                         break
                     } else if (!connectionResult.tryNext || index >= item.links.lastIndex) {
-                        if (connectionResult == DOWNLOAD_INVALID_INPUT) {
-                            showToast(R.string.error_file_invalid_toast)
+                        // Show failure toast on the last tried connection to prevent spam on repeated failures
+                        when (connectionResult) {
+                            is DownloadStatus.InvalidInput -> {
+                                showToast(R.string.error_file_invalid_toast)
+                            }
+
+                            is DownloadStatus.Failed -> {
+                                when (connectionResult.cause) {
+                                    is IOException -> {
+                                        showToast(R.string.error_file_io_toast)
+                                    }
+
+                                    is IllegalStateException -> {
+                                        showToast(R.string.error_file_invalid_toast)
+                                    }
+
+                                    is Throwable -> {
+                                        showToast(R.string.error_file_unknown_toast)
+                                    }
+                                }
+                            }
+
+                            is DownloadStatus.BadConfig -> {
+                                showToast(R.string.error_settings_invalid_toast)
+                            }
+
+                            else -> {}
                         }
                         isFailed = true
                         break
