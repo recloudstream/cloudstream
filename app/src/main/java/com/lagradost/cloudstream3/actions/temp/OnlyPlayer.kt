@@ -12,7 +12,7 @@ import com.lagradost.cloudstream3.utils.txt
 
 /** https://github.com/Kindness-Kismet/only_player/tree/main
  * https://github.com/Kindness-Kismet/only_player/blob/main/feature/player/src/main/java/one/only/player/feature/player/PlayerActivity.kt */
-class OnlyPlayer : OpenInAppAction(
+object OnlyPlayer : OpenInAppAction(
     txt("Only Player"),
     "one.only.player",
     intentClass = "one.only.player.feature.player.PlayerActivity"

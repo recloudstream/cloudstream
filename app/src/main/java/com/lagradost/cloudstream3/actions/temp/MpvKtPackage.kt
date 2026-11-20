@@ -12,12 +12,14 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 
-class MpvKtPreviewPackage: MpvKtPackage(
+object MpvKtPreviewPackage: MpvKtPackageAPI(
     appName = "mpvKt Preview",
     packageName = "live.mehiz.mpvkt.preview",
 )
 
-open class MpvKtPackage(
+object MpvKtPackage : MpvKtPackageAPI()
+
+open class MpvKtPackageAPI(
     appName: String = "mpvKt",
     packageName: String = "live.mehiz.mpvkt",
 ): OpenInAppAction(

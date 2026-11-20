@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.txt
 
 /** https://github.com/anilbeesetti/nextplayer */
-class NextPlayerPackage : OpenInAppAction(
+object NextPlayerPackage : OpenInAppAction(
     appName = txt("NextPlayer"),
     packageName = "dev.anilbeesetti.nextplayer",
     intentClass = "dev.anilbeesetti.nextplayer.feature.player.PlayerActivity"

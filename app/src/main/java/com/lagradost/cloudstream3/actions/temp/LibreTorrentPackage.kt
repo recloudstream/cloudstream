@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.txt
 
 /** https://github.com/proninyaroslav/libretorrent */
-class LibreTorrentPackage : OpenInAppAction(
+object LibreTorrentPackage : OpenInAppAction(
     appName = txt("LibreTorrent"),
     packageName = "org.proninyaroslav.libretorrent",
     intentClass = "org.proninyaroslav.libretorrent.ui.addtorrent.AddTorrentActivity"
