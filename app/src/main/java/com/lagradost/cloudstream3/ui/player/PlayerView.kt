@@ -134,6 +134,8 @@ class PlayerView @JvmOverloads constructor(
         fun playerUpdated(player: Any?) {}
         /** Called on a short single-tap on empty player area (no swipe, no double-tap). */
         fun onSingleTap() {}
+        /** Called whenever the user interacts with the player controls (tap, button click, etc.). */
+        fun onPlayerInteraction() {}
         /** Called when the hold-for-speedup gesture starts (show=true) or ends (show=false). */
         fun onHoldSpeedUp(show: Boolean) {}
         /** Called during brightness swipe with the current extra-brightness alpha (0–1). */
@@ -378,6 +380,7 @@ class PlayerView @JvmOverloads constructor(
             exoFfwdText?.text = context.getString(R.string.ffw_text_regular_format).format(seekSecs)
 
             playerPausePlay?.setOnClickListener {
+                callbacks?.onPlayerInteraction()
                 scheduleAutoHide()
                 if (currentPlayerStatus == CSPlayerLoading.IsEnded && isLayout(PHONE)) {
                     player.handleEvent(CSPlayerEvent.Restart, PlayerEventSource.UI)
@@ -386,10 +389,12 @@ class PlayerView @JvmOverloads constructor(
                 }
             }
             playerRew?.setOnClickListener  {
+                callbacks?.onPlayerInteraction()
                 scheduleAutoHide()
                 gestureHelper.rewind()
             }
             playerFfwd?.setOnClickListener {
+                callbacks?.onPlayerInteraction()
                 scheduleAutoHide()
                 gestureHelper.fastForward()
             }
@@ -817,7 +822,9 @@ class PlayerView @JvmOverloads constructor(
                     player.handleEvent(CSPlayerEvent.NextEpisode, source = PlayerEventSource.Player)
                 }
             }
-            is PauseEvent -> Unit
+            is PauseEvent -> {
+                callbacks?.onPlayerInteraction()
+            }
             is PlayEvent -> Unit
         }
     }
