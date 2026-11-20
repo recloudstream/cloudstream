@@ -333,7 +333,12 @@ class PlayerView @JvmOverloads constructor(
             }
 
             subView = exoPlayerView?.findViewById(androidx.media3.ui.R.id.exo_subtitles)
-            (player as? CS3IPlayer)?.initSubtitles(subView, subtitleHolder, CustomDecoder.style)
+            (player as? CS3IPlayer)?.initSubtitles(
+                subView,
+                subtitleHolder,
+                CustomDecoder.style,
+                exoPlayerView
+            )
             (player as? CS3IPlayer)?.let {
                 (it.imageGenerator as? PreviewGenerator)?.params =
                     ImageParams.new16by9(screenWidth)

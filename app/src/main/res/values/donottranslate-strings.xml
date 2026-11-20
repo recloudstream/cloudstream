@@ -69,6 +69,7 @@
     <string name="overscan_key">overscan_key</string>
     <string name="poster_size_key">poster_size_key</string>
     <string name="subtitles_encoding_key">subtitles_encoding_key</string>
+    <string name="libass_subtitles_key">libass_subtitles_key</string>
     <string name="override_site_key">override_site_key</string>
     <string name="redo_setup_key">redo_setup_key</string>
     <string name="filter_sub_lang_key">filter_sub_lang_key</string>

@@ -294,6 +294,9 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.kotlinx.io.core) // Logcat parser
 
+    // Subtitle styling
+    implementation(libs.libass)
+
     implementation(project(":library"))
     implementation(project(":shared"))
 }
