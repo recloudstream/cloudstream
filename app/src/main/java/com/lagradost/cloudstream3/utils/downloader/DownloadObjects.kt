@@ -181,15 +181,6 @@ object DownloadObjects {
         @JsonProperty("isFromDownload") @SerialName("isFromDownload") val isFromDownload: Boolean,
     )
 
-    data class DownloadStatus(
-        /** if you should retry with the same args and hope for a better result */
-        val retrySame: Boolean,
-        /** if you should try the next mirror */
-        val tryNext: Boolean,
-        /** if the result is what the user intended */
-        val success: Boolean,
-    )
-
     data class CreateNotificationMetadata(
         val type: VideoDownloadManager.DownloadType,
         val bytesDownloaded: Long,
@@ -215,7 +206,9 @@ object DownloadObjects {
         }
 
         fun delete(): Boolean {
-            return file.delete() == true
+            return runCatching {
+               file.delete()
+            }.getOrNull() == true
         }
 
         val resume: Boolean get() = fileLength > 0L
