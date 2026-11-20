@@ -30,11 +30,25 @@ class WebviewFragment : BaseFragment<FragmentWebviewBinding>(
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
-                val requestUrl = request?.url.toString()
+                val requestUrl = request?.url?.toString() ?: return false
                 val performedAction = MainActivity.handleAppIntentUrl(activity, requestUrl, true)
                 if (performedAction) {
                     findNavController().popBackStack()
                     return true
+                }
+
+                if (!requestUrl.startsWith("http://") && !requestUrl.startsWith("https://") &&
+                    !requestUrl.startsWith("about:") && !requestUrl.startsWith("javascript:")) {
+                    return try {
+                        val intent = android.content.Intent.parseUri(requestUrl, android.content.Intent.URI_INTENT_SCHEME)
+                        if (activity != null && intent.resolveActivity(activity!!.packageManager) != null) {
+                            activity?.startActivity(intent)
+                        }
+                        true
+                    } catch (e: Throwable) {
+                        com.lagradost.cloudstream3.mvvm.logError(e)
+                        true
+                    }
                 }
 
                 return super.shouldOverrideUrlLoading(view, request)

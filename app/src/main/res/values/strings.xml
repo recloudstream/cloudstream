@@ -638,6 +638,12 @@
     <string name="subscription_new">Subscribed to %s</string>
     <string name="subscription_deleted">Unsubscribed from %s</string>
     <string name="subscription_episode_released">Episode %d released!</string>
+    <string name="notifications">Notifications</string>
+    <string name="no_notifications">No notifications yet</string>
+    <string name="no_notifications_description">Subscribe to shows to receive updates on new episodes.</string>
+    <string name="new_episode_badge">NEW</string>
+    <string name="short_drama">Short Drama</string>
+    <string name="short_drama_singular">Short Drama</string>
     <string name="action_subscribe">Subscribe</string>
     <string name="action_unsubscribe">Unsubscribe</string>
     <string name="profile_number">Profile %d</string>

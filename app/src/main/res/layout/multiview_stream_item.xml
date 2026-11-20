@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/multiview_item_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/outline_drawable"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- ExoPlayer Video Viewport -->
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/multiview_player_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:use_controller="false"
+        app:surface_type="texture_view" />
+
+    <!-- Stream Header Overlay -->
+    <RelativeLayout
+        android:id="@+id/multiview_header_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#80000000"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/multiview_live_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="#E50914"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:text="LIVE"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/multiview_stream_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/multiview_live_badge"
+            android:layout_toStartOf="@id/multiview_close_btn"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            tools:text="Stream Title" />
+
+        <ImageView
+            android:id="@+id/multiview_close_btn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cancel"
+            app:srcCompat="@drawable/ic_baseline_close_24"
+            app:tint="@color/white" />
+    </RelativeLayout>
+
+    <!-- Kick/Twitch Style Volume Bar (Speaker Icon + Volume Slider) -->
+    <LinearLayout
+        android:id="@+id/multiview_volume_container"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="12dp"
+        android:background="@drawable/player_button_tv"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp">
+
+        <ImageView
+            android:id="@+id/multiview_mute_btn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cancel"
+            app:srcCompat="@drawable/ic_baseline_volume_mute_24"
+            app:tint="@color/white" />
+
+        <SeekBar
+            android:id="@+id/multiview_volume_slider"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/white"
+            android:thumbTint="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+    <!-- Offline Overlay Card -->
+    <FrameLayout
+        android:id="@+id/multiview_offline_card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E0111111"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#222222"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="OFFLINE"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/multiview_offline_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/grayTextColor"
+                android:textSize="12sp"
+                tools:text="Stream is offline" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/multiview_offline_close_btn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cancel"
+            app:srcCompat="@drawable/ic_baseline_close_24"
+            app:tint="@color/white" />
+    </FrameLayout>
+
+    <!-- Empty Slot Add Button Container -->
+    <LinearLayout
+        android:id="@+id/multiview_empty_slot_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#1E1E24"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/multiview_slot_add_btn"
+            style="@style/SmallBlackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ Add a stream"
+            app:icon="@drawable/ic_baseline_add_24" />
+    </LinearLayout>
+
+</FrameLayout>

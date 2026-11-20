@@ -209,6 +209,14 @@ class CS3IPlayer : IPlayer {
     override fun getPosition(): Long? = exoPlayer?.currentPosition
     override fun getIsPlaying(): Boolean = isPlaying
     override fun getPlaybackSpeed(): Float = playBackSpeed
+    override fun getCurrentLink(): ExtractorLink? = currentLink
+    override fun getExoPlayer(): ExoPlayer? = exoPlayer
+    override var volume: Float
+        get() = exoPlayer?.volume ?: 1.0f
+        set(value) {
+            val clamped = value.coerceIn(0f, 1f)
+            exoPlayer?.volume = clamped
+        }
 
     /**
      * Tracks reported to be used by exoplayer, since sometimes it has a mind of it's own when selecting subs.
