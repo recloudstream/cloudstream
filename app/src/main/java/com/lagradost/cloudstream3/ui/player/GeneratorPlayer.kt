@@ -25,18 +25,21 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.annotation.OptIn
+import androidx.appcompat.app.AlertDialog
 import androidx.core.animation.addListener
 import androidx.core.app.NotificationCompat
 import androidx.core.app.PendingIntentCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.text.toSpanned
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -61,6 +64,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
+import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourceAndSubsBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectTracksBinding
 import com.lagradost.cloudstream3.isAnimeOp
@@ -85,7 +89,10 @@ import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper.getLinkPriority
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.result.ACTION_CLICK_DEFAULT
+import com.lagradost.cloudstream3.ui.result.ACTION_SHOW_OPTIONS
+import com.lagradost.cloudstream3.ui.result.ACTION_SHOW_TOAST
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
+import com.lagradost.cloudstream3.ui.result.EpisodeClickEvent
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
@@ -110,6 +117,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.LiveRecent
+import com.lagradost.cloudstream3.utils.toResultEpisode
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
@@ -149,6 +158,12 @@ class GeneratorPlayer : FullScreenPlayer() {
         const val CHANNEL_ID = 7340
         const val STOP_ACTION = "stopcs3"
 
+        /** Bounded automatic reconnects for expired live links. */
+        private const val MAX_LIVE_RETRIES = 2
+
+        /** Frame attempts used to move TV focus into the overlay list while it lays out. */
+        private const val OVERLAY_FOCUS_ATTEMPTS = 5
+
         private val generators = ConcurrentHashMap<String, VideoGenerator<*>>()
         fun newInstance(
             generator: VideoGenerator<*>,
@@ -187,6 +202,12 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private var isPlayerActive: AtomicBoolean = AtomicBoolean(false)
     private var isNextEpisode: Boolean = false // this is used to reset the watch time
+
+    /** Prevents recording the same live channel on every player status tick. */
+    private var lastRecordedLiveKey: String? = null
+
+    /** Bounded automatic reconnects for expired live links. */
+    private var liveRetryCount = 0
 
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
     private val allMeta: List<ResultEpisode>?
@@ -239,7 +260,29 @@ class GeneratorPlayer : FullScreenPlayer() {
         super.playerStatusChanged()
         if (player.getIsPlaying()) {
             viewModel.forceClearCache = false
+            liveRetryCount = 0
+            recordCurrentLiveIfNeeded()
         }
+    }
+
+    private fun liveKey(episode: ResultEpisode): String = "${episode.apiName}_${episode.id}"
+
+    /**
+     * Only records a live channel once playback actually started, so failed or
+     * expired links never pollute the recents list.
+     */
+    private fun recordCurrentLiveIfNeeded() {
+        val meta = currentMeta as? ResultEpisode ?: return
+        if (!meta.tvType.isLiveStream()) return
+
+        val key = liveKey(meta)
+        if (key == lastRecordedLiveKey) return
+
+        lastRecordedLiveKey = key
+        DataStoreHelper.addLiveRecent(
+            meta,
+            pageUrl = viewModel.state.generatorState?.response?.url
+        )
     }
 
     private fun noSubtitles(): Boolean {
@@ -548,6 +591,9 @@ class GeneratorPlayer : FullScreenPlayer() {
             player.addTimeStamps(emptyList()) // clear stamps
             // Resets subtitle delay, as we watch some other content
             player.setSubtitleOffset(0)
+            // A new channel/episode starts, so it may be recorded again once it plays.
+            lastRecordedLiveKey = null
+            liveRetryCount = 0
         }
     }
 
@@ -1579,10 +1625,71 @@ class GeneratorPlayer : FullScreenPlayer() {
                     "isPlaying=${player.getIsPlaying()}", exception
         )
 
+        if (retryExpiredLiveChannel(exception)) return
+
         if (!hasNextMirror()) {
             viewModel.forceClearCache = true
         }
         super.playerError(exception)
+    }
+
+    /**
+     * Retries the current live channel when its link expired. Returns true when a
+     * retry was scheduled, so the caller must not surface the player error.
+     */
+    private fun retryExpiredLiveChannel(exception: Throwable): Boolean {
+        val liveMeta = currentMeta as? ResultEpisode
+        if (liveMeta?.tvType?.isLiveStream() != true) return false
+        if (!isLiveExpiryError(exception)) return false
+        if (hasNextMirror()) return false
+        if (liveRetryCount >= MAX_LIVE_RETRIES) return false
+
+        // The first retry re-extracts from the stored provider data; the second one
+        // reloads the channel page to get a fresh provider reference.
+        val usePageFallback = liveRetryCount > 0
+        liveRetryCount++
+        notifyLiveRetry(exception)
+        releasePlayer()
+        viewModel.reloadLiveChannel(usePageFallback)
+        return true
+    }
+
+    /**
+     * Keeps the standard playback error diagnostics visible (error name and code, e.g.
+     * 2004) while an automatic live retry runs, followed by the reconnecting notice.
+     * Both are shown in a single toast because [showToast] cancels the previous one.
+     */
+    private fun notifyLiveRetry(exception: Throwable) {
+        val error = playerHostView?.playerErrorMessage(exception)
+        val reconnect = context?.getString(R.string.reconnecting_live)
+        val message = listOfNotNull(error, reconnect).joinToString("\n")
+        if (message.isNotBlank()) {
+            showToast(message, Toast.LENGTH_LONG)
+        }
+    }
+
+    /**
+     * Errors typically produced by an expired signed live URL or by a DRM
+     * authorization that is no longer valid.
+     */
+    private fun isLiveExpiryError(exception: Throwable): Boolean {
+        val playbackException = exception as? PlaybackException ?: return false
+        return when (playbackException.errorCode) {
+            PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
+            PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND,
+            PlaybackException.ERROR_CODE_IO_UNSPECIFIED,
+            PlaybackException.ERROR_CODE_REMOTE_ERROR,
+            PlaybackException.ERROR_CODE_TIMEOUT,
+            PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+            PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
+            PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> true
+
+            else -> {
+                val message = playbackException.message?.lowercase().orEmpty()
+                "403" in message || "410" in message ||
+                        "expired" in message || "forbidden" in message
+            }
+        }
     }
 
     private fun noLinksFound() {
@@ -1676,6 +1783,9 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun nextEpisode() {
+        // Live channels have no next episode, so CH+/CH- open the recent channels overlay.
+        if (openLiveRecentsOverlay()) return
+
         if (viewModel.hasNextEpisode() == true) {
             isNextEpisode = true
             releasePlayer()
@@ -1684,11 +1794,27 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun prevEpisode() {
+        if (openLiveRecentsOverlay()) return
+
         if (viewModel.hasPrevEpisode() == true) {
             isNextEpisode = true
             releasePlayer()
             viewModel.loadLinksPrev()
         }
+    }
+
+    /**
+     * Opens the recent channels overlay when a live channel is playing. Used by the
+     * CH+/CH- keys, which have no next/previous episode to switch to on live streams.
+     */
+    private fun openLiveRecentsOverlay(): Boolean {
+        if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() != true) return false
+        return openEpisodesOverlay()
+    }
+
+    /** Live streams keep playing while the recent channels overlay is open. */
+    override fun shouldPauseForEpisodesOverlay(): Boolean {
+        return (currentMeta as? ResultEpisode)?.tvType?.isLiveStream() != true
     }
 
     private fun getNextLink(): DisplayLink? {
@@ -2132,81 +2258,254 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun isThereEpisodes(): Boolean {
+        val current = currentMeta as? ResultEpisode
+        if (current?.tvType?.isLiveStream() == true) {
+            // Do not show a list with only the channel that is already playing.
+            return getOverlayEpisodes().size >= 2
+        }
+
         // Checks if there is a second episode of type ResultEpisode
         // => There exists more than 1 episode, and they are all ResultEpisode
         return viewModel.state.generatorState?.allMeta?.getOrNull(1) as? ResultEpisode != null
     }
 
-    override fun showEpisodesOverlay() {
-        try {
-            playerBinding?.apply {
-                playerEpisodeList.setRecycledViewPool(EpisodeAdapter.sharedPool)
-                playerEpisodeList.adapter = EpisodeAdapter(
-                    false,
-                    { episodeClick ->
-                        if (episodeClick.action == ACTION_CLICK_DEFAULT) {
-                            isNextEpisode = false
-                            releasePlayer()
-                            playerEpisodeOverlay.isGone = true
-                            episodeClick.position?.let { viewModel.loadThisEpisode(it) }
-                        }
-                    },
-                    { downloadClickEvent ->
-                        DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
+    /**
+     * For VOD this is the generator's episode list. For live it is the global
+     * recent-channel list, keeping the currently playing channel first.
+     */
+    private fun getOverlayEpisodes(): List<ResultEpisode> {
+        val current = currentMeta as? ResultEpisode
+        if (current?.tvType?.isLiveStream() != true) return allMeta ?: emptyList()
+
+        val recents: List<LiveRecent> = DataStoreHelper.getAllLiveRecents()
+        val episodes = recents.map { it.toResultEpisode() }
+        val currentKey = liveKey(current)
+        return if (episodes.any { liveKey(it) == currentKey }) {
+            episodes
+        } else {
+            listOf(current) + episodes
+        }
+    }
+
+    private fun refreshLiveRecentsOverlay() {
+        val current = currentMeta as? ResultEpisode
+        if (current?.tvType?.isLiveStream() != true) return
+
+        val episodes = getOverlayEpisodes()
+        (playerBinding?.playerEpisodeList?.adapter as? EpisodeAdapter)?.submitList(episodes)
+
+        if (episodes.size < 2) {
+            closeEpisodesOverlay()
+        }
+    }
+
+    private fun showLiveRecentOptions(episode: ResultEpisode) {
+        val ctx = context ?: return
+        val current = currentMeta as? ResultEpisode
+        val isCurrent = current != null && liveKey(current) == liveKey(episode)
+
+        val options = buildList<Pair<String, () -> Unit>> {
+            if (isCurrent) {
+                add(ctx.getString(R.string.reconnect_channel) to ::reconnectCurrentChannel)
+            } else {
+                add(
+                    ctx.getString(R.string.remove_from_recents) to {
+                        DataStoreHelper.removeLiveRecent(episode.apiName, episode.id)
+                        refreshLiveRecentsOverlay()
                     }
                 )
-                playerEpisodeList.setLinearListLayout(
+            }
+            add(ctx.getString(R.string.clear_live_recents) to ::clearLiveRecents)
+        }
+
+        AlertDialog.Builder(ctx)
+            .setTitle(episode.name ?: episode.headerName)
+            .setItems(options.map { it.first }.toTypedArray()) { _, which ->
+                options.getOrNull(which)?.second?.invoke()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun reconnectCurrentChannel() {
+        closeEpisodesOverlay()
+        releasePlayer()
+        viewModel.reloadLiveChannel(false)
+    }
+
+    private fun clearLiveRecents() {
+        DataStoreHelper.clearLiveRecents()
+        refreshLiveRecentsOverlay()
+    }
+
+    override fun showEpisodesOverlay() {
+        try {
+            val binding = playerBinding ?: return
+            val current = currentMeta as? ResultEpisode
+            val isLive = current?.tvType?.isLiveStream() == true
+            val episodes = getOverlayEpisodes()
+
+            binding.playerEpisodeList.apply {
+                setRecycledViewPool(EpisodeAdapter.sharedPool)
+                adapter = createEpisodeAdapter(current, isLive)
+                setLinearListLayout(
                     isHorizontal = false,
                     nextUp = FOCUS_SELF,
                     nextDown = FOCUS_SELF,
                     nextRight = FOCUS_SELF,
                 )
-                val episodes = allMeta ?: emptyList()
-                (playerEpisodeList.adapter as? EpisodeAdapter)?.submitList(episodes)
+                (adapter as? EpisodeAdapter)?.submitList(episodes)
+            }
 
-                // Scroll to current episode
-                viewModel.state.generatorState?.index?.let { index ->
-                    playerEpisodeList.scrollToPosition(index)
-                    // Ensure focus on tv
-                    if (isLayout(TV)) {
-                        playerEpisodeList.post {
-                            val viewHolder =
-                                playerEpisodeList.findViewHolderForAdapterPosition(index)
-                            viewHolder?.itemView?.requestFocus()
-                            viewHolder?.itemView?.let { itemView ->
-                                itemView.isFocusableInTouchMode = true
-                                itemView.requestFocus()
-                            }
-                        }
-                    }
-                }
+            val currentIndex = getOverlayCurrentIndex(episodes, current, isLive)
+            updateOverlayTitle(binding, episodes, currentIndex, isLive)
+            scrollToOverlayIndex(binding.playerEpisodeList, currentIndex)
 
-                // update overlay season title
-                var lastTopIndex = -1
-                playerEpisodeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        val layoutManager =
-                            recyclerView.layoutManager as? LinearLayoutManager ?: return
-                        val topIndex = layoutManager.findFirstCompletelyVisibleItemPosition()
-                        if (topIndex != RecyclerView.NO_POSITION && topIndex != lastTopIndex) {
-                            @Suppress("AssignedValueIsNeverRead")
-                            lastTopIndex = topIndex
-                            val topItem = episodes.getOrNull(topIndex)
-                            topItem?.let {
-                                playerEpisodeOverlayTitle.setText(
-                                    ResultViewModel2.seasonToTxt(
-                                        topItem.seasonData,
-                                        topItem.seasonIndex
-                                    )
-                                )
-                            }
-                        }
-                    }
-                })
+            if (!isLive) {
+                addSeasonTitleScrollListener(binding, episodes)
             }
         } catch (e: Exception) {
             logError(e)
         }
+    }
+
+    /** Builds the episode/channel list adapter used by the player overlay. */
+    private fun createEpisodeAdapter(
+        current: ResultEpisode?,
+        isLive: Boolean,
+    ): EpisodeAdapter = EpisodeAdapter(
+        false,
+        { episodeClick -> onEpisodeClick(episodeClick, current, isLive) },
+        { downloadClickEvent -> DownloadButtonSetup.handleDownloadClick(downloadClickEvent) },
+    )
+
+    private fun onEpisodeClick(
+        episodeClick: EpisodeClickEvent,
+        current: ResultEpisode?,
+        isLive: Boolean,
+    ) {
+        when {
+            isLive && episodeClick.action == ACTION_CLICK_DEFAULT ->
+                openLiveRecent(episodeClick.data, current)
+
+            isLive && (episodeClick.action == ACTION_SHOW_OPTIONS ||
+                    episodeClick.action == ACTION_SHOW_TOAST) ->
+                showLiveRecentOptions(episodeClick.data)
+
+            episodeClick.action == ACTION_CLICK_DEFAULT -> {
+                isNextEpisode = false
+                releasePlayer()
+                playerBinding?.playerEpisodeOverlay?.isGone = true
+                episodeClick.position?.let { viewModel.loadThisEpisode(it) }
+            }
+        }
+    }
+
+    /**
+     * Switches to another recent live channel in the same player. Selecting the
+     * channel that is already playing only closes the overlay.
+     */
+    private fun openLiveRecent(selected: ResultEpisode, current: ResultEpisode?) {
+        if (playerBinding?.playerEpisodeOverlay == null) return
+
+        if (current != null && liveKey(selected) == liveKey(current)) {
+            closeEpisodesOverlay()
+            return
+        }
+
+        val pageUrl = DataStoreHelper.getAllLiveRecents()
+            .firstOrNull { it.apiName == selected.apiName && it.id == selected.id }
+            ?.pageUrl
+
+        if (!viewModel.loadLiveRecent(selected, pageUrl)) {
+            showToast(R.string.live_recents_provider_missing, Toast.LENGTH_SHORT)
+            return
+        }
+
+        isNextEpisode = false
+        closeEpisodesOverlay()
+        releasePlayer()
+    }
+
+    private fun getOverlayCurrentIndex(
+        episodes: List<ResultEpisode>,
+        current: ResultEpisode?,
+        isLive: Boolean,
+    ): Int {
+        if (!isLive) return viewModel.state.generatorState?.index ?: -1
+
+        val currentKey = current?.let { liveKey(it) } ?: return -1
+        return episodes.indexOfFirst { liveKey(it) == currentKey }
+    }
+
+    private fun updateOverlayTitle(
+        binding: PlayerCustomLayoutBinding,
+        episodes: List<ResultEpisode>,
+        currentIndex: Int,
+        isLive: Boolean,
+    ) {
+        if (isLive) {
+            binding.playerEpisodeOverlayTitle.setText(R.string.live_recents)
+            return
+        }
+
+        episodes.getOrNull(currentIndex.coerceAtLeast(0))?.let { item ->
+            binding.playerEpisodeOverlayTitle.setText(
+                ResultViewModel2.seasonToTxt(item.seasonData, item.seasonIndex)
+            )
+        }
+    }
+
+    private fun scrollToOverlayIndex(list: RecyclerView, index: Int) {
+        if (index < 0) return
+
+        list.scrollToPosition(index)
+        if (!isLayout(TV)) return
+
+        // The overlay is still GONE here, so wait for the list to be laid out before
+        // moving the TV focus into it.
+        list.doOnNextLayout {
+            focusOverlayItem(list, index, OVERLAY_FOCUS_ATTEMPTS)
+        }
+    }
+
+    /**
+     * Moves the TV focus to the overlay item. The list may still be populating after
+     * [scrollToOverlayIndex], so retry a bounded number of frames before giving up.
+     */
+    private fun focusOverlayItem(list: RecyclerView, index: Int, attemptsLeft: Int) {
+        list.post {
+            val itemView = list.findViewHolderForAdapterPosition(index)?.itemView
+            if (itemView != null && itemView.isShown) {
+                itemView.isFocusableInTouchMode = true
+                itemView.requestFocus()
+            } else if (attemptsLeft > 0) {
+                focusOverlayItem(list, index, attemptsLeft - 1)
+            }
+        }
+    }
+
+    /** Keeps the VOD season title in sync while the episode list scrolls. */
+    private fun addSeasonTitleScrollListener(
+        binding: PlayerCustomLayoutBinding,
+        episodes: List<ResultEpisode>,
+    ) {
+        var lastTopIndex = -1
+        binding.playerEpisodeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+                val topIndex = layoutManager.findFirstCompletelyVisibleItemPosition()
+                if (topIndex == RecyclerView.NO_POSITION || topIndex == lastTopIndex) return
+
+                @Suppress("AssignedValueIsNeverRead")
+                lastTopIndex = topIndex
+                episodes.getOrNull(topIndex)?.let { topItem ->
+                    binding.playerEpisodeOverlayTitle.setText(
+                        ResultViewModel2.seasonToTxt(topItem.seasonData, topItem.seasonIndex)
+                    )
+                }
+            }
+        })
     }
 
     @MainThread
