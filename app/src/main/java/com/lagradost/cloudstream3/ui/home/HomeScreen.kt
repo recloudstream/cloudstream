@@ -74,7 +74,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
@@ -101,7 +100,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
-import com.lagradost.cloudstream4.Database
 import com.lagradost.cloudstream4.compose.FocusButton
 import com.lagradost.cloudstream4.compose.FocusIconButton
 import com.lagradost.cloudstream4.compose.HORIZONTAL_ASPECT_RATIO
@@ -123,6 +121,7 @@ import com.lagradost.cloudstream4.compose.rounded
 import com.lagradost.cloudstream4.compose.whiteOutline
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.no_results_found
+import com.lagradost.cloudstream4.rememberAccountData
 import com.lagradost.cloudstream4.rememberDatabase
 import com.lagradost.cloudstream4.state.SearchableData
 import com.lagradost.cloudstream4.state.SearchableDataState
@@ -141,6 +140,8 @@ import com.lagradost.cloudstream4.viewmodels.SelectAPIDialog
 import com.lagradost.cloudstream4.viewmodels.SortByPin
 import com.mihon.material.padding
 import com.mihon.presentation.secondaryItemAlpha
+import com.mihon.presentation.settings.collectAsState
+import com.mihon.presentation.settings.widget.SwitchPreferenceWidget
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentListOf
@@ -151,10 +152,7 @@ import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
-import java.util.WeakHashMap
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.Uuid
 
@@ -329,7 +327,7 @@ fun Preview() {
                             )
                         )
                     ),
-                    resumeWatching = SearchableData.from(
+                    continueWatching = SearchableData.from(
                         sortedBy = sortByInt { it.id!! }, data = persistentMapOf(
                             0 to ImmutableSearchResponse.previewMovie,
                             1 to ImmutableSearchResponse.previewTvSeries
@@ -345,7 +343,7 @@ object HomeScreen : Screen {
     val HORIZONTAL_POSTER_WIDTH = 240.dp
     val FOCUS_EXTRA_WIDTH = 20.dp
 
-    // TODO actually fix
+    /*// TODO actually fix
     private val reloadCount = MutableStateFlow(0)
 
     init {
@@ -364,7 +362,7 @@ object HomeScreen : Screen {
                 onAction(HomeAction.Reload)
             }
         }
-    }
+    }*/
 
     object TestPlugin : BasePlugin() {
         val api = object : TmdbProvider() {
@@ -404,21 +402,33 @@ object HomeScreen : Screen {
                 )
             }
 
+            val settings = rememberAccountData()
+
             LazyColumn(contentPadding = contentPadding) {
                 item("header") {
                     TvHeader(state.activeApi, onAction = onAction)
                 }
                 item("hero") {
-                    if (state.isLoading) {
-                        TvHeroLoading()
-                    } else {
-                        TvHeroRow(row = state.hero, onAction = onAction)
+                    val heroEnabled by settings.home.heroEnabled.collectAsState()
+                    if (heroEnabled) {
+                        if (state.isLoading) {
+                            TvHeroLoading()
+                        } else {
+                            TvHeroRow(row = state.hero, onAction = onAction)
+                        }
                     }
                 }
                 if (!state.isLoading) {
                     item("continue watching") {
-                        if (state.resumeWatching.sorted.isNotEmpty()) {
-                            TvResumeRow(row = state.resumeWatching, onAction = onAction)
+                        val continueWatchingEnabled by settings.home.continueWatchingEnabled.collectAsState()
+                        if (state.continueWatching.sorted.isNotEmpty() && continueWatchingEnabled) {
+                            TvResumeRow(row = state.continueWatching, onAction = onAction)
+                        }
+                    }
+                    item("bookmarks") {
+                        val bookmarksEnabled by settings.home.bookmarksEnabled.collectAsState()
+                        if (bookmarksEnabled) {
+                            Text("TODO bookmarks")
                         }
                     }
                     items(state.rows.sorted, key = { name -> name }) { name ->
@@ -479,16 +489,17 @@ object HomeScreen : Screen {
         ) {
             var hasFocus by remember { mutableStateOf(false) }
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .rounded()
-                .onFocusChanged { newFocus ->
-                    hasFocus = newFocus.hasFocus
-                }
-                .whiteOutline(
-                    hasFocus = hasFocus, shape = RoundedShape()
-                )
-                .fadedOutline()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .rounded()
+                    .onFocusChanged { newFocus ->
+                        hasFocus = newFocus.hasFocus
+                    }
+                    .whiteOutline(
+                        hasFocus = hasFocus, shape = RoundedShape()
+                    )
+                    .fadedOutline()) {
                 HorizontalPager(
                     state = state,
                     modifier = Modifier.semantics { role = Role.Carousel },
@@ -500,10 +511,10 @@ object HomeScreen : Screen {
 
                     AsyncImage(
                         model = if (hero.isLoading) {
-                        Color.Transparent
-                    } else {
-                        hero.response.backgroundImageRequest()
-                    },
+                            Color.Transparent
+                        } else {
+                            hero.response.backgroundImageRequest()
+                        },
                         /**
                          * Error is not desirable as it acts as transparent
                          * error = painterResource(R.drawable.poster),
@@ -957,8 +968,44 @@ object HomeScreen : Screen {
     }
 
     @Composable
+    fun EditMenu(onDismissRequest: () -> Unit) {
+        AlertDialog(
+            containerColor = MaterialTheme.colorScheme.background,
+            onDismissRequest = onDismissRequest,
+            confirmButton = {
+            },
+            dismissButton = {},
+            text = {
+                val settings = rememberAccountData()
+                Column {
+                    SwitchPreferenceWidget(
+                        preference = settings.home.heroEnabled,
+                        title = stringResource(R.string.hero),
+                    )
+                    SwitchPreferenceWidget(
+                        preference = settings.home.continueWatchingEnabled,
+                        title = stringResource(R.string.continue_watching),
+                    )
+                    SwitchPreferenceWidget(
+                        preference = settings.home.bookmarksEnabled,
+                        title = stringResource(R.string.error_bookmarks_text),
+                    )
+                }
+            },
+            title = {
+                Text(text = stringResource(R.string.title_home))
+            })
+    }
+
+    @Composable
     fun TvHeader(api: String?, onAction: (HomeAction) -> Unit) {
         val focusRequester = remember { FocusRequester() }
+        var editMenu by remember { mutableStateOf(false) }
+        if (editMenu) {
+            EditMenu {
+                editMenu = false
+            }
+        }
         Row(
             horizontalArrangement = Arrangement.spacedBy(
                 space = MaterialTheme.padding.small, alignment = Alignment.CenterHorizontally
@@ -980,6 +1027,15 @@ object HomeScreen : Screen {
                         contentDescription = stringResource(R.string.search),
                     )
                 }
+            }
+
+            FocusIconButton(onClick = {
+                editMenu = true
+            }, transparent = true) {
+                Icon(
+                    painter = painterResource(R.drawable.edit_24px),
+                    contentDescription = stringResource(R.string.edit),
+                )
             }
 
             FocusButton(
@@ -1170,21 +1226,21 @@ object HomeScreen : Screen {
                         if (api.isPinned) {
                             FocusIconButton(
                                 transparent = true, onClick = {
-                                onAction(HomeAction.RemovePin(api.name))
-                            }, modifier = if (settings != null) {
-                                Modifier
-                                    .focusRequester(button1FocusRequester)
-                                    .focusProperties {
-                                        start = backgroundFocusRequester
-                                        end = button2FocusRequester
-                                    }
-                            } else {
-                                Modifier
-                                    .focusRequester(button2FocusRequester)
-                                    .focusProperties {
-                                        start = button1FocusRequester
-                                    }
-                            }) {
+                                    onAction(HomeAction.RemovePin(api.name))
+                                }, modifier = if (settings != null) {
+                                    Modifier
+                                        .focusRequester(button1FocusRequester)
+                                        .focusProperties {
+                                            start = backgroundFocusRequester
+                                            end = button2FocusRequester
+                                        }
+                                } else {
+                                    Modifier
+                                        .focusRequester(button2FocusRequester)
+                                        .focusProperties {
+                                            start = button1FocusRequester
+                                        }
+                                }) {
                                 Icon(
                                     painter = painterResource(R.drawable.keep),
                                     contentDescription = stringResource(R.string.favorite),

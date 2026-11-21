@@ -37,6 +37,7 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.collections.immutable.toPersistentSet
@@ -50,7 +51,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import java.util.WeakHashMap
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
 
@@ -71,7 +71,7 @@ data class HomeState(
     /** Watch internal id -> Map(Item id -> response) */
     val bookmarks: PersistentMap<Int, SearchableData<Int, ImmutableSearchResponse>> = persistentMapOf(),
     /** Item id -> item */
-    val resumeWatching: SearchableData<Int, ImmutableSearchResponse> = SearchableData.from(
+    val continueWatching: SearchableData<Int, ImmutableSearchResponse> = SearchableData.from(
         data = persistentMapOf(),
         sortedBy = sortByLong { -(it.updateTime ?: 0L) },
         filteredBy = null
@@ -89,8 +89,13 @@ data class HomeState(
     val rows: SearchableData<String, ImmutableHomePageList> = SearchableData.from(
         data = persistentMapOf(),
         sortedBy = sortByInt { it.order },
-        filteredBy = null
+        filteredBy = { it.isEnabled }
     ),
+    /**
+     * What rows we have requested, that way we can enable/disable or re-request
+     * if we change settings
+     * */
+    val rowsRequested : PersistentSet<String> = persistentSetOf(),
     val rowDialog: String? = null,
     val selectAPIDialog: SelectAPIDialog? = null,
 )
@@ -628,7 +633,7 @@ class HomeViewModel(val repository: HomeRepository, val db: Database) :
         val results = repository.getAllResumeWatching()
         if (!isActive) return@launch
         val newResumeWatching = results.associateBy { it.id!! }.toPersistentMap()
-        updateState { copy(resumeWatching = resumeWatching.setTo(newResumeWatching)) }
+        updateState { copy(continueWatching = continueWatching.setTo(newResumeWatching)) }
     }
 
     private suspend fun expandRow(name: String) = homepageQuery.launch {

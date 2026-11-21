@@ -814,4 +814,5 @@
     </plurals>
     <string name="player_is_live">Live</string>
     <string name="installed_plugins">Installed plugins</string>
+    <string name="hero">Hero banner</string>
 </resources>

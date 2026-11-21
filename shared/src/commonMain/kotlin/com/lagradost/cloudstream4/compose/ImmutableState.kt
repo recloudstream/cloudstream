@@ -254,6 +254,7 @@ data class ImmutableHomePageList(
     val name: String,
     /** Unique identifier */
     override val uuid: Uuid = Uuid.random(),
+    val isEnabled : Boolean = true,
     val page: Int,
     val hasNext: Boolean,
     val isLoading: Boolean,

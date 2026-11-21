@@ -100,6 +100,10 @@ class AccountData internal constructor(
 }
 
 class HomePreferences(preferences: PreferenceStore) {
+    val heroEnabled = preferences.getBoolean("home_hero", true)
+    val bookmarksEnabled = preferences.getBoolean("home_bookmarks", true)
+    val continueWatchingEnabled = preferences.getBoolean("home_resume_watching", true)
+
     val selectedApi = preferences.getJson("home_api_used", "")
     val selectedTvTypes = preferences.getObjectFromString(
         "home_pref_homepage", persistentSetOf(TvType.Movie, TvType.TvSeries), serializer = { obj ->
