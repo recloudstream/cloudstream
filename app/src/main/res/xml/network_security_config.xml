@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Enforce strict HTTPS for sensitive accounts, sync providers, and update services -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">github.com</domain>
+        <domain includeSubdomains="true">api.github.com</domain>
+        <domain includeSubdomains="true">raw.githubusercontent.com</domain>
+        <domain includeSubdomains="true">anilist.co</domain>
+        <domain includeSubdomains="true">myanimelist.net</domain>
+        <domain includeSubdomains="true">api.myanimelist.net</domain>
+        <domain includeSubdomains="true">api.opensubtitles.com</domain>
+        <domain includeSubdomains="true">api.trakt.tv</domain>
+        <domain includeSubdomains="true">simkl.com</domain>
+        <domain includeSubdomains="true">api.simkl.com</domain>
+    </domain-config>
+
+    <!-- Base fallback: Cleartext HTTP permitted strictly for legacy third-party video host CDNs -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
