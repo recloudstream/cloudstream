@@ -41,11 +41,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -53,6 +51,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
@@ -121,9 +120,7 @@ import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.SearchResponseAction
 import com.lagradost.cloudstream4.compose.SearchResponseItem
 import com.lagradost.cloudstream4.compose.VERTICAL_ASPECT_RATIO
-import com.lagradost.cloudstream4.compose.WhiteButton
 import com.lagradost.cloudstream4.compose.WhiteFilterChip
-import com.lagradost.cloudstream4.compose.circle
 import com.lagradost.cloudstream4.compose.fadedOutline
 import com.lagradost.cloudstream4.compose.loading
 import com.lagradost.cloudstream4.compose.rounded
@@ -144,6 +141,7 @@ import com.lagradost.cloudstream4.viewmodels.HomeRepository
 import com.lagradost.cloudstream4.viewmodels.HomeState
 import com.lagradost.cloudstream4.viewmodels.HomeViewModel
 import com.lagradost.cloudstream4.viewmodels.ImmutableAPI
+import com.lagradost.cloudstream4.viewmodels.ImmutableBookmarkRow
 import com.lagradost.cloudstream4.viewmodels.ImmutableHero
 import com.lagradost.cloudstream4.viewmodels.SelectAPIDialog
 import com.lagradost.cloudstream4.viewmodels.SortByPin
@@ -152,7 +150,6 @@ import com.mihon.presentation.secondaryItemAlpha
 import com.mihon.presentation.settings.collectAsState
 import com.mihon.presentation.settings.widget.SwitchPreferenceWidget
 import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
@@ -308,10 +305,17 @@ fun Preview() {
                         ), filter = FilterAPI(TvType.entries.toPersistentSet())
                     ),
                     isLoading = false,
-                    bookmarks = persistentMapOf(
-                        1 to SearchableData.from(
-                            data = persistentMapOf(1 to ImmutableSearchResponse.previewMovie),
-                            sortedBy = sortByUuid { it.uuid })
+                    bookmarks = SearchableData.from(
+                        persistentMapOf(
+                            1 to ImmutableBookmarkRow(
+                                internalId = 1, row =
+                                    SearchableData.from(
+                                        data = persistentMapOf(1 to ImmutableSearchResponse.previewMovie),
+                                        sortedBy = sortByUuid { it.uuid })
+                            )
+                        ),
+                        sortedBy = sortByInt { it.internalId },
+                        filteredBy = { it.row.data.isNotEmpty() }
                     ),
                     hero = SearchableData.from(
                         sortedBy = sortByUuid { it.uuid }, data = persistentMapOf(
@@ -442,7 +446,7 @@ object HomeScreen : Screen {
                     }
                     item("bookmarks") {
                         val bookmarksEnabled by settings.home.bookmarksEnabled.collectAsState()
-                        if (bookmarksEnabled && state.bookmarks.isNotEmpty()) {
+                        if (bookmarksEnabled && state.bookmarks.sorted.isNotEmpty()) {
                             TvBookmarkRow(
                                 data = state.bookmarks,
                                 onAction = onAction
@@ -731,100 +735,108 @@ object HomeScreen : Screen {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun TvBookmarkRow(
-        data: PersistentMap<Int, SearchableData<Int, ImmutableSearchResponse>>,
+        data: SearchableData<Int, ImmutableBookmarkRow>,
         onAction: (HomeAction) -> Unit
     ) {
-        val pxValue = with(LocalDensity.current) { MaterialTheme.padding.medium.toPx() }
-        val newBringIntoViewSpec = remember(pxValue) { LeftAlignedFocusFollower(pxValue) }
+        require(data.sorted.isNotEmpty())
+        Column(
+            modifier = Modifier.focusGroup(),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.medium)
+        ) {
+            val pxValue = with(LocalDensity.current) { MaterialTheme.padding.medium.toPx() }
+            val newBringIntoViewSpec = remember(pxValue) { LeftAlignedFocusFollower(pxValue) }
 
-        // TODO Fix derived state list order to avoid bugs like this
-        var focusedState by remember { mutableIntStateOf(0) }
+            var focusedIndex by rememberSaveable { mutableIntStateOf(0) }
+            val listState = rememberLazyListState(focusedIndex)
+            val scope = rememberCoroutineScope()
+            val focusedInternalId = data.sorted.getOrNull(focusedIndex) ?: data.sorted.last()
 
-        val listState = rememberLazyListState()
-        val scope = rememberCoroutineScope()
-
-        CompositionLocalProvider(LocalBringIntoViewSpec provides newBringIntoViewSpec) {
-            Box {
-                val hasFocus = remember { mutableStateOf(false) }
-                LazyRow(
-                    state = listState,
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
-                    contentPadding = PaddingValues(horizontal = MaterialTheme.padding.medium),
-                    modifier = Modifier.focusRestorer().focusGroup().onFocusChanged { newFocus ->
-                        hasFocus.value = newFocus.hasFocus
-                    }
-                ) {
-                    var index = 0
-                    for (i in arrayOf(0, 4, 2, 1, 3)) {
-                        if (!data.containsKey(i)) {
-                            continue
-                        }
-                        item(key = i) {
+            CompositionLocalProvider(LocalBringIntoViewSpec provides newBringIntoViewSpec) {
+                val defaultFocusRequester = remember { FocusRequester() }
+                Box {
+                    val hasFocus = remember { mutableStateOf(false) }
+                    LazyRow(
+                        state = listState,
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+                        contentPadding = PaddingValues(horizontal = MaterialTheme.padding.medium),
+                        modifier = Modifier
+                            .focusRestorer(defaultFocusRequester)
+                            .onFocusChanged { newFocus ->
+                                hasFocus.value = newFocus.hasFocus
+                            }
+                    ) {
+                        itemsIndexed(data.sorted, key = { _, i -> i }) { index, internalId ->
                             Button(
                                 onClick = {
                                     scope.launch {
-                                        focusedState = i
+                                        focusedIndex = index
                                         listState.scrollToItem(index = index)
                                     }
                                 },
                                 colors =
-                                    if (focusedState == i) {
+                                    if (focusedIndex == index) {
                                         Colors.transparentButton
                                     } else {
                                         Colors.blackTransparentButton
                                     },
-                                modifier = Modifier.onFocusChanged { newFocus ->
-                                    if (newFocus.hasFocus) {
-                                        focusedState = i
+                                modifier = Modifier
+                                    .let { modifier ->
+                                        if (focusedIndex == index) {
+                                            modifier.focusRequester(defaultFocusRequester)
+                                        } else {
+                                            modifier
+                                        }
                                     }
-                                },
+                                    .onFocusChanged { newFocus ->
+                                        if (newFocus.hasFocus) {
+                                            focusedIndex = index
+                                        }
+                                    },
                             ) {
-                                Text(text = stringResource(bookmarkString(index = i)))
+                                Text(text = stringResource(bookmarkString(index = internalId)))
                             }
                         }
-                        index += 1
+                        item("tail") {
+                            Spacer(modifier = Modifier.width(LocalWindowInfo.current.containerSize.width.dp))
+                        }
                     }
-                    item("tail") {
-                        Spacer(modifier = Modifier.width(LocalWindowInfo.current.containerSize.width.dp))
-                    }
-                }
 
-                Row {
-                    Spacer(modifier = Modifier.width(MaterialTheme.padding.medium))
-                    Button(
-                        onClick = {},
-                        enabled = false,
-                        colors =
-                            if(hasFocus.value) {
-                                ButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.onBackground,
-                                    contentColor = MaterialTheme.colorScheme.surfaceVariant,
-                                    disabledContainerColor = MaterialTheme.colorScheme.onBackground,
-                                    disabledContentColor = MaterialTheme.colorScheme.surfaceVariant
-                                )
-                            } else {
-                                ButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                    contentColor = MaterialTheme.colorScheme.onBackground,
-                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                    disabledContentColor = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                    ) {
-                        Text(text = stringResource(bookmarkString(index = focusedState)))
+                    Row {
+                        Spacer(modifier = Modifier.width(MaterialTheme.padding.medium))
+                        Button(
+                            onClick = {},
+                            enabled = false,
+                            colors =
+                                if (hasFocus.value) {
+                                    ButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.onBackground,
+                                        contentColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        disabledContainerColor = MaterialTheme.colorScheme.onBackground,
+                                        disabledContentColor = MaterialTheme.colorScheme.surfaceVariant
+                                    )
+                                } else {
+                                    ButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        contentColor = MaterialTheme.colorScheme.onBackground,
+                                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        disabledContentColor = MaterialTheme.colorScheme.onBackground
+                                    )
+                                },
+                        ) {
+                            Text(text = stringResource(bookmarkString(index = focusedInternalId)))
+                        }
                     }
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(MaterialTheme.padding.medium))
-        data[focusedState]?.let { row ->
-            val listState = remember(focusedState) { LazyListState() }
-            TvResumeRow(
-                listState = listState,
-                title = stringResource(bookmarkString(focusedState)),
-                row = row,
-                onAction = onAction,
-            )
+            val rowListState = remember(focusedInternalId) { LazyListState() }
+            data[focusedInternalId]?.let { bookmarkRow ->
+                TvResumeRow(
+                    listState = rowListState,
+                    title = stringResource(bookmarkString(focusedInternalId)),
+                    row = bookmarkRow.row,
+                    onAction = onAction,
+                )
+            }
         }
     }
 

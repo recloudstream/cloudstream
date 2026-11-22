@@ -64,12 +64,25 @@ data class ImmutableHero(
 ) : UniqueItem
 
 @Immutable
+data class ImmutableBookmarkRow(
+    val internalId: Int,
+    val row: SearchableData<Int, ImmutableSearchResponse>,
+)
+
+/** Remaps the order of bookmarks to a more natural sort order */
+private val orderOfBookmarks = arrayOf(0, 4, 2, 1, 3)
+
+@Immutable
 data class HomeState(
     val activeApi: String? = null,
     val isLoading: Boolean = true,
     val error: Throwable? = null,
     /** Watch internal id -> Map(Item id -> response) */
-    val bookmarks: PersistentMap<Int, SearchableData<Int, ImmutableSearchResponse>> = persistentMapOf(),
+    val bookmarks: SearchableData<Int, ImmutableBookmarkRow> = SearchableData.from(
+        data = persistentMapOf(),
+        sortedBy = sortByInt { orderOfBookmarks.getOrNull(it.internalId) ?: it.internalId },
+        filteredBy = { it.row.data.isNotEmpty() }
+    ),
     /** Item id -> item */
     val continueWatching: SearchableData<Int, ImmutableSearchResponse> = SearchableData.from(
         data = persistentMapOf(),
@@ -95,7 +108,7 @@ data class HomeState(
      * What rows we have requested, that way we can enable/disable or re-request
      * if we change settings
      * */
-    val rowsRequested : PersistentSet<String> = persistentSetOf(),
+    val rowsRequested: PersistentSet<String> = persistentSetOf(),
     val rowDialog: String? = null,
     val selectAPIDialog: SelectAPIDialog? = null,
 )
@@ -617,15 +630,17 @@ class HomeViewModel(val repository: HomeRepository, val db: Database) :
     private suspend fun loadBookmarks() = bookmarkDispatcher.launch {
         val results = repository.getAllBookmarks()
         val newBookmarks = results.entries.associate { entry ->
-            entry.key to SearchableData.from(
-                data = entry.value.associateBy { item -> item.id!! }.toPersistentMap(),
-                sortedBy = sortByLong { it.updateTime!! },
-                filteredBy = null
+            entry.key to ImmutableBookmarkRow(
+                internalId = entry.key, row = SearchableData.from(
+                    data = entry.value.associateBy { item -> item.id!! }.toPersistentMap(),
+                    sortedBy = sortByLong { it.updateTime!! },
+                    filteredBy = null
+                )
             )
         }.toPersistentMap()
         if (!isActive) return@launch
         updateState {
-            copy(bookmarks = newBookmarks)
+            copy(bookmarks = bookmarks.setTo(newBookmarks))
         }
     }
 
