@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -93,6 +96,8 @@ import com.lagradost.cloudstream3.plugins.Plugin
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.AccountPin
 import com.lagradost.cloudstream3.ui.settings.SettingsProvidersScreen.toStringRes
 import com.lagradost.cloudstream3.ui.settings.extensions.ExtensionsScreen.contentTypes
@@ -136,6 +141,7 @@ import com.lagradost.cloudstream4.state.sortByInt
 import com.lagradost.cloudstream4.state.sortByUuid
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.lagradost.cloudstream4.viewmodels.DerivedMainAPIState
+import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.Search
 import com.lagradost.cloudstream4.viewmodels.FilterAPI
 import com.lagradost.cloudstream4.viewmodels.HomeAction
 import com.lagradost.cloudstream4.viewmodels.HomeRepository
@@ -830,7 +836,8 @@ object HomeScreen : Screen {
                     }
                 }
             }
-            val rowListState = rememberSaveable(focusedInternalId, saver = LazyListState.Saver) { LazyListState() }
+            val rowListState =
+                rememberSaveable(focusedInternalId, saver = LazyListState.Saver) { LazyListState() }
             data[focusedInternalId]?.let { bookmarkRow ->
                 TvResumeRow(
                     showTitle = false,
@@ -1106,7 +1113,7 @@ object HomeScreen : Screen {
     }
 
     @Composable
-    fun EditMenu(onDismissRequest: () -> Unit) {
+    fun EditMenu(onDismissRequest: () -> Unit, onAction : (HomeAction) -> Unit) {
         AlertDialog(
             containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = onDismissRequest,
@@ -1140,9 +1147,9 @@ object HomeScreen : Screen {
         val defaultFocusRequester = remember { FocusRequester() }
         var editMenu by remember { mutableStateOf(false) }
         if (editMenu) {
-            EditMenu {
+            EditMenu(onAction = onAction, onDismissRequest = {
                 editMenu = false
-            }
+            })
         }
         Row(
             horizontalArrangement = Arrangement.spacedBy(
@@ -1153,6 +1160,7 @@ object HomeScreen : Screen {
                 .fillMaxWidth()
                 .focusRestorer(fallback = defaultFocusRequester)
                 .focusGroup()
+                .horizontalScroll(state = rememberScrollState())
         ) {
             val activity = LocalActivity.current
             if (api != null) {
@@ -1250,6 +1258,13 @@ object HomeScreen : Screen {
 
         }, dismissButton = {}, text = {
             LazyColumn {
+                item {
+                    val textState = rememberTextFieldState()
+                    LaunchedEffect(textState.text) {
+                        onAction(HomeAction.SearchApi(textState.text.toString()))
+                    }
+                    SettingsFragmentScreen.SettingsSearch(textState)
+                }
                 item {
                     LazyRow(
                         modifier = Modifier
@@ -1391,7 +1406,7 @@ object HomeScreen : Screen {
                 }
             }
         }, title = {
-            Text(text = stringResource(R.string.title_home))
+
         })
     }
 

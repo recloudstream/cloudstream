@@ -22,6 +22,7 @@ import com.lagradost.cloudstream4.state.DefaultEffectContainer
 import com.lagradost.cloudstream4.state.DefaultStateContainer
 import com.lagradost.cloudstream4.state.DerivedState
 import com.lagradost.cloudstream4.state.EffectContainer
+import com.lagradost.cloudstream4.state.FilterByQuery
 import com.lagradost.cloudstream4.state.MultiActiveQuery
 import com.lagradost.cloudstream4.state.SearchableData
 import com.lagradost.cloudstream4.state.SearchableDataState
@@ -176,18 +177,20 @@ data class DerivedMainAPIState(
 @Immutable
 data class FilterAPI(
     val tvTypes: PersistentSet<TvType> = TvType.entries.toSet().toPersistentSet(),
+    val query: FilterByQuery<ImmutableAPI> = FilterByQuery("") { it.name },
 ) : Function1<ImmutableAPI, Boolean> {
     override fun invoke(api: ImmutableAPI): Boolean =
-        /** Filter by type */
-        (if (api.supportedTypes.isEmpty()) {
-            /**
-             * This is a strange edge-case, but if no tv-types are recognized they
-             * automatically should be treated as "Other" to avoid always filtering them
-             */
-            tvTypes.contains(TvType.Others)
-        } else {
-            api.supportedTypes.any(tvTypes::contains)
-        })
+        query(api) &&
+                /** Filter by type */
+                (if (api.supportedTypes.isEmpty()) {
+                    /**
+                     * This is a strange edge-case, but if no tv-types are recognized they
+                     * automatically should be treated as "Other" to avoid always filtering them
+                     */
+                    tvTypes.contains(TvType.Others)
+                } else {
+                    api.supportedTypes.any(tvTypes::contains)
+                })
 }
 
 @Immutable
@@ -210,6 +213,7 @@ sealed class HomeAction {
     object LoadResumeWatching : HomeAction()
     object LoadBookmarks : HomeAction()
     object OpenApiDialog : HomeAction()
+    data class SearchApi(val query: String) : HomeAction()
     data class FilterByTypes(val types: PersistentSet<TvType>) : HomeAction()
 }
 
@@ -487,6 +491,22 @@ class HomeViewModel(val repository: HomeRepository, val db: Database) :
             is RemovePin -> {
                 updatePin {
                     removing(action.name)
+                }
+            }
+
+            is SearchApi -> {
+                updateState {
+                    if (selectAPIDialog == null) {
+                        this
+                    } else {
+                        val newFilter = selectAPIDialog.filter.copy(query = selectAPIDialog.filter.query.update(action.query))
+                        copy(
+                            selectAPIDialog = selectAPIDialog.copy(
+                                data = selectAPIDialog.data.filteringBy(newFilter = newFilter),
+                                filter = newFilter
+                            )
+                        )
+                    }
                 }
             }
         }
