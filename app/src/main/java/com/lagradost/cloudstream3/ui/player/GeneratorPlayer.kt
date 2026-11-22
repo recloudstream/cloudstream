@@ -143,6 +143,7 @@ import java.util.Calendar
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(UnstableApi::class)
 class GeneratorPlayer : FullScreenPlayer() {
@@ -242,8 +243,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         super.playerStatusChanged()
         if (player.getIsPlaying()) {
             viewModel.forceClearCache = false
-        } else {
-            // Never seek away while the user has paused or stopped the video
+        } else if (currentPlayerStatus == CSPlayerLoading.IsPaused) {
             if (autoSkipJob?.isActive == true) {
                 declinedTimestamp = shownTimestamp
             }
@@ -2140,35 +2140,17 @@ class GeneratorPlayer : FullScreenPlayer() {
         hideSkipButtonRunnable = null
     }
 
-    private fun performSkip(timestamp: VideoSkipStamp) {
-        cancelHideSkipButton()
+    private fun startAutoSkipCountdown(timestamp: VideoSkipStamp, currentIndex: Int): Boolean {
         cancelAutoSkipCountdown()
-        player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
-        val currentPos = player.getPosition() ?: 0L
-        if (currentPos < timestamp.timestamp.endMs && !timestamp.skipToNextEpisode) {
-            player.seekTo(timestamp.timestamp.endMs + 500L)
-        }
-        onTimestampSkipped(timestamp)
-    }
-
-    /**
-     * Counts down on the skip button and skips the chapter once it reaches
-     * zero. The countdown is cancelled by any user interaction (see
-     * [onPlayerInteraction]) or when the player is paused, so the user
-     * always keeps manual control.
-     */
-    private fun startAutoSkipCountdown(timestamp: VideoSkipStamp, currentIndex: Int) {
-        cancelAutoSkipCountdown()
-        if (!isAutoSkipEnabled(timestamp)) return
-        if (timestamp == declinedTimestamp) return
-        if (currentPlayerStatus == CSPlayerLoading.IsPaused) return
+        if (!isAutoSkipEnabled(timestamp)) return false
+        if (timestamp == declinedTimestamp) return false
+        if (currentPlayerStatus == CSPlayerLoading.IsPaused) return false
         declinedTimestamp = null
 
         val countdownSeconds = getAutoSkipCountdownSeconds()
         if (countdownSeconds <= 0) {
-            // Skip instantly when the countdown is set to zero
-            performSkip(timestamp)
-            return
+            player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+            return true
         }
 
         autoSkipJob = viewLifecycleOwner.lifecycleScope.launch {
@@ -2189,11 +2171,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                             secondsRemaining
                         )
                     )
-                    delay(1000)
+                    delay(1000.milliseconds)
                 }
 
                 if (skipIndex == currentIndex && currentPlayerStatus != CSPlayerLoading.IsPaused) {
-                    performSkip(timestamp)
+                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
                 }
             } finally {
                 // Restore the plain label no matter how the countdown ended
@@ -2203,6 +2185,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
             }
         }
+        return true
     }
 
     override fun onPlayerInteraction() {
@@ -2289,12 +2272,8 @@ class GeneratorPlayer : FullScreenPlayer() {
             displayTimeStamp(true)
             val currentIndex = skipIndex
 
-            val isAutoSkip = isAutoSkipEnabled(timestamp) && timestamp != declinedTimestamp
-            if (isAutoSkip) {
-                // Countdown will handle skipping and hiding when done
-                startAutoSkipCountdown(timestamp, currentIndex)
-            } else {
-                // Auto-skip is not active for this stamp: hide the manual skip button after 6s
+            val started = startAutoSkipCountdown(timestamp, currentIndex)
+            if (!started) {
                 scheduleHideSkipButton(6000L)
             }
         } else {

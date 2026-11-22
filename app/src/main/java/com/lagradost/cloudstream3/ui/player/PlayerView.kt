@@ -823,7 +823,9 @@ class PlayerView @JvmOverloads constructor(
                 }
             }
             is PauseEvent -> {
-                callbacks?.onPlayerInteraction()
+                if (event.source == PlayerEventSource.UI) {
+                    callbacks?.onPlayerInteraction()
+                }
             }
             is PlayEvent -> Unit
         }
