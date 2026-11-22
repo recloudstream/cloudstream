@@ -34,19 +34,25 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
@@ -100,6 +106,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream4.compose.Colors
 import com.lagradost.cloudstream4.compose.FocusButton
 import com.lagradost.cloudstream4.compose.FocusIconButton
 import com.lagradost.cloudstream4.compose.HORIZONTAL_ASPECT_RATIO
@@ -114,7 +121,9 @@ import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.SearchResponseAction
 import com.lagradost.cloudstream4.compose.SearchResponseItem
 import com.lagradost.cloudstream4.compose.VERTICAL_ASPECT_RATIO
+import com.lagradost.cloudstream4.compose.WhiteButton
 import com.lagradost.cloudstream4.compose.WhiteFilterChip
+import com.lagradost.cloudstream4.compose.circle
 import com.lagradost.cloudstream4.compose.fadedOutline
 import com.lagradost.cloudstream4.compose.loading
 import com.lagradost.cloudstream4.compose.rounded
@@ -143,6 +152,7 @@ import com.mihon.presentation.secondaryItemAlpha
 import com.mihon.presentation.settings.collectAsState
 import com.mihon.presentation.settings.widget.SwitchPreferenceWidget
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
@@ -152,6 +162,7 @@ import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.Uuid
@@ -422,13 +433,20 @@ object HomeScreen : Screen {
                     item("continue watching") {
                         val continueWatchingEnabled by settings.home.continueWatchingEnabled.collectAsState()
                         if (state.continueWatching.sorted.isNotEmpty() && continueWatchingEnabled) {
-                            TvResumeRow(row = state.continueWatching, onAction = onAction)
+                            TvResumeRow(
+                                title = stringResource(R.string.continue_watching),
+                                row = state.continueWatching,
+                                onAction = onAction
+                            )
                         }
                     }
                     item("bookmarks") {
                         val bookmarksEnabled by settings.home.bookmarksEnabled.collectAsState()
-                        if (bookmarksEnabled) {
-                            Text("TODO bookmarks")
+                        if (bookmarksEnabled && state.bookmarks.isNotEmpty()) {
+                            TvBookmarkRow(
+                                data = state.bookmarks,
+                                onAction = onAction
+                            )
                         }
                     }
                     items(state.rows.sorted, key = { name -> name }) { name ->
@@ -700,16 +718,130 @@ object HomeScreen : Screen {
         }
     }
 
+    fun bookmarkString(index: Int) =
+        when (index) {
+            0 -> R.string.type_watching
+            1 -> R.string.type_completed
+            2 -> R.string.type_on_hold
+            3 -> R.string.type_dropped
+            4 -> R.string.type_plan_to_watch
+            else -> R.string.type_none
+        }
+
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
+    fun TvBookmarkRow(
+        data: PersistentMap<Int, SearchableData<Int, ImmutableSearchResponse>>,
+        onAction: (HomeAction) -> Unit
+    ) {
+        val pxValue = with(LocalDensity.current) { MaterialTheme.padding.medium.toPx() }
+        val newBringIntoViewSpec = remember(pxValue) { LeftAlignedFocusFollower(pxValue) }
+
+        // TODO Fix derived state list order to avoid bugs like this
+        var focusedState by remember { mutableIntStateOf(0) }
+
+        val listState = rememberLazyListState()
+        val scope = rememberCoroutineScope()
+
+        CompositionLocalProvider(LocalBringIntoViewSpec provides newBringIntoViewSpec) {
+            Box {
+                val hasFocus = remember { mutableStateOf(false) }
+                LazyRow(
+                    state = listState,
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+                    contentPadding = PaddingValues(horizontal = MaterialTheme.padding.medium),
+                    modifier = Modifier.focusRestorer().focusGroup().onFocusChanged { newFocus ->
+                        hasFocus.value = newFocus.hasFocus
+                    }
+                ) {
+                    var index = 0
+                    for (i in arrayOf(0, 4, 2, 1, 3)) {
+                        if (!data.containsKey(i)) {
+                            continue
+                        }
+                        item(key = i) {
+                            Button(
+                                onClick = {
+                                    scope.launch {
+                                        focusedState = i
+                                        listState.scrollToItem(index = index)
+                                    }
+                                },
+                                colors =
+                                    if (focusedState == i) {
+                                        Colors.transparentButton
+                                    } else {
+                                        Colors.blackTransparentButton
+                                    },
+                                modifier = Modifier.onFocusChanged { newFocus ->
+                                    if (newFocus.hasFocus) {
+                                        focusedState = i
+                                    }
+                                },
+                            ) {
+                                Text(text = stringResource(bookmarkString(index = i)))
+                            }
+                        }
+                        index += 1
+                    }
+                    item("tail") {
+                        Spacer(modifier = Modifier.width(LocalWindowInfo.current.containerSize.width.dp))
+                    }
+                }
+
+                Row {
+                    Spacer(modifier = Modifier.width(MaterialTheme.padding.medium))
+                    Button(
+                        onClick = {},
+                        enabled = false,
+                        colors =
+                            if(hasFocus.value) {
+                                ButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.onBackground,
+                                    contentColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    disabledContainerColor = MaterialTheme.colorScheme.onBackground,
+                                    disabledContentColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            } else {
+                                ButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    contentColor = MaterialTheme.colorScheme.onBackground,
+                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    disabledContentColor = MaterialTheme.colorScheme.onBackground
+                                )
+                            },
+                    ) {
+                        Text(text = stringResource(bookmarkString(index = focusedState)))
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(MaterialTheme.padding.medium))
+        data[focusedState]?.let { row ->
+            val listState = remember(focusedState) { LazyListState() }
+            TvResumeRow(
+                listState = listState,
+                title = stringResource(bookmarkString(focusedState)),
+                row = row,
+                onAction = onAction,
+            )
+        }
+    }
+
+    @Composable
     fun TvResumeRow(
-        row: SearchableData<Int, ImmutableSearchResponse>, onAction: (HomeAction) -> Unit
+        title: String,
+        row: SearchableData<Int, ImmutableSearchResponse>,
+        listState: LazyListState = rememberLazyListState(),
+        onAction: (HomeAction) -> Unit
     ) {
         TvRow(
-            rowName = stringResource(R.string.continue_watching),
+            rowName = title,
             isExpandable = true,
             isHorizontal = false,
             isLoading = false,
+            showTitle = false,
+            listState = listState,
             items = { itemContent ->
                 itemsIndexed(items = row.sorted, key = { _, id -> row[id]!!.uuid }) { index, id ->
                     val response = row[id]!!
@@ -720,14 +852,17 @@ object HomeScreen : Screen {
         )
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun TvSearchRow(row: ImmutableHomePageList, onAction: (HomeAction) -> Unit) {
+    fun TvSearchRow(
+        row: ImmutableHomePageList,
+        onAction: (HomeAction) -> Unit,
+    ) {
         TvRow(
             rowName = row.name,
             isExpandable = true,
             isHorizontal = row.isHorizontalImages,
             isLoading = row.isLoading,
+            showTitle = true,
             items = { itemContent ->
                 itemsIndexed(
                     items = row.items, key = { _, item -> item.uuid },
@@ -745,6 +880,8 @@ object HomeScreen : Screen {
         isExpandable: Boolean,
         isHorizontal: Boolean,
         isLoading: Boolean,
+        showTitle: Boolean,
+        listState: LazyListState = rememberLazyListState(),
         items: LazyListScope.(@Composable LazyItemScope.(index: Int, response: ImmutableSearchResponse) -> Unit) -> Unit,
         onAction: (HomeAction) -> Unit
     ) {
@@ -758,12 +895,14 @@ object HomeScreen : Screen {
         val newBringIntoViewSpec = remember(pxValue) { LeftAlignedFocusFollower(pxValue) }
         CompositionLocalProvider(LocalBringIntoViewSpec provides newBringIntoViewSpec) {
             Column {
-                Text(
-                    text = rowName,
-                    modifier = Modifier.padding(MaterialTheme.padding.medium),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium,
-                )
+                if (showTitle) {
+                    Text(
+                        text = rowName,
+                        modifier = Modifier.padding(MaterialTheme.padding.medium),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
 
                 Box(
                     contentAlignment = Alignment.CenterStart,
@@ -779,7 +918,6 @@ object HomeScreen : Screen {
                         )
                     }
                     var hasFocus by remember { mutableStateOf(false) }
-                    val listState: LazyListState = rememberLazyListState()
                     val shouldLoadMore = remember {
                         derivedStateOf {
                             val lastVisibleIndex =
@@ -943,22 +1081,6 @@ object HomeScreen : Screen {
 
                                         }
                                     })
-
-                                /*val watchEpisode = overlayResponse.watchEpisode
-                                if (watchEpisode != null) {
-                                    val text =
-                                        "S1:E2"//LocalContext.current.getShortSeasonText(episode = watchEpisode.episode, season = watchEpisode.season)
-                                    if (text != null) {
-                                        Text(
-                                            text = text,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            maxLines = 2,
-                                            textAlign = TextAlign.Center,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                }*/
                             }
                         }
                     }
