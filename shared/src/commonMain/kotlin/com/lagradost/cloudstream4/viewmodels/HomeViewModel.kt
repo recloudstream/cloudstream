@@ -406,7 +406,7 @@ class HomeViewModel(val repository: HomeRepository, val db: Database) :
 
             is SelectApi -> {
                 /** Invalid api name -> None */
-                if (action.apiName.isNullOrBlank() || action.apiName.uppercase() == "NONE") {
+                if (action.apiName.isNullOrBlank() || action.apiName.equals("none", true)) {
                     db.account.home.selectedApi.set(action.apiName ?: "None")
                     viewModelScope.launch(Dispatchers.IO) {
                         loadNonePage()

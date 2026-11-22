@@ -66,9 +66,9 @@ fun FocusButton(
 
 @Composable
 fun FocusIconButton(
-    transparent: Boolean = true,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    transparent: Boolean = true,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = IconButtonDefaults.standardShape,

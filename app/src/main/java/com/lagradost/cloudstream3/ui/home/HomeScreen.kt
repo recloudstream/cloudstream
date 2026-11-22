@@ -51,6 +51,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -438,6 +439,7 @@ object HomeScreen : Screen {
                         val continueWatchingEnabled by settings.home.continueWatchingEnabled.collectAsState()
                         if (state.continueWatching.sorted.isNotEmpty() && continueWatchingEnabled) {
                             TvResumeRow(
+                                showTitle = true,
                                 title = stringResource(R.string.continue_watching),
                                 row = state.continueWatching,
                                 onAction = onAction
@@ -828,9 +830,10 @@ object HomeScreen : Screen {
                     }
                 }
             }
-            val rowListState = remember(focusedInternalId) { LazyListState() }
+            val rowListState = rememberSaveable(focusedInternalId, saver = LazyListState.Saver) { LazyListState() }
             data[focusedInternalId]?.let { bookmarkRow ->
                 TvResumeRow(
+                    showTitle = false,
                     listState = rowListState,
                     title = stringResource(bookmarkString(focusedInternalId)),
                     row = bookmarkRow.row,
@@ -843,6 +846,7 @@ object HomeScreen : Screen {
     @Composable
     fun TvResumeRow(
         title: String,
+        showTitle: Boolean,
         row: SearchableData<Int, ImmutableSearchResponse>,
         listState: LazyListState = rememberLazyListState(),
         onAction: (HomeAction) -> Unit
@@ -852,7 +856,7 @@ object HomeScreen : Screen {
             isExpandable = true,
             isHorizontal = false,
             isLoading = false,
-            showTitle = false,
+            showTitle = showTitle,
             listState = listState,
             items = { itemContent ->
                 itemsIndexed(items = row.sorted, key = { _, id -> row[id]!!.uuid }) { index, id ->
@@ -1133,7 +1137,7 @@ object HomeScreen : Screen {
 
     @Composable
     fun TvHeader(api: String?, onAction: (HomeAction) -> Unit) {
-        val focusRequester = remember { FocusRequester() }
+        val defaultFocusRequester = remember { FocusRequester() }
         var editMenu by remember { mutableStateOf(false) }
         if (editMenu) {
             EditMenu {
@@ -1147,7 +1151,8 @@ object HomeScreen : Screen {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRestorer(fallback = focusRequester)
+                .focusRestorer(fallback = defaultFocusRequester)
+                .focusGroup()
         ) {
             val activity = LocalActivity.current
             if (api != null) {
@@ -1179,7 +1184,7 @@ object HomeScreen : Screen {
                     api
                 }, onClick = {
                     onAction(HomeAction.OpenApiDialog)
-                }, transparent = false, modifier = Modifier.focusRequester(focusRequester)
+                }, transparent = false, modifier = Modifier.focusRequester(defaultFocusRequester)
             )
             // TODO
             /*DropdownMenu(expanded = dialog != null, onDismissRequest = {
@@ -1297,9 +1302,14 @@ object HomeScreen : Screen {
                     val (backgroundFocusRequester, button1FocusRequester, button2FocusRequester) = remember { FocusRequester.createRefs() }
 
                     Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                             .rounded()
+                            .focusRequester(backgroundFocusRequester)
+                            .focusProperties {
+                                end = button1FocusRequester
+                            }
                             .combinedClickable(onClick = {
                                 if (isSelected) {
                                     onAction(HomeAction.SelectApi("None"))
@@ -1314,10 +1324,6 @@ object HomeScreen : Screen {
                                     onAction(HomeAction.AddPin(api.name))
                                 }
                             })
-                            .focusRequester(backgroundFocusRequester)
-                            .focusProperties {
-                                end = button1FocusRequester
-                            }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (isSelected) {
                             Icon(
@@ -1361,7 +1367,7 @@ object HomeScreen : Screen {
                             FocusIconButton(
                                 transparent = true, onClick = {
                                     onAction(HomeAction.RemovePin(api.name))
-                                }, modifier = if (settings != null) {
+                                }, modifier = if (settings == null) {
                                     Modifier
                                         .focusRequester(button1FocusRequester)
                                         .focusProperties {
