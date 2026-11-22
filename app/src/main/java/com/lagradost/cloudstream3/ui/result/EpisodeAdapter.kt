@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
+import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.databinding.ResultEpisodeBinding
 import com.lagradost.cloudstream3.databinding.ResultEpisodeLargeBinding
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
@@ -68,6 +69,19 @@ const val ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE = 19
 
 data class EpisodeClickEvent(val position: Int?, val action: Int, val data: ResultEpisode) {
     constructor(action: Int, data: ResultEpisode) : this(null, action, data)
+}
+
+/**
+ * Live recents are shown with the same adapter as episodes, but they must not be
+ * formatted as "0. Channel".
+ */
+private fun episodeDisplayName(item: ResultEpisode, context: Context): String {
+    val name = item.name
+    return when {
+        item.tvType.isLiveStream() -> name?.takeIf { it.isNotBlank() } ?: item.headerName
+        name == null -> "${context.getString(R.string.episode)} ${item.episode}"
+        else -> "${item.episode}. $name"
+    }
 }
 
 class EpisodeAdapter(
@@ -202,8 +216,7 @@ class EpisodeAdapter(
                     downloadButton.setPersistentId(item.id)
                     downloadButton.setStatus(status)
 
-                    val name =
-                        if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
+                    val name = episodeDisplayName(item, episodeText.context)
                     episodeFiller.isVisible = item.isFiller == true
                     episodeText.text =
                         name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
@@ -423,8 +436,7 @@ class EpisodeAdapter(
                     downloadButton.setPersistentId(item.id)
                     downloadButton.setStatus(status)
 
-                    val name =
-                        if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
+                    val name = episodeDisplayName(item, episodeText.context)
                     episodeFiller.isVisible = item.isFiller == true
                     episodeText.text =
                         name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name

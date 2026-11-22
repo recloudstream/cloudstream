@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
@@ -57,6 +58,8 @@ const val RESULT_RESUME_WATCHING = "result_resume_watching_2" // Changed due to 
 const val RESULT_RESUME_WATCHING_OLD = "result_resume_watching"
 const val RESULT_RESUME_WATCHING_HAS_MIGRATED = "result_resume_watching_migrated"
 const val RESULT_EPISODE = "result_episode"
+const val RESULT_LIVE_RECENTS = "result_live_recents"
+private const val LIVE_RECENTS_LIMIT = 15
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 const val KEY_RESULT_SORT = "result_sort"
@@ -520,6 +523,71 @@ object DataStoreHelper {
     ) : SearchResponse
 
     /**
+     * Lightweight reference to a live channel the user actually played.
+     *
+     * It intentionally stores only the provider reference ([data]) and the optional
+     * page URL, never the signed [ExtractorLink] URL. Live links expire, so the
+     * channel is re-extracted from the provider when needed.
+     */
+    @Serializable
+    data class LiveRecent(
+        @JsonProperty("apiName") @SerialName("apiName") val apiName: String,
+        @JsonProperty("data") @SerialName("data") val data: String,
+        @JsonProperty("pageUrl") @SerialName("pageUrl") val pageUrl: String? = null,
+        @JsonProperty("headerName") @SerialName("headerName") val headerName: String,
+        @JsonProperty("name") @SerialName("name") val name: String? = null,
+        @JsonProperty("poster") @SerialName("poster") val poster: String? = null,
+        @JsonProperty("id") @SerialName("id") val id: Int,
+        @JsonProperty("parentId") @SerialName("parentId") val parentId: Int,
+        @JsonProperty("episode") @SerialName("episode") val episode: Int = 0,
+        @JsonProperty("season") @SerialName("season") val season: Int? = null,
+        @JsonProperty("updateTime") @SerialName("updateTime") val updateTime: Long = unixTimeMS,
+    )
+
+    fun getAllLiveRecents(): List<LiveRecent> {
+        val folder = "$currentAccount/$RESULT_LIVE_RECENTS"
+        return getKeys(folder)?.mapNotNull { path ->
+            getKey<LiveRecent>(path)
+        }?.sortedByDescending { it.updateTime } ?: emptyList()
+    }
+
+    fun addLiveRecent(episode: ResultEpisode, pageUrl: String? = null) {
+        if (!episode.tvType.isLiveStream()) return
+
+        val folder = "$currentAccount/$RESULT_LIVE_RECENTS"
+        val key = "${episode.apiName}_${episode.id}"
+        val recent = LiveRecent(
+            apiName = episode.apiName,
+            data = episode.data,
+            pageUrl = pageUrl,
+            headerName = episode.headerName,
+            name = episode.name,
+            poster = episode.poster,
+            id = episode.id,
+            parentId = episode.parentId,
+            episode = episode.episode,
+            season = episode.season,
+            updateTime = unixTimeMS,
+        )
+        setKey(folder, key, recent)
+
+        val all = getKeys(folder)?.mapNotNull { getKey<LiveRecent>(it) } ?: return
+        if (all.size > LIVE_RECENTS_LIMIT) {
+            all.sortedBy { it.updateTime }
+                .take(all.size - LIVE_RECENTS_LIMIT)
+                .forEach { removeKey(folder, "${it.apiName}_${it.id}") }
+        }
+    }
+
+    fun removeLiveRecent(apiName: String, id: Int) {
+        removeKey("$currentAccount/$RESULT_LIVE_RECENTS", "${apiName}_$id")
+    }
+
+    fun clearLiveRecents() {
+        removeKeys("$currentAccount/$RESULT_LIVE_RECENTS")
+    }
+
+    /**
      * A datastore wide account for future implementations of a multiple account system
      */
 
@@ -839,3 +907,24 @@ object DataStoreHelper {
         get() = getKey<Array<String>>(USER_PINNED_PROVIDERS) ?: emptyArray<String>()
         set(value) = setKey(USER_PINNED_PROVIDERS, value)
 }
+
+fun DataStoreHelper.LiveRecent.toResultEpisode(): ResultEpisode = ResultEpisode(
+    headerName = headerName,
+    name = name?.takeIf { it.isNotBlank() } ?: headerName,
+    poster = poster,
+    episode = episode,
+    seasonIndex = null,
+    season = season,
+    data = data,
+    apiName = apiName,
+    id = id,
+    index = 0,
+    position = 0,
+    duration = 0,
+    score = null,
+    description = null,
+    isFiller = null,
+    tvType = TvType.Live,
+    parentId = parentId,
+    videoWatchState = VideoWatchState.None,
+)

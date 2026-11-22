@@ -769,4 +769,10 @@
     <string name="edit_profile_image_default">Imágenes por defecto</string>
     <string name="installed_plugins">Complementos instalados</string>
     <string name="compressor_makeup_label">Ajuste obtenido: +%d dB</string>
+    <string name="live_recents">Canales recientes</string>
+    <string name="remove_from_recents">Quitar de recientes</string>
+    <string name="clear_live_recents">Borrar canales recientes</string>
+    <string name="reconnect_channel">Reconectar canal</string>
+    <string name="reconnecting_live">Reconectando canal en vivo…</string>
+    <string name="live_recents_provider_missing">El proveedor de este canal no está disponible</string>
 </resources>
