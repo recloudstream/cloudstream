@@ -778,4 +778,23 @@
     <string name="edit_profile_image_picker">Trình chọn ảnh</string>
     <string name="edit_profile_image_default">Ảnh mặc định</string>
     <string name="installed_plugins">Tiện ích mở rộng đã cài đặt</string>
+    <!-- Đọc phụ đề -->
+    <string name="subtitle_tts_category">Đọc phụ đề</string>
+    <string name="subtitle_tts_enable">Đọc phụ đề</string>
+    <string name="subtitle_tts_enable_des">Dùng giọng đọc để đọc to phụ đề</string>
+    <string name="subtitle_tts_language">Ngôn ngữ đọc</string>
+    <string name="subtitle_tts_voice">Giọng đọc</string>
+    <string name="subtitle_tts_voice_default">Giọng mặc định</string>
+    <string name="subtitle_tts_original_volume">Âm lượng gốc</string>
+    <string name="subtitle_tts_original_volume_des">Âm lượng video (phần trăm, 0-100) khi đang đọc phụ đề. 100 = giữ nguyên</string>
+    <string name="subtitle_tts_speech_rate">Tốc độ đọc</string>
+    <string name="subtitle_tts_show_subtitle">Hiển thị phụ đề khi đọc</string>
+    <string name="subtitle_tts_show_subtitle_des">Tắt để ẩn phụ đề trên màn hình trong lúc giọng đang đọc</string>
+    <string name="subtitle_tts_pause_mode">Tạm dừng phim chờ đọc xong</string>
+    <string name="subtitle_tts_pause_mode_des">Khi phụ đề mới tới mà giọng chưa đọc xong, phim sẽ tạm dừng chờ. Không bỏ câu, không tăng tốc</string>
+    <string name="subtitle_tts_auto_boost">Tự tăng tốc đọc</string>
+    <string name="subtitle_tts_auto_boost_des">Đọc nhanh hơn khi giọng đọc bị trễ so với phụ đề</string>
+    <string name="subtitle_tts_max_rate">Tốc độ tối đa khi tăng tốc</string>
+    <string name="subtitle_tts_drop_seconds">Bỏ câu trễ quá (giây)</string>
+    <string name="subtitle_tts_drop_seconds_des">Câu phải chờ lâu hơn mức này sẽ bị bỏ để giọng không lệch xa hình</string>
 </resources>
