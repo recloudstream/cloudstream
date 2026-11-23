@@ -818,4 +818,23 @@
     </plurals>
     <string name="player_is_live">Live</string>
     <string name="installed_plugins">Installed plugins</string>
+    <!-- Subtitle text-to-speech -->
+    <string name="subtitle_tts_category">Read subtitles aloud</string>
+    <string name="subtitle_tts_enable">Read subtitles aloud</string>
+    <string name="subtitle_tts_enable_des">Speak the subtitle text with a text-to-speech voice</string>
+    <string name="subtitle_tts_language">Reading language</string>
+    <string name="subtitle_tts_voice">Reading voice</string>
+    <string name="subtitle_tts_voice_default">Default voice</string>
+    <string name="subtitle_tts_original_volume">Original volume</string>
+    <string name="subtitle_tts_original_volume_des">Video volume in percent (0-100) while a subtitle is being read. 100 = unchanged</string>
+    <string name="subtitle_tts_speech_rate">Reading speed</string>
+    <string name="subtitle_tts_show_subtitle">Show subtitles while reading</string>
+    <string name="subtitle_tts_show_subtitle_des">Turn off to hide the on-screen subtitle while the voice reads it</string>
+    <string name="subtitle_tts_pause_mode">Pause video until the line is read</string>
+    <string name="subtitle_tts_pause_mode_des">When the next subtitle arrives before the voice finishes, the video pauses and waits. Nothing is skipped or sped up</string>
+    <string name="subtitle_tts_auto_boost">Auto speed up</string>
+    <string name="subtitle_tts_auto_boost_des">Read faster when the voice falls behind the subtitles</string>
+    <string name="subtitle_tts_max_rate">Max speed when speeding up</string>
+    <string name="subtitle_tts_drop_seconds">Skip lines later than (seconds)</string>
+    <string name="subtitle_tts_drop_seconds_des">A line that has waited longer than this is skipped so the voice does not drift away from the picture</string>
 </resources>

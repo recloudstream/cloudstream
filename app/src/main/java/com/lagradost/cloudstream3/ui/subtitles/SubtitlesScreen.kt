@@ -15,8 +15,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +41,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.CustomDecoder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
+import com.lagradost.cloudstream3.ui.player.SubtitleTts
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyleEvent
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.defaultSubtitleStyle
@@ -185,6 +189,43 @@ object SubtitlesScreen : SearchableSettings {
                 parseJson<List<String>>(json).toSet()
             })
 
+        // Ngôn ngữ và giọng đọc mà engine TTS trên máy hỗ trợ (tải nền một lần)
+        val appContext = LocalContext.current
+        val defaultVoiceLabel = stringResource(R.string.subtitle_tts_voice_default)
+        val ttsInfo by produceState<SubtitleTts.EngineInfo?>(initialValue = null) {
+            SubtitleTts.loadEngineInfo(appContext) { value = it }
+        }
+        val ttsLanguage =
+            dataStore.getString(SubtitleTts.PREF_LANGUAGE, SubtitleTts.DEFAULT_LANGUAGE)
+        val ttsLangTag by ttsLanguage.changes().collectAsState(initial = ttsLanguage.get())
+        val ttsLanguages = SubtitleTts.languageOptions(ttsInfo, ttsLangTag)
+        val ttsVoices = SubtitleTts.voiceOptions(ttsInfo, ttsLangTag, defaultVoiceLabel)
+        val ttsEnabled = dataStore.getBoolean(SubtitleTts.PREF_ENABLED, false)
+        val ttsVoice = dataStore.getString(SubtitleTts.PREF_VOICE, SubtitleTts.VOICE_DEFAULT)
+
+        // Đổi ngôn ngữ thì giọng cũ (của ngôn ngữ khác) không còn hợp lệ, quay về giọng mặc định
+        LaunchedEffect(ttsLangTag, ttsInfo) {
+            if (ttsInfo != null && ttsVoice.get() !in ttsVoices.keys) {
+                ttsVoice.set(SubtitleTts.VOICE_DEFAULT)
+            }
+        }
+        val ttsOriginalVolume =
+            dataStore.getInt(SubtitleTts.PREF_ORIGINAL_VOLUME, SubtitleTts.DEFAULT_ORIGINAL_VOLUME)
+        val ttsSpeechRate =
+            dataStore.getInt(SubtitleTts.PREF_SPEECH_RATE, SubtitleTts.DEFAULT_SPEECH_RATE)
+        val ttsPauseMode = dataStore.getBoolean(SubtitleTts.PREF_PAUSE_MODE, false)
+        val ttsShowSubtitle = dataStore.getBoolean(SubtitleTts.PREF_SHOW_SUBTITLE, true)
+        val ttsAutoBoost = dataStore.getBoolean(SubtitleTts.PREF_AUTO_BOOST, true)
+        val ttsMaxRate = dataStore.getInt(SubtitleTts.PREF_MAX_RATE, SubtitleTts.DEFAULT_MAX_RATE)
+        val ttsDropSeconds =
+            dataStore.getInt(SubtitleTts.PREF_DROP_SECONDS, SubtitleTts.DEFAULT_DROP_SECONDS)
+        val ttsIsOn by ttsEnabled.changes()
+            .collectAsState(initial = ttsEnabled.get())
+        val ttsPauseIsOn by ttsPauseMode.changes()
+            .collectAsState(initial = ttsPauseMode.get())
+        val ttsBoostIsOn by ttsAutoBoost.changes()
+            .collectAsState(initial = ttsAutoBoost.get())
+
         val subtitleFileSelector =
             rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
                 // It lies, it can be null if file manager quits.
@@ -208,6 +249,86 @@ object SubtitlesScreen : SearchableSettings {
             }
 
         return persistentListOf(
+            Preference.PreferenceGroup(
+                title = stringResource(R.string.subtitle_tts_category),
+                preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = ttsEnabled,
+                        icon = painterResource(R.drawable.closed_caption_24px),
+                        title = stringResource(R.string.subtitle_tts_enable),
+                        subtitle = stringResource(R.string.subtitle_tts_enable_des),
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = ttsShowSubtitle,
+                        icon = painterResource(R.drawable.closed_caption_24px),
+                        title = stringResource(R.string.subtitle_tts_show_subtitle),
+                        subtitle = stringResource(R.string.subtitle_tts_show_subtitle_des),
+                        enabled = ttsIsOn,
+                    ),
+                    Preference.PreferenceItem.ListPreference(
+                        preference = ttsLanguage,
+                        icon = painterResource(R.drawable.language_korean_latin_24px),
+                        title = stringResource(R.string.subtitle_tts_language),
+                        entries = ttsLanguages,
+                        enabled = ttsIsOn,
+                    ),
+                    Preference.PreferenceItem.ListPreference(
+                        preference = ttsVoice,
+                        icon = painterResource(R.drawable.text_fields_24px),
+                        title = stringResource(R.string.subtitle_tts_voice),
+                        entries = ttsVoices,
+                        enabled = ttsIsOn,
+                    ),
+                    Preference.PreferenceItem.SliderPreference(
+                        preference = ttsOriginalVolume,
+                        icon = painterResource(R.drawable.text_fields_24px),
+                        title = stringResource(R.string.subtitle_tts_original_volume),
+                        subtitle = stringResource(R.string.subtitle_tts_original_volume_des),
+                        valueRange = 0..100,
+                        steps = 19,
+                        enabled = ttsIsOn,
+                    ),
+                    Preference.PreferenceItem.SliderPreference(
+                        preference = ttsSpeechRate,
+                        icon = painterResource(R.drawable.text_fields_24px),
+                        title = stringResource(R.string.subtitle_tts_speech_rate),
+                        valueRange = 50..200,
+                        steps = 14,
+                        enabled = ttsIsOn,
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = ttsPauseMode,
+                        icon = painterResource(R.drawable.closed_caption_24px),
+                        title = stringResource(R.string.subtitle_tts_pause_mode),
+                        subtitle = stringResource(R.string.subtitle_tts_pause_mode_des),
+                        enabled = ttsIsOn,
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = ttsAutoBoost,
+                        icon = painterResource(R.drawable.closed_caption_24px),
+                        title = stringResource(R.string.subtitle_tts_auto_boost),
+                        subtitle = stringResource(R.string.subtitle_tts_auto_boost_des),
+                        enabled = ttsIsOn && !ttsPauseIsOn,
+                    ),
+                    Preference.PreferenceItem.SliderPreference(
+                        preference = ttsMaxRate,
+                        icon = painterResource(R.drawable.text_fields_24px),
+                        title = stringResource(R.string.subtitle_tts_max_rate),
+                        valueRange = 100..200,
+                        steps = 9,
+                        enabled = ttsIsOn && !ttsPauseIsOn && ttsBoostIsOn,
+                    ),
+                    Preference.PreferenceItem.SliderPreference(
+                        preference = ttsDropSeconds,
+                        icon = painterResource(R.drawable.text_fields_24px),
+                        title = stringResource(R.string.subtitle_tts_drop_seconds),
+                        subtitle = stringResource(R.string.subtitle_tts_drop_seconds_des),
+                        valueRange = 2..15,
+                        steps = 12,
+                        enabled = ttsIsOn && !ttsPauseIsOn,
+                    ),
+                )
+            ),
             Preference.PreferenceItem.CustomPreference(
                 title = stringResource(R.string.skip_type_preview), content = {
                     val state by store.state

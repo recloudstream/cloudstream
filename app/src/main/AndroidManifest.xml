@@ -27,6 +27,10 @@
             QUERY_ALL_PACKAGES does not work on some devices running Android 11+ (like Google TV 14), 
             so we must explicitly specify the packages and intent patterns we query to ensure visibility.
         -->
+        <!-- For reading subtitles aloud (text-to-speech engines) -->
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
         <!-- For external video players -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
