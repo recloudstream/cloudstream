@@ -22,7 +22,7 @@ const val loadingLineHeight = 15
 @Composable
 fun Modifier.loading(): Modifier {
     return this
-        .clip(RoundedCornerShape(5.dp))
+        .rounded()
         .background(grayColor)
         .gradientEffect(shimmerColor)
 }

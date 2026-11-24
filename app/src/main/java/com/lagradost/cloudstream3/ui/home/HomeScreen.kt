@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.content.res.Configuration
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -69,7 +71,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -134,9 +138,12 @@ import com.lagradost.cloudstream4.compose.SearchResponseItem
 import com.lagradost.cloudstream4.compose.VERTICAL_ASPECT_RATIO
 import com.lagradost.cloudstream4.compose.WhiteFilterChip
 import com.lagradost.cloudstream4.compose.fadedOutline
+import com.lagradost.cloudstream4.compose.gradientEffect
+import com.lagradost.cloudstream4.compose.grayColor
 import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.compose.loading
 import com.lagradost.cloudstream4.compose.rounded
+import com.lagradost.cloudstream4.compose.shimmerColor
 import com.lagradost.cloudstream4.compose.whiteOutline
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.no_results_found
@@ -174,6 +181,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.absoluteValue
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.uuid.Uuid
 
@@ -489,10 +497,18 @@ object HomeScreen : Screen {
                 item("hero") {
                     val heroEnabled by settings.home.heroEnabled.collectAsState()
                     if (heroEnabled) {
-                        if (state.isLoading) {
-                            TvHeroLoading()
+                        if (isLayout(PHONE or EMULATOR)) {
+                            if (state.isLoading) {
+                                PhoneHeroLoading()
+                            } else {
+                                PhoneHeroRow(row = state.hero, onAction = onAction)
+                            }
                         } else {
-                            TvHeroRow(row = state.hero, onAction = onAction)
+                            if (state.isLoading) {
+                                TvHeroLoading()
+                            } else {
+                                TvHeroRow(row = state.hero, onAction = onAction)
+                            }
                         }
                     }
                 }
@@ -561,6 +577,204 @@ object HomeScreen : Screen {
                     .fadedOutline()
             )
             LoadingLine(0.7f)
+        }
+    }
+
+    @Composable
+    fun PhoneHeroLoading() {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+            modifier = Modifier.padding(MaterialTheme.padding.medium)
+        ) {
+            val isHorizontal =
+                LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+            Box(
+                modifier = Modifier
+                    .aspectRatio(
+                        if (isHorizontal) {
+                            HORIZONTAL_ASPECT_RATIO * 1.5f
+                        } else {
+                            VERTICAL_ASPECT_RATIO
+                        }
+                    )
+                    .fillMaxWidth()
+                    .loading()
+                    .fadedOutline()
+            )
+            LoadingLine(0.7f)
+        }
+    }
+
+    @Composable
+    fun PhoneHeroRow(row: SearchableData<Uuid, ImmutableHero>, onAction: (HomeAction) -> Unit) {
+        if (row.sorted.isEmpty()) {
+            return
+        }
+
+        val pagerState = rememberPagerState(initialPage = 0) { row.sorted.size }
+
+        /** Preload prev and next */
+        LaunchedEffect(pagerState.currentPage) {
+            for (index in pagerState.currentPage - 1..pagerState.currentPage + 1) {
+                val uuid = row.sorted.getOrNull(index) ?: continue
+                onAction(HomeAction.SelectHero(uuid))
+            }
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.extraSmall),
+            modifier = Modifier.padding(MaterialTheme.padding.medium)
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .semantics { role = Role.Carousel }
+                    .fillMaxWidth()
+                    .rounded()
+                    .background(grayColor)
+                    .fadedOutline(),
+            ) { page ->
+                val uuid = row.sorted[page]
+                val hero = row[uuid]!!
+                val interactionSource = remember { MutableInteractionSource() }
+                val isHorizontal =
+                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+                AsyncImage(
+                    model = if (hero.isLoading) {
+                        Color.Transparent
+                    } else if (isHorizontal) {
+                        hero.response.backgroundImageRequest()
+                    } else {
+                        hero.response.imageRequest()
+                    },
+                    contentDescription = hero.response.name,
+                    contentScale = ContentScale.Crop,
+                    clipToBounds = true,
+                    alignment = BiasAlignment(0f, -0.5f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(
+                            if (isHorizontal) {
+                                HORIZONTAL_ASPECT_RATIO * 1.5f
+                            } else {
+                                VERTICAL_ASPECT_RATIO
+                            }
+                        )
+                        .let { modifier ->
+                            if (hero.isLoading) {
+                                modifier.gradientEffect(shimmerColor)
+                            } else {
+                                modifier
+                            }
+                        }
+                        .clickable(
+                            onClickLabel = stringResource(R.string.home_more_info),
+                            role = Role.Image,
+                            interactionSource = interactionSource
+                        ) {
+                            loadResult(
+                                hero.response.url, hero.response.apiName, hero.response.name
+                            )
+                        }/*.graphicsLayer {
+                                val offset = pagerState.currentPageOffsetFraction + pagerState.currentPage - page
+                                this.translationX = maxOf(offset, 0.0f) * 300.dp.toPx()
+                            }*/
+                )
+            }
+
+            Spacer(Modifier.height(MaterialTheme.padding.extraSmall))
+
+            val uuid = row.sorted[pagerState.currentPage]
+            val hero = row[uuid]!!
+
+            Text(text = hero.response.name, style = MaterialTheme.typography.titleLarge)
+            if (hero.isLoading) {
+                Spacer(modifier = Modifier.height(MaterialTheme.padding.extraSmall))
+                LoadingLine(0.4f)
+                LoadingLine()
+                LoadingLine()
+                LoadingLine(0.7f)
+            } else {
+                FlowRow(
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+                    maxLines = 1
+                ) {
+                    var addDot = false
+                    val centerDotColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    val tvType = hero.response.type
+                    if (tvType != null) {
+                        Text(text = stringResource(tvType.toStringRes()))
+                        addDot = true
+                    }
+                    if (hero.response.year != null) {
+                        if (addDot) {
+                            Text(text = "·", color = centerDotColor)
+                        }
+                        Text(text = hero.response.year.toString())
+                        addDot = true
+                    }
+                    if (tvType != null) {
+                        val episodes = hero.response.episodes.maxOfOrNull { it.value }
+
+                        when (tvType) {
+                            TvType.AnimeMovie, TvType.Live, TvType.Movie, TvType.Torrent, TvType.Video -> {
+                                if (hero.response.duration != null) {
+                                    Text(text = "·", color = centerDotColor)
+                                    Text(text = hero.response.duration.toString())
+                                    addDot = true
+                                }
+                            }
+
+                            TvType.Anime, TvType.AsianDrama, TvType.Cartoon, TvType.TvSeries -> {
+                                if (episodes != null && episodes > 0) {
+                                    Text(text = "·", color = centerDotColor)
+                                    Text(text = "$episodes ${stringResource(R.string.episodes)}")
+                                    addDot = true
+                                }
+                            }
+
+                            else -> {}
+                        }
+                    }
+                    hero.response.score?.toStringNull(minScore = 0.1, maxScore = 10)?.let { score ->
+                        if (addDot) {
+                            Text(text = "·", color = centerDotColor)
+                        }
+                        Text(text = "★ $score")
+                        addDot = true
+                    }
+
+                    if (addDot) {
+                        Spacer(Modifier.width(MaterialTheme.padding.extraSmall))
+                    }
+                    hero.response.tags.take(10).forEach { tag ->
+                        Text(
+                            text = tag, modifier = Modifier
+                                .border(
+                                    width = 1.5.dp,
+                                    color = Color.White.copy(alpha = 0.1f),
+                                    shape = RoundedShape()
+                                )
+                                .padding(
+                                    vertical = MaterialTheme.padding.extraSmall,
+                                    horizontal = MaterialTheme.padding.small
+                                )
+                        )
+                    }
+                }
+
+                val plot = hero.response.plot
+                if (!plot.isNullOrBlank()) {
+                    Text(
+                        text = plot,
+                        maxLines = 5,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
         }
     }
 
@@ -1094,7 +1308,9 @@ object HomeScreen : Screen {
                         .fillMaxWidth()
                         .clickable {
                             onAction(HomeAction.ShowRowDialog(rowName))
-                        }.padding(MaterialTheme.padding.medium)) {
+                        }
+                        .padding(MaterialTheme.padding.medium)
+                ) {
                     Text(
                         text = rowName,
                         color = MaterialTheme.colorScheme.onBackground,
