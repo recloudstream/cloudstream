@@ -137,8 +137,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import java.io.Serializable
-import java.lang.ref.WeakReference
 import java.util.Calendar
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -246,8 +246,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         } else if (currentPlayerStatus == CSPlayerLoading.IsPaused) {
             if (autoSkipJob?.isActive == true) {
                 declinedTimestamp = shownTimestamp
+                cancelAutoSkipCountdown()
+                // The countdown no longer hides the button, so schedule it
+                scheduleHideSkipButton(4000L)
             }
-            cancelAutoSkipCountdown()
         }
     }
 
@@ -555,6 +557,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         if (!sameEpisode) {
             player.addTimeStamps(emptyList()) // clear stamps
+            resetSkipButton()
             // Resets subtitle delay, as we watch some other content
             player.setSubtitleOffset(0)
         }
@@ -1736,6 +1739,15 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var lastRecordedPosition: Long = 0L
 
     override fun playerPositionChanged(position: Long, duration: Long) {
+        shownTimestamp?.let { shown ->
+            if (position >= shown.timestamp.endMs || position < shown.timestamp.startMs) {
+                cancelHideSkipButton()
+                cancelAutoSkipCountdown()
+                displayTimeStamp(false)
+                shownTimestamp = null
+            }
+        }
+
         if (position < lastRecordedPosition - 1000L) {
             // User sought backwards: allow auto-skip to trigger again
             declinedTimestamp = null
@@ -1744,11 +1756,6 @@ class GeneratorPlayer : FullScreenPlayer() {
             declinedTimestamp?.let { declined ->
                 if (position >= declined.timestamp.endMs || position < declined.timestamp.startMs) {
                     declinedTimestamp = null
-                }
-            }
-            shownTimestamp?.let { shown ->
-                if (position >= shown.timestamp.endMs || position < shown.timestamp.startMs) {
-                    shownTimestamp = null
                 }
             }
         }
@@ -2140,6 +2147,21 @@ class GeneratorPlayer : FullScreenPlayer() {
         hideSkipButtonRunnable = null
     }
 
+    /** Instantly hides the skip button and clears all state related to it */
+    private fun resetSkipButton() {
+        cancelHideSkipButton()
+        cancelAutoSkipCountdown()
+        shownTimestamp = null
+        declinedTimestamp = null
+        skipIndex++
+        timestampShowState = false
+        // Remove the listeners first, as cancel() would invoke onEnd and move the focus
+        skipAnimator?.removeAllListeners()
+        skipAnimator?.cancel()
+        skipAnimator = null
+        playerBinding?.skipChapterButton?.isVisible = false
+    }
+
     private fun startAutoSkipCountdown(timestamp: VideoSkipStamp, currentIndex: Int): Boolean {
         cancelAutoSkipCountdown()
         if (!isAutoSkipEnabled(timestamp)) return false
@@ -2148,13 +2170,9 @@ class GeneratorPlayer : FullScreenPlayer() {
         declinedTimestamp = null
 
         val countdownSeconds = getAutoSkipCountdownSeconds()
-        if (countdownSeconds <= 0) {
-            player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
-            return true
-        }
-
         autoSkipJob = viewLifecycleOwner.lifecycleScope.launch {
             try {
+                yield()
                 for (secondsRemaining in countdownSeconds downTo 1) {
                     if (skipIndex != currentIndex) return@launch
                     if (currentPlayerStatus == CSPlayerLoading.IsPaused) {
@@ -2176,6 +2194,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 if (skipIndex == currentIndex && currentPlayerStatus != CSPlayerLoading.IsPaused) {
                     player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+                }
+
+                if (skipIndex == currentIndex) {
+                    displayTimeStamp(false)
                 }
             } finally {
                 // Restore the plain label no matter how the countdown ended
@@ -2366,12 +2388,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     @MainThread
     fun releasePlayer() {
-        cancelHideSkipButton()
-        cancelAutoSkipCountdown()
-        shownTimestamp = null
-        declinedTimestamp = null
-        lastRecordedPosition = 0L
         player.release()
+        resetSkipButton()
+        lastRecordedPosition = 0L
         currentSelectedSubtitles = null
         currentSelectedLink = null
         isPlayerActive.set(false)
