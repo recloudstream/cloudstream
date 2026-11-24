@@ -21,10 +21,6 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.receivers.PackageInstallerStatusReceiver
-import com.lagradost.cloudstream3.services.PackageInstallerService.Companion.UPDATE_CHANNEL_DESCRIPTION
-import com.lagradost.cloudstream3.services.PackageInstallerService.Companion.UPDATE_CHANNEL_ID
-import com.lagradost.cloudstream3.services.PackageInstallerService.Companion.UPDATE_CHANNEL_NAME
-import com.lagradost.cloudstream3.services.PackageInstallerService.Companion.UPDATE_NOTIFICATION_ID
 import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
 import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.viewmodels.AppUpdater
@@ -42,6 +38,11 @@ import java.security.MessageDigest
 object ApkUpdater : AppUpdater {
     private const val APP_UPDATE_NAME = "CloudStream"
     private const val APP_UPDATE_SUFFIX = "apk"
+
+    private const val UPDATE_CHANNEL_ID = "cloudstream3.updates"
+    private const val UPDATE_CHANNEL_NAME = "App Updates"
+    private const val UPDATE_CHANNEL_DESCRIPTION = "App updates notification channel"
+    private const val UPDATE_NOTIFICATION_ID = -68454136
 
     @Throws
     override suspend fun update(
