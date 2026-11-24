@@ -34,6 +34,8 @@ import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.serializers.WriteOnlySerializer
+import com.mihon.common.preference.AndroidAccountPreferenceStore
+import com.mihon.common.preference.DataPreferenceStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -218,6 +220,10 @@ object DataStoreHelper {
             MainActivity.reloadHomeEvent(true)
         }
         _selectedAccountNumberFlow.value += 1
+
+        // Notify that the associated keys have changed to make the view models update them
+        AndroidAccountPreferenceStore.setAccount(account.keyIndex)
+        DataPreferenceStore.keyFlow.tryEmit("data_store_helper/account_key_index")
     }
 
     fun getDefaultAccount(context: Context): Account {

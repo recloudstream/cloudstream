@@ -5,18 +5,54 @@ import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJsonLiteral
 import com.mihon.common.preference.PreferenceStore
 import com.mihon.common.preference.getEnumSet
+import com.mihon.common.preference.getJson
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toPersistentSet
 
 @Composable
 expect fun rememberAppSettings(): AppSettings
 
+@Composable
+expect fun rememberGeneralData(): GeneralData
+
+@Composable
+expect fun rememberAccountData(): AccountData
+
+@Composable
+expect fun rememberDatabase(): Database
+
+/**
+ * Here we store and get all "Persistent" data the app can access between sessions.
+ *
+ * This is the general type-safe database implementation, that way we can just inject it
+ * into a viewmodel, or similar.
+ *
+ * Notes:
+ * 1. We use an internal constructor to force the user to construct it using the platform specific
+ * initializer.
+ *
+ * 2. This is named "Database" instead of "PersistentData" or similar to avoid confusion with the
+ * Persistent data structures, and allow for the name short name "db".
+ */
+class Database internal constructor(
+    /** App settings that are set in the settings menu by the user manually */
+    val settings: AppSettings,
+    /**
+     * Private data for miscellaneous keys that are not settings, but should persist.
+     * This is for frequently changed keys or general keys not set by the user.
+     * */
+    val general: GeneralData,
+    /** The CloudStream account related data, this "changes" when we switch account */
+    val account: AccountData,
+)
+
 /**
  * App settings for every setting we have, that way we can just inject AppSettings into a viewmodel,
  * or similar.
- *
- * We use an internal constructor to force the user to construct it using the plantform specific
- * initalizer
  * */
 class AppSettings internal constructor(
     preferences: PreferenceStore,
@@ -32,8 +68,61 @@ class AppSettings internal constructor(
     val plugins = PluginPreferences(preferences)
 }
 
+/** Formally get/set key */
+class GeneralData internal constructor(
+    preferences: PreferenceStore
+) {
+    val accountIndex = preferences.getJson<Int>("data_store_helper/account_key_index", 0)
+    val downloadSubsLanguage = preferences.getObjectFromString<Set<String>>(
+        "subs_auto_download",
+        persistentSetOf("en"), serializer = { obj ->
+            obj.toTypedArray().toJsonLiteral()
+        }, deserializer = { json ->
+            parseJson<Array<String>>(json).toPersistentSet()
+        })
+    val autoSelectSubtitles = preferences.getJson("subs_auto_select", "en")
+    val pinnedProviders = preferences.getObjectFromString(
+        "user_pinned_providers",
+        persistentSetOf<String>(),
+        serializer = { obj ->
+            obj.toTypedArray().toJsonLiteral()
+        },
+        deserializer = { json ->
+            parseJson<Array<String>>(json).toPersistentSet()
+        })
+}
+
+/** Formally get/set key with index/ prefix */
+class AccountData internal constructor(
+    preferences: PreferenceStore
+) {
+    val home: HomePreferences = HomePreferences(preferences)
+}
+
+class HomePreferences(preferences: PreferenceStore) {
+    val heroEnabled = preferences.getBoolean("home_hero", true)
+    val bookmarksEnabled = preferences.getBoolean("home_bookmarks", true)
+    val continueWatchingEnabled = preferences.getBoolean("home_resume_watching", true)
+
+    val selectedApi = preferences.getJson("home_api_used", "")
+    val selectedTvTypes = preferences.getObjectFromString(
+        "home_pref_homepage", persistentSetOf(TvType.Movie, TvType.TvSeries), serializer = { obj ->
+            obj.map { it.name }.toTypedArray().toJsonLiteral()
+        },
+        deserializer = { json ->
+            parseJson<Array<String>>(json).mapNotNull {
+                try {
+                    enumValueOf<TvType>(it)
+                } catch (_: IllegalArgumentException) {
+                    null
+                }
+            }.toPersistentSet()
+        })
+}
+
 class PluginPreferences(preferences: PreferenceStore) {
     val autoUpdate = preferences.getBoolean("auto_update_plugins", true)
+
     /** Not used anymore, as a user should never auto install all plugins in a repository */
     val autoDownload = preferences.getInt("auto_download_plugins_key2", 0)
 }
@@ -43,9 +132,11 @@ class BackupPreferences(preferences: PreferenceStore) {
     val path = preferences.getString("backup_path_key")
     val visualPath = preferences.getString("backup_dir_key")
 }
+
 class UpdatePreferences(preferences: PreferenceStore) {
-    val apkInstaller = preferences.getInt("apk_installer_key",1)
+    val apkInstaller = preferences.getInt("apk_installer_key", 1)
     val showAppUpdates = preferences.getBoolean("auto_update", true)
+
     // Node id for this update
     val skipUpdate = preferences.getString("skip_update_key", "")
 }
@@ -204,4 +295,5 @@ class GeneralPreferences(preferences: PreferenceStore) {
     /** This should honesty be refactored to a single setting */
     val downloadPath = preferences.getString("download_path_key", "")
     val downloadPathVisual = preferences.getString("download_path_key_visual", "")
+    val subtitlesFilterSubLanguage = preferences.getBoolean("filter_sub_lang_key", false)
 }

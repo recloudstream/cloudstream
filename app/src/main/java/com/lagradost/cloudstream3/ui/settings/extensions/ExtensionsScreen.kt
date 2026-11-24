@@ -112,6 +112,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream4.compose.ActionDialog
 import com.lagradost.cloudstream4.compose.BlackButton
 import com.lagradost.cloudstream4.compose.BlackTextField
+import com.lagradost.cloudstream4.compose.FocusIconButton
 import com.lagradost.cloudstream4.compose.IsScrolling
 import com.lagradost.cloudstream4.compose.LogBoxBlack
 import com.lagradost.cloudstream4.compose.LogBoxWhite
@@ -335,26 +336,24 @@ object ExtensionsScreen : Screen {
         var extraDialog by remember { mutableStateOf(false) }
         if (!state.searchPlugins) {
             if (isLayout(TV)) {
-                WhiteIconButton(
+                FocusIconButton(
                     onClick = {
                         scope.launch {
                             openRepositoryDialog(clipboard = clipboard, onAction = onAction)
                         }
                     }) {
                     Icon(
-                        tint = MaterialTheme.colorScheme.onBackground,
                         painter = painterResource(R.drawable.add_24px),
                         contentDescription = stringResource(R.string.add_repository)
                     )
                 }
             }
 
-            WhiteIconButton(
+            FocusIconButton(
                 onClick = {
                     extraDialog = true
                 }) {
                 Icon(
-                    tint = MaterialTheme.colorScheme.onBackground,
                     painter = painterResource(R.drawable.ic_baseline_more_vert_24),
                     contentDescription = stringResource(R.string.extensions)
                 )
@@ -411,11 +410,10 @@ object ExtensionsScreen : Screen {
 
         val activeRepository = state.pluginFilter.repository
         if (state.searchPlugins && activeRepository != null && derivedRepositoryState.notDownloaded != derivedRepositoryState.total) {
-            WhiteIconButton(onClick = {
+            FocusIconButton(onClick = {
                 deleteDialog = true
             }) {
                 Icon(
-                    tint = MaterialTheme.colorScheme.onBackground,
                     painter = painterResource(R.drawable.delete_sweep_24px),
                     contentDescription = stringResource(R.string.delete_repository)
                 )
@@ -424,11 +422,10 @@ object ExtensionsScreen : Screen {
 
         /** We only show the langauge filter button if we are searching plugins and there is languages to pick from*/
         if (state.searchPlugins && derivedRepositoryState.languageCount.isNotEmpty()) {
-            WhiteIconButton(onClick = {
+            FocusIconButton(onClick = {
                 languageDialog = true
             }) {
                 Icon(
-                    tint = MaterialTheme.colorScheme.onBackground,
                     painter = painterResource(R.drawable.plugin_lang),
                     contentDescription = stringResource(R.string.extension_language)
                 )
@@ -1224,7 +1221,7 @@ object ExtensionsScreen : Screen {
 
             if (settings != null) {
                 val context = LocalContext.current
-                WhiteIconButton(
+                FocusIconButton(
                     modifier = Modifier
                         .focusRequester(button1FocusRequester)
                         .focusProperties {
@@ -1250,7 +1247,7 @@ object ExtensionsScreen : Screen {
                 }
             }
 
-            WhiteIconButton(
+            FocusIconButton(
                 modifier = Modifier
                     .focusRequester(button2FocusRequester)
                     .focusProperties {
@@ -1293,14 +1290,14 @@ object ExtensionsScreen : Screen {
                                 modifier = Modifier
                                     .size(IconButtonDefaults.smallContainerSize())
                                     .padding(MaterialTheme.padding.small),
-                                color = MaterialTheme.colorScheme.onBackground,
+                                color = LocalContentColor.current,
                             )
                         } else {
                             CircularProgressIndicator(
                                 modifier = Modifier
                                     .size(IconButtonDefaults.smallContainerSize())
                                     .padding(MaterialTheme.padding.small),
-                                color = MaterialTheme.colorScheme.onBackground,
+                                color = LocalContentColor.current,
                             )
                         }
                     }
@@ -1815,7 +1812,7 @@ object ExtensionsScreen : Screen {
                 when (val reason = repository.status) {
                     is RepositoryStatus.Failure -> {
                         var errorDialog by remember { mutableStateOf(false) }
-                        WhiteIconButton(
+                        FocusIconButton(
                             onClick = {
                                 errorDialog = true
                             },
@@ -1856,7 +1853,7 @@ object ExtensionsScreen : Screen {
                     }
 
                     RepositoryStatus.Loading, RepositoryStatus.Success -> {
-                        WhiteIconButton(
+                        FocusIconButton(
                             onClick = {
                                 deleteDialog = true
                             },

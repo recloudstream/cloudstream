@@ -291,7 +291,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.lagradost.cloudstream3.ui.home.HomeFragment"
+        android:name="com.lagradost.cloudstream3.ui.home.HomeFragment2"
         android:label="@string/title_home"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"

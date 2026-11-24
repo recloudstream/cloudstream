@@ -65,6 +65,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityOptionsCompat
 import coil3.compose.AsyncImage
@@ -100,12 +101,12 @@ import java.util.Locale
 import java.util.TimeZone
 
 object SettingsFragmentScreen : Screen {
-    fun <I> ActivityResultLauncher<I>.launchSafe(input : I, options: ActivityOptionsCompat? = null) {
+    fun <I> ActivityResultLauncher<I>.launchSafe(input: I, options: ActivityOptionsCompat? = null) {
         try {
             this.launch(input = input, options = options)
-        } catch (_ : ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             showToast(R.string.app_not_found_error)
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             /** This should not ever happen, but again Java is wack */
             showToast(t.toString())
             logError(t)
@@ -196,6 +197,85 @@ object SettingsFragmentScreen : Screen {
         val subtitle: PersistentList<Int>,
     )
 
+    @Composable
+    fun AccountPin(size: Dp) {
+        val default = DataStoreHelper.getDefaultAccount(
+            LocalContext.current
+        )
+        val flow by DataStoreHelper.selectedAccountNumberFlow.collectAsState()
+        val account = remember(flow) {
+            DataStoreHelper.getCurrentAccount() ?: default
+        }
+
+        val image =
+            account.customImage ?: profileImages.getOrNull(account.defaultImageIndex)
+            ?: profileImages.first()
+
+        AsyncImage(
+            contentScale = ContentScale.Crop,
+            model = image,
+            modifier = Modifier
+                .focusOutline(shape = CircleShape)
+                .circleBorder(size)
+                .clickable {
+                    activity.navigate(
+                        R.id.accountSelectActivity,
+                        Bundle().apply { putBoolean("isFromMainActivity", true) }
+                    )
+                },
+            contentDescription = null,
+        )
+    }
+
+    @Composable
+    fun Account() {
+        val default = DataStoreHelper.getDefaultAccount(
+            LocalContext.current
+        )
+        val flow by DataStoreHelper.selectedAccountNumberFlow.collectAsState()
+        val account = remember(flow) {
+            DataStoreHelper.getCurrentAccount() ?: default
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .focusOutline()
+                .clickable {
+                    activity.navigate(
+                        R.id.accountSelectActivity,
+                        Bundle().apply { putBoolean("isFromMainActivity", true) }
+                    )
+                }
+                .padding(
+                    vertical = MaterialTheme.padding.large,
+                    horizontal = MaterialTheme.padding.medium
+                )
+        ) {
+            val image =
+                account.customImage ?: profileImages.getOrNull(account.defaultImageIndex)
+                ?: profileImages.first()
+
+            AsyncImage(
+                contentScale = ContentScale.Crop,
+                model = image,
+                modifier = Modifier.circleBorder(50.dp),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(MaterialTheme.padding.medium))
+            Column {
+                Text(
+                    text = account.name,
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Text(
+                    text = stringResource(R.string.title_settings),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+    }
+
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -223,51 +303,7 @@ object SettingsFragmentScreen : Screen {
             Column(modifier = Modifier.verticalScroll(outerListState)) {
                 Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
 
-                val default = DataStoreHelper.getDefaultAccount(
-                    LocalContext.current
-                )
-                val flow by DataStoreHelper.selectedAccountNumberFlow.collectAsState()
-                val account = remember(flow) {
-                    DataStoreHelper.getCurrentAccount() ?: default
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .focusOutline()
-                        .clickable {
-                            activity.navigate(
-                                R.id.accountSelectActivity,
-                                Bundle().apply { putBoolean("isFromMainActivity", true) }
-                            )
-                        }
-                        .padding(
-                            vertical = MaterialTheme.padding.large,
-                            horizontal = MaterialTheme.padding.medium
-                        )
-                ) {
-                    val image =
-                        account.customImage ?: profileImages.getOrNull(account.defaultImageIndex)
-                        ?: profileImages.first()
-
-                    AsyncImage(
-                        contentScale = ContentScale.Crop,
-                        model = image,
-                        modifier = Modifier.circleBorder(50.dp),
-                        contentDescription = null,
-                    )
-                    Spacer(modifier = Modifier.width(MaterialTheme.padding.medium))
-                    Column {
-                        Text(
-                            text = account.name,
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                        Text(
-                            text = stringResource(R.string.title_settings),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
+                Account()
 
                 Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
                 SettingsSearch(textFieldState = textFieldState)

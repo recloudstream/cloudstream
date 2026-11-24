@@ -165,6 +165,34 @@ data class MultiActiveQuery<T>(
         }
     }
 
+    /** Tries to launch the job, but if it already exists, then we just ignore this call */
+    suspend fun launchWithoutCancel(label: T, block: suspend CoroutineScope.() -> Unit) {
+        val currentScope = CoroutineScope(currentCoroutineContext() + supervisor)
+        val obj: suspend CoroutineScope.() -> Unit = {
+            try {
+                withContext(dispatcher) {
+                    block()
+                }
+            } catch (_: Throwable) {
+            } finally {
+                // This actually does not need a `withContext(NonCancellable)`, because if this gets
+                // canceled the callee will also clear this key. This means that it is free to skip
+                // in case of cancellation
+                mutex.withLock {
+                    // Clean up the key so we do not leak the label
+                    queries.remove(label)
+                }
+            }
+        }
+
+        mutex.withLock {
+            if(!queries.containsKey(label)) {
+                queries[label] = currentScope.launch(block = obj)
+            }
+        }
+    }
+
+    /** Launches the job, and cancels any previous job with the same label */
     suspend fun launch(label: T, block: suspend CoroutineScope.() -> Unit) {
         val currentScope = CoroutineScope(currentCoroutineContext() + supervisor)
         val obj: suspend CoroutineScope.() -> Unit = {
@@ -178,7 +206,7 @@ data class MultiActiveQuery<T>(
                 // canceled the callee will also clear this key. This means that it is free to skip
                 // in case of cancellation
                 mutex.withLock {
-                    // Clean up the key so we do not leek shit
+                    // Clean up the key so we do not leak the label
                     queries.remove(label)
                 }
             }

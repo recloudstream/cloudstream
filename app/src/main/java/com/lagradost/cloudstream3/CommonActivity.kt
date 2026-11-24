@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PictureInPictureParams
@@ -7,7 +8,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.Manifest
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -39,31 +39,26 @@ import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
-import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.player.PlayerPipHelper.isPIPPossible
 import com.lagradost.cloudstream3.ui.player.Torrent
-import com.lagradost.cloudstream3.ui.result.ActorAdaptor
-import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
-import com.lagradost.cloudstream3.ui.result.ImageAdapter
-import com.lagradost.cloudstream3.ui.search.SearchAdapter
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
-import com.lagradost.cloudstream3.ui.settings.extensions.PluginAdapter
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UiText
+import com.mihon.common.preference.AndroidAccountPreferenceStore
+import org.schabi.newpipe.extractor.NewPipe
 import java.lang.ref.WeakReference
 import java.util.Locale
 import kotlin.math.max
 import kotlin.math.min
-import org.schabi.newpipe.extractor.NewPipe
 
 enum class FocusDirection {
     Start,
@@ -248,6 +243,7 @@ object CommonActivity {
         ioSafe { Torrent.deleteAllFiles() }
         val componentActivity = activity as? ComponentActivity ?: return
 
+        AndroidAccountPreferenceStore.setAccount(DataStoreHelper.selectedKeyIndex)
         componentActivity.updateLocale()
         componentActivity.updateTv()
         AccountManager.initMainAPI()

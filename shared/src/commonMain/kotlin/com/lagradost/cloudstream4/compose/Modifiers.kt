@@ -15,6 +15,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -72,6 +73,13 @@ fun Modifier.focusOutline(
         hasFocus = newFocus.isFocused
     }.whiteOutline(hasFocus = hasFocus, shape = shape)
 }
+
+@Composable
+fun Modifier.fadedOutline(shape: Shape = RoundedShape()) = border(
+    width = 1.5.dp,
+    color = Color.White.copy(alpha = 0.1f),
+    shape = shape
+)
 
 @Composable
 fun Modifier.whiteOutline(hasFocus: Boolean, shape: Shape = RoundedShape()): Modifier {

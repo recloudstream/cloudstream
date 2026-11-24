@@ -5,14 +5,46 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.lagradost.cloudstream4.generated.resources.Res
 import com.lagradost.cloudstream4.generated.resources.preview
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
+import com.mihon.common.preference.PreferenceData
+import com.mihon.presentation.settings.Preference
+import com.mihon.presentation.settings.collectAsState
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
+@Composable
+fun SwitchPreferenceWidget(
+    preference: PreferenceData<Boolean>,
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String? = null,
+    icon: Painter? = null,
+    onValueChanged: suspend (value: Boolean) -> Boolean = { true },
+) {
+    val scope = rememberCoroutineScope()
+    val value by preference.collectAsState()
+    SwitchPreferenceWidget(
+        modifier = modifier,
+        title = title,
+        subtitle = subtitle,
+        icon = icon,
+        checked = value,
+        onCheckedChanged = { newValue ->
+            scope.launch {
+                if(onValueChanged(newValue)) {
+                    preference.set(newValue)
+                }
+            }
+        },
+    )
+}
 @Composable
 fun SwitchPreferenceWidget(
     modifier: Modifier = Modifier,

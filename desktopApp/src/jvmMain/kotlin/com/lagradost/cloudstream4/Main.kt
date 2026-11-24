@@ -37,7 +37,8 @@ fun main() = application {
                     containerColor = MaterialTheme.colorScheme.background,
                     contentColor = MaterialTheme.colorScheme.onBackground
                 ) {
-                    Column {
+                    HomeScreen.Content()
+                    /*Column {
                         Text("Hello, World!")
                         Row {
                             WhiteButton("Hello in White") {
@@ -53,7 +54,7 @@ fun main() = application {
                             checked = checked,
                             onCheckedChanged = { checked = !checked }
                         )
-                    }
+                    }*/
                 }
             }
 
