@@ -179,6 +179,7 @@ import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.compose.CloudStreamThemeAppSettings
 import com.lagradost.cloudstream4.theme.CloudStreamTheme
 import com.lagradost.safefile.SafeFile
@@ -1989,9 +1990,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         handleAppIntent(intent)
 
-        //ioSafe {
-        //    runAutoUpdate()
-        //}
+        if (AppSettings(this).updates.legacyUpdater.get()) {
+            ioSafe {
+                runAutoUpdate()
+            }
+        }
 
         FcastManager().init(this, false)
 

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CommonActivity.activity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivityScreen
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -23,7 +25,9 @@ import com.lagradost.cloudstream3.services.BackupWorkManager
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.InAppUpdater.installPreReleaseIfNeeded
+import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.rememberAppSettings
@@ -90,8 +94,9 @@ object SettingsUpdatesScreen : SearchableSettings {
                         subtitle = BuildConfig.VERSION_NAME,
                         icon = painterResource(R.drawable.mobile_arrow_down_24px),
                         onClick = {
-                            githubViewModel?.onAction(GithubAction.SearchForUpdate)
-                            /*ioSafe {
+                            if (!settings.updates.legacyUpdater.get()) {
+                                githubViewModel?.onAction(GithubAction.SearchForUpdate)
+                            } else ioSafe {
                                 if (activity?.runAutoUpdate(false) == false) {
                                     activity?.runOnUiThread {
                                         showToast(
@@ -100,7 +105,7 @@ object SettingsUpdatesScreen : SearchableSettings {
                                         )
                                     }
                                 }
-                            }*/
+                            }
                         }
                     ),
                     Preference.PreferenceItem.TextPreference(
@@ -120,6 +125,13 @@ object SettingsUpdatesScreen : SearchableSettings {
                             stringArrayResource(R.array.apk_installer_pref)
                         ).toMap(),
                         preference = settings.updates.apkInstaller
+                    ),
+
+                    Preference.PreferenceItem.SwitchPreference(
+                        title = stringResource(R.string.legacy_app_updater_settings),
+                        subtitle = stringResource(R.string.legacy_app_updater_settings_des),
+                        icon = painterResource(R.drawable.baseline_downloading_24),
+                        preference = settings.updates.legacyUpdater
                     ),
 
                     Preference.PreferenceItem.SwitchPreference(
