@@ -94,7 +94,7 @@ object SettingsUpdatesScreen : SearchableSettings {
                         subtitle = BuildConfig.VERSION_NAME,
                         icon = painterResource(R.drawable.mobile_arrow_down_24px),
                         onClick = {
-                            if (!settings.updates.legacyUpdater.get()) {
+                            if (!settings.updates.updateInBackground.get()) {
                                 githubViewModel?.onAction(GithubAction.SearchForUpdate)
                             } else ioSafe {
                                 if (activity?.runAutoUpdate(false) == false) {
@@ -128,10 +128,10 @@ object SettingsUpdatesScreen : SearchableSettings {
                     ),
 
                     Preference.PreferenceItem.SwitchPreference(
-                        title = stringResource(R.string.legacy_app_updater_settings),
-                        subtitle = stringResource(R.string.legacy_app_updater_settings_des),
+                        title = stringResource(R.string.update_in_background_settings),
+                        subtitle = stringResource(R.string.update_in_background_settings_des),
                         icon = painterResource(R.drawable.baseline_downloading_24),
-                        preference = settings.updates.legacyUpdater
+                        preference = settings.updates.updateInBackground
                     ),
 
                     Preference.PreferenceItem.SwitchPreference(

@@ -71,7 +71,7 @@ object MainActivityScreen : Screen {
                 repository = GithubReleases,
             ).apply {
                 /** Only search once per session when not in safe mode */
-                if (!hasSearchedForUpdate && !PluginManager.isSafeMode() && !settings.updates.legacyUpdater.get()) {
+                if (!hasSearchedForUpdate && !PluginManager.isSafeMode() && !settings.updates.updateInBackground.get()) {
                     hasSearchedForUpdate = true
                     onAction(AutoSearchForUpdate)
                 }

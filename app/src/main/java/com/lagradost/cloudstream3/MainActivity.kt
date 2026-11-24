@@ -1990,7 +1990,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         handleAppIntent(intent)
 
-        if (AppSettings(this).updates.legacyUpdater.get()) {
+        if (AppSettings(this).updates.updateInBackground.get()) {
             ioSafe {
                 runAutoUpdate()
             }
