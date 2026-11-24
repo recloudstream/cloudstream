@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,14 +40,16 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -54,7 +57,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -81,6 +83,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -96,7 +99,6 @@ import com.lagradost.cloudstream3.plugins.Plugin
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.AccountPin
 import com.lagradost.cloudstream3.ui.settings.SettingsProvidersScreen.toStringRes
@@ -112,15 +114,19 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream4.compose.Colors
+import com.lagradost.cloudstream4.compose.EMULATOR
 import com.lagradost.cloudstream4.compose.FocusButton
 import com.lagradost.cloudstream4.compose.FocusIconButton
 import com.lagradost.cloudstream4.compose.HORIZONTAL_ASPECT_RATIO
+import com.lagradost.cloudstream4.compose.HorizontalTab
 import com.lagradost.cloudstream4.compose.ImmutableHomePageList
 import com.lagradost.cloudstream4.compose.ImmutableSearchResponse
 import com.lagradost.cloudstream4.compose.ImmutableWatchEpisode
 import com.lagradost.cloudstream4.compose.ImmutableWatchPosition
+import com.lagradost.cloudstream4.compose.IsScrolling
 import com.lagradost.cloudstream4.compose.LeftAlignedFocusFollower
 import com.lagradost.cloudstream4.compose.LoadingLine
+import com.lagradost.cloudstream4.compose.PHONE
 import com.lagradost.cloudstream4.compose.RoundedShape
 import com.lagradost.cloudstream4.compose.Screen
 import com.lagradost.cloudstream4.compose.SearchResponseAction
@@ -128,6 +134,7 @@ import com.lagradost.cloudstream4.compose.SearchResponseItem
 import com.lagradost.cloudstream4.compose.VERTICAL_ASPECT_RATIO
 import com.lagradost.cloudstream4.compose.WhiteFilterChip
 import com.lagradost.cloudstream4.compose.fadedOutline
+import com.lagradost.cloudstream4.compose.isLayout
 import com.lagradost.cloudstream4.compose.loading
 import com.lagradost.cloudstream4.compose.rounded
 import com.lagradost.cloudstream4.compose.whiteOutline
@@ -141,7 +148,6 @@ import com.lagradost.cloudstream4.state.sortByInt
 import com.lagradost.cloudstream4.state.sortByUuid
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.lagradost.cloudstream4.viewmodels.DerivedMainAPIState
-import com.lagradost.cloudstream4.viewmodels.ExtensionsAction.Search
 import com.lagradost.cloudstream4.viewmodels.FilterAPI
 import com.lagradost.cloudstream4.viewmodels.HomeAction
 import com.lagradost.cloudstream4.viewmodels.HomeRepository
@@ -416,8 +422,48 @@ object HomeScreen : Screen {
     }
 
     @Composable
+    fun FloatingActionButton(
+        state: HomeState,
+        expanded: MutableState<Boolean>,
+        onAction: (HomeAction) -> Unit
+    ) {
+        ExtendedFloatingActionButton(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 0.dp,
+                focusedElevation = 0.dp,
+                hoveredElevation = 0.dp
+            ),
+            expanded = expanded.value,
+            text = {
+                Text(state.activeApi ?: "None")
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.extension_24px),
+                    contentDescription = stringResource(R.string.extensions)
+                )
+            },
+            onClick = {
+                onAction(HomeAction.OpenApiDialog)
+            })
+    }
+
+    @Composable
     fun Content(state: HomeState, onAction: (HomeAction) -> Unit) {
-        Scaffold { contentPadding ->
+        val fabExpanded = remember { mutableStateOf(true) }
+
+        com.mihon.material.Scaffold(
+            // TODO @WindowInsets remove this when we have converted everything to compose
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            floatingActionButton = {
+                if (isLayout(PHONE)) {
+                    FloatingActionButton(state = state, onAction = onAction, expanded = fabExpanded)
+                }
+            }
+        ) { contentPadding ->
             state.selectAPIDialog?.let { dialog ->
                 SelectAPIDialog(
                     dialog = dialog, selectedAPIName = state.activeApi, onAction = onAction
@@ -425,10 +471,20 @@ object HomeScreen : Screen {
             }
 
             val settings = rememberAccountData()
+            val lazyListState = rememberLazyListState()
+            lazyListState.IsScrolling(up = {
+                fabExpanded.value = true
+            }, down = {
+                fabExpanded.value = false
+            })
 
-            LazyColumn(contentPadding = contentPadding) {
+            LazyColumn(contentPadding = contentPadding, state = lazyListState) {
                 item("header") {
-                    TvHeader(state.activeApi, onAction = onAction)
+                    if (isLayout(PHONE)) {
+                        PhoneHeader(state.activeApi, onAction = onAction)
+                    } else {
+                        TvHeader(state.activeApi, onAction = onAction)
+                    }
                 }
                 item("hero") {
                     val heroEnabled by settings.home.heroEnabled.collectAsState()
@@ -444,26 +500,43 @@ object HomeScreen : Screen {
                     item("continue watching") {
                         val continueWatchingEnabled by settings.home.continueWatchingEnabled.collectAsState()
                         if (state.continueWatching.sorted.isNotEmpty() && continueWatchingEnabled) {
-                            TvResumeRow(
-                                showTitle = true,
-                                title = stringResource(R.string.continue_watching),
-                                row = state.continueWatching,
-                                onAction = onAction
-                            )
+                            if (isLayout(PHONE or EMULATOR)) {
+                                PhoneResumeRow(
+                                    showTitle = true,
+                                    title = stringResource(R.string.continue_watching),
+                                    row = state.continueWatching,
+                                    onAction = onAction
+                                )
+                            } else {
+                                TvResumeRow(
+                                    showTitle = true,
+                                    title = stringResource(R.string.continue_watching),
+                                    row = state.continueWatching,
+                                    onAction = onAction
+                                )
+                            }
                         }
                     }
                     item("bookmarks") {
                         val bookmarksEnabled by settings.home.bookmarksEnabled.collectAsState()
                         if (bookmarksEnabled && state.bookmarks.sorted.isNotEmpty()) {
-                            TvBookmarkRow(
-                                data = state.bookmarks,
-                                onAction = onAction
-                            )
+                            if (isLayout(PHONE or EMULATOR)) {
+                                PhoneBookmarkRow(data = state.bookmarks, onAction = onAction)
+                            } else {
+                                TvBookmarkRow(
+                                    data = state.bookmarks,
+                                    onAction = onAction
+                                )
+                            }
                         }
                     }
                     items(state.rows.sorted, key = { name -> name }) { name ->
                         val row = state.rows[name]!!
-                        TvSearchRow(row = row, onAction = onAction)
+                        if (isLayout(PHONE or EMULATOR)) {
+                            PhoneSearchRow(row = row, onAction = onAction)
+                        } else {
+                            TvSearchRow(row = row, onAction = onAction)
+                        }
                     }
                 } else {
                     items(10) {
@@ -495,12 +568,6 @@ object HomeScreen : Screen {
     fun TvHeroRow(row: SearchableData<Uuid, ImmutableHero>, onAction: (HomeAction) -> Unit) {
         if (row.sorted.isEmpty()) {
             return
-        }
-
-        val searchAction = remember<(SearchResponseAction) -> Unit>(onAction) {
-            { item ->
-                onAction(HomeAction.ResultAction(item))
-            }
         }
 
         val state = rememberPagerState(initialPage = 0) { row.sorted.size }
@@ -740,6 +807,65 @@ object HomeScreen : Screen {
             else -> R.string.type_none
         }
 
+
+    @Composable
+    fun PhoneBookmarkRow(
+        data: SearchableData<Int, ImmutableBookmarkRow>,
+        onAction: (HomeAction) -> Unit
+    ) {
+        require(data.sorted.isNotEmpty())
+        val pagerState = rememberPagerState { data.sorted.size }
+        HorizontalTab(
+            pagerState = pagerState,
+            size = data.sorted.size,
+            name = {
+                stringResource(bookmarkString(data.sorted[it]))
+            },
+            containerColor = Color.Transparent,
+            edgePadding = MaterialTheme.padding.medium,
+            fillWidth = false
+        )
+        val focusedInternalId = data.sorted.getOrNull(pagerState.currentPage) ?: data.sorted.last()
+
+        /*LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusGroup()
+                .focusRestorer(defaultFocusRequester),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+            contentPadding = PaddingValues(horizontal = MaterialTheme.padding.small)
+        ) {
+            itemsIndexed(data.sorted, key = {index,internalId -> internalId}) { index, internalId ->
+                WhiteFilterChip(
+                    modifier = Modifier,
+                    selected = focusedInternalId == internalId,
+                    label = stringResource(bookmarkString(index = internalId)),
+                ) {
+                    focusedIndex = index
+                }
+            }
+        }*/
+        Spacer(Modifier.height(MaterialTheme.padding.small))
+
+        val rows = arrayOf(
+            rememberLazyListState(),
+            rememberLazyListState(),
+            rememberLazyListState(),
+            rememberLazyListState(),
+            rememberLazyListState(),
+        )
+
+        data[focusedInternalId]?.let { bookmarkRow ->
+            PhoneResumeRow(
+                showTitle = false,
+                listState = rows[focusedInternalId],
+                title = stringResource(bookmarkString(focusedInternalId)),
+                row = bookmarkRow.row,
+                onAction = onAction,
+            )
+        }
+    }
+
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun TvBookmarkRow(
@@ -876,6 +1002,31 @@ object HomeScreen : Screen {
     }
 
     @Composable
+    fun PhoneResumeRow(
+        title: String,
+        showTitle: Boolean,
+        row: SearchableData<Int, ImmutableSearchResponse>,
+        listState: LazyListState = rememberLazyListState(),
+        onAction: (HomeAction) -> Unit
+    ) {
+        PhoneRow(
+            rowName = title,
+            isExpandable = true,
+            isHorizontal = false,
+            isLoading = false,
+            showTitle = showTitle,
+            listState = listState,
+            items = { itemContent ->
+                itemsIndexed(items = row.sorted, key = { _, id -> row[id]!!.uuid }) { index, id ->
+                    val response = row[id]!!
+                    itemContent(index, response)
+                }
+            },
+            onAction = onAction
+        )
+    }
+
+    @Composable
     fun TvSearchRow(
         row: ImmutableHomePageList,
         onAction: (HomeAction) -> Unit,
@@ -894,6 +1045,130 @@ object HomeScreen : Screen {
             },
             onAction = onAction
         )
+    }
+
+    @Composable
+    fun PhoneSearchRow(
+        row: ImmutableHomePageList,
+        onAction: (HomeAction) -> Unit,
+    ) {
+        PhoneRow(
+            rowName = row.name,
+            isExpandable = true,
+            isHorizontal = row.isHorizontalImages,
+            isLoading = row.isLoading,
+            showTitle = true,
+            items = { itemContent ->
+                itemsIndexed(
+                    items = row.items, key = { _, item -> item.uuid },
+                    itemContent = itemContent,
+                )
+            },
+            onAction = onAction
+        )
+    }
+
+    @Composable
+    fun PhoneRow(
+        rowName: String,
+        isExpandable: Boolean,
+        isHorizontal: Boolean,
+        isLoading: Boolean,
+        showTitle: Boolean,
+        listState: LazyListState = rememberLazyListState(),
+        items: LazyListScope.(@Composable LazyItemScope.(index: Int, response: ImmutableSearchResponse) -> Unit) -> Unit,
+        onAction: (HomeAction) -> Unit
+    ) {
+        val searchAction = remember<(SearchResponseAction) -> Unit>(onAction) {
+            { item ->
+                onAction(HomeAction.ResultAction(item))
+            }
+        }
+
+        Column {
+            if (showTitle) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onAction(HomeAction.ShowRowDialog(rowName))
+                        }.padding(MaterialTheme.padding.medium)) {
+                    Text(
+                        text = rowName,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_forward),
+                        contentDescription = stringResource(R.string.home_more_info)
+                    )
+                }
+            }
+
+            var hasFocus by remember { mutableStateOf(false) }
+            val shouldLoadMore = remember {
+                derivedStateOf {
+                    val lastVisibleIndex =
+                        listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                    val totalItems = listState.layoutInfo.totalItemsCount
+                    // Do not expand if zero, as it is probably loading
+                    totalItems > 0 && lastVisibleIndex >= totalItems - 5
+                }
+            }
+            LaunchedEffect(shouldLoadMore.value) {
+                if (shouldLoadMore.value && !isLoading && isExpandable) {
+                    onAction(HomeAction.Expand(rowName))
+                }
+            }
+            val focusRequester = remember { FocusRequester() }
+            LazyRow(
+                state = listState,
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.extraSmall),
+                contentPadding = PaddingValues(horizontal = MaterialTheme.padding.medium),
+                modifier = Modifier
+                    .onFocusChanged { newFocus ->
+                        hasFocus = newFocus.hasFocus
+                    }
+                    .focusGroup()
+                    .focusRestorer(fallback = focusRequester),
+                verticalAlignment = Alignment.CenterVertically) {
+                items { index, response ->
+                    val isFirstItem = index == 0
+                    SearchResponseItem(
+                        response = response,
+                        action = searchAction,
+                        showText = true,
+                        isHorizontal = isHorizontal,
+                        modifier = Modifier.width(
+                            if (isHorizontal) {
+                                HORIZONTAL_POSTER_WIDTH
+                            } else {
+                                VERTICAL_POSTER_WIDTH
+                            }
+                        ).let { modifier ->
+                            if (isFirstItem) {
+                                modifier.focusRequester(focusRequester)
+                            } else {
+                                modifier
+                            }
+                        }, customText = response.watchEpisode?.let { watchEpisode ->
+                            {
+                                CustomText(
+                                    response = response,
+                                    watchEpisode = watchEpisode
+                                )
+                            }
+                        })
+                }
+                if (isLoading) {
+                    items(10) {
+                        LoadingPoster(isHorizontal)
+                    }
+                }
+            }
+        }
     }
 
     @OptIn(ExperimentalFoundationApi::class)
@@ -1038,70 +1313,10 @@ object HomeScreen : Screen {
                                         .background(MaterialTheme.colorScheme.background),
                                     customText = overlayResponse.watchEpisode?.let { watchEpisode ->
                                         {
-                                            val text = LocalContext.current.getShortSeasonText(
-                                                episode = watchEpisode.episode,
-                                                season = watchEpisode.season
+                                            CustomText(
+                                                response = overlayResponse,
+                                                watchEpisode = watchEpisode
                                             )
-                                                ?: overlayResponse.watchPosition?.let { watchPosition ->
-                                                    (watchPosition.duration - watchPosition.position).toComponents { hours, minutes, seconds, _ ->
-                                                        if (hours > 0) {
-                                                            stringResource(
-                                                                R.string.next_episode_time_hour_format,
-                                                                hours,
-                                                                minutes
-                                                            )
-                                                        } else if (minutes > 0) {
-                                                            stringResource(
-                                                                R.string.next_episode_time_min_format,
-                                                                hours,
-                                                                minutes
-                                                            )
-                                                        } else {
-                                                            null
-                                                        }
-                                                    }
-                                                }
-                                            Column(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                horizontalAlignment = Alignment.CenterHorizontally
-                                            ) {
-                                                if (text != null) {
-                                                    Row(
-                                                        verticalAlignment = Alignment.CenterVertically,
-                                                        horizontalArrangement = Arrangement.Center,
-                                                        modifier = Modifier.fillMaxWidth()
-                                                    ) {
-                                                        Icon(
-                                                            painter = painterResource(R.drawable.play_arrow_24px),
-                                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                            contentDescription = null,
-                                                            modifier = Modifier.size(24.dp)
-                                                        )
-                                                        Text(
-                                                            text = text,
-                                                            style = MaterialTheme.typography.bodyMedium,
-                                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                            maxLines = 1,
-                                                            textAlign = TextAlign.Center,
-                                                            overflow = TextOverflow.Ellipsis
-                                                        )
-                                                        Spacer(modifier = Modifier.width(24.dp))
-                                                    }
-                                                }
-                                                Text(
-                                                    text = overlayResponse.name,
-                                                    style = MaterialTheme.typography.bodyMedium,
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    maxLines = if (text != null) {
-                                                        1
-                                                    } else {
-                                                        2
-                                                    },
-                                                    textAlign = TextAlign.Center,
-                                                    overflow = TextOverflow.Ellipsis
-                                                )
-                                            }
-
                                         }
                                     })
                             }
@@ -1113,7 +1328,74 @@ object HomeScreen : Screen {
     }
 
     @Composable
-    fun EditMenu(onDismissRequest: () -> Unit, onAction : (HomeAction) -> Unit) {
+    fun CustomText(response: ImmutableSearchResponse, watchEpisode: ImmutableWatchEpisode) {
+        val text = LocalContext.current.getShortSeasonText(
+            episode = watchEpisode.episode,
+            season = watchEpisode.season
+        )
+            ?: response.watchPosition?.let { watchPosition ->
+                (watchPosition.duration - watchPosition.position).toComponents { hours, minutes, _, _ ->
+                    if (hours > 0) {
+                        stringResource(
+                            R.string.next_episode_time_hour_format,
+                            hours,
+                            minutes
+                        )
+                    } else if (minutes > 0) {
+                        stringResource(
+                            R.string.next_episode_time_min_format,
+                            hours,
+                            minutes
+                        )
+                    } else {
+                        null
+                    }
+                }
+            }
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (text != null) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.play_arrow_24px),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        textAlign = TextAlign.Center,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.width(24.dp))
+                }
+            }
+            Text(
+                text = response.name,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = if (text != null) {
+                    1
+                } else {
+                    2
+                },
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+
+    @Composable
+    fun EditMenu(onDismissRequest: () -> Unit, onAction: (HomeAction) -> Unit) {
         AlertDialog(
             containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = onDismissRequest,
@@ -1140,6 +1422,69 @@ object HomeScreen : Screen {
             title = {
                 Text(text = stringResource(R.string.title_home))
             })
+    }
+
+    @Composable
+    fun PhoneHeader(api: String?, onAction: (HomeAction) -> Unit) {
+        val activity = LocalActivity.current
+
+        var editMenu by remember { mutableStateOf(false) }
+        if (editMenu) {
+            EditMenu(onAction = onAction, onDismissRequest = {
+                editMenu = false
+            })
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(
+                MaterialTheme.padding.small,
+                Alignment.Start
+            ),
+            modifier = Modifier.padding(horizontal = MaterialTheme.padding.medium)
+        ) {
+            FocusIconButton(onClick = {
+                editMenu = true
+            }, transparent = true) {
+                Icon(
+                    painter = painterResource(R.drawable.edit_24px),
+                    contentDescription = stringResource(R.string.edit),
+                )
+            }
+            Button(
+                onClick = {
+                    if (api != null) {
+                        QuickSearchFragment.pushSearch(
+                            activity = activity, autoSearch = null, providers = arrayOf(api)
+                        )
+                    }
+                },
+                colors = Colors.blackTransparentButton,
+                modifier = Modifier.weight(1.0f)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(
+                        MaterialTheme.padding.small,
+                        Alignment.Start
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val title = if (api != null) {
+                        stringResource(R.string.search_hint_site, api)
+                    } else {
+                        stringResource(R.string.search_hint)
+                    }
+                    Icon(
+                        painter = painterResource(R.drawable.search_icon),
+                        contentDescription = null,
+                    )
+                    Text(text = title)
+                }
+            }
+            AccountPin(35.dp)
+        }
+
     }
 
     @Composable
@@ -1252,162 +1597,172 @@ object HomeScreen : Screen {
     ) {
         val defaultFocusRequester: FocusRequester = remember { FocusRequester() }
 
-        AlertDialog(containerColor = MaterialTheme.colorScheme.background, onDismissRequest = {
-            onAction(HomeAction.DismissDialog)
-        }, confirmButton = {
+        AlertDialog(
+            containerColor = MaterialTheme.colorScheme.background,
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+            onDismissRequest = {
+                onAction(HomeAction.DismissDialog)
+            },
+            confirmButton = {
 
-        }, dismissButton = {}, text = {
-            LazyColumn {
-                item {
-                    val textState = rememberTextFieldState()
-                    LaunchedEffect(textState.text) {
-                        onAction(HomeAction.SearchApi(textState.text.toString()))
-                    }
-                    SettingsFragmentScreen.SettingsSearch(textState)
-                }
-                item {
-                    LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusGroup()
-                            .focusRestorer(defaultFocusRequester),
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
-                        contentPadding = PaddingValues(horizontal = MaterialTheme.padding.small)
-                    ) {
-                        var first = true
-                        for ((text, types) in contentTypes) {
-                            if (types.none(dialog.data.state::containsType)) {
-                                continue
-                            }
-                            val modifier = if (first) {
-                                first = false
-                                Modifier.focusRequester(defaultFocusRequester)
-                            } else {
-                                Modifier
-                            }
-                            item(key = text) {
-                                FilterSelection(
-                                    modifier = modifier,
-                                    filter = dialog.filter.tvTypes,
-                                    text = text,
-                                    types = types,
-                                    onAction = onAction
-                                )
-                            }
+            },
+            dismissButton = {},
+            text = {
+                LazyColumn {
+                    item {
+                        val textState = rememberTextFieldState()
+                        LaunchedEffect(textState.text) {
+                            onAction(HomeAction.SearchApi(textState.text.toString()))
                         }
+                        SettingsFragmentScreen.SettingsSearch(textState)
+                        Spacer(Modifier.height(MaterialTheme.padding.small))
                     }
-                }
 
-                item("no results found") {
-                    if (dialog.data.sorted.isEmpty()) {
-                        Text(
-                            text = org.jetbrains.compose.resources.stringResource(Res.string.no_results_found),
+                    item {
+                        LazyRow(
                             modifier = Modifier
-                                .secondaryItemAlpha()
                                 .fillMaxWidth()
-                                .padding(20.dp),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-
-                items(dialog.data.sorted, key = { uuid -> uuid }) { uuid ->
-                    val api = dialog.data[uuid]!!
-                    val isSelected = selectedAPIName == api.name
-                    val (backgroundFocusRequester, button1FocusRequester, button2FocusRequester) = remember { FocusRequester.createRefs() }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .rounded()
-                            .focusRequester(backgroundFocusRequester)
-                            .focusProperties {
-                                end = button1FocusRequester
-                            }
-                            .combinedClickable(onClick = {
-                                if (isSelected) {
-                                    onAction(HomeAction.SelectApi("None"))
-                                } else {
-                                    onAction(HomeAction.SelectApi(api.name))
+                                .focusGroup()
+                                .focusRestorer(defaultFocusRequester),
+                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+                            contentPadding = PaddingValues(horizontal = MaterialTheme.padding.small)
+                        ) {
+                            var first = true
+                            for ((text, types) in contentTypes) {
+                                if (types.none(dialog.data.state::containsType)) {
+                                    continue
                                 }
-                                onAction(HomeAction.DismissDialog)
-                            }, onLongClick = {
-                                if (api.isPinned) {
-                                    onAction(HomeAction.RemovePin(api.name))
+                                val modifier = if (first) {
+                                    first = false
+                                    Modifier.focusRequester(defaultFocusRequester)
                                 } else {
-                                    onAction(HomeAction.AddPin(api.name))
-                                }
-                            })
-                    ) {
-                        if (isSelected) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_baseline_check_24),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp),
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
-                        } else {
-                            Spacer(modifier = Modifier.size(24.dp))
-                        }
-                        Text(
-                            text = api.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.padding(MaterialTheme.padding.medium)
-                        )
-                        Spacer(modifier = Modifier.weight(1.0f))
-                        val settings =
-                            (api.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin)?.openSettings
-                        if (settings != null) {
-                            val context = LocalContext.current
-                            FocusIconButton(
-                                transparent = true,
-                                onClick = {
-                                    settings(context)
-                                },
-                                modifier = Modifier
-                                    .focusRequester(button1FocusRequester)
-                                    .focusProperties {
-                                        start = backgroundFocusRequester
-                                        end = button2FocusRequester
-                                    }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.tune),
-                                    contentDescription = stringResource(R.string.title_settings),
-                                )
-                            }
-                        }
-                        if (api.isPinned) {
-                            FocusIconButton(
-                                transparent = true, onClick = {
-                                    onAction(HomeAction.RemovePin(api.name))
-                                }, modifier = if (settings == null) {
                                     Modifier
+                                }
+                                item(key = text) {
+                                    FilterSelection(
+                                        modifier = modifier,
+                                        filter = dialog.filter.tvTypes,
+                                        text = text,
+                                        types = types,
+                                        onAction = onAction
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(Modifier.height(MaterialTheme.padding.small))
+                    }
+
+                    if (dialog.data.sorted.isEmpty()) {
+                        item("no results found") {
+                            Text(
+                                text = org.jetbrains.compose.resources.stringResource(Res.string.no_results_found),
+                                modifier = Modifier
+                                    .secondaryItemAlpha()
+                                    .fillMaxWidth()
+                                    .padding(20.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    items(dialog.data.sorted, key = { uuid -> uuid }) { uuid ->
+                        val api = dialog.data[uuid]!!
+                        val isSelected = selectedAPIName == api.name
+                        val (backgroundFocusRequester, button1FocusRequester, button2FocusRequester) = remember { FocusRequester.createRefs() }
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .rounded()
+                                .focusRequester(backgroundFocusRequester)
+                                .focusProperties {
+                                    end = button1FocusRequester
+                                }
+                                .combinedClickable(onClick = {
+                                    if (isSelected) {
+                                        onAction(HomeAction.SelectApi("None"))
+                                    } else {
+                                        onAction(HomeAction.SelectApi(api.name))
+                                    }
+                                    onAction(HomeAction.DismissDialog)
+                                }, onLongClick = {
+                                    if (api.isPinned) {
+                                        onAction(HomeAction.RemovePin(api.name))
+                                    } else {
+                                        onAction(HomeAction.AddPin(api.name))
+                                    }
+                                })
+                        ) {
+                            if (isSelected) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_baseline_check_24),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.size(24.dp))
+                            }
+                            Text(
+                                text = api.name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.padding(MaterialTheme.padding.medium)
+                            )
+                            Spacer(modifier = Modifier.weight(1.0f))
+                            val settings =
+                                (api.sourcePlugin?.let { PluginManager.plugins[it] } as? Plugin)?.openSettings
+                            if (settings != null) {
+                                val context = LocalContext.current
+                                FocusIconButton(
+                                    transparent = true,
+                                    onClick = {
+                                        settings(context)
+                                    },
+                                    modifier = Modifier
                                         .focusRequester(button1FocusRequester)
                                         .focusProperties {
                                             start = backgroundFocusRequester
                                             end = button2FocusRequester
-                                        }
-                                } else {
-                                    Modifier
-                                        .focusRequester(button2FocusRequester)
-                                        .focusProperties {
-                                            start = button1FocusRequester
-                                        }
-                                }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.keep),
-                                    contentDescription = stringResource(R.string.favorite),
-                                )
+                                        }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.tune),
+                                        contentDescription = stringResource(R.string.title_settings),
+                                    )
+                                }
+                            }
+                            if (api.isPinned) {
+                                FocusIconButton(
+                                    transparent = true, onClick = {
+                                        onAction(HomeAction.RemovePin(api.name))
+                                    }, modifier = if (settings == null) {
+                                        Modifier
+                                            .focusRequester(button1FocusRequester)
+                                            .focusProperties {
+                                                start = backgroundFocusRequester
+                                                end = button2FocusRequester
+                                            }
+                                    } else {
+                                        Modifier
+                                            .focusRequester(button2FocusRequester)
+                                            .focusProperties {
+                                                start = button1FocusRequester
+                                            }
+                                    }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.keep),
+                                        contentDescription = stringResource(R.string.favorite),
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
-        }, title = {
+            },
+            title = {
 
-        })
+            })
     }
 
     @Composable

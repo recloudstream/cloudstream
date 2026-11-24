@@ -64,7 +64,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 @PreviewLightDark
-fun Preview() {
+private fun Preview() {
     CloudStreamPreviewTheme {
         SearchResponseItem(
             response = ImmutableSearchResponse(
