@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
@@ -7,10 +8,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
+import android.content.pm.PackageManager
 import android.os.Build
+import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity
@@ -43,6 +47,7 @@ object ApkUpdater : AppUpdater {
     private const val UPDATE_CHANNEL_NAME = "App Updates"
     private const val UPDATE_CHANNEL_DESCRIPTION = "App updates notification channel"
     private const val UPDATE_NOTIFICATION_ID = -68454136
+    private const val NOTIFICATION_INTERVAL_MS = 500L
 
     @Throws
     override suspend fun update(
@@ -54,9 +59,7 @@ object ApkUpdater : AppUpdater {
         val activity = CommonActivity.activity ?: throw ErrorLoadingException("No activity found")
         clearOldFiles(activity)
 
-        val notificationProgress = if (settings.updates.updateInBackground.get()) {
-            progressNotification(activity.applicationContext)
-        } else null
+        val notificationProgress = progressNotification(activity.applicationContext)
         val onProgress: (Long, Long?) -> Unit = { progress, total ->
             downloadProgress(progress, total)
             notificationProgress?.invoke(progress, total)
@@ -93,7 +96,13 @@ object ApkUpdater : AppUpdater {
         }
     }
 
-    private fun progressNotification(context: Context): (Long, Long?) -> Unit {
+    private fun progressNotification(context: Context): ((Long, Long?) -> Unit)? {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) return null
+
         context.createNotificationChannel(
             UPDATE_CHANNEL_ID,
             UPDATE_CHANNEL_NAME,
@@ -111,13 +120,18 @@ object ApkUpdater : AppUpdater {
             .setOnlyAlertOnce(true)
             .setSilent(true)
 
+        var lastNotified = 0L
         return { progress, total ->
-            val knownTotal = total != null && total > 0
-            val percent = if (knownTotal) (progress * 100 / total).toInt() else 0
-            manager.notify(
-                UPDATE_NOTIFICATION_ID,
-                builder.setProgress(100, percent, !knownTotal).build()
-            )
+            val now = SystemClock.elapsedRealtime()
+            if (now - lastNotified >= NOTIFICATION_INTERVAL_MS) {
+                lastNotified = now
+                val knownTotal = total != null && total > 0
+                val percent = if (knownTotal) (progress * 100 / total).toInt() else 0
+                manager.notify(
+                    UPDATE_NOTIFICATION_ID,
+                    builder.setProgress(100, percent, !knownTotal).build()
+                )
+            }
         }
     }
 
