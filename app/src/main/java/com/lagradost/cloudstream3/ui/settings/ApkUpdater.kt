@@ -48,6 +48,7 @@ object ApkUpdater : AppUpdater {
     private const val UPDATE_CHANNEL_DESCRIPTION = "App updates notification channel"
     private const val UPDATE_NOTIFICATION_ID = -68454136
     private const val NOTIFICATION_INTERVAL_MS = 500L
+    private const val NOTIFICATION_TIMEOUT_MS = 10_000L
 
     @Throws
     override suspend fun update(
@@ -119,6 +120,7 @@ object ApkUpdater : AppUpdater {
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setSilent(true)
+            .setTimeoutAfter(NOTIFICATION_TIMEOUT_MS)
 
         var lastNotified = 0L
         return { progress, total ->
