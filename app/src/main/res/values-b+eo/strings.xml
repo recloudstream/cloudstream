@@ -131,7 +131,7 @@
     <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
     <string name="next_season_episode_format" formatted="true">Sezono %1$d epizodo %2$d publikiĝos en</string>
     <string name="play_from_beginning_img_des">Legi ekde la komenco</string>
-    <string name="download_queue">Elsûtovico</string>
+    <string name="download_queue">Elŝutovico</string>
     <string name="speech_recognition_unavailable">La parolrekono ne haveblas</string>
     <string name="begin_speaking">Komencu paroli…</string>
     <string name="downloads_empty">Ne estas elŝuto ĉimomente.</string>
@@ -181,4 +181,5 @@
     <string name="duration">Daŭro</string>
     <string name="synopsis">Sinoptiko</string>
     <string name="no_subtitles">Neniu Subteksto</string>
+    <string name="library">Biblioteko</string>
 </resources>

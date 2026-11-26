@@ -8,6 +8,7 @@ import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -36,12 +37,13 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-internal fun BasePreferenceWidget(
+fun BasePreferenceWidget(
     modifier: Modifier = Modifier,
     title: String? = null,
     subcomponent: @Composable (ColumnScope.() -> Unit)? = null,
     icon: @Composable (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
     widget: @Composable (() -> Unit)? = null,
 ) {
     val highlighted = LocalPreferenceHighlighted.current
@@ -51,7 +53,7 @@ internal fun BasePreferenceWidget(
             .highlightBackground(highlighted)
             .focusOutline()
             .sizeIn(minHeight = minHeight)
-            .clickable(enabled = onClick != null, onClick = { onClick?.invoke() })
+            .combinedClickable(enabled = onClick != null, onLongClick = onLongClick, onClick = { onClick?.invoke() })
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -90,10 +92,12 @@ internal fun BasePreferenceWidget(
 @Composable
 internal fun Modifier.highlightBackground(highlighted: Boolean): Modifier {
     var highlightFlag by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(highlighted) {
         if (highlighted) {
             highlightFlag = true
             delay(3.seconds)
+            highlightFlag = false
+        } else {
             highlightFlag = false
         }
     }
@@ -122,6 +126,6 @@ internal fun Modifier.highlightBackground(highlighted: Boolean): Modifier {
 }
 
 internal val TrailingWidgetBuffer = 16.dp
-internal val PrefsHorizontalPadding = 16.dp
+val PrefsHorizontalPadding = 16.dp
 internal val PrefsVerticalPadding = 16.dp
 internal val TitleFontSize = 16.sp

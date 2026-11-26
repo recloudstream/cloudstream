@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.insecureApp
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.ui.settings.SettingsProvidersScreen.toStringRes
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestricted
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.showRequestIgnoreBatteryOptDialog
@@ -166,7 +167,7 @@ object SettingsGeneralScreen : SearchableSettings {
                             // This is not a ListPreference because the old selection system is
                             // broken af. This needs to be refactored to QuickNovels download path
                             // system.
-                            selectFileSelector.launch(Uri.EMPTY)
+                            selectFileSelector.launchSafe(Uri.EMPTY)
                         },
                     ),
                     Preference.PreferenceItem.SliderPreference(
@@ -222,7 +223,8 @@ object SettingsGeneralScreen : SearchableSettings {
                         entries = integerArrayResource(R.array.dns_pref_values).zip(
                             stringArrayResource(R.array.dns_pref)
                         ).toMap(),
-                        onValueChanged = {
+                        onValueChanged = { newValue ->
+                            settings.general.dns.set(newValue) // Must set the value before initClient is called
                             (CloudStreamApp.context)?.let { ctx ->
                                 app.initClient(ctx, ignoreSSL = false)
                                 @OptIn(UnsafeSSL::class)

@@ -745,4 +745,25 @@
         <item quantity="other">%d dolda länkar</item>
     </plurals>
     <string name="log_cat">Logcat 🐈</string>
+    <string name="subs_edge">Edge</string>
+    <string name="start_paused_settings">Starta videor pausade</string>
+    <string name="start_paused_settings_des">Reducera stress vid val av källor</string>
+    <string name="compressor">Kompressor</string>
+    <string name="compressor_setting">Dynamisk omfångskompressor</string>
+    <string name="compressor_setting_summary">Visa kompressorkontroller i spelaren (hjälper till att balansera högt/lågt ljud)</string>
+    <string name="compressor_on">På</string>
+    <string name="compressor_on_format">På · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Av</string>
+    <string name="compressor_preset_light">Låg</string>
+    <string name="compressor_preset_dialog">Dialogförstärkning</string>
+    <string name="compressor_preset_heavy">Hög</string>
+    <string name="compressor_threshold_label">Tröskelvärde: %d dB</string>
+    <string name="compressor_makeup_label">Skapa förstärkning: +%d dB</string>
+    <string name="compressor_threshold_hint">Ljud som är högre än %d dB sänks</string>
+    <string name="compressor_makeup_hint">Höjer den totala volymen med +%d dB</string>
+    <string name="background">Bakgrund</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">Bildväljare</string>
+    <string name="edit_profile_image_default">Standard bilder</string>
+    <string name="installed_plugins">Installerade insticksmoduler</string>
 </resources>

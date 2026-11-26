@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.KitsuApi.Companion.KITSU_CACHED_LIST
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -94,12 +95,12 @@ object BackupUtils {
         // and make it possible to restore download folders using that metadata.
         DOWNLOAD_EPISODE_CACHE_BACKUP,
         DOWNLOAD_EPISODE_CACHE,
-        
+
         // Download headers are unintuitively used in the resume watching system.
         // We can therefore not prune download headers in backups.
         // DOWNLOAD_HEADER_CACHE_BACKUP,
         // DOWNLOAD_HEADER_CACHE,
-        
+
 
         // This may overwrite valid local data with invalid data
         KEY_DOWNLOAD_INFO,
@@ -193,7 +194,7 @@ object BackupUtils {
         }
 
         // Make sure the library is fresh
-        for(api in AccountManager.syncApis) {
+        for (api in AccountManager.syncApis) {
             api.requireLibraryRefresh = true
         }
     }
@@ -210,7 +211,9 @@ object BackupUtils {
                 return@ioSafe
             }
 
-            val date = SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.getDefault()).format(Date(currentTimeMillis()))
+            val date = SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.getDefault()).format(
+                Date(currentTimeMillis())
+            )
             val displayName = "CS3_Backup_${date}"
             val backupFile = getBackup(context)
             val stream = setupBackupStream(context, displayName)
@@ -236,7 +239,11 @@ object BackupUtils {
     }
 
     @Throws(IOException::class)
-    private fun setupBackupStream(context: Context, name: String, ext: String = "txt"): DownloadObjects.StreamData {
+    private fun setupBackupStream(
+        context: Context,
+        name: String,
+        ext: String = "txt"
+    ): DownloadObjects.StreamData {
         return setupStream(
             baseFile = getCurrentBackupDir(context).first ?: getDefaultBackupDir(context)
             ?: throw IOException("Bad config"),
@@ -285,22 +292,17 @@ object BackupUtils {
 
     fun Activity.restorePrompt() {
         runOnUiThread {
-            try {
-                restoreFileSelector?.launch(
-                    arrayOf(
-                        "text/plain",
-                        "text/str",
-                        "text/x-unknown",
-                        "application/json",
-                        "unknown/unknown",
-                        "content/unknown",
-                        "application/octet-stream",
-                    )
+            restoreFileSelector?.launchSafe(
+                arrayOf(
+                    "text/plain",
+                    "text/str",
+                    "text/x-unknown",
+                    "application/json",
+                    "unknown/unknown",
+                    "content/unknown",
+                    "application/octet-stream",
                 )
-            } catch (e: Exception) {
-                showToast(e.message)
-                logError(e)
-            }
+            )
         }
     }
 
@@ -331,7 +333,8 @@ object BackupUtils {
      */
     fun getCurrentBackupDir(context: Context): Pair<SafeFile?, String?> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-        val basePathSetting = settingsManager.getString(context.getString(R.string.backup_path_key), null)
+        val basePathSetting =
+            settingsManager.getString(context.getString(R.string.backup_path_key), null)
         return baseBackupPathToFile(context, basePathSetting) to basePathSetting
     }
 

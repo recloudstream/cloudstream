@@ -1,7 +1,9 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
@@ -30,7 +33,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
@@ -47,6 +49,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -59,10 +66,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityOptionsCompat
 import coil3.compose.AsyncImage
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.activity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.profileImages
 import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
@@ -90,6 +100,18 @@ import java.util.Locale
 import java.util.TimeZone
 
 object SettingsFragmentScreen : Screen {
+    fun <I> ActivityResultLauncher<I>.launchSafe(input : I, options: ActivityOptionsCompat? = null) {
+        try {
+            this.launch(input = input, options = options)
+        } catch (_ : ActivityNotFoundException) {
+            showToast(R.string.app_not_found_error)
+        } catch (t : Throwable) {
+            /** This should not ever happen, but again Java is wack */
+            showToast(t.toString())
+            logError(t)
+        }
+    }
+
     val screens = persistentListOf(
         SettingsNavigation(
             title = R.string.category_general,
@@ -288,25 +310,54 @@ object SettingsFragmentScreen : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     @Composable
-    fun SettingsSearch(textFieldState : TextFieldState) {
+    fun SettingsSearch(textFieldState: TextFieldState) {
         var hasFocus by remember { mutableStateOf(false) }
+        var isWritable by remember { mutableStateOf(false) }
         val focusProgress by animateFloatAsState(targetValue = if (hasFocus) 1.0f else 0.0f)
         val focusManager = LocalFocusManager.current
         val focusRequester = remember { FocusRequester() }
+        val isTv = isLayout(TV)
         TextField(
             state = textFieldState,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Search,
-                // This option is bugged on compose, making it unable to open at all
-                // showKeyboardOnFocus = false
+                /**
+                 * We do not want to pull up the keyboard when navigating to the item on TV, therefore
+                 * we listen to when the TV user presses some key to "extra" focus it
+                 *
+                 * showKeyboardOnFocus is somewhat bugged, so need to change this to true when you
+                 * press it, as otherwise no keyboard will show even with keyboardController
+                 * */
+                showKeyboardOnFocus = if (isTv) isWritable else true
             ),
+            lineLimits = TextFieldLineLimits.SingleLine,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp - 12.dp * focusProgress)
-                .focusOutline(enabled = isLayout(TV), CircleShape)
+                .focusOutline(enabled = isTv, CircleShape)
                 .onFocusChanged { newFocus ->
                     hasFocus = newFocus.hasFocus
-                }.focusRequester(focusRequester),
+                    /** Loss of focus -> readonly */
+                    if (!newFocus.hasFocus) {
+                        isWritable = false
+                    }
+                }
+                .focusRequester(focusRequester)
+                .onPreviewKeyEvent { keyEvent ->
+                    if (isWritable || !isTv || !hasFocus || keyEvent.type != KeyEventType.KeyUp) {
+                        return@onPreviewKeyEvent false
+                    }
+
+                    /** Focus + press once -> writable */
+                    return@onPreviewKeyEvent when (keyEvent.key) {
+                        Key.Enter, Key.DirectionCenter, Key.NumPadEnter, Key.Spacebar -> {
+                            isWritable = true
+                            true
+                        }
+
+                        else -> false
+                    }
+                },
             placeholder = {
                 Text(text = stringResource(R.string.search_hint))
             },

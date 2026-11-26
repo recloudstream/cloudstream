@@ -65,6 +65,7 @@ import coil3.compose.AsyncImage
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.Account
 import com.lagradost.cloudstream4.compose.ActionDialog
@@ -143,7 +144,7 @@ object AccountScreen {
                     .padding(contentPadding),
                 horizontalAlignment = Alignment.End
             ) {
-                val (edit, accounts) = FocusRequester.createRefs()
+                val (edit, accounts) = remember { FocusRequester.createRefs() }
 
                 IconButton(
                     onClick = {
@@ -318,7 +319,7 @@ object AccountScreen {
             )
         }
 
-        val (focusRequester) = FocusRequester.createRefs()
+        val focusRequester = remember { FocusRequester() }
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
         }
@@ -430,7 +431,7 @@ object AccountScreen {
                                 DropdownMenuItem(
                                     text = { Text(text = stringResource(R.string.edit_profile_image_picker)) },
                                     onClick = {
-                                        selectFileSelector.launch(arrayOf("image/*"))
+                                        selectFileSelector.launchSafe(arrayOf("image/*"))
                                         selectProfileImage = false
                                     }
                                 )
@@ -746,7 +747,7 @@ object AccountScreen {
         val innerPadding by animateDpAsState(
             targetValue = if (hasFocus || isLayout(PHONE or EMULATOR)) 0.dp else MaterialTheme.padding.extraSmall,
         )
-        val (focusRequester) = FocusRequester.createRefs()
+        val focusRequester = remember { FocusRequester() }
         LaunchedEffect(Unit) {
             if (selected) {
                 focusRequester.requestFocus()

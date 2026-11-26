@@ -256,16 +256,18 @@ class PlayerGeneratorViewModel : ViewModel() {
 
     fun loadLinksPrev() {
         Log.i(TAG, "loadLinksPrev")
-        if (generator?.hasPrev(episodeIndex) == true) {
-            episodeIndex += 1
+        val newEpisodeIndex = episodeIndex
+        if (generator?.hasPrev(newEpisodeIndex) == true) {
+            episodeIndex = newEpisodeIndex - 1
             loadLinks()
         }
     }
 
     fun loadLinksNext() {
         Log.i(TAG, "loadLinksNext")
-        if (generator?.hasNext(episodeIndex) == true) {
-            episodeIndex += 1
+        val newEpisodeIndex = episodeIndex
+        if (generator?.hasNext(newEpisodeIndex) == true) {
+            episodeIndex = newEpisodeIndex + 1
             loadLinks()
         }
     }
