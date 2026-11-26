@@ -90,7 +90,7 @@
             android:icon="@drawable/speedup"
             android:summary="@string/speedup_summary"
             android:title="@string/speedup_title"
-            app:defaultValue="false"
+            app:defaultValue="true"
             app:key="@string/speedup_key" />
         <SwitchPreference
             android:icon="@drawable/ic_baseline_skip_next_24"
