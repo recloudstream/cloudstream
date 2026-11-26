@@ -797,51 +797,59 @@ class CS3IPlayer : IPlayer {
                 null
             }
         }
-
         private fun createVideoSource(
-            link: ExtractorLink,
-            engine: CronetEngine?,
-            interceptor: Interceptor?,
-        ): HttpDataSource.Factory {
-            val userAgent = link.headers.entries.find {
-                it.key.equals("User-Agent", ignoreCase = true)
-            }?.value ?: USER_AGENT
+        link: ExtractorLink,
+        engine: CronetEngine?,
+        interceptor: Interceptor?,
+    ): HttpDataSource.Factory {
+        val userAgent = link.headers.entries.find {
+            it.key.equals("User-Agent", ignoreCase = true)
+        }?.value ?: USER_AGENT
 
-            val source = if (interceptor == null) {
-                if (engine == null) {
-                    Log.d(TAG, "Using DefaultHttpDataSource for $link")
-                    OkHttpDataSource.Factory(app.baseClient).setUserAgent(userAgent)
-                } else {
-                    Log.d(TAG, "Using CronetDataSource for $link")
-                    CronetDataSource.Factory(engine, Executors.newSingleThreadExecutor())
-                        .setUserAgent(userAgent)
-                        .setConnectionTimeoutMs(CRONET_TIMEOUT_MS)
-                        .setReadTimeoutMs(CRONET_TIMEOUT_MS)
-                        .setResetTimeoutOnRedirects(true)
-                        .setHandleSetCookieRequests(true)
-                }
+        // Check if the referer contains characters above U+00FF.
+        val needsRawReferer = (link.referer + link.headers["Referer"].orEmpty())
+            .any { it.code > 0xFF }
+
+        val source = if (needsRawReferer) {
+            Log.d(TAG, "Using DefaultHttpDataSource (raw referer) for $link")
+            DefaultHttpDataSource.Factory()
+                .setUserAgent(userAgent)
+                .setAllowCrossProtocolRedirects(true)
+        } else if (interceptor == null) {
+            if (engine == null) {
+                Log.d(TAG, "Using DefaultHttpDataSource for $link")
+                DefaultHttpDataSource.Factory().setUserAgent(userAgent)
             } else {
-                Log.d(TAG, "Using OkHttpDataSource for $link")
-                val client = app.baseClient.newBuilder()
-                    .addInterceptor(interceptor)
-                    .build()
-                OkHttpDataSource.Factory(client).setUserAgent(userAgent)
+                Log.d(TAG, "Using CronetDataSource for $link")
+                CronetDataSource.Factory(engine, Executors.newSingleThreadExecutor())
+                    .setUserAgent(userAgent)
+                    .setConnectionTimeoutMs(CRONET_TIMEOUT_MS)
+                    .setReadTimeoutMs(CRONET_TIMEOUT_MS)
+                    .setResetTimeoutOnRedirects(true)
+                    .setHandleSetCookieRequests(true)
             }
-
-            // Do no include empty referer, if the provider wants those they can use the header map.
-            val refererMap =
-                if (link.referer.isBlank()) emptyMap() else mapOf("referer" to link.referer)
-
-            // These are extra headers the browser like to insert, not sure if we want to include them
-            // for WIDEVINE/drm as well? Do that if someone gets 404 and creates an issue.
-            val headers =
-                refererMap + link.headers // Adds the headers from the provider, e.g Authorization
-
-            return source.apply {
-                setDefaultRequestProperties(headers)
-            }
+        } else {
+            Log.d(TAG, "Using OkHttpDataSource for $link")
+            val client = app.baseClient.newBuilder()
+                .addInterceptor(interceptor)
+                .build()
+            OkHttpDataSource.Factory(client).setUserAgent(userAgent)
         }
 
+        // Do not include an empty referer.
+        val refererMap =
+            if (link.referer.isBlank()) emptyMap() else mapOf("referer" to link.referer)
+
+        val headers =
+            refererMap + link.headers
+
+        Log.d(TAG, "Referer = [${link.referer}]")
+        Log.d(TAG, "Referer chars = " + link.referer.map { "U+%04X".format(it.code) })
+
+        return source.apply {
+            setDefaultRequestProperties(headers)
+        }
+    }
         private fun Context.createOfflineSource(): DataSource.Factory {
             return DefaultDataSource.Factory(
                 this,
