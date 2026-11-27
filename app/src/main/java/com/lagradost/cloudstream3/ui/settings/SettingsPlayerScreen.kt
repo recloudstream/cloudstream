@@ -327,6 +327,12 @@ object SettingsPlayerScreen : SearchableSettings {
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_cache),
                 preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.player.tunneledPlayback,
+                        title = stringResource(R.string.tunneled_playback),
+                        subtitle = stringResource(R.string.tunneled_playback_desc),
+                        icon = painterResource(R.drawable.subway)
+                    ),
                     Preference.PreferenceItem.ListPreference(
                         preference = settings.player.bufferDiskMB,
                         title = stringResource(R.string.video_buffer_disk_settings),

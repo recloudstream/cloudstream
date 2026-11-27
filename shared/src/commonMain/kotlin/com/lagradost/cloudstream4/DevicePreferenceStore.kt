@@ -196,6 +196,7 @@ class PlayerPreferences(preferences: PreferenceStore) {
     val bufferTimeSec = preferences.getInt("video_buffer_length_key", 0)
     val tvSeekOnTime = preferences.getInt("android_tv_interface_on_seek_key", 10)
     val tvSeekOffTime = preferences.getInt("android_tv_interface_off_seek_key", 10)
+    val tunneledPlayback = preferences.getBoolean("player_tunneled_playback", false)
 }
 
 class GeneralPreferences(preferences: PreferenceStore) {
