@@ -58,6 +58,10 @@ class SecurityPreferences(preferences: PreferenceStore) {
     val skipAccountSelection = preferences.getBoolean(
         "skip_startup_account_select_key", false
     )
+    /** Mirror bookmark status changes to logged in sync accounts (AniList, MAL, ...) */
+    val syncBookmarks = preferences.getBoolean(
+        "sync_bookmarks_key", false
+    )
 }
 
 class UIPreferences(preferences: PreferenceStore) {
