@@ -58,6 +58,7 @@ object ImageLoader {
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
             .components {
+                add(ImageCompatibilityInterceptor())
                 add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) }))
                 if (isBrokenHardware) {
                     add(BitmapFactoryDecoder.Factory())
