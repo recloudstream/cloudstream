@@ -1365,13 +1365,7 @@ class UpdatedMatroskaExtractor private constructor(
 
         if (track.waitingForDtsAnalysis) {
             checkNotNull(track.format)
-            if (DtsUtil.isSampleDtsHd(input, size)) {
-                track.format = track.format!!
-                    .buildUpon()
-                    .setSampleMimeType(MimeTypes.AUDIO_DTS_HD)
-                    .build()
-            }
-
+            track.format = DtsUtil.updateFormatWithDtsHdInfo(input, size, track.format!!)
             track.output!!.format(track.format!!)
             track.waitingForDtsAnalysis = false
             maybeEndTracks()
