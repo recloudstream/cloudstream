@@ -390,6 +390,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 }*/
 
             resultReloadConnectionerror.setOnClickListener {
+                com.lagradost.cloudstream3.ui.APIRepository.invalidateLoadResponse(storedData.apiName, storedData.url)
                 viewModel.load(
                     activity,
                     storedData.url,
@@ -922,6 +923,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
 
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
+                        resultTvComingSoon.setText(R.string.playback_availability_unknown)
+                        resultTvComingSoon.isFocusable = d.comingSoon
+                        resultTvComingSoon.setOnClickListener { resultReloadConnectionerror.performClick() }
 
                         populateChips(resultTag, d.tags)
                         val prefs =
