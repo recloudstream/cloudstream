@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.syncproviders
 
 import androidx.annotation.WorkerThread
 import com.lagradost.cloudstream3.APIHolder.unixTime
-import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleEntity
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
@@ -14,7 +13,8 @@ class SubtitleRepo(override val api: SubtitleAPI) : AuthRepo(api) {
         data class SavedSearchResponse(
             val unixTime: Long,
             val response: List<SubtitleEntity>,
-            val query: SubtitleSearch
+            val query: SubtitleSearch,
+            val idPrefix: String,
         )
 
         data class SavedResourceResponse(
@@ -66,7 +66,7 @@ class SubtitleRepo(override val api: SubtitleAPI) : AuthRepo(api) {
                 var found: List<SubtitleEntity>? = null
                 for (item in searchCache) {
                     // 120 min save
-                    if (item.query == query && (unixTime - item.unixTime) < 60 * 120) {
+                    if (item.idPrefix == idPrefix && item.query == query && (unixTime - item.unixTime) < 60 * 120) {
                         found = item.response
                         break
                     }
@@ -79,7 +79,7 @@ class SubtitleRepo(override val api: SubtitleAPI) : AuthRepo(api) {
 
             // only cache valid return values
             if (returnValue.isNotEmpty()) {
-                val add = SavedSearchResponse(unixTime, returnValue, query)
+                val add = SavedSearchResponse(unixTime, returnValue, query, idPrefix)
                 searchCache.withLock {
                     if (searchCache.size > CACHE_SIZE) {
                         searchCache[searchCacheIndex] = add // rolling cache

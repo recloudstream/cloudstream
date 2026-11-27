@@ -5,14 +5,16 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.extractors.helper.AesHelper.cryptoAESHandler
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jsoup.nodes.Element
 
 class DatabaseGdrive2 : Gdriveplayer() {
-    override var mainUrl = "https://databasegdriveplayer.co"
+    override val mainUrl = "https://databasegdriveplayer.co"
 }
 
 class DatabaseGdrive : Gdriveplayer() {
-    override var mainUrl = "https://series.databasegdriveplayer.co"
+    override val mainUrl = "https://series.databasegdriveplayer.co"
 }
 
 class Gdriveplayerapi : Gdriveplayer() {
@@ -73,20 +75,19 @@ open class Gdriveplayer : ExtractorApi() {
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
+        callback: (ExtractorLink) -> Unit,
     ) {
         val document = app.get(url).document
-
         val eval = unpackJs(document)?.replace("\\", "") ?: return
         val data = Regex("data='(\\S+?)'").first(eval) ?: return
         val password = Regex("null,['|\"](\\w+)['|\"]").first(eval)
             ?.split(Regex("\\D+"))
             ?.joinToString("") {
                 it.toInt().toChar().toString()
-            }.let { Regex("var pass = \"(\\S+?)\"").first(it ?: return)?.toByteArray() }
-            ?: throw ErrorLoadingException("can't find password")
-        val decryptedData = cryptoAESHandler(data, password, false, "AES/CBC/NoPadding")?.let { getAndUnpack(it) }?.replace("\\", "")
+            }.let { Regex("var pass = \"(\\S+?)\"").first(it ?: return)?.encodeToByteArray() }
+                ?: throw ErrorLoadingException("can't find password")
 
+        val decryptedData = cryptoAESHandler(data, password, false, false)?.let { getAndUnpack(it) }?.replace("\\", "")
         val sourceData = decryptedData?.substringAfter("sources:[")?.substringBefore("],")
         val subData = decryptedData?.substringAfter("tracks:[")?.substringBefore("],")
 
@@ -111,18 +112,17 @@ open class Gdriveplayer : ExtractorApi() {
                 subtitleCallback.invoke(
                     newSubtitleFile(
                         sub.label,
-                        httpsify(sub.file)
+                        httpsify(sub.file),
                     )
                 )
             }
         }
-
     }
 
+    @Serializable
     data class Tracks(
-        @JsonProperty("file") val file: String,
-        @JsonProperty("kind") val kind: String,
-        @JsonProperty("label") val label: String
+        @JsonProperty("file") @SerialName("file") val file: String,
+        @JsonProperty("kind") @SerialName("kind") val kind: String,
+        @JsonProperty("label") @SerialName("label") val label: String,
     )
-
 }

@@ -86,15 +86,13 @@ import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
 import com.lagradost.cloudstream3.utils.JsUnpacker.Companion.load
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream4.AppSettings
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Cache
 import java.io.File
-import java.net.URL
-import java.net.URLDecoder
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-
 
 object AppContextUtils {
     fun RecyclerView.isRecyclerScrollable(): Boolean {
@@ -147,6 +145,7 @@ object AppContextUtils {
             text.toSpanned()
         }
     }
+
     /** Get channel ID by name */
     @SuppressLint("RestrictedApi")
     private fun buildWatchNextProgramUri(
@@ -364,15 +363,22 @@ object AppContextUtils {
         }
     }
 
+    /** Sort subtitles by names */
     fun sortSubs(subs: Set<SubtitleData>): List<SubtitleData> {
-        return subs.sortedBy { it.name }
+        // Be aware, sorting by "$originalName $nameSuffix" causes "a (b) 1" < "a 1",
+        // where "originalName then nameSuffix" preserves "a 1" < "a (b) 1", because we do not compare '(' and '1'.
+        return subs
+            .sortedWith(
+                compareBy { subtitle: SubtitleData -> subtitle.originalName }
+                    .thenBy { subtitle: SubtitleData -> subtitle.nameSuffix })
     }
 
     fun Context.getApiSettings(): HashSet<String> {
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
         val hasUniversal = activeLangs.contains(AllLanguagesName)
-        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }.map { it.name })
+        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }
+            .map { it.name })
         return hashSet
     }
 
@@ -463,7 +469,8 @@ object AppContextUtils {
         } ?: default
         val langs = this.getApiProviderLangSettings()
         val hasUniversal = langs.contains(AllLanguagesName)
-        val allApis = apis.filter { api -> (hasUniversal || langs.contains(api.lang)) && (api.hasMainPage || !hasHomePageIsRequired) }
+        val allApis =
+            apis.filter { api -> (hasUniversal || langs.contains(api.lang)) && (api.hasMainPage || !hasHomePageIsRequired) }
         return if (currentPrefMedia.isEmpty()) {
             allApis
         } else {
@@ -475,14 +482,14 @@ object AppContextUtils {
     fun Context.filterSearchResultByFilmQuality(data: List<SearchResponse>): List<SearchResponse> {
         // Filter results omitting entries with certain quality
         if (data.isNotEmpty()) {
-            val filteredSearchQuality = PreferenceManager.getDefaultSharedPreferences(this)
+            val filteredSearchQuality = AppSettings(this).ui.filterQuality.get() /*PreferenceManager.getDefaultSharedPreferences(this)
                 ?.getStringSet(getString(R.string.pref_filter_search_quality_key), setOf())
                 ?.mapNotNull { entry ->
                     entry.toIntOrNull() ?: return@mapNotNull null
-                } ?: listOf()
+                } ?: listOf()*/
             if (filteredSearchQuality.isNotEmpty()) {
                 return data.filter { item ->
-                    val searchQualVal = item.quality?.ordinal ?: -1
+                    val searchQualVal = item.quality //?.ordinal ?: -1
                     //Log.i("filterSearch", "QuickSearch item => ${item.toJson()}")
                     !filteredSearchQuality.contains(searchQualVal)
                 }
@@ -494,17 +501,17 @@ object AppContextUtils {
     fun Context.filterHomePageListByFilmQuality(data: HomePageList): HomePageList {
         // Filter results omitting entries with certain quality
         if (data.list.isNotEmpty()) {
-            val filteredSearchQuality = PreferenceManager.getDefaultSharedPreferences(this)
+            val filteredSearchQuality = AppSettings(this).ui.filterQuality.get() /*PreferenceManager.getDefaultSharedPreferences(this)
                 ?.getStringSet(getString(R.string.pref_filter_search_quality_key), setOf())
                 ?.mapNotNull { entry ->
                     entry.toIntOrNull() ?: return@mapNotNull null
-                } ?: listOf()
+                } ?: listOf()*/
             if (filteredSearchQuality.isNotEmpty()) {
                 return HomePageList(
                     name = data.name,
                     isHorizontalImages = data.isHorizontalImages,
                     list = data.list.filter { item ->
-                        val searchQualVal = item.quality?.ordinal ?: -1
+                        val searchQualVal = item.quality //?.ordinal ?: -1
                         //Log.i("filterSearch", "QuickSearch item => ${item.toJson()}")
                         !filteredSearchQuality.contains(searchQualVal)
                     }
@@ -517,13 +524,13 @@ object AppContextUtils {
     fun Activity.loadRepository(url: String) {
         ioSafe {
             val repo = RepositoryManager.parseRepository(url) ?: return@ioSafe
-            RepositoryManager.addRepository(
-                RepositoryData(
-                    repo.iconUrl ?: "",
-                    repo.name,
-                    url
-                )
+            val data = RepositoryData(
+                repo.iconUrl ?: "",
+                repo.name,
+                url,
+                repo.description
             )
+            RepositoryManager.addRepository(data)
             main {
                 showToast(
                     getString(R.string.player_loaded_subtitles, repo.name),
@@ -531,13 +538,12 @@ object AppContextUtils {
                 )
             }
             afterRepositoryLoadedEvent.invoke(true)
-            addRepositoryDialog(repo.name, url)
+            addRepositoryDialog(data)
         }
     }
 
     fun Activity.addRepositoryDialog(
-        repositoryName: String,
-        repositoryURL: String,
+        repositoryData: RepositoryData
     ) {
         val repos = RepositoryManager.getRepositories()
 
@@ -547,9 +553,7 @@ object AppContextUtils {
                 navigate(
                     R.id.global_to_navigation_settings_plugins,
                     PluginsFragment.newInstance(
-                        repositoryName,
-                        repositoryURL,
-                        false,
+                        repositoryData,
                     )
                 )
             }
@@ -557,7 +561,7 @@ object AppContextUtils {
 
         runOnUiThread {
             AlertDialog.Builder(this).apply {
-                setTitle(repositoryName)
+                setTitle(repositoryData.name)
                 setMessage(R.string.download_all_plugins_from_repo)
                 setPositiveButton(R.string.open_downloaded_repo) { _, _ ->
                     openAddedRepo()
@@ -630,16 +634,17 @@ object AppContextUtils {
         }
     }
 
-    fun splitQuery(url: URL): Map<String, String> {
-        val queryPairs: MutableMap<String, String> = LinkedHashMap()
-        val query: String = url.query
-        val pairs = query.split("&").toTypedArray()
-        for (pair in pairs) {
-            val idx = pair.indexOf("=")
-            queryPairs[URLDecoder.decode(pair.substring(0, idx), "UTF-8")] =
-                URLDecoder.decode(pair.substring(idx + 1), "UTF-8")
-        }
-        return queryPairs
+    // Deprecate after next stable
+    /* @Deprecated(
+        message = "Use splitUrlParameters instead.",
+        replaceWith = ReplaceWith(
+            expression = "splitUrlParameters(url.toString())",
+            imports = ["com.lagradost.cloudstream3.splitUrlParameters"],
+        ),
+        level = DeprecationLevel.WARNING,
+    ) */
+    fun splitQuery(url: java.net.URL): Map<String, String> {
+        return com.lagradost.cloudstream3.splitUrlParameters(url.toString())
     }
 
     /**| S1:E2 Hello World
@@ -684,7 +689,7 @@ object AppContextUtils {
             "$seasonNameShort${rSeason}:$episodeNameShort${rEpisode}"
         } else if (rEpisode != null) {
             "$episodeNameShort$rEpisode"
-        }else null
+        } else null
     }
 
     fun Activity?.loadCache() {
@@ -707,7 +712,7 @@ object AppContextUtils {
     fun loadResult(
         url: String,
         apiName: String,
-        name : String,
+        name: String,
         startAction: Int = 0,
         startValue: Int = 0
     ) {
@@ -717,7 +722,7 @@ object AppContextUtils {
     fun FragmentActivity.loadResult(
         url: String,
         apiName: String,
-        name : String,
+        name: String,
         startAction: Int = 0,
         startValue: Int = 0
     ) {
@@ -843,7 +848,8 @@ object AppContextUtils {
     }
 
     fun Context.isUsingMobileData(): Boolean {
-        val connectionManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectionManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val activeNetwork: Network? = connectionManager.activeNetwork
             val networkCapabilities = connectionManager.getNetworkCapabilities(activeNetwork)

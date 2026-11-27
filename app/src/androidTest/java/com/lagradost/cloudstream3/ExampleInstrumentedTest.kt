@@ -55,12 +55,6 @@ class ExampleInstrumentedTest {
         return APIHolder.allProviders.toTypedArray() //.filter { !it.usesWebView }
     }
 
-    @Test
-    fun providersExist() {
-        Assert.assertTrue(getAllProviders().isNotEmpty())
-        println("Done providersExist")
-    }
-
     @Throws
     private inline fun <reified T : ViewBinding> testAllLayouts(
         activity: Activity,
@@ -169,7 +163,7 @@ class ExampleInstrumentedTest {
             TestingUtils.getDeferredProviderTests(
                 this,
                 getAllProviders(),
-            ) { _, _ -> }
+            ) { _, _, _ -> }
         }
     }
 }

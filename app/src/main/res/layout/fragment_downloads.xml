@@ -261,7 +261,7 @@
                     android:padding="8dp"
 
                     android:src="@drawable/ic_network_stream"
-                    app:tint="?attr/textColor"></ImageView>
+                    app:tint="?attr/textColor" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -306,7 +306,7 @@
             android:paddingBottom="100dp"
             android:clipToPadding="false"
             android:descendantFocusability="afterDescendants"
-            android:nextFocusUp="@id/download_appbar"
+            android:nextFocusUp="@id/download_stream_button_tv"
             android:nextFocusLeft="@id/navigation_downloads"
             android:nextFocusDown="@id/download_queue_button"
             android:tag="@string/tv_no_focus_tag"

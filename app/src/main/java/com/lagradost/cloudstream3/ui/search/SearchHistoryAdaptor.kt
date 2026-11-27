@@ -13,12 +13,15 @@ import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SearchHistoryItem(
-    @JsonProperty("searchedAt") val searchedAt: Long,
-    @JsonProperty("searchText") val searchText: String,
-    @JsonProperty("type") val type: List<TvType>,
-    @JsonProperty("key") val key: String,
+    @JsonProperty("searchedAt") @SerialName("searchedAt") val searchedAt: Long,
+    @JsonProperty("searchText") @SerialName("searchText") val searchText: String,
+    @JsonProperty("type") @SerialName("type") val type: List<TvType>,
+    @JsonProperty("key") @SerialName("key") val key: String,
 )
 
 data class SearchHistoryCallback(

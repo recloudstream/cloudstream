@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
+import com.lagradost.cloudstream3.utils.StringUtils.decodeUrl
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.nodes.Document
 
@@ -96,7 +96,7 @@ open class InternetArchive : ExtractorApi() {
             if (mediaUrl.isNotEmpty()) {
                 val name = if (mediaUrl.count() > 1) {
                     val fileExtension = mediaUrl.substringAfterLast(".")
-                    val fileNameCleaned = fileName.decodeUri().substringBeforeLast('.')
+                    val fileNameCleaned = fileName.decodeUrl().substringBeforeLast('.')
                     "$fileNameCleaned ($fileExtension)"
                 } else this.name
                 callback(

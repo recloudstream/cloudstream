@@ -10,13 +10,31 @@
         style="@style/CheckLabel"
         android:layout_gravity="center"
         tools:text="hello" />
-    <ImageView
-        android:id="@+id/pinicon"
-        android:layout_width="50dp"
-        android:layout_height="24dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="end|center_vertical"
-        android:src="@drawable/pin_ic"
-        android:visibility="gone"
-        tools:visibility="visible"
-        tools:ignore="RtlHardcoded" />
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/action_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_tune_24"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:contentDescription="@string/title_settings" />
+
+        <ImageView
+            android:id="@+id/pinicon"
+            android:layout_width="50dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/pin_ic"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:ignore="RtlHardcoded" />
+    </LinearLayout>
 </FrameLayout>

@@ -233,6 +233,7 @@
         <item>@string/automatic</item>
         <item>HW+SW</item>
         <item>SW+HW</item>
+        <item>HW+</item>
         <item>HW</item>
     </array>
 
@@ -240,6 +241,7 @@
         <item>-1</item> <!-- Auto-->
         <item>0</item>  <!-- HW+SW, aka on but prefer hw -->
         <item>2</item>  <!-- SW+HW, aka on but prefer sw -->
+        <item>3</item>  <!-- HW+, aka audio sw -->
         <item>1</item>  <!-- HW, aka off -->
     </array>
 

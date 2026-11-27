@@ -123,3 +123,26 @@ suspend fun <R> runAllAsync(
         }
     }.map { it.await() }
 }
+
+/** amap with stronger cancellation guarantee, aka will only return when each job is joined */
+@OptIn(DelicateCoroutinesApi::class)
+@InternalAPI
+@Throws
+suspend fun <A, B> Collection<A>.cmap(f: suspend (A) -> B): List<B> =
+    with(CoroutineScope(currentCoroutineContext())) {
+        // 1. Spawn all jobs
+        map { async { f(it) } }.map { deferred ->
+            // 2. Await all jobs without throwing, and join if canceled
+            try {
+                Result.success(deferred.await())
+            } catch (e: CancellationException) {
+                withContext(NonCancellable) {
+                    deferred.join()
+                }
+                Result.failure(e)
+            } catch (t : Throwable) {
+                Result.failure(t)
+            }
+            // 3. Throw if something goes wrong
+        }.map { it.getOrThrow() }
+    }

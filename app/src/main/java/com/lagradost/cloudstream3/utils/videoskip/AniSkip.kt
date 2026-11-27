@@ -1,12 +1,14 @@
 package com.lagradost.cloudstream3.utils.videoskip
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AnimeLoadResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 // taken from https://github.com/saikou-app/saikou/blob/3803f8a7a59b826ca193664d46af3a22bbc989f7/app/src/main/java/ani/saikou/others/AniSkip.kt
 // the following is GPLv3 code https://github.com/saikou-app/saikou/blob/main/LICENSE.md
@@ -47,22 +49,25 @@ class AniSkip : SkipAPI() {
         }
     }
 
+    @Serializable
     data class AniSkipResponse(
-        @JsonSerialize val found: Boolean,
-        @JsonSerialize val results: List<Stamp>?,
-        @JsonSerialize val message: String?,
-        @JsonSerialize val statusCode: Int
+        @JsonProperty("found") @SerialName("found") val found: Boolean,
+        @JsonProperty("results") @SerialName("results") val results: List<Stamp>?,
+        @JsonProperty("message") @SerialName("message") val message: String?,
+        @JsonProperty("statusCode") @SerialName("statusCode") val statusCode: Int,
     )
 
+    @Serializable
     data class Stamp(
-        @JsonSerialize val interval: AniSkipInterval,
-        @JsonSerialize val skipType: String,
-        @JsonSerialize val skipId: String,
-        @JsonSerialize val episodeLength: Double
+        @JsonProperty("interval") @SerialName("interval") val interval: AniSkipInterval,
+        @JsonProperty("skipType") @SerialName("skipType") val skipType: String,
+        @JsonProperty("skipId") @SerialName("skipId") val skipId: String,
+        @JsonProperty("episodeLength") @SerialName("episodeLength") val episodeLength: Double,
     )
 
+    @Serializable
     data class AniSkipInterval(
-        @JsonSerialize val startTime: Double,
-        @JsonSerialize val endTime: Double
+        @JsonProperty("startTime") @SerialName("startTime") val startTime: Double,
+        @JsonProperty("endTime") @SerialName("endTime") val endTime: Double,
     )
 }

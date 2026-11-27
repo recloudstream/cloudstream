@@ -70,7 +70,8 @@ abstract class AccountManager {
             SubtitleRepo(openSubtitlesApi),
             SubtitleRepo(addic7ed),
             SubtitleRepo(subDlApi),
-            PlainAuthRepo(animeSkipApi)
+            PlainAuthRepo(animeSkipApi),
+            SubtitleRepo(subSourceApi)
         )
 
         fun updateAccountIds() {
@@ -120,7 +121,8 @@ abstract class AccountManager {
         val subtitleProviders = arrayOf(
             SubtitleRepo(openSubtitlesApi),
             SubtitleRepo(addic7ed),
-            SubtitleRepo(subDlApi)
+            SubtitleRepo(subDlApi),
+            SubtitleRepo(subSourceApi)
         )
         val syncApis = arrayOf(
             SyncRepo(malApi),

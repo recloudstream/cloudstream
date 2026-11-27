@@ -16,7 +16,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.txt
 
-class PlayMirrorAction : VideoClickAction() {
+object PlayMirrorAction : VideoClickAction() {
     override val name = txt(R.string.episode_action_play_mirror)
 
     override val oneSource = true

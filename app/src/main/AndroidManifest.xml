@@ -57,6 +57,8 @@
         <package android:name="dev.anilbeesetti.nextplayer" />
         <package android:name="com.instantbits.cast.webvideo" />
         <package android:name="com.gianlu.aria2android" />
+        <package android:name="org.xbmc.kodi" />
+        <package android:name="org.courville.nova" />
         
         <!-- Torrent clients -->
         <package android:name="org.proninyaroslav.libretorrent" />
@@ -161,7 +163,7 @@
             android:supportsPictureInPicture="true" />
 
         <activity
-            android:name=".ui.account.AccountSelectActivity"
+            android:name=".ui.account.AccountSelectActivity2"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden"
             android:exported="true">
             <intent-filter android:exported="true">
@@ -252,6 +254,10 @@
                 <action android:name="restart_service" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".receivers.PackageInstallerStatusReceiver"
+            android:exported="false" />
 
         <service
             android:name=".services.VideoDownloadService"

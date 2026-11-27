@@ -70,6 +70,7 @@
         <attr name="iconColor" format="color" />
         <attr name="white" format="color" />
         <attr name="black" format="color" />
+        <attr name="account_unselected_stroke" format="color" />
     </declare-styleable>
 
     <declare-styleable name="PercentageCropImageView">

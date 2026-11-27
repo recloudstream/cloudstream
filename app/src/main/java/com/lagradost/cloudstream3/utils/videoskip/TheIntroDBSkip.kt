@@ -8,6 +8,8 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.app
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /** https://theintrodb.org/docs */
 class TheIntroDBSkip : SkipAPI() {
@@ -30,10 +32,10 @@ class TheIntroDBSkip : SkipAPI() {
                 ?: return null
 
         val url = if (data.isMovie()) {
-            "$mainUrl/v2/media?$idSuffix"
+            "$mainUrl/v4/media?$idSuffix"
         } else {
             val season = episode.season ?: return null
-            "$mainUrl/v2/media?$idSuffix&season=$season&episode=${episode.episode}"
+            "$mainUrl/v4/media?$idSuffix&season=$season&episode=${episode.episode}"
         }
         val root = app.get(url).parsed<Root>()
         return arrayOf(
@@ -41,7 +43,7 @@ class TheIntroDBSkip : SkipAPI() {
             root.credits to SkipType.Credits,
             root.recap to SkipType.Recap,
             root.preview to SkipType.Preview
-        ).map { (list, type) ->
+        ).flatMap { (list, type) ->
             list.map { stamp ->
                 SkipStamp(
                     type,
@@ -49,28 +51,21 @@ class TheIntroDBSkip : SkipAPI() {
                     stamp.endMs ?: episodeDurationMs
                 )
             }
-        }.flatten()
+        }
     }
 
+    @Serializable
     data class Root(
-        @JsonProperty("tmdb_id")
-        val tmdbId: Long,
-        @JsonProperty("type")
-        val type: String,
-        @JsonProperty("intro")
-        val intro: List<Stamp> = emptyList(),
-        @JsonProperty("recap")
-        val recap: List<Stamp> = emptyList(),
-        @JsonProperty("credits")
-        val credits: List<Stamp> = emptyList(),
-        @JsonProperty("preview")
-        val preview: List<Stamp> = emptyList(),
+        @JsonProperty("type") @SerialName("type") val type: String,
+        @JsonProperty("intro") @SerialName("intro") val intro: List<Stamp> = emptyList(),
+        @JsonProperty("recap") @SerialName("recap") val recap: List<Stamp> = emptyList(),
+        @JsonProperty("credits") @SerialName("credits") val credits: List<Stamp> = emptyList(),
+        @JsonProperty("preview") @SerialName("preview") val preview: List<Stamp> = emptyList(),
     )
 
+    @Serializable
     data class Stamp(
-        @JsonProperty("start_ms")
-        val startMs: Long?,
-        @JsonProperty("end_ms")
-        val endMs: Long?,
+        @JsonProperty("start_ms") @SerialName("start_ms") val startMs: Long?,
+        @JsonProperty("end_ms") @SerialName("end_ms") val endMs: Long?,
     )
 }

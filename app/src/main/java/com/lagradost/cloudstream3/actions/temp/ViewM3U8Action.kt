@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.txt
 
-class ViewM3U8Action: VideoClickAction() {
+object ViewM3U8Action: VideoClickAction() {
     override val name = txt(R.string.episode_action_play_in_format, "m3u8 player")
 
     override val isPlayer = true

@@ -64,6 +64,8 @@ jobs:
         SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
         TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
         MDL_API_KEY: ${{ secrets.MDL_API_KEY }}
+        MAL_KEY: ${{ secrets.MAL_KEY }}
+        ANILIST_KEY: ${{ secrets.ANILIST_KEY }}
 
     - name: Create pre-release
       uses: marvinpinto/action-automatic-releases@latest

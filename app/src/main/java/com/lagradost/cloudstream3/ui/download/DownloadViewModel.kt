@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -36,6 +37,7 @@ import com.lagradost.cloudstream3.utils.ResourceLiveData
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.deleteFilesAndUpdateSettings
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.downloadDeleteEvent
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -67,6 +69,17 @@ class DownloadViewModel : ViewModel() {
     private val _selectedItemIds = ConsistentLiveData<Set<Int>?>(null)
     val selectedItemIds: LiveData<Set<Int>?> = _selectedItemIds
 
+    init {
+        // Keep the Downloads list in sync when a download is deleted/cancelled from
+        // anywhere in the app (result page button, queue, notification, etc.). See
+        // onDownloadDeleted for the rationale (issue #1227).
+        downloadDeleteEvent += ::onDownloadDeleted
+    }
+
+    override fun onCleared() {
+        downloadDeleteEvent -= ::onDownloadDeleted
+        super.onCleared()
+    }
 
     fun cancelSelection() {
         updateSelectedItems { null }
@@ -387,6 +400,18 @@ class DownloadViewModel : ViewModel() {
         _selectedItemIds.postValue(null)
         postHeaders(_headerCards.success?.filter { it.data.id !in idsToRemove })
         postChildren(_childCards.success?.filter { it.data.id !in idsToRemove })
+    }
+
+    /**
+     * Refreshes the Downloads screen in real time when a download is deleted/cancelled.
+     */
+    private fun onDownloadDeleted(id: Int) {
+        // Keep multi-select state consistent: forget the removed id if it was selected.
+        updateSelectedItems { it?.minus(id) }
+
+        val context = CloudStreamApp.context ?: return
+        updateHeaderList(context)
+        postChildren(_childCards.success?.filterNot { it.data.id == id })
     }
 
     private fun updateStorageStats(visual: List<VisualDownloadCached.Header>) {

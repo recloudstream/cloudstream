@@ -26,6 +26,11 @@ jobs:
         cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
         cache-read-only: false
 
+    - name: Ensure binary compatibility
+      # This is to ensure that your code is backwards compatible.
+      # If this fails you need to add a @Prerelease annotation to new code.
+      run: ./gradlew library:checkKotlinAbi
+
     - name: Run Gradle
       run: ./gradlew assemblePrereleaseDebug lint check
 

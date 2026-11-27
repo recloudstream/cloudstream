@@ -7,6 +7,7 @@ import android.net.Uri
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.actions.OpenInAppAction
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.SkipSerializationTest
 import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.player.SubtitleOrigin
@@ -22,7 +23,10 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
+import com.lagradost.cloudstream3.utils.serializers.UriSerializer
 import com.lagradost.cloudstream3.utils.txt
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * If you want to support CloudStream 3 as an external player, then this shows how to play any video link
@@ -32,36 +36,34 @@ import com.lagradost.cloudstream3.utils.txt
  * These are passed as LINKS_EXTRA and SUBTITLE_EXTRA respectively
  */
 @Suppress("Unused")
-class CloudStreamPackage : OpenInAppAction(
+object CloudStreamPackage : OpenInAppAction(
     appName = txt("CloudStream"),
     packageName = BuildConfig.APPLICATION_ID, //"com.lagradost.cloudstream3" or "com.lagradost.cloudstream3.prerelease"
     intentClass = "com.lagradost.cloudstream3.ui.player.DownloadedPlayerActivity"
 ) {
     override val oneSource: Boolean = false
 
-    companion object {
-        const val SUBTITLE_EXTRA: String = "subs" // Json of an array of MinimalVideoLink
-        const val LINKS_EXTRA: String = "links" // Json of an array of MinimalSubtitleLink
-        const val TITLE_EXTRA: String = "title" // Unused (String)
-        const val ID_EXTRA: String =
-            "id" // Identification number for the video(s), used to store start time (Int)
-        const val POSITION_EXTRA: String = "pos" // Start time in MS (Long)
-        const val DURATION_EXTRA: String = "dur" // Duration time in MS (Long)
-    }
+    const val SUBTITLE_EXTRA: String = "subs" // Json of an array of MinimalVideoLink
+    const val LINKS_EXTRA: String = "links" // Json of an array of MinimalSubtitleLink
+    const val TITLE_EXTRA: String = "title" // Unused (String)
+    const val ID_EXTRA: String =
+        "id" // Identification number for the video(s), used to store start time (Int)
+    const val POSITION_EXTRA: String = "pos" // Start time in MS (Long)
+    const val DURATION_EXTRA: String = "dur" // Duration time in MS (Long)
+    const val POSITION_EXTRA_ALT: String = "position" // Start time in MS (Long)
+    const val DURATION_EXTRA_ALT: String = "duration" // Duration time in MS (Long)
 
+    @Serializable
+    @SkipSerializationTest //.Uri has issues with Jackson
     data class MinimalVideoLink(
-        @JsonProperty("uri")
+        @JsonProperty("uri") @SerialName("uri")
+        @Serializable(with = UriSerializer::class)
         val uri: Uri?,
-        @JsonProperty("url")
-        val url: String?,
-        @JsonProperty("mimeType")
-        val mimeType: String = "video/mp4",
-        @JsonProperty("name")
-        val name: String?,
-        @JsonProperty("headers")
-        var headers: Map<String, String> = mapOf(),
-        @JsonProperty("quality")
-        val quality: Int?,
+        @JsonProperty("url") @SerialName("url") val url: String?,
+        @JsonProperty("mimeType") @SerialName("mimeType") val mimeType: String = "video/mp4",
+        @JsonProperty("name") @SerialName("name") val name: String?,
+        @JsonProperty("headers") @SerialName("headers") var headers: Map<String, String> = mapOf(),
+        @JsonProperty("quality") @SerialName("quality") val quality: Int?,
     ) {
         companion object {
             fun fromExtractor(link: ExtractorLink): MinimalVideoLink = MinimalVideoLink(
@@ -97,16 +99,12 @@ class CloudStreamPackage : OpenInAppAction(
             }
     }
 
-
+    @Serializable
     data class MinimalSubtitleLink(
-        @JsonProperty("url")
-        val url: String,
-        @JsonProperty("mimeType")
-        val mimeType: String = "text/vtt",
-        @JsonProperty("name")
-        val name: String?,
-        @JsonProperty("headers")
-        var headers: Map<String, String> = mapOf(),
+        @JsonProperty("url") @SerialName("url") val url: String,
+        @JsonProperty("mimeType") @SerialName("mimeType") val mimeType: String = "text/vtt",
+        @JsonProperty("name") @SerialName("name") val name: String?,
+        @JsonProperty("headers") @SerialName("headers") var headers: Map<String, String> = mapOf(),
     ) {
         companion object {
             fun fromSubtitle(sub: SubtitleData): MinimalSubtitleLink = MinimalSubtitleLink(
@@ -124,9 +122,7 @@ class CloudStreamPackage : OpenInAppAction(
             originalName = name ?: "Unknown",
             headers = headers,
             origin = SubtitleOrigin.URL,
-            languageCode = fromCodeToLangTagIETF(name) ?:
-                           fromLanguageToTagIETF(name, true) ?:
-                           name,
+            languageCode = fromCodeToLangTagIETF(name) ?: fromLanguageToTagIETF(name, true) ?: name,
         )
     }
 
@@ -139,8 +135,9 @@ class CloudStreamPackage : OpenInAppAction(
     ) {
         intent.apply {
             val position = getViewPos(video.id)?.position
-            if (position != null)
+            if (position != null) {
                 putExtra(POSITION_EXTRA, position)
+            }
 
             putExtra(ID_EXTRA, video.id)
             putExtra(TITLE_EXTRA, video.name)

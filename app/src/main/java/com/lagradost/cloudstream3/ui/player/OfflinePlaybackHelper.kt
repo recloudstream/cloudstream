@@ -35,6 +35,18 @@ object OfflinePlaybackHelper {
         )
     }
 
+    fun getLongExtra(intent: Intent, name: String): Long? {
+        val value = intent.getLongExtra(name, -1L)
+        if (value == -1L) {
+            val intValue = intent.getIntExtra(name, -1)
+            if (intValue == -1) {
+                return null
+            }
+            return intValue.toLong()
+        }
+        return value
+    }
+
     // See CloudStreamPackage
     fun playIntent(activity: Activity, intent: Intent?): Boolean {
         if (intent == null) return false
@@ -46,13 +58,13 @@ object OfflinePlaybackHelper {
 
         val id = intent.getIntExtra(CloudStreamPackage.ID_EXTRA, -1)
         //val title = intent.getStringExtra(CloudStreamPackage.TITLE_EXTRA) // unused
-        val pos = intent.getLongExtra(CloudStreamPackage.POSITION_EXTRA, -1L)
-        val dur = intent.getLongExtra(CloudStreamPackage.DURATION_EXTRA, -1L)
+        val pos = getLongExtra(intent, CloudStreamPackage.POSITION_EXTRA)
+            ?: getLongExtra(intent, CloudStreamPackage.POSITION_EXTRA_ALT)
+        val dur = getLongExtra(intent, CloudStreamPackage.DURATION_EXTRA)
+            ?: getLongExtra(intent, CloudStreamPackage.DURATION_EXTRA_ALT)
 
-        if (id != -1 && pos != -1L) {
-            val duration = if (dur != -1L) {
-                dur
-            } else DataStoreHelper.getViewPos(id)?.duration ?: pos
+        if (id != -1 && pos != null) {
+            val duration = dur ?: (DataStoreHelper.getViewPos(id)?.duration ?: pos)
             DataStoreHelper.setViewPos(id, pos, duration)
         }
 
@@ -84,7 +96,8 @@ object OfflinePlaybackHelper {
                             name = name ?: getString(activity, R.string.downloaded_file),
                             // well not the same as a normal id, but we take it as users may want to
                             // play downloaded files and save the location
-                            id = uri.lastPathSegment?.toLongOrNull()?.hashCode() ?: uri.lastPathSegment?.hashCode()
+                            id = uri.lastPathSegment?.toLongOrNull()?.hashCode()
+                                ?: uri.lastPathSegment?.hashCode()
                         )
                     )
                 ), 0

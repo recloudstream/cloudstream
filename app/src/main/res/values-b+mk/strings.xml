@@ -244,7 +244,7 @@
     <string name="quality_tc">TC</string>
     <string name="subscription_new">Претплатен на %s</string>
     <string name="pref_category_subtitles">Преводи</string>
-    <string name="download_all_plugins_from_repo">Предупредување: CloudStream 3 не презема никаква одговорност за користење на екстензии од трети страни и не обезбедува никаква поддршка за нив!</string>
+    <string name="download_all_plugins_from_repo">Предупредување: CloudStream не презема никаква одговорност за користење на екстензии од трети страни и не обезбедува никаква поддршка за нив!</string>
     <string name="backup_failed">Недостасуваат дозволи за складирање. Обиди се повторно.</string>
     <string name="sort_save">Зачувај</string>
     <string name="player_load_subtitles">Вчитај од датотека</string>
@@ -310,7 +310,7 @@
     <string name="video_tracks">Видео резолуција</string>
     <string name="asian_drama">Азиски драми</string>
     <string name="plugin_loaded">Приклучокот е вчитан</string>
-    <string name="subtitles_remove_bloat">Отстрани непотребен текст од преводите</string>
+    <string name="subtitles_remove_bloat">Отстрани реклами од преводите</string>
     <string name="plugins_not_downloaded" formatted="true">Не е преземено: %d</string>
     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
     <string name="audio_tracks">Аудио јазик</string>
@@ -429,8 +429,8 @@
     <string name="category_ui">Изглед</string>
     <string name="add_sync">Додај тракинг</string>
     <string name="sync_score">Оценет</string>
-    <string name="quality_cam_rip">Камера</string>
-    <string name="quality_cam_hd">Камера</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_sdr">SDR</string>
     <string name="app_not_found_error">Апликацијата не е пронајдена</string>
     <string name="example_username">Корисничко име</string>
@@ -445,7 +445,7 @@
     <string name="backup_failed_error_format">Грешка при правење резервна копија на %s</string>
     <string name="pref_filter_search_quality">Сокриј го избраниот квалитет на видеото во резултатите од пребарувањето</string>
     <string name="apk_installer_settings_des">Некои уреди не го поддржуваат новиот инсталатор на пакети. Испробај ја легаси(старата) опција, ако ажурирањата не се инсталираат.</string>
-    <string name="limit_title_rez">Резолуција на видео плеер</string>
+    <string name="limit_title_rez">Прикажи информации за плеерот</string>
     <string name="video_buffer_size_settings">Големина на видео баферот</string>
     <string name="pref_category_player_layout">Распоред</string>
     <string name="pref_category_defaults">Стандардно</string>
@@ -642,7 +642,7 @@
     <string name="starting_plugin_update_manually">Започнување на процесот на ажурирање на приклучоци!</string>
     <string name="update_plugins">Ажурирај приклучоци</string>
     <string name="no_plugins_updated_manually">Ниту еден приклучок не е ажуриран.</string>
-    <string name="plugins_updated_manually">Успешно ажурирани %d приклучоци!</string>
+    <string name="plugins_updated_manually">Успешно ажурирани %d приклучоци</string>
     <string name="sort_episodes_number_asc">Епизода (Растечки)</string>
     <string name="sort_episodes_number_desc">Епизода (Опаѓачки)</string>
     <string name="sort_episodes_rating_high_low">Рејтинг (Највисок)</string>
@@ -705,4 +705,64 @@
     <string name="top_center">Горе во центар</string>
     <string name="top_right">Горе на десно</string>
     <string name="play_full_series_button">Пушти ја целата серија</string>
+    <string name="download_queue">Редица за преземање</string>
+    <string name="queue_empty_message">Моментално нема преземања во редицата.</string>
+    <string name="extra_brightness_settings">Дополнителна осветленост</string>
+    <string name="extra_brightness_settings_des">Овозможи филтер за осветленост кога ќе се надмине 100% осветленост на екранот</string>
+    <string name="extra_brightness_key">овозможена_дополнителна_осветленост</string>
+    <string name="search_suggestions">Предлози за пребарување</string>
+    <string name="search_suggestions_des">Прикажувај предлози за пребарување додека пишуваш</string>
+    <string name="clear_suggestions">Исчисти предлози</string>
+    <string name="show_player_metadata_overlay">Прикажи преклоп со метаподатоци на плеерот</string>
+    <string name="show_cast_in_details">Прикажи панел за емитување</string>
+    <string name="install_prerelease">Инсталирај предиздавачка верзија</string>
+    <string name="prerelease_already_installed">Предиздавачката верзија е веќе инсталирана.</string>
+    <string name="prerelease_install_failed">Неуспешна инсталација на предиздавачката верзија.</string>
+    <string name="video_singular">Видео</string>
+    <string name="show_episode_text">Текст на епизода</string>
+    <string name="video_info">Информации за медиумот</string>
+    <string name="skip_type_preview">Преглед</string>
+    <string name="source_priority">Приоритет на извор</string>
+    <string name="source_priority_help">Одреди како ќе се подредуваат видео изворите во плеерот</string>
+    <string name="source_name">Име на изворот</string>
+    <string name="download_all">Преземи сѐ</string>
+    <string name="cancel_all">Откажи сѐ</string>
+    <string name="download_episode_range">Дали сакате да ја преземете епизодата %s?</string>
+    <string name="cancel_queue_message">Дали сакате да ги откажете сите преземања во редицата?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d активно преземање</item>
+        <item quantity="other">%d активни преземања</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d преземање во редицата</item>
+        <item quantity="other">%d преземања во редицата</item>
+    </plurals>
+    <string name="player_is_live">Во живо</string>
+    <string name="start_paused_settings">Започни паузирани видеа</string>
+    <string name="profile_settings">Поставки на профил</string>
+    <string name="profile_hide_negative_sources">Сокриј извори со негативен приоритет</string>
+    <string name="profile_hide_error_sources">Сокриј извори со грешки</string>
+    <string name="background">Позадина</string>
+    <string name="subs_edge">Edge</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="start_paused_settings_des">Намалете го оптоварувањето при избирање извори</string>
+    <string name="tv_layout_clock_settings">Прикажи часовник во реално време</string>
+    <string name="tv_layout_clock_settings_des">Прикажи часовник во реално време на врвот на екранот. Се применува на почетната страница и плеерот</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d скриена врска</item>
+        <item quantity="other">%d скриени врски</item>
+    </plurals>
+    <string name="compressor">Компресор</string>
+    <string name="compressor_setting">Компресор со динамички опсег</string>
+    <string name="compressor_setting_summary">Прикажи ги контролите на компресорот во плеерот (помага во балансирање на гласен/тивок звук)</string>
+    <string name="compressor_on">Вклучено</string>
+    <string name="compressor_on_format">Вклучено · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Исклучено</string>
+    <string name="compressor_preset_light">Лесно</string>
+    <string name="compressor_preset_dialog">Засилување на дијалог</string>
+    <string name="compressor_preset_heavy">Тешко</string>
+    <string name="compressor_threshold_label">Праг: %d dB</string>
+    <string name="compressor_makeup_label">Компензациско засилување: +%d dB</string>
+    <string name="compressor_threshold_hint">Звуци погласни од %d dB се стишуваат</string>
+    <string name="compressor_makeup_hint">Ја зголемува вкупната јачина на звукот за +%d dB</string>
 </resources>

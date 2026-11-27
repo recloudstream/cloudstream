@@ -23,15 +23,15 @@ const val PROGRAM_ID_LIST_KEY = "persistent_program_ids"
 
 object TvChannelUtils {
     fun Context.saveProgramId(programId: Long) {
-        val existing: List<Long> = getKey(PROGRAM_ID_LIST_KEY) ?: emptyList()
+        val existing: List<Long> = getKey<List<Long>>(PROGRAM_ID_LIST_KEY) ?: emptyList()
         val updated = (existing + programId).distinct()
         setKey(PROGRAM_ID_LIST_KEY, updated)
     }
     fun Context.getStoredProgramIds(): List<Long> {
-        return getKey(PROGRAM_ID_LIST_KEY) ?: emptyList()
+        return getKey<List<Long>>(PROGRAM_ID_LIST_KEY) ?: emptyList()
     }
     fun Context.removeProgramId(programId: Long) {
-        val existing: List<Long> = getKey(PROGRAM_ID_LIST_KEY) ?: emptyList()
+        val existing: List<Long> = getKey<List<Long>>(PROGRAM_ID_LIST_KEY) ?: emptyList()
         val updated = existing.filter { it != programId }
         setKey(PROGRAM_ID_LIST_KEY, updated)
     }
@@ -149,10 +149,12 @@ object TvChannelUtils {
             .setInputId(inputId)
             .build()
 
-        val channelUri = context.contentResolver.insert(
-            TvContractCompat.Channels.CONTENT_URI,
-            channel.toContentValues()
-        )
+        val channelUri = runCatching {
+            context.contentResolver.insert(
+                TvContractCompat.Channels.CONTENT_URI,
+                channel.toContentValues()
+            )
+        }.getOrNull()
 
         channelUri?.let {
             val channelId = ContentUris.parseId(it)

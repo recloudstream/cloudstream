@@ -887,7 +887,6 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             val wasShowing = playerView.callbacks?.isUIShowing() ?: false
 
             // Only expose the parent chain when controls are currently hidden.
-            val prevCenterMenuGone = playerView.playerCenterMenu?.isGone ?: false
             val prevVideoHolderVisible = playerView.playerVideoHolder?.isVisible ?: true
             if (!wasShowing) {
                 playerView.playerCenterMenu?.isGone = false
@@ -906,7 +905,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                         resetRewindText()
                         // Restore parent chain only if we changed it and controls are still hidden.
                         if (!wasShowing && !(playerView.callbacks?.isUIShowing() ?: false)) {
-                            playerView.playerCenterMenu?.isGone = prevCenterMenuGone
+                            playerView.playerCenterMenu?.isGone = true
                             playerView.playerVideoHolder?.isVisible = prevVideoHolderVisible
                             rewHolder.alpha = 0f
                         }
@@ -927,7 +926,6 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             val ffwdText = playerView.exoFfwdText
             val wasShowing = playerView.callbacks?.isUIShowing() ?: false
 
-            val prevCenterMenuGone = playerView.playerCenterMenu?.isGone ?: false
             val prevVideoHolderVisible = playerView.playerVideoHolder?.isVisible ?: true
             if (!wasShowing) {
                 playerView.playerCenterMenu?.isGone = false
@@ -945,7 +943,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                     ffwdText?.post {
                         resetFastForwardText()
                         if (!wasShowing && !(playerView.callbacks?.isUIShowing() ?: false)) {
-                            playerView.playerCenterMenu?.isGone = prevCenterMenuGone
+                            playerView.playerCenterMenu?.isGone = true
                             playerView.playerVideoHolder?.isVisible = prevVideoHolderVisible
                             ffwdHolder.alpha = 0f
                         }

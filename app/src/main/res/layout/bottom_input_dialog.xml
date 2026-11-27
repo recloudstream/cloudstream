@@ -4,7 +4,7 @@
     android:nextFocusDown="@id/nginx_text_input"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/text1"
@@ -24,13 +24,13 @@
         android:id="@+id/nginx_text_input"
         android:nextFocusRight="@id/cancel_btt"
         android:nextFocusLeft="@id/apply_btt"
+        android:nextFocusDown="@id/apply_btt"
         android:layout_marginBottom="60dp"
         android:layout_marginHorizontal="10dp"
         android:paddingTop="10dp"
         android:requiresFadingEdge="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_rowWeight="1"
+        android:layout_height="wrap_content"
         android:autofillHints="no"
         android:inputType="text"
         tools:text="nginx.com"
@@ -42,6 +42,7 @@
         android:layout_gravity="bottom"
         android:gravity="bottom|end"
         android:layout_marginTop="-60dp"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
@@ -50,6 +51,8 @@
             android:layout_gravity="center_vertical|end"
             android:text="@string/sort_apply"
             android:id="@+id/apply_btt"
+            android:nextFocusUp="@id/nginx_text_input"
+            android:nextFocusRight="@id/cancel_btt"
             style="@style/WhiteButton" />
 
         <com.google.android.material.button.MaterialButton
@@ -57,6 +60,8 @@
             android:layout_gravity="center_vertical|end"
             android:text="@string/sort_cancel"
             android:id="@+id/cancel_btt"
+            android:nextFocusUp="@id/nginx_text_input"
+            android:nextFocusLeft="@id/apply_btt"
             style="@style/BlackButton" />
     </LinearLayout>
 </LinearLayout>

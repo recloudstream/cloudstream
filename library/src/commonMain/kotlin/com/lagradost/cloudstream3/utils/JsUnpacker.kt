@@ -26,8 +26,7 @@ class JsUnpacker(packedJS: String?) {
         val js = packedJS ?: return null
         try {
             val match = Regex(
-                """\}\s*\('(.*)',\s*(.*?),\s*(\d+),\s*'(.*?)'\.split\('\|'\)""",
-                RegexOption.DOT_MATCHES_ALL
+                """(?s)\}\s*\('(.*)',\s*(.*?),\s*(\d+),\s*'(.*?)'\.split\('\|'\)"""
             ).find(js)
             if (match != null && match.groupValues.size == 5) {
                 val payload = match.groupValues[1].replace("\\'", "'")
@@ -56,7 +55,7 @@ class JsUnpacker(packedJS: String?) {
                     val x = unbase.unbase(word)
                     val value = if (x in symtab.indices) symtab[x] else null
                     if (!value.isNullOrEmpty()) {
-                        decoded.replace(
+                        decoded.setRange(
                             wordMatch.range.first + replaceOffset,
                             wordMatch.range.last + 1 + replaceOffset,
                             value

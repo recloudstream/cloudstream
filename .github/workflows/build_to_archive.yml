@@ -73,6 +73,8 @@ jobs:
         SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
         TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
         MDL_API_KEY: ${{ secrets.MDL_API_KEY }}
+        MAL_KEY: ${{ secrets.MAL_KEY }}
+        ANILIST_KEY: ${{ secrets.ANILIST_KEY }}
 
     - uses: actions/checkout@v6
       with:

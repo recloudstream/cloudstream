@@ -1,17 +1,16 @@
-@file:OptIn(ExperimentalUuidApi::class)
-
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fleeksoft.ksoup.Ksoup
 import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.Acefile
 import com.lagradost.cloudstream3.extractors.Ahvsh
 import com.lagradost.cloudstream3.extractors.Aico
+import com.lagradost.cloudstream3.extractors.Antarcticadocs
 import com.lagradost.cloudstream3.extractors.Asnwish
 import com.lagradost.cloudstream3.extractors.Auvexiug
 import com.lagradost.cloudstream3.extractors.Awish
@@ -79,8 +78,11 @@ import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
+import com.lagradost.cloudstream3.extractors.Firestream
+import com.lagradost.cloudstream3.extractors.FirestreamSite
 import com.lagradost.cloudstream3.extractors.Multimoviesshg
 import com.lagradost.cloudstream3.extractors.FlaswishCom
+import com.lagradost.cloudstream3.extractors.Flyfile
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.FourPlayRu
@@ -108,7 +110,9 @@ import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
 import com.lagradost.cloudstream3.extractors.HDStreamAble
 import com.lagradost.cloudstream3.extractors.Habetar
+import com.lagradost.cloudstream3.extractors.Handfacesnap
 import com.lagradost.cloudstream3.extractors.Haxloppd
+import com.lagradost.cloudstream3.extractors.Hexload
 import com.lagradost.cloudstream3.extractors.Hgcloudto
 import com.lagradost.cloudstream3.extractors.HglinkTo
 import com.lagradost.cloudstream3.extractors.HgplayCDN
@@ -116,6 +120,7 @@ import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.HubCloud
 import com.lagradost.cloudstream3.extractors.Hxfile
 import com.lagradost.cloudstream3.extractors.HlsWish
+import com.lagradost.cloudstream3.extractors.HubuCloud
 import com.lagradost.cloudstream3.extractors.InternetArchive
 import com.lagradost.cloudstream3.extractors.JWPlayer
 import com.lagradost.cloudstream3.extractors.Jeniusplay
@@ -157,6 +162,8 @@ import com.lagradost.cloudstream3.extractors.Multimovies
 import com.lagradost.cloudstream3.extractors.Mvidoo
 import com.lagradost.cloudstream3.extractors.MyVidPlay
 import com.lagradost.cloudstream3.extractors.Mwish
+import com.lagradost.cloudstream3.extractors.Namefacesnap
+import com.lagradost.cloudstream3.extractors.Nameitweb
 import com.lagradost.cloudstream3.extractors.NathanFromSubject
 import com.lagradost.cloudstream3.extractors.Nekostream
 import com.lagradost.cloudstream3.extractors.Nekowish
@@ -164,6 +171,7 @@ import com.lagradost.cloudstream3.extractors.Neonime7n
 import com.lagradost.cloudstream3.extractors.Neonime8n
 import com.lagradost.cloudstream3.extractors.Obeywish
 import com.lagradost.cloudstream3.extractors.Odnoklassniki
+import com.lagradost.cloudstream3.extractors.Odysseusa
 import com.lagradost.cloudstream3.extractors.OkRuHTTP
 import com.lagradost.cloudstream3.extractors.OkRuHTTPMobile
 import com.lagradost.cloudstream3.extractors.OkRuSSL
@@ -177,6 +185,7 @@ import com.lagradost.cloudstream3.extractors.PlayLtXyz
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.PlayerVoxzer
 import com.lagradost.cloudstream3.extractors.Playerwish
+import com.lagradost.cloudstream3.extractors.Playmate
 import com.lagradost.cloudstream3.extractors.Playmogo
 import com.lagradost.cloudstream3.extractors.Rabbitstream
 import com.lagradost.cloudstream3.extractors.RapidVid
@@ -226,12 +235,10 @@ import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
 import com.lagradost.cloudstream3.extractors.Streamhub2
-import com.lagradost.cloudstream3.extractors.Streamix
 import com.lagradost.cloudstream3.extractors.Streamlare
 import com.lagradost.cloudstream3.extractors.StreamoUpload
 import com.lagradost.cloudstream3.extractors.Streamplay
 import com.lagradost.cloudstream3.extractors.Streamsss
-import com.lagradost.cloudstream3.extractors.Streamup
 import com.lagradost.cloudstream3.extractors.Streamwish2
 import com.lagradost.cloudstream3.extractors.Strwish
 import com.lagradost.cloudstream3.extractors.Strwish2
@@ -269,6 +276,9 @@ import com.lagradost.cloudstream3.extractors.VidHidePro5
 import com.lagradost.cloudstream3.extractors.VidHidePro6
 import com.lagradost.cloudstream3.extractors.VidHideHub
 import com.lagradost.cloudstream3.extractors.Ryderjet
+import com.lagradost.cloudstream3.extractors.Streamcash
+import com.lagradost.cloudstream3.extractors.Thebesthostertv
+import com.lagradost.cloudstream3.extractors.VidChampions
 import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -285,9 +295,20 @@ import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.VinovoSi
 import com.lagradost.cloudstream3.extractors.VinovoTo
 import com.lagradost.cloudstream3.extractors.VidNest
+import com.lagradost.cloudstream3.extractors.VidaaraxCom
+import com.lagradost.cloudstream3.extractors.VidaaraxNet
 import com.lagradost.cloudstream3.extractors.Vidara
+import com.lagradost.cloudstream3.extractors.VidaraSo
+import com.lagradost.cloudstream3.extractors.Vidaraa
+import com.lagradost.cloudstream3.extractors.Vidaratem
+import com.lagradost.cloudstream3.extractors.Vidaraw
+import com.lagradost.cloudstream3.extractors.Vidarax
+import com.lagradost.cloudstream3.extractors.Vidavaca
 import com.lagradost.cloudstream3.extractors.Vide0Net
+import com.lagradost.cloudstream3.extractors.Vidmatrixa
+import com.lagradost.cloudstream3.extractors.Vids
 import com.lagradost.cloudstream3.extractors.Vidsonic
+import com.lagradost.cloudstream3.extractors.Vixeo
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
 import com.lagradost.cloudstream3.extractors.Voe1
@@ -312,13 +333,15 @@ import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
+import io.ktor.http.Url
+import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import org.jsoup.Jsoup
-import java.net.URI
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
@@ -407,6 +430,7 @@ enum class ExtractorLinkType {
     MAGNET;
 
     // See https://www.iana.org/assignments/media-types/media-types.xhtml
+    @JsonIgnore
     fun getMimeType(): String {
         return when (this) {
             VIDEO -> "video/mp4"
@@ -420,7 +444,7 @@ enum class ExtractorLinkType {
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     val path = try {
-        URI(url).path
+        Url(url).encodedPath.decodeURLPart()
     } catch (_: Throwable) {
         // don't log magnet links as errors
         null
@@ -442,7 +466,6 @@ val INFER_TYPE: ExtractorLinkType? = null
  *
  * ClearKey is supported on Android devices running Android 5.0 (API Level 21) and up.
  */
-@Prerelease
 val CLEARKEY_DRM_UUID = Uuid.fromLongs(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
 
 /**
@@ -451,7 +474,6 @@ val CLEARKEY_DRM_UUID = Uuid.fromLongs(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL
  *
  * Widevine is supported on Android devices running Android 4.3 (API Level 18) and up.
  */
-@Prerelease
 val WIDEVINE_DRM_UUID = Uuid.fromLongs(-0x121074568629b532L, -0x5c37d8232ae2de13L)
 
 /**
@@ -461,7 +483,6 @@ val WIDEVINE_DRM_UUID = Uuid.fromLongs(-0x121074568629b532L, -0x5c37d8232ae2de13
  * PlayReady is supported on all AndroidTV devices. Note that most other Android devices do not
  * provide PlayReady support.
  */
-@Prerelease
 val PLAYREADY_DRM_UUID = Uuid.fromLongs(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
 
 // Deprecate after next stable
@@ -523,7 +544,6 @@ suspend fun newDrmExtractorLink(
     return builder
 }
 
-@Prerelease
 suspend fun newDrmExtractorLink(
     source: String,
     name: String,
@@ -674,26 +694,27 @@ open class DrmExtractorLink private constructor(
  * @property audioTracks List of separate audio tracks that can be used with this video
  * @see newExtractorLink
  * */
+@Serializable
 open class ExtractorLink
 @Deprecated("Use newExtractorLink", level = DeprecationLevel.WARNING)
 constructor(
-    open val source: String,
-    open val name: String,
-    override val url: String,
-    override var referer: String,
-    open var quality: Int,
-    override var headers: Map<String, String> = mapOf(),
+    @SerialName("source") open val source: String,
+    @SerialName("name") open val name: String,
+    @SerialName("url") override val url: String,
+    @SerialName("referer") override var referer: String,
+    @SerialName("quality") open var quality: Int,
+    @SerialName("headers") override var headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
-    open var extractorData: String? = null,
-    open var type: ExtractorLinkType,
+    @SerialName("extractorData") open var extractorData: String? = null,
+    @SerialName("type") open var type: ExtractorLinkType,
     /** List of separate audio tracks that can be merged with this video */
-    open var audioTracks: List<AudioFile> = emptyList(),
+    @SerialName("audioTracks") open var audioTracks: List<AudioFile> = emptyList(),
 ) : IDownloadableMinimum {
-    val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
-    val isDash: Boolean get() = type == ExtractorLinkType.DASH
+    @get:JsonIgnore val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
+    @get:JsonIgnore val isDash: Boolean get() = type == ExtractorLinkType.DASH
 
     // Cached video size
-    private var videoSize: Long? = null
+    @Transient private var videoSize: Long? = null
 
     /**
      * Get video size in bytes with one head request. Only available for ExtractorLinkType.Video
@@ -819,7 +840,7 @@ constructor(
 
 /**
  * Removes https:// and www.
- * To match urls regardless of schema, perhaps Uri() can be used?
+ * To match urls regardless of schema, perhaps Url() can be used?
  */
 val schemaStripRegex = Regex("""^(https:|)//(www\.|)""")
 
@@ -1088,6 +1109,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Tantifilm(),
     Userload(),
     Supervideo(),
+    Streamcash(),
 
     // StreamSB.kt works
     //  SBPlay(),
@@ -1125,6 +1147,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Vicloud(),
     Uservideo(),
     Userscloud(),
+    HubuCloud(),
 
     Movhide(),
     StreamhideCom(),
@@ -1158,9 +1181,23 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     MoviehabNet(),
     Jeniusplay(),
     StreamoUpload(),
-    Streamup(),
-    Streamix(),
     Vidara(),
+    Vidavaca(),
+    Vidaraa(),
+    Vidaraw(),
+    Vidarax(),
+    VidaraSo(),
+    Vidaratem(),
+    VidaaraxCom(),
+    VidaaraxNet(),
+    Odysseusa(),
+    Handfacesnap(),
+    Namefacesnap(),
+    Thebesthostertv(),
+    Vidmatrixa(),
+    VidChampions(),
+    Antarcticadocs(),
+    Nameitweb(),
 
     GamoVideo(),
     Gdriveplayerapi(),
@@ -1273,6 +1310,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Ds2play(),
     Ds2video(),
     Vidsonic(),
+    Vixeo(),
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
@@ -1297,6 +1335,12 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     GUpload(),
     HlsWish(),
     ByseQekaho(),
+    Flyfile(),
+    Firestream(),
+    FirestreamSite(),
+    Vids(),
+    Playmate(),
+    Hexload(),
 )
 
 
@@ -1316,7 +1360,7 @@ fun httpsify(url: String): String {
 }
 
 suspend fun getPostForm(requestUrl: String, html: String): String? {
-    val document = Jsoup.parse(html)
+    val document = Ksoup.parse(html)
     val inputs = document.select("Form > input")
     if (inputs.size < 4) return null
     var op: String? = null
