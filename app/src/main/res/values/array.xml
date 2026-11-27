@@ -229,6 +229,25 @@
         <item>2</item>
     </array>
 
+    <!-- Long press speed options, values are in percent (200 = 2x) -->
+    <array name="speedup_speed_names">
+        <item>1.5x</item>
+        <item>2x</item>
+        <item>2.5x</item>
+        <item>3x</item>
+        <item>4x</item>
+        <item>5x</item>
+    </array>
+
+    <array name="speedup_speed_values">
+        <item>150</item>
+        <item>200</item>
+        <item>250</item>
+        <item>300</item>
+        <item>400</item>
+        <item>500</item>
+    </array>
+
     <array name="software_decoding_switch">
         <item>@string/automatic</item>
         <item>HW+SW</item>
