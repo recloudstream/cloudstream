@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 
-class PlayInBrowserAction: VideoClickAction() {
+object PlayInBrowserAction: VideoClickAction() {
     override val name = txt(R.string.episode_action_play_in_format, "Browser")
 
     override val oneSource = true

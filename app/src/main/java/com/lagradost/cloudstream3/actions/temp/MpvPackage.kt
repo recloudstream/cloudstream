@@ -18,9 +18,9 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 // https://mpv-android.github.io/mpv-android/intent.html
 
 //https://github.com/marlboro-advance/mpvEx
-class MpvExPackage: MpvPackage("mpvEx","app.marlboroadvance.mpvex","app.marlboroadvance.mpvex.ui.player.PlayerActivity")
+object MpvExPackage: MpvPackageAPI("mpvEx","app.marlboroadvance.mpvex","app.marlboroadvance.mpvex.ui.player.PlayerActivity")
 
-class MpvYTDLPackage : MpvPackage("MPV YTDL", "is.xyz.mpv.ytdl") {
+object MpvYTDLPackage : MpvPackageAPI("MPV YTDL", "is.xyz.mpv.ytdl") {
     override val sourceTypes = setOf(
         ExtractorLinkType.VIDEO,
         ExtractorLinkType.DASH,
@@ -28,7 +28,9 @@ class MpvYTDLPackage : MpvPackage("MPV YTDL", "is.xyz.mpv.ytdl") {
     )
 }
 
-open class MpvPackage(appName: String = "MPV", packageName: String = "is.xyz.mpv",intentClass:String = "is.xyz.mpv.MPVActivity"): OpenInAppAction(
+object MpvPackage : MpvPackageAPI()
+
+open class MpvPackageAPI(appName: String = "MPV", packageName: String = "is.xyz.mpv",intentClass:String = "is.xyz.mpv.MPVActivity"): OpenInAppAction(
     txt(appName),
     packageName,
     intentClass

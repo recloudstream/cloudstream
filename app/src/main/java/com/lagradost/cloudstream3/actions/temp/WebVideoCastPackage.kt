@@ -14,7 +14,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 
 // https://www.webvideocaster.com/integrations
 
-class WebVideoCastPackage: OpenInAppAction(
+object WebVideoCastPackage: OpenInAppAction(
     txt("Web Video Cast"),
     "com.instantbits.cast.webvideo"
 ) {

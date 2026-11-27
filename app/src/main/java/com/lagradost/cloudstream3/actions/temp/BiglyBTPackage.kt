@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.txt
 
 /** https://github.com/BiglySoftware/BiglyBT-Android */
-class BiglyBTPackage : OpenInAppAction(
+object BiglyBTPackage : OpenInAppAction(
     appName = txt("BiglyBT"),
     packageName = "com.biglybt.android.client",
     intentClass = "com.biglybt.android.client.activity.IntentHandler"

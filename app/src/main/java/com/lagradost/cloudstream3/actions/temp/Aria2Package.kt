@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.utils.txt
 
 /** https://github.com/devgianlu/Aria2Android */
 @Suppress("unused")
-class Aria2Package : OpenInAppAction(
+object Aria2Package : OpenInAppAction(
     appName = txt("Aria2"),
     packageName = "com.gianlu.aria2android",
     intentClass = "com.gianlu.aria2android.MainActivity"

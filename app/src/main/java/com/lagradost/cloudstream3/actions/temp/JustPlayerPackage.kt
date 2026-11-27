@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.txt
 
 /** https://github.com/moneytoo/Player/ */
-class JustPlayerPackage : OpenInAppAction(
+object JustPlayerPackage : OpenInAppAction(
     appName = txt("JustPlayer"),
     packageName = "com.brouken.player",
     intentClass = "com.brouken.player.PlayerActivity"

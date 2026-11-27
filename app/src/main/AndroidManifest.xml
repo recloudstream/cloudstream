@@ -58,6 +58,7 @@
         <package android:name="com.instantbits.cast.webvideo" />
         <package android:name="com.gianlu.aria2android" />
         <package android:name="org.xbmc.kodi" />
+        <package android:name="org.courville.nova" />
         
         <!-- Torrent clients -->
         <package android:name="org.proninyaroslav.libretorrent" />
