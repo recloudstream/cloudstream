@@ -206,7 +206,7 @@ object DataStoreHelper {
     fun setAccount(account: Account, showToast : Boolean = true) {
         val homepage = currentHomePage
         selectedKeyIndex = account.keyIndex
-        AccountManager.updateAccountIds()
+        AccountManager.updateCurrentAccount()
         if(showToast) {
             showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
         }
