@@ -1,20 +1,31 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
+import android.content.pm.PackageManager
 import android.os.Build
+import android.os.SystemClock
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.PendingIntentCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.receivers.PackageInstallerStatusReceiver
+import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
 import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.viewmodels.AppUpdater
 import com.lagradost.cloudstream4.viewmodels.DigestPair
@@ -32,6 +43,13 @@ object ApkUpdater : AppUpdater {
     private const val APP_UPDATE_NAME = "CloudStream"
     private const val APP_UPDATE_SUFFIX = "apk"
 
+    private const val UPDATE_CHANNEL_ID = "cloudstream3.updates"
+    private const val UPDATE_CHANNEL_NAME = "App Updates"
+    private const val UPDATE_CHANNEL_DESCRIPTION = "App updates notification channel"
+    private const val UPDATE_NOTIFICATION_ID = -68454136
+    private const val NOTIFICATION_INTERVAL_MS = 500L
+    private const val NOTIFICATION_TIMEOUT_MS = 10_000L
+
     @Throws
     override suspend fun update(
         settings: AppSettings,
@@ -42,27 +60,79 @@ object ApkUpdater : AppUpdater {
         val activity = CommonActivity.activity ?: throw ErrorLoadingException("No activity found")
         clearOldFiles(activity)
 
-        val request = app.get(url)
-        val length = request.size
-        val body = request.body
-        body.use { body ->
-            val length = length ?: body.contentLength()
-            val readStream = body.byteStream()
+        val notificationProgress = progressNotification(activity.applicationContext)
+        val onProgress: (Long, Long?) -> Unit = { progress, total ->
+            downloadProgress(progress, total)
+            notificationProgress?.invoke(progress, total)
+        }
 
-            when (settings.updates.apkInstaller.get()) {
-                0 -> {
-                    packageInstallerDownloader(
-                        activity,
-                        readStream,
-                        length,
-                        digest,
-                        downloadProgress
-                    )
-                }
+        try {
+            val request = app.get(url)
+            val length = request.size
+            val body = request.body
+            body.use { body ->
+                val length = length ?: body.contentLength()
+                val readStream = body.byteStream()
 
-                else -> {
-                    legacyDownloader(activity, readStream, length, digest, downloadProgress)
+                when (settings.updates.apkInstaller.get()) {
+                    0 -> {
+                        packageInstallerDownloader(
+                            activity,
+                            readStream,
+                            length,
+                            digest,
+                            onProgress
+                        )
+                    }
+
+                    else -> {
+                        legacyDownloader(activity, readStream, length, digest, onProgress)
+                    }
                 }
+            }
+        } finally {
+            if (notificationProgress != null) {
+                NotificationManagerCompat.from(activity).cancel(UPDATE_NOTIFICATION_ID)
+            }
+        }
+    }
+
+    private fun progressNotification(context: Context): ((Long, Long?) -> Unit)? {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) return null
+
+        context.createNotificationChannel(
+            UPDATE_CHANNEL_ID,
+            UPDATE_CHANNEL_NAME,
+            UPDATE_CHANNEL_DESCRIPTION
+        )
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val openApp = PendingIntentCompat.getActivity(
+            context, 0, Intent(context, MainActivity::class.java), 0, false
+        )
+        val builder = NotificationCompat.Builder(context, UPDATE_CHANNEL_ID)
+            .setSmallIcon(R.drawable.rdload)
+            .setContentTitle(context.getString(R.string.update_notification_downloading))
+            .setContentIntent(openApp)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .setTimeoutAfter(NOTIFICATION_TIMEOUT_MS)
+
+        var lastNotified = 0L
+        return { progress, total ->
+            val now = SystemClock.elapsedRealtime()
+            if (now - lastNotified >= NOTIFICATION_INTERVAL_MS) {
+                lastNotified = now
+                val knownTotal = total != null && total > 0
+                val percent = if (knownTotal) (progress * 100 / total).toInt() else 0
+                manager.notify(
+                    UPDATE_NOTIFICATION_ID,
+                    builder.setProgress(100, percent, !knownTotal).build()
+                )
             }
         }
     }

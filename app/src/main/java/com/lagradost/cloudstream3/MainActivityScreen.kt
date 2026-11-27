@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3
 
 import android.text.format.Formatter.formatFileSize
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.getStackTracePretty
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.settings.ApkUpdater
@@ -47,6 +49,7 @@ import com.lagradost.cloudstream4.viewmodels.GithubState
 import com.lagradost.cloudstream4.viewmodels.GithubUpdateDialogState
 import com.lagradost.cloudstream4.viewmodels.GithubViewModel
 import com.mihon.material.padding
+import com.mihon.presentation.settings.collectAsState
 
 object MainActivityScreen : Screen {
     private var hasSearchedForUpdate: Boolean = false
@@ -94,6 +97,7 @@ object MainActivityScreen : Screen {
     @Composable
     fun GithubState(updaterState: GithubState, onAction: (GithubAction) -> Unit) {
         val dialog = updaterState.dialog ?: return
+        val updateInBackground by rememberAppSettings().updates.updateInBackground.collectAsState()
 
         val title: String
         val body: @Composable () -> Unit
@@ -173,6 +177,9 @@ object MainActivityScreen : Screen {
                 confirmButton = {
                     WhiteButton(text = stringResource(R.string.update), onClick = {
                         onAction(Update(state.file))
+                        if (updateInBackground) {
+                            showToast(R.string.download_started, Toast.LENGTH_LONG)
+                        }
                     })
                 }
                 dismissButton = {
@@ -187,6 +194,9 @@ object MainActivityScreen : Screen {
             }
 
             is GithubUpdateDialogState.DownloadProgress -> {
+                // The download continues without the dialog, and installs once done
+                if (updateInBackground) return
+
                 cancelable = false
                 title = stringResource(R.string.update_notification_downloading)
                 body = {

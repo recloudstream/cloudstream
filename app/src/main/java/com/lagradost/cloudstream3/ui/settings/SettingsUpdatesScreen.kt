@@ -123,6 +123,13 @@ object SettingsUpdatesScreen : SearchableSettings {
                     ),
 
                     Preference.PreferenceItem.SwitchPreference(
+                        title = stringResource(R.string.update_in_background_settings),
+                        subtitle = stringResource(R.string.update_in_background_settings_des),
+                        icon = painterResource(R.drawable.baseline_downloading_24),
+                        preference = settings.updates.updateInBackground
+                    ),
+
+                    Preference.PreferenceItem.SwitchPreference(
                         title = stringResource(R.string.updates_settings),
                         subtitle = stringResource(R.string.updates_settings_des),
                         icon = painterResource(R.drawable.notifications_active_24px),

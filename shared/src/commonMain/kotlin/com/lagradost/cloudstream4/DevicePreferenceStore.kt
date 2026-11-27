@@ -47,6 +47,7 @@ class BackupPreferences(preferences: PreferenceStore) {
 class UpdatePreferences(preferences: PreferenceStore) {
     val apkInstaller = preferences.getInt("apk_installer_key",1)
     val showAppUpdates = preferences.getBoolean("auto_update", true)
+    val updateInBackground = preferences.getBoolean("update_in_background_key", false)
     // Node id for this update
     val skipUpdate = preferences.getString("skip_update_key", "")
 }
