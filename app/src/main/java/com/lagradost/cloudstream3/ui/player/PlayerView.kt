@@ -172,6 +172,7 @@ class PlayerView @JvmOverloads constructor(
     var currentPlayerStatus: CSPlayerLoading = CSPlayerLoading.IsBuffering
     var mMediaSession: MediaSession? = null
     private var pipReceiver: BroadcastReceiver? = null
+    private var pipActivity: Activity? = null
 
     /** Auto-hide */
     private var autoHideToken = 0
@@ -489,7 +490,17 @@ class PlayerView @JvmOverloads constructor(
         gestureHelper.release()
         autoHideHandler.removeCallbacksAndMessages(null)
 
+        unregisterPipReceiver()
+
         keepScreenOn(false)
+    }
+
+    private fun unregisterPipReceiver() {
+        val receiver = pipReceiver ?: return
+        val act = pipActivity
+        safe { act?.unregisterReceiver(receiver) }
+        pipReceiver = null
+        pipActivity = null
     }
 
     fun onPictureInPictureModeChanged(
@@ -501,6 +512,7 @@ class PlayerView @JvmOverloads constructor(
             if (isInPictureInPictureMode) {
                 // Hide the full-screen UI (controls, etc.) while in picture-in-picture mode.
                 piphide?.isVisible = false
+                unregisterPipReceiver()
                 pipReceiver = object : BroadcastReceiver() {
                     override fun onReceive(context: Context, intent: Intent) {
                         if (ACTION_MEDIA_CONTROL != intent.action) return
@@ -510,6 +522,7 @@ class PlayerView @JvmOverloads constructor(
                         )
                     }
                 }
+                pipActivity = activity
                 val filter = IntentFilter().apply { addAction(ACTION_MEDIA_CONTROL) }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     activity?.registerReceiver(pipReceiver, filter, Context.RECEIVER_EXPORTED)
@@ -524,10 +537,7 @@ class PlayerView @JvmOverloads constructor(
                 // Restore the full-screen UI.
                 piphide?.isVisible = true
                 callbacks?.exitedPipMode()
-                pipReceiver?.let {
-                    // Prevents java.lang.IllegalArgumentException: Receiver not registered
-                    safe { activity?.unregisterReceiver(it) }
-                }
+                unregisterPipReceiver()
                 activity?.hideSystemUI()
                 hideKeyboard(this)
             }

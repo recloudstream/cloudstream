@@ -316,6 +316,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Movie -> R.string.movies_singular
                 TvType.Torrent -> R.string.torrent_singular
                 TvType.AsianDrama -> R.string.asian_drama_singular
+                TvType.ShortDrama -> R.string.short_drama_singular
                 TvType.Live -> R.string.live_singular
                 TvType.Others -> R.string.other_singular
                 TvType.NSFW -> R.string.nsfw_singular

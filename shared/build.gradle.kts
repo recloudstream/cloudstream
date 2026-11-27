@@ -45,9 +45,10 @@ kotlin {
             implementation(libs.ktor.client.android)
         }
 
-        appleMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-        }
+        // appleMain is unused as there are currently no Apple targets configured in shared or library
+        // appleMain.dependencies {
+        //     implementation(libs.ktor.client.darwin)
+        // }
 
         jvmMain.dependencies {
             implementation(libs.ktor.client.java)

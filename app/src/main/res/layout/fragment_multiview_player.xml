@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/multiview_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#050507">
+
+    <!-- Constraint Viewport for 1x2, 1+2, 2x2, and 3x3 Modes -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/multiview_viewport"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/multiview_bottom_bar"
+        android:padding="4dp">
+
+        <include
+            android:id="@+id/multiview_slot_0"
+            layout="@layout/multiview_stream_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <include
+            android:id="@+id/multiview_slot_1"
+            layout="@layout/multiview_stream_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <include
+            android:id="@+id/multiview_slot_2"
+            layout="@layout/multiview_stream_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <include
+            android:id="@+id/multiview_slot_3"
+            layout="@layout/multiview_stream_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <include
+            android:id="@+id/multiview_slot_4"
+            layout="@layout/multiview_stream_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <include
+            android:id="@+id/multiview_slot_5"
+            layout="@layout/multiview_stream_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <include
+            android:id="@+id/multiview_slot_6"
+            layout="@layout/multiview_stream_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <include
+            android:id="@+id/multiview_slot_7"
+            layout="@layout/multiview_stream_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <include
+            android:id="@+id/multiview_slot_8"
+            layout="@layout/multiview_stream_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Bottom Control Bar -->
+    <LinearLayout
+        android:id="@+id/multiview_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="#121216"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_stream"
+            style="@style/SmallBlackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ Add a stream"
+            app:icon="@drawable/ic_baseline_add_24" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_mode_1x2"
+            style="@style/SmallBlackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="1x2 Split" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_mode_1plus2"
+            style="@style/SmallBlackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="1+2 View" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_mode_grid"
+            style="@style/SmallBlackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="2x2 Grid" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_mode_grid3x3"
+            style="@style/SmallBlackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="3x3 Grid" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_mode_quality"
+            style="@style/SmallBlackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Quality: 720p" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/btn_exit_multiview"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cancel"
+            android:padding="8dp"
+            app:srcCompat="@drawable/baseline_fullscreen_exit_24"
+            app:tint="@color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_close_all_multiview"
+            style="@style/SmallBlackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Close All"
+            android:textColor="@color/white"
+            app:backgroundTint="#E50914"
+            app:icon="@drawable/ic_baseline_close_24"
+            app:iconTint="@color/white" />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -916,9 +916,19 @@
                                 android:layout_height="40dp"
 
                                 android:nextFocusLeft="@id/player_subtitle_offset_btt"
-                                android:nextFocusRight="@id/player_tracks_btt"
+                                android:nextFocusRight="@id/player_multiview_btn"
                                 android:text="@string/video_source"
                                 app:icon="@drawable/ic_baseline_playlist_play_24" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/player_multiview_btn"
+                                style="@style/VideoButton"
+                                android:layout_height="40dp"
+
+                                android:nextFocusLeft="@id/player_sources_btt"
+                                android:nextFocusRight="@id/player_tracks_btt"
+                                android:text="Multi-View"
+                                app:icon="@drawable/ic_baseline_tune_24" />
 
 
                             <com.google.android.material.button.MaterialButton

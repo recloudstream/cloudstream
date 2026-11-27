@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.newSharedPool
+import com.lagradost.cloudstream3.ui.player.MultiPlayerManager
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
@@ -95,13 +96,17 @@ open class ParentItemAdapter(
         val binding = holder.view
         if (binding !is HomepageParentBinding) return
         val info = item.list
+        val sectionClickCallback: (SearchClickCallback) -> Unit = { click ->
+            MultiPlayerManager.setCurrentHomeSection(info.name, info.list)
+            clickCallback(click)
+        }
         binding.apply {
             val currentAdapter = homeChildRecyclerview.adapter as? HomeChildItemAdapter
             if (currentAdapter == null) {
                 homeChildRecyclerview.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
                 homeChildRecyclerview.adapter = HomeChildItemAdapter(
                     id = id + position + 100,
-                    clickCallback = clickCallback,
+                    clickCallback = sectionClickCallback,
                     nextFocusUp = homeChildRecyclerview.nextFocusUpId,
                     nextFocusDown = homeChildRecyclerview.nextFocusDownId,
                 ).apply {
@@ -113,7 +118,7 @@ open class ParentItemAdapter(
                 currentAdapter.apply {
                     isHorizontal = info.isHorizontalImages
                     hasNext = item.hasNext
-                    this.clickCallback = this@ParentItemAdapter.clickCallback
+                    this.clickCallback = sectionClickCallback
                     nextFocusUp = homeChildRecyclerview.nextFocusUpId
                     nextFocusDown = homeChildRecyclerview.nextFocusDownId
                     submitIncomparableList(item.list.list)

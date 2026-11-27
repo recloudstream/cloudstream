@@ -1009,6 +1009,27 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
 
+    override fun openMultiView() {
+        val sources = viewModel.state.links.mapNotNull { it.first }
+        val episodes = allMeta ?: emptyList()
+        MultiPlayerManager.setAvailableSourcesAndEpisodes(sources, episodes)
+
+        // The last home row clicked is global state. Only keep it when it belongs to
+        // the extension that provided the item currently playing.
+        val currentProvider = (currentMeta as? ResultEpisode)?.apiName
+            ?: player.getCurrentLink()?.source
+        val matchingHomeStreams = currentProvider?.let { provider ->
+            MultiPlayerManager.currentHomeSectionStreams.filter {
+                it.apiName.equals(provider, ignoreCase = true)
+            }
+        }.orEmpty()
+        MultiPlayerManager.setCurrentHomeSection(
+            if (matchingHomeStreams.isEmpty()) "" else MultiPlayerManager.currentHomeSectionName.orEmpty(),
+            matchingHomeStreams
+        )
+        super.openMultiView()
+    }
+
     override fun showMirrorsDialogue() {
         try {
             currentSelectedSubtitles = player.getCurrentPreferredSubtitle()

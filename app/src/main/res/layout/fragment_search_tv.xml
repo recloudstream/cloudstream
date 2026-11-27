@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="30dp">
+                    android:layout_marginEnd="75dp">
 
                     <androidx.appcompat.widget.SearchView
                         android:id="@+id/main_search"
@@ -64,7 +64,7 @@
                         android:inputType="text"
                         android:nextFocusLeft="@id/navigation_search"
 
-                        android:nextFocusRight="@id/search_filter"
+                        android:nextFocusRight="@id/search_notification"
                         android:nextFocusUp="@id/navigation_search"
                         android:nextFocusDown="@id/search_autofit_results"
                         android:paddingStart="-10dp"
@@ -95,22 +95,44 @@
                     </androidx.appcompat.widget.SearchView>
                 </FrameLayout>
 
-                <ImageView
-                    android:id="@+id/search_filter"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
 
-                    android:layout_margin="10dp"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/change_providers_img_des"
-                    android:nextFocusLeft="@id/main_search"
-                    android:nextFocusRight="@id/main_search"
-                    android:nextFocusUp="@id/navigation_search"
-                    android:nextFocusDown="@id/tvtypes_chips_scroll"
-                    android:tag = "@string/tv_no_focus_tag"
-                    android:src="@drawable/ic_baseline_tune_24"
-                    app:tint="?attr/textColor" />
+                    <ImageView
+                        android:id="@+id/search_notification"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="10dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/notifications"
+                        android:nextFocusLeft="@id/main_search"
+                        android:nextFocusRight="@id/search_filter"
+                        android:nextFocusUp="@id/navigation_search"
+                        android:nextFocusDown="@id/tvtypes_chips_scroll"
+                        android:tag="@string/tv_no_focus_tag"
+                        android:src="@drawable/ic_baseline_notifications_active_24"
+                        app:tint="?attr/textColor" />
+
+                    <ImageView
+                        android:id="@+id/search_filter"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/change_providers_img_des"
+                        android:nextFocusLeft="@id/search_notification"
+                        android:nextFocusRight="@id/main_search"
+                        android:nextFocusUp="@id/navigation_search"
+                        android:nextFocusDown="@id/tvtypes_chips_scroll"
+                        android:tag="@string/tv_no_focus_tag"
+                        android:src="@drawable/ic_baseline_tune_24"
+                        app:tint="?attr/textColor" />
+                </LinearLayout>
             </FrameLayout>
         </LinearLayout>
 
