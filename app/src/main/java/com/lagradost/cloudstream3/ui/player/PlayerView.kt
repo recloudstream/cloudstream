@@ -167,6 +167,10 @@ class PlayerView @JvmOverloads constructor(
     /** Player state */
 
     var player: IPlayer = CS3IPlayer()
+        set(value) {
+            if (field !== value) gestureHelper.cancelSpeedUp()
+            field = value
+        }
     var resizeMode: Int = 0
     var hasPipModeSupport: Boolean = true
     var currentPlayerStatus: CSPlayerLoading = CSPlayerLoading.IsBuffering
@@ -457,6 +461,7 @@ class PlayerView @JvmOverloads constructor(
     }
 
     fun onStop() {
+        gestureHelper.cancelSpeedUp()
         player.onStop()
     }
 
@@ -466,6 +471,7 @@ class PlayerView @JvmOverloads constructor(
 
     /** Releases all player resources. */
     fun release() {
+        gestureHelper.cancelSpeedUp()
         player.release()
         player.releaseCallbacks()
         player = CS3IPlayer()
