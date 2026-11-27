@@ -880,13 +880,14 @@ class CS3IPlayer : IPlayer {
             return getMediaItemBuilder(mimeType).setUri(url).build()
         }
 
-        private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
+        private fun getTrackSelector(context: Context, maxVideoHeight: Int?, tunnelingEnabled : Boolean): TrackSelector {
             val trackSelector = DefaultTrackSelector(context)
             trackSelector.parameters = trackSelector.buildUponParameters()
                 // This will not force higher quality videos to fail
                 // but will make the m3u8 pick the correct preferred
                 .setMaxVideoSize(Int.MAX_VALUE, maxVideoHeight ?: Int.MAX_VALUE)
                 .setPreferredAudioLanguage(null)
+                .setTunnelingEnabled(tunnelingEnabled)
                 .build()
             return trackSelector
         }
@@ -1090,6 +1091,7 @@ class CS3IPlayer : IPlayer {
          * Does not work if trackSelector is defined.
          **/
         maxVideoHeight: Int? = null,
+        tunnelingEnabled : Boolean,
         /** External audio tracks to merge with the video */
         audioSources: List<MediaSource> = emptyList()
     ): ExoPlayer {
@@ -1271,8 +1273,9 @@ class CS3IPlayer : IPlayer {
                 }
                 .setTrackSelector(
                     trackSelector ?: getTrackSelector(
-                        context,
-                        maxVideoHeight
+                        context = context,
+                        maxVideoHeight = maxVideoHeight,
+                        tunnelingEnabled = tunnelingEnabled
                     )
                 )
                 // Allows any seeking to be +- 0.3s to allow for faster seeking
@@ -1444,7 +1447,7 @@ class CS3IPlayer : IPlayer {
             Int.MAX_VALUE
         )
         val settings = AppSettings(context)
-
+        val tunnelingEnabled = settings.player.tunneledPlayback.get()
         try {
             hasUsedFirstRender = false
 
@@ -1470,6 +1473,7 @@ class CS3IPlayer : IPlayer {
                 maxVideoHeight = maxVideoHeight,
                 audioSources = audioSources,
                 onlineSource = onlineSource,
+                tunnelingEnabled = tunnelingEnabled
             )
 
             event(PlayerAttachedEvent(exoPlayer))
