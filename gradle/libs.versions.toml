@@ -35,6 +35,7 @@ kotlinxIOCore = "0.9.1"
 kotlinxSerializationJson = "1.11.0"
 ksoup = "0.2.6"
 ktor = "3.5.0"
+libass = "1.0.0"
 lifecycleKtx = "2.10.0"
 material = "1.14.0"
 media3 = "1.9.3"
@@ -115,6 +116,7 @@ ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "k
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
+libass = { module = "com.github.recloudstream:libass", version.ref = "libass" }
 lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleKtx" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
