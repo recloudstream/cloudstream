@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.UnsafeSSL
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.insecureApp
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.network.AppProxySelector
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.ui.settings.SettingsProvidersScreen.toStringRes
@@ -34,6 +35,7 @@ import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.showRequestIg
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream4.AppSettings
+import com.lagradost.cloudstream4.ProxyType
 import com.lagradost.cloudstream4.compose.ActionDialog
 import com.lagradost.cloudstream4.compose.PHONE
 import com.lagradost.cloudstream4.compose.isLayout
@@ -44,11 +46,21 @@ import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import com.mihon.presentation.settings.collectAsState
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
 
 object SettingsGeneralScreen : SearchableSettings {
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.category_general)
+
+    /** Network settings are only read when building the clients, so they are rebuilt on change */
+    private fun reloadClients() {
+        CloudStreamApp.context?.let { ctx ->
+            app.initClient(ctx, ignoreSSL = false)
+            @OptIn(UnsafeSSL::class)
+            insecureApp.initClient(ctx, ignoreSSL = true)
+        }
+    }
 
     @Composable
     override fun getPreferences(): List<Preference> {
@@ -84,6 +96,8 @@ object SettingsGeneralScreen : SearchableSettings {
 
         val bananas by settings.general.bananas.collectAsState()
         val downloadPathVisual by settings.general.downloadPathVisual.collectAsState()
+        val proxyType by settings.general.proxyType.collectAsState()
+        val proxyAddress by settings.general.proxyAddress.collectAsState()
         //val downloadPath by settings.general.downloadPath.collectAsState()
 
         var isBatteryShown by remember { mutableStateOf(false) }
@@ -225,11 +239,7 @@ object SettingsGeneralScreen : SearchableSettings {
                         ).toMap(),
                         onValueChanged = { newValue ->
                             settings.general.dns.set(newValue) // Must set the value before initClient is called
-                            (CloudStreamApp.context)?.let { ctx ->
-                                app.initClient(ctx, ignoreSSL = false)
-                                @OptIn(UnsafeSSL::class)
-                                insecureApp.initClient(ctx, ignoreSSL = true)
-                            }
+                            reloadClients()
                             return@ListPreference true
                         },
                     ),
@@ -238,7 +248,39 @@ object SettingsGeneralScreen : SearchableSettings {
                         subtitle = stringResource(R.string.jsdelivr_proxy_summary),
                         icon = painterResource(R.drawable.wifi_proxy_24px),
                         preference = settings.general.jsdelivrProxy
-                    )
+                    ),
+                    Preference.PreferenceItem.ListPreference(
+                        title = stringResource(R.string.proxy_pref),
+                        icon = painterResource(R.drawable.lan_24px),
+                        preference = settings.general.proxyType,
+                        entries = persistentMapOf(
+                            ProxyType.None to stringResource(R.string.none),
+                            ProxyType.Http to "HTTP",
+                            ProxyType.Socks to "SOCKS",
+                        ),
+                        onValueChanged = { newValue ->
+                            settings.general.proxyType.set(newValue) // Must set the value before initClient is called
+                            reloadClients()
+                            return@ListPreference true
+                        },
+                    ),
+                    Preference.PreferenceItem.EditTextPreference(
+                        title = stringResource(R.string.proxy_address_pref),
+                        // Shows the expected format until an address is set
+                        subtitle = if (proxyAddress.isBlank()) stringResource(R.string.proxy_address_hint) else "%s",
+                        icon = painterResource(R.drawable.edit_24px),
+                        preference = settings.general.proxyAddress,
+                        enabled = proxyType != ProxyType.None,
+                        onValueChanged = { newValue ->
+                            if (AppProxySelector.parseAddress(newValue) == null) {
+                                showToast(R.string.error_invalid_data)
+                                return@EditTextPreference false
+                            }
+                            settings.general.proxyAddress.set(newValue) // Must set the value before initClient is called
+                            reloadClients()
+                            return@EditTextPreference true
+                        },
+                    ),
                 )
             ),
 

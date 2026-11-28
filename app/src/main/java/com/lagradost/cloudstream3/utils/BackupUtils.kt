@@ -76,6 +76,10 @@ object BackupUtils {
         "backup_path_key",
         "backup_dir_path_key",
 
+        // A proxy is network specific, restoring it elsewhere could block all requests
+        "proxy_type_key",
+        "proxy_address_key",
+
         // When sharing backup we do not want to transfer what is essentially the password
         // Note that this is deprecated, and can be removed after all tokens have expired
         "anilist_token",

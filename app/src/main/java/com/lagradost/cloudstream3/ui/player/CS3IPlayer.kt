@@ -88,6 +88,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.network.AppProxySelector
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.fixSubtitleAlignment
 import com.lagradost.cloudstream3.ui.player.live.LiveHelper
 import com.lagradost.cloudstream3.ui.player.live.PREFERRED_LIVE_OFFSET
@@ -2006,7 +2007,12 @@ class CS3IPlayer : IPlayer {
             val onlineSourceFactory =
                 createVideoSource(
                     link = link,
-                    engine = tryCreateEngine(context, simpleCacheSize),
+                    // Cronet does not support custom proxies, so OkHttp is used when one is set
+                    engine = if (AppProxySelector.fromSettings(context) == null) {
+                        tryCreateEngine(context, simpleCacheSize)
+                    } else {
+                        null
+                    },
                     interceptor = interceptor
                 )
 
