@@ -767,6 +767,11 @@ class CS3IPlayer : IPlayer {
         }
 
         fun tryCreateEngine(context: Context, diskCacheSize: Long): CronetEngine? {
+            // Cronet does not support custom proxies, so OkHttp is used when one is set
+            if (AppProxySelector.fromSettings(context) != null) {
+                return null
+            }
+
             // Fast case, no need to recreate it
             cronetEngine?.let {
                 return it
@@ -2007,12 +2012,7 @@ class CS3IPlayer : IPlayer {
             val onlineSourceFactory =
                 createVideoSource(
                     link = link,
-                    // Cronet does not support custom proxies, so OkHttp is used when one is set
-                    engine = if (AppProxySelector.fromSettings(context) == null) {
-                        tryCreateEngine(context, simpleCacheSize)
-                    } else {
-                        null
-                    },
+                    engine = tryCreateEngine(context, simpleCacheSize),
                     interceptor = interceptor
                 )
 
