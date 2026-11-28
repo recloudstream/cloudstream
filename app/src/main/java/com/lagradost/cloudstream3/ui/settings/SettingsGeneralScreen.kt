@@ -4,16 +4,20 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.integerArrayResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.AllLanguagesName
@@ -27,6 +31,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.insecureApp
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.network.toDohUrlOrNull
 import com.lagradost.cloudstream3.ui.settings.SettingsFragmentScreen.launchSafe
 import com.lagradost.cloudstream3.ui.settings.SettingsProvidersScreen.toStringRes
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestricted
@@ -35,8 +40,13 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.compose.ActionDialog
+import com.lagradost.cloudstream4.compose.BlackTextField
 import com.lagradost.cloudstream4.compose.PHONE
+import com.lagradost.cloudstream4.compose.SingleSelectDialog
 import com.lagradost.cloudstream4.compose.isLayout
+import com.lagradost.cloudstream4.generated.resources.Res
+import com.lagradost.cloudstream4.generated.resources.cancel
+import com.lagradost.cloudstream4.generated.resources.ok
 import com.lagradost.cloudstream4.rememberAppSettings
 import com.lagradost.cloudstream4.theme.CloudStreamPreviewTheme
 import com.lagradost.safefile.SafeFile
@@ -47,6 +57,8 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentMap
 
 object SettingsGeneralScreen : SearchableSettings {
+    private const val CUSTOM_DNS = 9
+
     @Composable
     override fun getTitleRes(): String = stringResource(R.string.category_general)
 
@@ -86,8 +98,54 @@ object SettingsGeneralScreen : SearchableSettings {
         val downloadPathVisual by settings.general.downloadPathVisual.collectAsState()
         //val downloadPath by settings.general.downloadPath.collectAsState()
 
+        val dns by settings.general.dns.collectAsState()
+        val dnsCustomUrl by settings.general.dnsCustomUrl.collectAsState()
+        var isDnsDialogShown by remember { mutableStateOf(false) }
         var isBatteryShown by remember { mutableStateOf(false) }
         val context = LocalContext.current
+
+        if (isDnsDialogShown) {
+            var customUrl by remember { mutableStateOf(dnsCustomUrl) }
+            SingleSelectDialog(
+                title = stringResource(R.string.dns_pref),
+                entries = integerArrayResource(R.array.dns_pref_values).zip(
+                    stringArrayResource(R.array.dns_pref)
+                ).toMap(),
+                selectedKey = dns,
+                confirmText = org.jetbrains.compose.resources.stringResource(Res.string.ok),
+                dismissText = org.jetbrains.compose.resources.stringResource(Res.string.cancel),
+                dismiss = { isDnsDialogShown = false },
+                footer = { selected ->
+                    if (selected == CUSTOM_DNS) {
+                        BlackTextField(
+                            value = customUrl,
+                            placeHolder = stringResource(R.string.dns_custom_url_hint),
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                            singleLine = true,
+                            onValueChange = { customUrl = it },
+                        )
+                    }
+                },
+                confirm = { newDns ->
+                    if (newDns == CUSTOM_DNS) {
+                        val customDohUrl = customUrl.toDohUrlOrNull()
+                        if (customDohUrl == null) {
+                            showToast(R.string.error_invalid_url)
+                            return@SingleSelectDialog
+                        }
+                        settings.general.dnsCustomUrl.set(customDohUrl.toString())
+                    }
+                    settings.general.dns.set(newDns) // Must set the value before initClient is called
+                    (CloudStreamApp.context)?.let { ctx ->
+                        app.initClient(ctx, ignoreSSL = false)
+                        @OptIn(UnsafeSSL::class)
+                        insecureApp.initClient(ctx, ignoreSSL = true)
+                    }
+                    isDnsDialogShown = false
+                }
+            )
+        }
 
         if (isBatteryShown) {
             ActionDialog(
@@ -215,23 +273,11 @@ object SettingsGeneralScreen : SearchableSettings {
                             }
                         }
                     ),
-                    Preference.PreferenceItem.ListPreference(
+                    Preference.PreferenceItem.TextPreference(
                         title = stringResource(R.string.dns_pref),
                         subtitle = stringResource(R.string.dns_pref_summary),
                         icon = painterResource(R.drawable.dns_24px),
-                        preference = settings.general.dns,
-                        entries = integerArrayResource(R.array.dns_pref_values).zip(
-                            stringArrayResource(R.array.dns_pref)
-                        ).toMap(),
-                        onValueChanged = { newValue ->
-                            settings.general.dns.set(newValue) // Must set the value before initClient is called
-                            (CloudStreamApp.context)?.let { ctx ->
-                                app.initClient(ctx, ignoreSSL = false)
-                                @OptIn(UnsafeSSL::class)
-                                insecureApp.initClient(ctx, ignoreSSL = true)
-                            }
-                            return@ListPreference true
-                        },
+                        onClick = { isDnsDialogShown = true }
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         title = stringResource(R.string.jsdelivr_proxy),

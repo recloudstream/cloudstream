@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.network
 
+import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.dnsoverhttps.DnsOverHttps
 import java.net.InetAddress
@@ -105,3 +107,16 @@ fun OkHttpClient.Builder.addCanadianShieldDns() = (
                 "149.112.122.10",
             )
         ))
+
+fun String.toDohUrlOrNull(): HttpUrl? = trim().toHttpUrlOrNull()?.takeIf { it.isHttps }
+
+fun OkHttpClient.Builder.addCustomDns(url: String?) =
+    url?.toDohUrlOrNull()?.let { dohUrl ->
+        dns(
+            DnsOverHttps
+                .Builder()
+                .client(build())
+                .url(dohUrl)
+                .build()
+        )
+    } ?: this

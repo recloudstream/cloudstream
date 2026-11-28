@@ -136,7 +136,8 @@ fun <T> SingleSelectDialog(
     dismissText: String? = null,
     dismiss: () -> Unit,
     confirm: (T) -> Unit,
-    iconProvider: (@Composable (key: T, value: String) -> Unit)? = null
+    iconProvider: (@Composable (key: T, value: String) -> Unit)? = null,
+    footer: (@Composable (selected: T) -> Unit)? = null
 ) {
     var selected by remember { mutableStateOf(selectedKey) }
     val selectedPainter = painterResource(Res.drawable.check)
@@ -174,6 +175,9 @@ fun <T> SingleSelectDialog(
                             }
                         }
                     }
+                }
+                if (footer != null) {
+                    item { footer(selected) }
                 }
             }
         },
