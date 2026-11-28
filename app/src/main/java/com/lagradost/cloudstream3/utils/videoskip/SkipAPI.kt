@@ -10,16 +10,20 @@ import com.lagradost.cloudstream3.utils.txt
 import java.util.concurrent.ConcurrentHashMap
 
 
-enum class SkipType(@StringRes val res: Int) {
-    Opening(R.string.skip_type_op),
-    Ending(R.string.skip_type_ed),
-    Recap(R.string.skip_type_recap),
-    MixedOpening(R.string.skip_type_mixed_op),
-    MixedEnding(R.string.skip_type_mixed_ed),
-    Credits(R.string.skip_type_credits),
-    Intro(R.string.skip_type_intro),
-    Preview(R.string.skip_type_preview),
-}
+/** The string resource for the skip type, kept in the app module as the
+ * shared module has no access to the app translations */
+@get:StringRes
+val SkipType.res: Int
+    get() = when (this) {
+        SkipType.Opening -> R.string.skip_type_op
+        SkipType.Ending -> R.string.skip_type_ed
+        SkipType.Recap -> R.string.skip_type_recap
+        SkipType.MixedOpening -> R.string.skip_type_mixed_op
+        SkipType.MixedEnding -> R.string.skip_type_mixed_ed
+        SkipType.Credits -> R.string.skip_type_credits
+        SkipType.Intro -> R.string.skip_type_intro
+        SkipType.Preview -> R.string.skip_type_preview
+    }
 
 data class SkipStamp(
     val type: SkipType,
