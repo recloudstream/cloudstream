@@ -154,6 +154,12 @@ object SettingsGeneralScreen : SearchableSettings {
                         }
                         return@MultiSelectListPreference false
                     }),
+                    Preference.PreferenceItem.SwitchPreference(
+                        title = stringResource(R.string.enable_nsfw_on_providers),
+                        subtitle = stringResource(R.string.apply_on_restart),
+                        icon = painterResource(R.drawable.ic_baseline_extension_24),
+                        preference = settings.provider.enableNsfwOnProviders
+                    ),
             )),
 
             Preference.PreferenceGroup(

@@ -147,6 +147,10 @@ class ProviderPreferences(preferences: PreferenceStore) {
         "prefer_media_type_key_2", defaultPreferredMedia
     )
 
+    val enableNsfwOnProviders = preferences.getBoolean(
+        "enable_nsfw_on_providers_key", false
+    )
+
     val extensionLanguages = preferences.getStringSet(
         "provider_lang_key", setOf(AllLanguagesName)
     )
