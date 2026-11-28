@@ -13,7 +13,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 
-class FcastAction: VideoClickAction() {
+object FcastAction: VideoClickAction() {
     override val name = txt("Fcast to device")
 
     override val oneSource = true

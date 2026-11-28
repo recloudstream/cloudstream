@@ -83,6 +83,10 @@
     <string name="stream">Network stream</string>
     <string name="open_local_video">Open local video</string>
     <string name="error_loading_links_toast">Error Loading Links</string>
+    <string name="error_file_io_toast">Error occurred when writing to the file. Try setting a new download directory.</string>
+    <string name="error_file_unknown_toast">Error occurred when downloading the file. Try again.</string>
+    <string name="error_file_invalid_toast">Download source is invalid. Try another source.</string>
+    <string name="error_settings_invalid_toast">Invalid download settings.</string>
     <string name="links_reloaded_toast">Links Reloaded</string>
     <string name="download_storage_text">Internal Storage</string>
     <string name="app_dubbed_text">Dub</string>
@@ -749,7 +753,12 @@
     <string name="torrent_preferred_media">Enable torrent in Settings/Providers/Preferred media</string>
     <string name="torrent_not_accepted">Restart app and accept Stream Torrent pop-up to proceed.</string>
     <string name="software_decoding">Software decoding</string>
+    <string name="hardware_decoding">Hardware decoding</string>
+    <string name="hardware_then_software_decoding">Prefer Hardware over Software</string>
+    <string name="software_decoding_video">Video software decoding</string>
+    <string name="software_decoding_audio">Audio software decoding</string>
     <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your device, but may cause laggy or unstable playback on high resolution.</string>
+    <string name="software_decoding_audio_desc">Audio software decoding enables more audio formats, fixes some no audio issues</string>
     <string name="volume_exceeded_100">Volume has exceeded 100%</string>
     <string name="slide_up_again_to_exceed_100">Slide up again to go beyond 100%</string>
     <string name="update_plugins">Update Plugins</string>
@@ -820,4 +829,6 @@
     </plurals>
     <string name="player_is_live">Live</string>
     <string name="installed_plugins">Installed plugins</string>
+    <string name="tunneled_playback">Tunneled playback</string>
+    <string name="tunneled_playback_desc">Tunneled playback may improve stuttering on 4k videos, but may also cause playback issues on unsupported devices</string>
 </resources>

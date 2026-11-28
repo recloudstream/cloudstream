@@ -19,7 +19,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Brzina (%.2f×)</string>
     <string name="rated_format" formatted="true">Ocjena: %.1f</string>
-    <string name="new_update_format" formatted="true">Pronađeno je novo ažuriranje! \n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Pronađena je nova verzija! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Umetak</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -74,8 +74,8 @@
     <string name="home_expanded_hide">Sakrij</string>
     <string name="home_play">Pokreni</string>
     <string name="home_info">Informacije</string>
-    <string name="filter_bookmarks">Filtriraj oznake</string>
-    <string name="error_bookmarks_text">Oznake</string>
+    <string name="filter_bookmarks">Filtriraj zabilješke</string>
+    <string name="error_bookmarks_text">Zabilješke</string>
     <string name="action_remove_from_bookmarks">Ukloni</string>
     <string name="action_add_to_bookmarks">Postavi status gledanja</string>
     <string name="sort_apply">Primijeni</string>
@@ -100,7 +100,7 @@
     <string name="subs_auto_select_language">Automatski odabir jezika</string>
     <string name="subs_download_languages">Preuzmi jezike</string>
     <string name="subs_subtitle_languages">Jezik titlova</string>
-    <string name="subs_hold_to_reset_to_default">Pritisni za vraćanje na zadane postavke</string>
+    <string name="subs_hold_to_reset_to_default">Pritisni za resetiranje na standardne postavke</string>
     <string name="subs_import_text" formatted="true">Uvezi fontove postavljanjem u %s</string>
     <string name="continue_watching">Nastavi gledati</string>
     <string name="action_remove_watching">Ukloni</string>
@@ -135,7 +135,7 @@
     <string name="double_tap_to_pause_settings_des">Dodirni dvaput u sredinu za pauziranje</string>
     <string name="use_system_brightness_settings">Koristi svjetlinu sustava</string>
     <string name="use_system_brightness_settings_des">Koristi svjetlinu sustava u playeru aplikacija umjesto tamnog preklopa</string>
-    <string name="episode_sync_settings">Ažuriraj napredak gledanja</string>
+    <string name="episode_sync_settings">Aktualiziraj napredak gledanja</string>
     <string name="episode_sync_settings_des">Automatski sinkronizira vaš trenutni napredak u filmu ili epizodi</string>
     <string name="restore_settings">Obnovi podatke iz sigurnosne kopije</string>
     <string name="backup_settings">Sigurnosno kopiranje podataka</string>
@@ -146,7 +146,7 @@
     <string name="backup_failed_error_format">Pogreška pri sigurnosnom kopiranju %s</string>
     <string name="search">Traži</string>
     <string name="category_account">Računi i sigurnost</string>
-    <string name="category_updates">Ažuriranja i sigurnosna kopija</string>
+    <string name="category_updates">Aktualiziranja i sigurnosna kopija</string>
     <string name="settings_info">Informacije</string>
     <string name="advanced_search">Napredna pretraga</string>
     <string name="advanced_search_des">Daje rezultate pretrage odvojene prema pružatelju usluga</string>
@@ -154,9 +154,9 @@
     <string name="show_trailers_settings">Prikaži trailere</string>
     <string name="kitsu_settings">Prikaži postere iz Kitsua</string>
     <string name="pref_filter_search_quality">Sakrij odabranu kvalitetu videa u rezultatima pretrage</string>
-    <string name="automatic_plugin_updates">Automatsko ažuriranje dodataka</string>
-    <string name="updates_settings">Prikaži ažuriranja aplikacije</string>
-    <string name="updates_settings_des">Automatski traži nova ažuriranja nakon pokretanja aplikacije.</string>
+    <string name="automatic_plugin_updates">Automatsko aktualiziranje dodataka</string>
+    <string name="updates_settings">Prikaži aktualiziranja aplikacije</string>
+    <string name="updates_settings_des">Automatski traži nove verzije nakon pokretanja aplikacije.</string>
     <string name="github">Github</string>
     <string name="lightnovel">Aplikacija za romane od istih programera</string>
     <string name="anim">Anime aplikacija od istih programera</string>
@@ -168,7 +168,7 @@
     <string name="no_links_found_toast">Nisu pronađene poveznice</string>
     <string name="copy_link_toast">Poveznica je kopirana u međuspremnik</string>
     <string name="play_episode_toast">Pokreni epizodu</string>
-    <string name="subs_default_reset_toast">Vrati na zadanu vrijednost</string>
+    <string name="subs_default_reset_toast">Resetiraj na standardnu vrijednost</string>
     <string name="season">Sezona</string>
     <string name="no_season">Nema sezone</string>
     <string name="episode">Epizoda</string>
@@ -197,7 +197,7 @@
     <string name="synopsis">Sinopsis</string>
     <string name="queued">u redu čekanja</string>
     <string name="no_subtitles">Bez titlova</string>
-    <string name="action_default">Zadano</string>
+    <string name="action_default">Standardno</string>
     <string name="free_storage">Slobodno</string>
     <string name="used_storage">Iskorišteno</string>
     <string name="app_storage">Aplikacija</string>
@@ -243,15 +243,15 @@
     <string name="show_sub">Oznaka za titlove</string>
     <string name="show_title">Naslov</string>
     <string name="poster_ui_settings">Uključi/isključi elemente korisničkog sučelja na posteru</string>
-    <string name="no_update_found">Nije pronađeno ažuriranje</string>
-    <string name="check_for_update">Provjeri ažuriranja</string>
+    <string name="no_update_found">Nije pronađena nijedna nova verzija</string>
+    <string name="check_for_update">Traži nove verzije</string>
     <string name="video_lock">Zaključaj</string>
     <string name="video_aspect_ratio_resize">Promijeni veličinu</string>
     <string name="video_source">Izvor</string>
     <string name="video_skip_op">Preskoči OP</string>
     <string name="dont_show_again">Nemoj više prikazivati</string>
-    <string name="skip_update">Preskoči ovo ažuriranje</string>
-    <string name="update">Ažuriraj</string>
+    <string name="skip_update">Preskoči ovu novu verziju</string>
+    <string name="update">Aktualiziraj</string>
     <string name="watch_quality_pref">Preferirana kvaliteta gledanja (WiFi)</string>
     <string name="limit_title">Maksimalni broj znakova u naslovu video playera</string>
     <string name="limit_title_rez">Prikaži podatke playera</string>
@@ -345,7 +345,7 @@
     <string name="downloaded_file">Preuzeta datoteka</string>
     <string name="actor_main">Glavni</string>
     <string name="actor_supporting">Sporedni</string>
-    <string name="actor_background">Statist</string>
+    <string name="actor_background">Pozadina</string>
     <string name="home_source">Izvor</string>
     <string name="home_random">Slučajno</string>
     <string name="coming_soon">Dolazi uskoro …</string>
@@ -408,7 +408,7 @@
     <string name="plugins_downloaded" formatted="true">Preuzeto: %d</string>
     <string name="plugins_disabled" formatted="true">Onemogućeno: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nepreuzeto: %d</string>
-    <string name="blank_repo_message">CloudStream standardno nema instalirane web stranice. Stranice morate instalirati iz repozitorija. \n \nPridružite se našem Discordu ili tražite online.</string>
+    <string name="blank_repo_message">CloudStream standardno nema instalirane web-stranice. Stranice moraš instalirati iz repozitorija. \n \nPridruži se našem Discordu ili traži online.</string>
     <string name="view_public_repositories_button">Prikaži repozitorije zajednice</string>
     <string name="view_public_repositories_button_short">Javni popis</string>
     <string name="uppercase_all_subtitles">Koristi velika slova za sve titlove</string>
@@ -442,20 +442,20 @@
     <string name="action_mark_as_watched">Označi kao gledano</string>
     <string name="enable_skip_op_from_database_des">Prikaži skočni prozor za uvod/kraj</string>
     <string name="yes">Da</string>
-    <string name="update_notification_downloading">Preuzimanje ažuriranja aplikacije …</string>
+    <string name="update_notification_downloading">Preuzimanje nove verzije aplikacije …</string>
     <string name="confirm_exit_dialog">Jeste li sigurni da želite izaći?</string>
     <string name="no">Ne</string>
-    <string name="update_notification_installing">Instaliranje ažuriranja aplikacije …</string>
+    <string name="update_notification_installing">Instaliranje nove verzije aplikacije …</string>
     <string name="update_notification_failed">Nije moguće instalirati novu verziju aplikacije</string>
-    <string name="plugins_updated" formatted="true">Ažurirani dodaci: %d</string>
+    <string name="plugins_updated" formatted="true">Aktualizirani dodaci: %d</string>
     <string name="skip_type_mixed_op">Mješoviti uvod</string>
     <string name="skip_type_intro">Uvod</string>
     <string name="pref_category_links">Poveznice</string>
     <string name="play_trailer_button">Pokreni trailer</string>
     <string name="redo_setup_process">Ponovi postupak postavljanja</string>
-    <string name="apk_installer_settings_des">Neki uređaji ne podržavaju novi program za instaliranje paketa. Pokušaj sa starijom opcijom ako se ažuriranja ne instaliraju.</string>
+    <string name="apk_installer_settings_des">Neki uređaji ne podržavaju novi program za instaliranje paketa. Pokušaj sa starijom opcijom ako se nove verzije ne instaliraju.</string>
     <string name="apk_installer_settings">Instalator APK-a</string>
-    <string name="pref_category_app_updates">Ažuriranja aplikacije</string>
+    <string name="pref_category_app_updates">Aktualiziranja aplikacije</string>
     <string name="pref_category_backup">Sigurnosna kopija</string>
     <string name="pref_category_extensions">Proširenja</string>
     <string name="pref_category_actions">Radnje</string>
@@ -464,7 +464,7 @@
     <string name="pref_category_player_features">Značajke playera</string>
     <string name="pref_category_subtitles">Titlovi</string>
     <string name="pref_category_player_layout">Raspored</string>
-    <string name="pref_category_defaults">Zadane postavke</string>
+    <string name="pref_category_defaults">Standardne postavke</string>
     <string name="pref_category_looks">Izgledi</string>
     <string name="pref_category_ui_features">Značajke</string>
     <string name="skip_type_format" formatted="true">Preskoči %s</string>
@@ -478,7 +478,7 @@
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="update_started">Aktualiziranje započeto</string>
-    <string name="delayed_update_notice">Aplikacija će se ažurirati tijekom zatvaranja</string>
+    <string name="delayed_update_notice">Aplikacija će se aktualizirati tijekom zatvaranja</string>
     <string name="plugin_downloaded">Dodatak preuzet</string>
     <string name="action_remove_from_watched">Ukloni iz pogledanog</string>
     <string name="browser">Preglednik</string>
@@ -487,8 +487,8 @@
     <string name="sort_by">Sortiraj prema</string>
     <string name="sort">Sortiraj</string>
     <string name="sort_rating_asc">Ocjena (Manja do veće)</string>
-    <string name="sort_updated_new">Ažurirano (od novog prema starom)</string>
-    <string name="sort_updated_old">Ažurirano (od starog prema novom)</string>
+    <string name="sort_updated_new">Aktualizirano (od novog prema starom)</string>
+    <string name="sort_updated_old">Aktualizirano (od starog prema novom)</string>
     <string name="sort_alphabetical_a">Abecedno (A do Ž)</string>
     <string name="sort_alphabetical_z">Abecedno (Ž do A)</string>
     <string name="select_library">Odaberite biblioteku</string>
@@ -508,7 +508,7 @@
     <string name="test_failed">Neuspjelo</string>
     <string name="stop">Prekini</string>
     <string name="category_provider_test">Test pružatelja usluga</string>
-    <string name="subscription_in_progress_notification">Ažuriranje pretplaćenih emisija</string>
+    <string name="subscription_in_progress_notification">Aktualiziranje pretplaćenih emisija</string>
     <string name="subscription_episode_released">Epizoda %d izbačena!</string>
     <string name="subscription_list_name">Pretplaćeno</string>
     <string name="subscription_new">Pretplaćen na %s</string>
@@ -517,7 +517,7 @@
     <string name="pref_category_bypass">ISP zaobilaznice</string>
     <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba. Uključuje se jsdelivr proxy …</string>
-    <string name="jsdelivr_proxy_summary">Zaobilazi blokiranje neobrađenih GitHub URL-ova koristeći jsDelivr. Može uzrokovati kašnjenje ažuriranja nekoliko dana.</string>
+    <string name="jsdelivr_proxy_summary">Zaobiđi blokiranje neobrađenih GitHub URL-ova koristeći jsDelivr. Može prouzročiti kašnjenje aktualiziranja za nekoliko dana.</string>
     <string name="watch_quality_pref_data">Preferirana kvaliteta gledanja (mobilni podaci)</string>
     <string name="profile_number">Profil %d</string>
     <string name="wifi">Wi-Fi</string>
@@ -559,7 +559,7 @@
     <string name="enter_current_pin">Unesite trenutni PIN</string>
     <string name="logged_account" formatted="true">Prijavljeni ste kao %s</string>
     <string name="enter_pin_with_name" formatted="true">Unesite PIN za %s</string>
-    <string name="use_default_account">Koristi zadani račun</string>
+    <string name="use_default_account">Koristi standardni račun</string>
     <string name="skip_startup_account_select_pref">Preskoči odabir računa pri pokretanju</string>
     <string name="manage_accounts">Upravljanje računima</string>
     <string name="edit_account">Uredi račun</string>
@@ -659,12 +659,12 @@
     <string name="sort_button_episode">Ep %s</string>
     <string name="sort_button_rating">Ocjena %s</string>
     <string name="sort_button_date">Datum %s</string>
-    <string name="update_plugins">Ažuriraj dodatke</string>
-    <string name="no_plugins_updated_manually">Nijedan dodatak nije ažuriran.</string>
-    <string name="update_plugins_manually">Ažuriraj podatke ručno</string>
-    <string name="starting_plugin_update_manually">Pokreće se postupak ažuriranja dodataka!</string>
+    <string name="update_plugins">Aktualiziraj dodatke</string>
+    <string name="no_plugins_updated_manually">Nijedan dodatak nije aktualiziran.</string>
+    <string name="update_plugins_manually">Aktualiziraj dodatke ručno</string>
+    <string name="starting_plugin_update_manually">Pokreće se postupak aktualiziranja dodataka!</string>
     <string name="player_notification_channel_name">Obavijesti reproduktora</string>
-    <string name="plugins_updated_manually">Uspješno ažurirano %d dodataka</string>
+    <string name="plugins_updated_manually">Uspješno aktualizirani dodaci: %d</string>
     <string name="player_notification_channel_description">Obavijest reproduktora za upravljanje reprodukcijom iz pozadine</string>
     <string name="all_subtitles_italic">Ukosite sve titlove</string>
     <string name="all_subtitles_bold">Podebljajte sve titlove</string>
@@ -697,7 +697,7 @@
     <string name="edit_profile_image_hint">Unesite URL slike profila</string>
     <string name="edit_profile_image_error_empty">Nijedan URL nije pronađen</string>
     <string name="edit_profile_image_error_invalid">Nevaljan URL ili slika</string>
-    <string name="edit_profile_image_success">Slika uspješno ažurirana</string>
+    <string name="edit_profile_image_success">Slika uspješno aktualizirana</string>
     <string name="action_mark_watched_up_to_this_episode">Označi kao gledano do ove epizode</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Ukloni gledano do ove epizode</string>
     <string name="action_reload">Ponovo učitano</string>
@@ -766,4 +766,17 @@
         <item quantity="other">%d skrivenih poveznica</item>
     </plurals>
     <string name="background">Pozadina</string>
+    <string name="compressor_on">Uključeno</string>
+    <string name="compressor_on_format">Uključeno · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Isključeno</string>
+    <string name="compressor_threshold_label">Prag: %d dB</string>
+    <string name="compressor_makeup_hint">Pojačava ukupnu glasnoću za +%d dB</string>
+    <string name="compressor_makeup_label">Pojačanje korekcije: +%d dB</string>
+    <string name="installed_plugins">Instalirani dodaci</string>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">Birač slika</string>
+    <string name="edit_profile_image_default">Standardne slike</string>
+    <string name="compressor">Kompresor</string>
+    <string name="compressor_setting">Kompresor dinamičkog raspona</string>
+    <string name="compressor_setting_summary">Prikaži kontrole kompresora u playeru (pomaže uravnotežiti glasnu/tihu audio snimku)</string>
 </resources>
