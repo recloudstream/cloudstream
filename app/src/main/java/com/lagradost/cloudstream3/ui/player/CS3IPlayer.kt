@@ -111,6 +111,7 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.WIDEVINE_DRM_UUID
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import com.lagradost.cloudstream4.AppSettings
+import com.lagradost.cloudstream4.SoftwareDecoding
 import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
@@ -880,13 +881,14 @@ class CS3IPlayer : IPlayer {
             return getMediaItemBuilder(mimeType).setUri(url).build()
         }
 
-        private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
+        private fun getTrackSelector(context: Context, maxVideoHeight: Int?, tunnelingEnabled : Boolean): TrackSelector {
             val trackSelector = DefaultTrackSelector(context)
             trackSelector.parameters = trackSelector.buildUponParameters()
                 // This will not force higher quality videos to fail
                 // but will make the m3u8 pick the correct preferred
                 .setMaxVideoSize(Int.MAX_VALUE, maxVideoHeight ?: Int.MAX_VALUE)
                 .setPreferredAudioLanguage(null)
+                .setTunnelingEnabled(tunnelingEnabled)
                 .build()
             return trackSelector
         }
@@ -1090,6 +1092,7 @@ class CS3IPlayer : IPlayer {
          * Does not work if trackSelector is defined.
          **/
         maxVideoHeight: Int? = null,
+        tunnelingEnabled : Boolean,
         /** External audio tracks to merge with the video */
         audioSources: List<MediaSource> = emptyList()
     ): ExoPlayer {
@@ -1107,53 +1110,48 @@ class CS3IPlayer : IPlayer {
                         .build()
                 )
                 .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, _, metadataRendererOutput ->
-                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-                    val current = settingsManager.getInt(
-                        context.getString(R.string.software_decoding_key),
-                        -1
-                    )
-                    val isAudioOnly = current == 3 || current == 4
-                    val (isSoftwareDecodingEnabled, isSoftwareDecodingPreferred) = when (current) {
-                        0 -> true to false // HW+SW, aka on but prefer hw
-                        2 -> true to true // SW+HW, aka on but prefer sw
-                        1 -> false to false // HW, aka off
-                        3 -> true to true // HW+ but prefer sw audio
-                        4 -> true to false // HW+ but prefer hw audio
-                        // -1 = automatic
-                        // We do not want tv to have software decoding, because of crashes
-                        else -> isLayout(PHONE or EMULATOR) to false
-                    }
+                    val settings = AppSettings(context)
 
                     // Only create the compressor when the setting is actually enabled.
                     // When it's off, `compressor` stays null and nothing about the audio
-                    // pipeline is touched — same behaviour as before this feature existed.
-                    val isCompressorEnabled = settingsManager.getBoolean(
-                        context.getString(R.string.compressor_enabled_key),
-                        false
-                    )
-                    compressor =
-                        if (isCompressorEnabled) DynamicRangeCompressor().apply { restoreSavedSettings() } else null
+                    // pipeline is touched — same behavior as before this feature existed.
+                    val isCompressorEnabled = settings.player.compressorEnabled.get()
+                    compressor = if (isCompressorEnabled) {
+                        DynamicRangeCompressor().apply { restoreSavedSettings() }
+                    } else {
+                        null
+                    }
+
+                    val audioDecoding = when (settings.player.audioSoftwareDecoding.get()) {
+                        SoftwareDecoding.Automatic -> DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+                        SoftwareDecoding.Hardware -> DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
+                        SoftwareDecoding.HardwareThenSoftware -> DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+                        SoftwareDecoding.SoftwareThenHardware -> DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+                    }
+
+                    val videoDecoding = when (settings.player.videoSoftwareDecoding.get()) {
+                        SoftwareDecoding.Automatic ->
+                            // We do not want TV to have software decoding, because of crashes
+                            if (isLayout(PHONE or EMULATOR)) {
+                                DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+                            } else {
+                                DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
+                            }
+
+                        SoftwareDecoding.Hardware -> DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
+                        SoftwareDecoding.HardwareThenSoftware -> DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+                        SoftwareDecoding.SoftwareThenHardware -> DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+                    }
 
                     val factory =
-                        if (isAudioOnly) {
-                            FixedNextRenderersFactoryWithoutVideo(context, compressor).apply {
+                        if (videoDecoding != DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF || audioDecoding != DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF) {
+                            CustomRenderersFactory(
+                                context,
+                                compressor,
+                                audioDecoding = audioDecoding,
+                                videoDecoding = videoDecoding
+                            ).apply {
                                 setEnableDecoderFallback(true)
-                                setExtensionRendererMode(
-                                    if (isSoftwareDecodingPreferred)
-                                        DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
-                                    else
-                                        DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
-                                )
-                            }
-                        } else if (isSoftwareDecodingEnabled) {
-                            FixedNextRenderersFactory(context, compressor).apply {
-                                setEnableDecoderFallback(true)
-                                setExtensionRendererMode(
-                                    if (isSoftwareDecodingPreferred)
-                                        DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
-                                    else
-                                        DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
-                                )
                             }
                         } else {
                             val activeCompressor = compressor
@@ -1162,7 +1160,7 @@ class CS3IPlayer : IPlayer {
                                 DefaultRenderersFactory(context)
                             } else {
                                 object : DefaultRenderersFactory(context) {
-                                    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+                                    @OptIn(UnstableApi::class)
                                     override fun buildAudioSink(
                                         ctx: Context,
                                         enableFloatOutput: Boolean,
@@ -1271,8 +1269,9 @@ class CS3IPlayer : IPlayer {
                 }
                 .setTrackSelector(
                     trackSelector ?: getTrackSelector(
-                        context,
-                        maxVideoHeight
+                        context = context,
+                        maxVideoHeight = maxVideoHeight,
+                        tunnelingEnabled = tunnelingEnabled
                     )
                 )
                 // Allows any seeking to be +- 0.3s to allow for faster seeking
@@ -1444,7 +1443,7 @@ class CS3IPlayer : IPlayer {
             Int.MAX_VALUE
         )
         val settings = AppSettings(context)
-
+        val tunnelingEnabled = settings.player.tunneledPlayback.get()
         try {
             hasUsedFirstRender = false
 
@@ -1470,6 +1469,7 @@ class CS3IPlayer : IPlayer {
                 maxVideoHeight = maxVideoHeight,
                 audioSources = audioSources,
                 onlineSource = onlineSource,
+                tunnelingEnabled = tunnelingEnabled
             )
 
             event(PlayerAttachedEvent(exoPlayer))

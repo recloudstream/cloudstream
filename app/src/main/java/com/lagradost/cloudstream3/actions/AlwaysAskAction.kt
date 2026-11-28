@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.txt
 
-class AlwaysAskAction : VideoClickAction() {
+object AlwaysAskAction : VideoClickAction() {
     override val name = txt(R.string.player_settings_always_ask)
     override val isPlayer = true
 

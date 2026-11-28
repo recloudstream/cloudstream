@@ -12,69 +12,60 @@ import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.text.TextRenderer
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegAudioRenderer
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegVideoRenderer
-import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
-
 import android.os.Handler
 import androidx.media3.common.util.Log
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.audio.AudioRendererEventListener
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
+import androidx.media3.exoplayer.video.VideoRendererEventListener
 
 @UnstableApi
-class FixedNextRenderersFactory(
+open class CustomRenderersFactory(
     context: Context,
     private val compressor: DynamicRangeCompressor? = null,
-) : NextRenderersFactory(context) {
-    /** Somehow the nextlib authors decided that we need a text renderer that causes
-     * "ERROR_CODE_FAILED_RUNTIME_CHECK".
-     *
-     * Core issue: https://github.com/anilbeesetti/nextlib/pull/158
-     * Comment: https://github.com/recloudstream/cloudstream/pull/2342#issuecomment-3917751718
-     * */
-    override fun buildTextRenderers(
+    private val videoDecoding : @ExtensionRendererMode Int,
+    private val audioDecoding : @ExtensionRendererMode Int,
+) : DefaultRenderersFactory(context) {
+    override fun buildVideoRenderers(
         context: Context,
-        output: TextOutput,
-        outputLooper: Looper,
         extensionRendererMode: Int,
+        mediaCodecSelector: MediaCodecSelector,
+        enableDecoderFallback: Boolean,
+        eventHandler: Handler,
+        eventListener: VideoRendererEventListener,
+        allowedVideoJoiningTimeMs: Long,
         out: ArrayList<Renderer>
     ) {
-        out.add(TextRenderer(output, outputLooper))
+        super.buildVideoRenderers(
+            context,
+            videoDecoding,
+            mediaCodecSelector,
+            enableDecoderFallback,
+            eventHandler,
+            eventListener,
+            allowedVideoJoiningTimeMs,
+            out
+        )
+
+        if (videoDecoding == EXTENSION_RENDERER_MODE_OFF) return
+
+        var extensionRendererIndex = out.size
+        if (videoDecoding == EXTENSION_RENDERER_MODE_PREFER) {
+            extensionRendererIndex--
+        }
+
+        try {
+            val renderer = FfmpegVideoRenderer(allowedVideoJoiningTimeMs, eventHandler, eventListener, MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY)
+            out.add(extensionRendererIndex++, renderer)
+            Log.i(TAG, "Loaded FfmpegVideoRenderer.")
+        } catch (e: java.lang.Exception) {
+            // The extension is present, but instantiation failed.
+            throw java.lang.RuntimeException("Error instantiating Ffmpeg extension", e)
+        }
     }
 
     /**
-     * Only builds a custom [DefaultAudioSink] when a compressor is actually supplied.
-     * When [compressor] is null (the setting is off, or unsupported on this device) we
-     * fall through to the completely unmodified default sink from the parent factory,
-     * so playback behaves exactly as it did before this feature existed.
-     */
-    @OptIn(UnstableApi::class)
-    override fun buildAudioSink(
-        context: Context,
-        enableFloatOutput: Boolean,
-        enableAudioTrackPlaybackParams: Boolean
-    ): AudioSink? {
-        val activeCompressor = compressor
-            ?: return super.buildAudioSink(
-                context,
-                enableFloatOutput,
-                enableAudioTrackPlaybackParams
-            )
-
-        return DefaultAudioSink.Builder(context)
-            .setEnableFloatOutput(enableFloatOutput)
-            .setEnableAudioOutputPlaybackParameters(enableAudioTrackPlaybackParams)
-            .setAudioProcessors(arrayOf<AudioProcessor>(activeCompressor))
-            .build()
-    }
-}
-
-
-@UnstableApi
-open class FixedNextRenderersFactoryWithoutVideo(
-    context: Context,
-    private val compressor: DynamicRangeCompressor? = null,
-) : DefaultRenderersFactory(context) {
-    /** Somehow the nextlib authors decided that we need a text renderer that causes
+     * Somehow the nextlib authors decided that we need a text renderer that causes
      * "ERROR_CODE_FAILED_RUNTIME_CHECK".
      *
      * Core issue: https://github.com/anilbeesetti/nextlib/pull/158
@@ -89,6 +80,7 @@ open class FixedNextRenderersFactoryWithoutVideo(
     ) {
         out.add(TextRenderer(output, outputLooper))
     }
+
     /**
      * Only builds a custom [DefaultAudioSink] when a compressor is actually supplied.
      * When [compressor] is null (the setting is off, or unsupported on this device) we
@@ -127,7 +119,7 @@ open class FixedNextRenderersFactoryWithoutVideo(
     ) {
         super.buildAudioRenderers(
             context,
-            extensionRendererMode,
+            audioDecoding,
             mediaCodecSelector,
             enableDecoderFallback,
             audioSink,
@@ -136,10 +128,10 @@ open class FixedNextRenderersFactoryWithoutVideo(
             out
         )
 
-        if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) return
+        if (audioDecoding == EXTENSION_RENDERER_MODE_OFF) return
 
         var extensionRendererIndex = out.size
-        if (extensionRendererMode == EXTENSION_RENDERER_MODE_PREFER) {
+        if (audioDecoding == EXTENSION_RENDERER_MODE_PREFER) {
             extensionRendererIndex--
         }
 
@@ -154,6 +146,6 @@ open class FixedNextRenderersFactoryWithoutVideo(
     }
 
     companion object {
-        const val TAG = "NextRenderersFactory"
+        const val TAG = "CustomRenderersFactory"
     }
 }

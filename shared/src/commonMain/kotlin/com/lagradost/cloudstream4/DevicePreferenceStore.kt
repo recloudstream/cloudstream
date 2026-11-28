@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.TvType
 import com.mihon.common.preference.PreferenceStore
+import com.mihon.common.preference.getEnum
 import com.mihon.common.preference.getEnumSet
 
 @Composable
@@ -155,6 +156,13 @@ class ProviderPreferences(preferences: PreferenceStore) {
     )
 }
 
+enum class SoftwareDecoding {
+    Automatic,
+    Hardware,
+    HardwareThenSoftware,
+    SoftwareThenHardware,
+}
+
 class PlayerPreferences(preferences: PreferenceStore) {
     val episodeSync = preferences.getBoolean("episode_sync_enabled_key", true)
     val defaultPlayer = preferences.getString("player_default_key", "")
@@ -175,6 +183,8 @@ class PlayerPreferences(preferences: PreferenceStore) {
     val rotateButtonEnabled = preferences.getBoolean("rotate_video_key", false)
     val previewBarEnabled = preferences.getBoolean("preview_seekbar_key", true)
     val softwareDecoding = preferences.getInt("software_decoding_key2", -1)
+    val videoSoftwareDecoding = preferences.getEnum("software_decoding_video_key", SoftwareDecoding.Automatic)
+    val audioSoftwareDecoding = preferences.getEnum("software_decoding_audio_key", SoftwareDecoding.Automatic)
     val extraBrightnessEnabled = preferences.getBoolean("extra_brightness_key", false)
     val swipeHorizontalEnabled = preferences.getBoolean("swipe_enabled_key", true)
     val swipeVerticalEnabled = preferences.getBoolean("swipe_vertical_enabled_key", true)
@@ -186,6 +196,7 @@ class PlayerPreferences(preferences: PreferenceStore) {
     val bufferTimeSec = preferences.getInt("video_buffer_length_key", 0)
     val tvSeekOnTime = preferences.getInt("android_tv_interface_on_seek_key", 10)
     val tvSeekOffTime = preferences.getInt("android_tv_interface_off_seek_key", 10)
+    val tunneledPlayback = preferences.getBoolean("player_tunneled_playback", false)
 }
 
 class GeneralPreferences(preferences: PreferenceStore) {

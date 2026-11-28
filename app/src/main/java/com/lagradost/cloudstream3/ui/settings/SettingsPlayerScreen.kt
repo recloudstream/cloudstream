@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getFold
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream4.SoftwareDecoding
 import com.lagradost.cloudstream4.compose.EMULATOR
 import com.lagradost.cloudstream4.compose.PHONE
 import com.lagradost.cloudstream4.compose.TV
@@ -29,6 +30,7 @@ import com.lagradost.cloudstream4.rememberAppSettings
 import com.mihon.presentation.settings.Preference
 import com.mihon.presentation.settings.SearchableSettings
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.reflect.jvm.jvmName
@@ -180,13 +182,28 @@ object SettingsPlayerScreen : SearchableSettings {
                         icon = painterResource(R.drawable.picture_in_picture_center_24px),
                     ),
                     Preference.PreferenceItem.ListPreference(
-                        preference = settings.player.softwareDecoding,
-                        title = stringResource(R.string.software_decoding),
+                        preference = settings.player.videoSoftwareDecoding,
+                        title = stringResource(R.string.software_decoding_video),
                         subtitle = stringResource(R.string.software_decoding_desc),
                         icon = painterResource(R.drawable.memory_24px),
-                        entries = integerArrayResource(R.array.software_decoding_switch_values).zip(
-                            stringArrayResource(R.array.software_decoding_switch)
-                        ).toMap()
+                        entries = persistentMapOf(
+                            SoftwareDecoding.Automatic to stringResource(R.string.automatic),
+                            SoftwareDecoding.Hardware to stringResource(R.string.hardware_decoding),
+                            SoftwareDecoding.SoftwareThenHardware to stringResource(R.string.software_decoding),
+                            SoftwareDecoding.HardwareThenSoftware to stringResource(R.string.hardware_then_software_decoding),
+                        )
+                    ),
+                    Preference.PreferenceItem.ListPreference(
+                        preference = settings.player.audioSoftwareDecoding,
+                        title = stringResource(R.string.software_decoding_audio),
+                        subtitle = stringResource(R.string.software_decoding_audio_desc),
+                        icon = painterResource(R.drawable.no_sound),
+                        entries = persistentMapOf(
+                            SoftwareDecoding.Automatic to stringResource(R.string.automatic),
+                            SoftwareDecoding.Hardware to stringResource(R.string.hardware_decoding),
+                            SoftwareDecoding.SoftwareThenHardware to stringResource(R.string.software_decoding),
+                            SoftwareDecoding.HardwareThenSoftware to stringResource(R.string.hardware_then_software_decoding),
+                        )
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         preference = settings.player.extraBrightnessEnabled,
@@ -310,6 +327,12 @@ object SettingsPlayerScreen : SearchableSettings {
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_cache),
                 preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = settings.player.tunneledPlayback,
+                        title = stringResource(R.string.tunneled_playback),
+                        subtitle = stringResource(R.string.tunneled_playback_desc),
+                        icon = painterResource(R.drawable.subway)
+                    ),
                     Preference.PreferenceItem.ListPreference(
                         preference = settings.player.bufferDiskMB,
                         title = stringResource(R.string.video_buffer_disk_settings),
