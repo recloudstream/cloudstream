@@ -163,6 +163,12 @@ enum class SoftwareDecoding {
     SoftwareThenHardware,
 }
 
+enum class ProxyType {
+    None,
+    Http,
+    Socks,
+}
+
 class PlayerPreferences(preferences: PreferenceStore) {
     val episodeSync = preferences.getBoolean("episode_sync_enabled_key", true)
     val defaultPlayer = preferences.getString("player_default_key", "")
@@ -211,6 +217,11 @@ class GeneralPreferences(preferences: PreferenceStore) {
 
     /** Very weird setKey based usage, just having this setting might not do it */
     val jsdelivrProxy = preferences.getBoolean("jsdelivr_proxy_key", false)
+
+    val proxyType = preferences.getEnum("proxy_type_key", ProxyType.None)
+
+    /** host:port of the proxy, only used if [proxyType] is not [ProxyType.None] */
+    val proxyAddress = preferences.getString("proxy_address_key", "")
 
     /** This should honesty be refactored to a single setting */
     val downloadPath = preferences.getString("download_path_key", "")

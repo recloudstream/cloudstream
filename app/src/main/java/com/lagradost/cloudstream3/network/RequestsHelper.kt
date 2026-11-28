@@ -45,6 +45,8 @@ fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClie
                 ignoreAllSSLErrors()
             }
         }
+        // Set before the DNS, so that DoH requests also go through the proxy
+        .apply { AppProxySelector.fromSettings(context)?.let { proxySelector(it) } }
         .cache(
             // Note that you need to add a ResponseInterceptor to make this 100% active.
             // The server response dictates if and when stuff should be cached.

@@ -825,4 +825,7 @@
     <string name="installed_plugins">Installed plugins</string>
     <string name="tunneled_playback">Tunneled playback</string>
     <string name="tunneled_playback_desc">Tunneled playback may improve stuttering on 4k videos, but may also cause playback issues on unsupported devices</string>
+    <string name="proxy_pref">Network proxy</string>
+    <string name="proxy_address_pref">Proxy address</string>
+    <string name="proxy_address_hint">host:port, e.g. 192.168.1.10:8080</string>
 </resources>

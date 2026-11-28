@@ -88,6 +88,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.network.AppProxySelector
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.fixSubtitleAlignment
 import com.lagradost.cloudstream3.ui.player.live.LiveHelper
 import com.lagradost.cloudstream3.ui.player.live.PREFERRED_LIVE_OFFSET
@@ -766,6 +767,11 @@ class CS3IPlayer : IPlayer {
         }
 
         fun tryCreateEngine(context: Context, diskCacheSize: Long): CronetEngine? {
+            // Cronet does not support custom proxies, so OkHttp is used when one is set
+            if (AppProxySelector.fromSettings(context) != null) {
+                return null
+            }
+
             // Fast case, no need to recreate it
             cronetEngine?.let {
                 return it
