@@ -775,4 +775,15 @@
     <string name="edit_profile_image_url">Adres URL</string>
     <string name="edit_profile_image_picker">Wybór obrazu</string>
     <string name="installed_plugins">Zainstalowane wtyczki</string>
+    <string name="error_file_io_toast">Wystąpił błąd podczas zapisu do pliku. Spróbuj ustawić nowy katalog pobierania.</string>
+    <string name="error_file_unknown_toast">Podczas pobierania pliku wystąpił błąd. Spróbuj ponownie.</string>
+    <string name="error_file_invalid_toast">Źródło pobierania jest nieprawidłowe. Spróbuj użyć innego źródła.</string>
+    <string name="error_settings_invalid_toast">Nieprawidłowe ustawienia pobierania.</string>
+    <string name="hardware_decoding">Dekodowanie sprzętowe</string>
+    <string name="hardware_then_software_decoding">Preferuj sprzętowe od programowego</string>
+    <string name="software_decoding_video">Programowe dekodowanie wideo</string>
+    <string name="software_decoding_audio">Programowe dekodowanie audio</string>
+    <string name="software_decoding_audio_desc">Programowe dekodowanie audio umożliwia obsługę większej liczby formatów audio i rozwiązuje niektóre problemy z brakiem dźwięku</string>
+    <string name="tunneled_playback">Odtwarzanie tunelowane</string>
+    <string name="tunneled_playback_desc">Odtwarzanie tunelowane może ograniczyć zacinanie się filmów w rozdzielczości 4K, ale na urządzeniach, które go nie obsługują, może powodować problemy z odtwarzaniem</string>
 </resources>

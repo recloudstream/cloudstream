@@ -314,7 +314,7 @@
     <string name="trailer">Trailer</string>
     <string name="app_layout">Applayout</string>
     <string name="pref_category_ui_features">Funktioner</string>
-    <string name="example_site_url">https://example.com</string>
+    <string name="example_site_url">https://exempel.se</string>
     <string name="example_lang_name">Språkkod (en)</string>
     <string name="video_buffer_disk_settings">Videocache på disken</string>
     <string name="video_buffer_clear_settings">Rensa video- och bildcache</string>
@@ -527,7 +527,7 @@
     <string name="pref_category_gestures">Gester</string>
     <string name="authenticated_user" formatted="true">%s autentiserad</string>
     <string name="extras">Statister</string>
-    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="network_adress_example">https://exempel.se/example.mp4</string>
     <string name="delete_repository">Radera databasen</string>
     <string name="profile_background_des">Profil bakgrund</string>
     <string name="quality_workprint">WP</string>
@@ -766,4 +766,8 @@
     <string name="edit_profile_image_picker">Bildväljare</string>
     <string name="edit_profile_image_default">Standard bilder</string>
     <string name="installed_plugins">Installerade insticksmoduler</string>
+    <string name="error_file_io_toast">Ett fel uppstod vid skrivning till filen. Prova att ange en ny nedladdningskatalog.</string>
+    <string name="error_file_unknown_toast">Ett fel uppstod vid nedladdning av filen. Försök igen.</string>
+    <string name="error_file_invalid_toast">Nedladdningskälla är ogiltig. Prova en annan källa.</string>
+    <string name="error_settings_invalid_toast">Ogiltiga nedladdningsinställningar.</string>
 </resources>

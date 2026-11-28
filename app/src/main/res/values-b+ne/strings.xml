@@ -74,7 +74,7 @@
     <string name="sort_close">बन्द</string>
     <string name="sort_clear">खाली गर्नुहोस्</string>
     <string name="sort_save">सेव</string>
-    <string name="next_episode_format" formatted="true">एपिसोड %d रिलीज हुने समय</string>
+    <string name="next_episode_format" formatted="true">भाग %d रिलीज हुने समय</string>
     <string name="no_data">डाटा छैन</string>
     <string name="next_episode">अर्को एपिसोड</string>
     <string name="type_watching">हेर्दै गरेको</string>
@@ -84,7 +84,7 @@
     <string name="pick_source">स्रोतहरू</string>
     <string name="sort_apply">लागू गर्नुहोस्</string>
     <string name="provider_info_meta">साइट ले मेटाडाटा दिएको छैन,मेटाडाटा बिना भिडियो लोड नहुन सक्छ।</string>
-    <string name="next_season_episode_format" formatted="true">प्रकरण %1$d प्रसङ्ग %2$d प्रशारण हुनेवाला छ</string>
+    <string name="next_season_episode_format" formatted="true">सिजन %1$d भाग %2$d प्रशारण हुनेवाला छ</string>
     <string name="search_provider_text_providers">प्रोभाईडर उपयोग गरी खोज्नुहोस्</string>
     <string name="subs_download_languages">भाषा डाउनलाेड गर्नुहोस्</string>
     <string name="subs_subtitle_languages">उपशीर्षकको भाषा</string>
@@ -126,4 +126,11 @@
     <string name="player_subtitles_settings_des">प्लेयरको उपशीर्षकको सेटिङ</string>
     <string name="repo_copy_label">रिपोजिटरी को नाम र यूआरएल</string>
     <string name="toast_copied">कपी गरियो!</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="play_from_beginning_img_des">सुरुबाट चलाउनुहोस्</string>
+    <string name="speech_recognition_unavailable">वाक् पहिचान उपलब्ध छैन</string>
+    <string name="begin_speaking">बोल्न सुरु गर्नुहोस्…</string>
+    <string name="play_full_series_button">पुरै सिरिज सुरु गर्नुहोस्</string>
 </resources>

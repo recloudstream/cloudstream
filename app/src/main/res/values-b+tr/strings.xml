@@ -767,4 +767,9 @@
     <string name="edit_profile_image_default">Varsayılan görüntüler</string>
     <string name="installed_plugins">Yüklü eklentiler</string>
     <string name="edit_profile_image_picker">Resim seçici</string>
+    <string name="error_file_io_toast">Dosyaya yazma sırasında hata oluştu. Yeni bir indirme dizini belirlemeyi deneyin.</string>
+    <string name="error_file_unknown_toast">Dosyaya yazma sırasında hata oluştu. Yeni bir indirme dizini belirlemeyi deneyin.</string>
+    <string name="error_file_invalid_toast">İndirme kaynağı geçersiz. Başka bir kaynak deneyin.</string>
+    <string name="error_settings_invalid_toast">Geçersiz indirme ayarı.</string>
+    <string name="compressor">Sıkıştırıcı</string>
 </resources>
