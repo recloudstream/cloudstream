@@ -340,8 +340,8 @@
     <string name="home_random">Zufällig</string>
     <string name="coming_soon">Demnächst…</string>
     <string name="quality_cam">Cam</string>
-    <string name="quality_cam_rip">Cam</string>
-    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_cam_rip">CamRip</string>
+    <string name="quality_cam_hd">CamHD</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
@@ -745,4 +745,26 @@
         <item quantity="other">%d ausgeblendete Links</item>
     </plurals>
     <string name="subs_edge">Rand</string>
+    <string name="hardware_then_software_decoding">Hardware ist Software vorzuziehen</string>
+    <string name="software_decoding_video">Videodekodierung durch Software</string>
+    <string name="software_decoding_audio">Audiodekodierung durch Software</string>
+    <string name="hardware_decoding">Hardwaredekodierung</string>
+    <string name="log_cat">Logcat 🐈</string>
+    <string name="compressor">Kompressor</string>
+    <string name="compressor_setting">Dynamikkompressor</string>
+    <string name="compressor_on">Ein</string>
+    <string name="compressor_on_format">Ein · %1$d dB / +%2$d dB</string>
+    <string name="compressor_off">Aus</string>
+    <string name="compressor_preset_light">Leicht</string>
+    <string name="compressor_preset_heavy">Schwer</string>
+    <string name="compressor_threshold_label">Schwellenwert: %d dB</string>
+    <string name="compressor_threshold_hint">Töne, die lauter als %d dB sind, werden leiser gestellt</string>
+    <string name="compressor_makeup_hint">Erhöht die Gesamtlautstärke um +%d dB</string>
+    <string name="software_decoding_audio_desc">Die Dekodierung durch die Audio-Software ermöglicht die Wiedergabe weiterer Audioformate und behebt einige Probleme, bei denen kein Ton zu hören ist</string>
+    <string name="background">Hintergrund</string>
+    <string name="edit_profile_image_url">URL</string>
+    <string name="edit_profile_image_picker">Bildauswahl</string>
+    <string name="edit_profile_image_default">Standardbilder</string>
+    <string name="installed_plugins">Installierte Plugins</string>
+    <string name="tunneled_playback">Getunnelte Wiedergabe</string>
 </resources>

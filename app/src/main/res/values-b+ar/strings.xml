@@ -341,7 +341,7 @@
     <string name="coming_soon">قريبا…</string>
     <string name="quality_cam">تصوير كام</string>
     <string name="quality_cam_rip">مقطع مسجل CamRip</string>
-    <string name="quality_cam_hd">تصوير كام جودة عالية</string>
+    <string name="quality_cam_hd">تصوير كاميرا جودة عالية</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_hd">عالِ الدقة</string>
     <string name="quality_ts">TS</string>
@@ -365,7 +365,7 @@
     <string name="error_invalid_url">عنون رابط غير صالح</string>
     <string name="error">خطأ</string>
     <string name="subtitles_remove_captions">ازالة التسميات التوضيحية من الترجمة</string>
-    <string name="subtitles_remove_bloat">ازالة البرمجيات الخبيثة من الترجمة</string>
+    <string name="subtitles_remove_bloat">ازل الاعلانات من الترجمة</string>
     <string name="subtitles_filter_lang">تصفية حسب لغة الوسائط المفضلة</string>
     <string name="extras">اكسترا</string>
     <string name="trailer">مقطع دعائي</string>
@@ -655,7 +655,7 @@
     <string name="sort_button_rating">تقييم %s</string>
     <string name="sort_button_date">تاريخ %s</string>
     <string name="update_plugins">تحديث الإضافات</string>
-    <string name="plugins_updated_manually">تم تحديث %d إضافات بنجاح!</string>
+    <string name="plugins_updated_manually">تم تحديث %d إضافة/ات بنجاح!</string>
     <string name="no_plugins_updated_manually">لم يتم تحديث الإضافات.</string>
     <string name="update_plugins_manually">تحديث الإضافات يدوياً</string>
     <string name="sort_episodes_number_asc">حلقة (تصاعدي)</string>
@@ -766,4 +766,33 @@
     <string name="start_paused_settings">استئناف المقاطع الموقوفة</string>
     <string name="start_paused_settings_des">تقليل الضغط عند اختيار مصادر</string>
     <string name="background">خلفية النص</string>
+    <string name="error_file_io_toast">حدث خطأ أثناء كتابة الملف. حاول تحديد مجلد تنزيل جديد.</string>
+    <string name="error_file_unknown_toast">حدث خطأ أثناء تحميل الملف. حاول مجددًا.</string>
+    <string name="error_file_invalid_toast">مصدر التحميل غير موجود. جرب مصدرًا اخر.</string>
+    <string name="error_settings_invalid_toast">إعدادات التنزيل غير صالحة.</string>
+    <string name="compressor">ضاغط</string>
+    <string name="compressor_setting">ضاغط النطاق الديناميكي</string>
+    <string name="compressor_setting_summary">عرض عناصر التحكم في الضاغط في المشغل (يساعد على تحقيق التوازن بين الصوت العالي والمنخفض)</string>
+    <string name="compressor_on">مفعل</string>
+    <string name="compressor_on_format">مفعّل · %1$d ديسيبل / +%2$d ديسيبل</string>
+    <string name="compressor_off">مطفئ</string>
+    <string name="compressor_preset_light">خفيف</string>
+    <string name="compressor_preset_dialog">تعزيز الحوار</string>
+    <string name="compressor_preset_heavy">ثقيل</string>
+    <string name="compressor_threshold_label">العتبة: %d ديسيبل</string>
+    <string name="compressor_makeup_label">تعويض الكسب: +%d ديسيبل</string>
+    <string name="compressor_threshold_hint">تقليل مستوى الصوت الذي يزيد عن %d ديسيبل</string>
+    <string name="compressor_makeup_hint">زيادة مستوى الصوت الإجمالي بمقدار +%d ديسيبل</string>
+    <plurals name="links_hidden">
+        <item quantity="zero">لا روابط مخفية</item>
+        <item quantity="one">رابط مخفي</item>
+        <item quantity="two">رابطان مخفيان</item>
+        <item quantity="few">%d روابط مخفية</item>
+        <item quantity="many">%d رابط مخفي</item>
+        <item quantity="other">%d رابط مخفي</item>
+    </plurals>
+    <string name="edit_profile_image_url">Url</string>
+    <string name="edit_profile_image_picker">منتقي الصور</string>
+    <string name="edit_profile_image_default">الصور الافتراضية</string>
+    <string name="installed_plugins">الإضافات المحملة</string>
 </resources>

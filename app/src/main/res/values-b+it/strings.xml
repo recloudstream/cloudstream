@@ -3,7 +3,7 @@
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
-    <string name="next_episode_format" formatted="true">L\'episodio %d uscirà in</string>
+    <string name="next_episode_format" formatted="true">L\'episodio %d uscirà tra</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%d min</string>
@@ -614,7 +614,7 @@
     <string name="pref_category_security">Sicurezza</string>
     <string name="auth_locally">Autenticazione locale</string>
     <string name="qr_image">Immagine codice QR</string>
-    <string name="dismiss">Respingi</string>
+    <string name="dismiss">Chiudi</string>
     <string name="open_downloaded_repo">Apri repository</string>
     <string name="device_pin_url_message">Visita <b>%s</b> sul tuo smartphone o computer e inserisci il codice sopra</string>
     <string name="device_pin_error_message">Impossibile ottenere il codice PIN del dispositivo, prova l\'autenticazione locale</string>
@@ -791,4 +791,15 @@
     <string name="edit_profile_image_picker">Selettore immagini</string>
     <string name="edit_profile_image_default">Immagini predefinite</string>
     <string name="installed_plugins">Plugin installati</string>
+    <string name="error_file_io_toast">Errore durante il salvataggio del file. Prova a impostare una nuova cartella di download.</string>
+    <string name="error_file_unknown_toast">Errore durante il download del file. Riprova.</string>
+    <string name="error_file_invalid_toast">Fonte di download non valida. Prova un\'altra fonte.</string>
+    <string name="error_settings_invalid_toast">Impostazioni di download non valide.</string>
+    <string name="hardware_decoding">Decodifica hardware</string>
+    <string name="hardware_then_software_decoding">Preferisci hardware a software</string>
+    <string name="software_decoding_video">Decodifica software video</string>
+    <string name="software_decoding_audio">Decodifica software audio</string>
+    <string name="software_decoding_audio_desc">La decodifica software audio abilita più formati audio e risolve alcuni problemi di assenza di audio</string>
+    <string name="tunneled_playback">Riproduzione tunneled</string>
+    <string name="tunneled_playback_desc">La riproduzione con tunneling può ridurre gli scatti nei video in 4K, ma può anche causare problemi di riproduzione sui dispositivi non supportati</string>
 </resources>

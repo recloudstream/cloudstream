@@ -777,4 +777,15 @@
     <string name="edit_profile_image_picker">图片选择器</string>
     <string name="edit_profile_image_default">默认图片</string>
     <string name="installed_plugins">已安装的插件</string>
+    <string name="error_file_io_toast">写入文件时出错。数字和设置新的下载目录。</string>
+    <string name="error_file_unknown_toast">下载文件时出错。请重试。</string>
+    <string name="error_file_invalid_toast">下载源无效，尝试别的源。</string>
+    <string name="error_settings_invalid_toast">无效的下载设置。</string>
+    <string name="hardware_decoding">硬件解码</string>
+    <string name="hardware_then_software_decoding">硬件解码优先级高于软件解码</string>
+    <string name="software_decoding_video">视频软件解码</string>
+    <string name="software_decoding_audio">音频软件解码</string>
+    <string name="software_decoding_audio_desc">音频软件解码可处理更多音频格式，修复一些无声音问题</string>
+    <string name="tunneled_playback">隧道式播放</string>
+    <string name="tunneled_playback_desc">隧道式播放可改善 4k 视频播放卡顿问题，但可能在不支持设备上导致播放问题</string>
 </resources>

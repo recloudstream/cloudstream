@@ -787,4 +787,8 @@
     <string name="edit_profile_image_picker">Výběr obrázků</string>
     <string name="edit_profile_image_default">Výchozí obrázky</string>
     <string name="installed_plugins">Nainstalované doplňky</string>
+    <string name="error_file_io_toast">Během zapisování do souboru došlo k chybě. Zkuste nastavit nový adresář pro stahování.</string>
+    <string name="error_file_unknown_toast">Během stahování souboru došlo k chybě. Zkuste to znovu.</string>
+    <string name="error_file_invalid_toast">Zdroj stahování je neplatný. Zkuste jiný zdroj.</string>
+    <string name="error_settings_invalid_toast">Neplatná nastavení stahování.</string>
 </resources>

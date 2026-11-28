@@ -763,4 +763,15 @@
     <string name="edit_profile_image_picker">이미지 선택기</string>
     <string name="edit_profile_image_default">기본 이미지</string>
     <string name="installed_plugins">설치한 플러그인</string>
+    <string name="error_file_io_toast">파일에 쓰는 중 오류가 발생했습니다. 새 다운로드 경로를 설정해 보세요.</string>
+    <string name="error_file_unknown_toast">파일을 다운로드하는 중 오류가 발생했습니다. 다시 시도하세요.</string>
+    <string name="error_file_invalid_toast">다운로드 소스가 유효하지 않습니다. 다른 소스를 시도하세요.</string>
+    <string name="error_settings_invalid_toast">다운로드 설정이 유효하지 않습니다.</string>
+    <string name="hardware_decoding">하드웨어 디코딩</string>
+    <string name="hardware_then_software_decoding">소프트웨어보다 하드웨어 우선</string>
+    <string name="software_decoding_video">비디오 소프트웨어 디코딩</string>
+    <string name="software_decoding_audio">오디오 소프트웨어 디코딩</string>
+    <string name="software_decoding_audio_desc">오디오 소프트웨어 디코딩 시 더 많은 오디오 형식이 활성화되며, 일부 오디오 누락 문제를 해결할 수 있습니다</string>
+    <string name="tunneled_playback">터널링 재생</string>
+    <string name="tunneled_playback_desc">터널링 재생은 4K 동영상의 끊김 현상을 개선할 수 있지만, 지원하지 않는 기기에서는 재생 문제를 유발할 수 있습니다</string>
 </resources>
