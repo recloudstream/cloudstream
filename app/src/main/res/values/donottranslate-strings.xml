@@ -73,6 +73,8 @@
     <string name="redo_setup_key">redo_setup_key</string>
     <string name="filter_sub_lang_key">filter_sub_lang_key</string>
     <string name="pref_filter_search_quality_key">pref_filter_search_quality_key</string>
+    <string name="search_concurrency_key">search_concurrency_key</string>
+    <string name="search_timeout_key">search_timeout_key</string>
     <string name="enable_nsfw_on_providers_key">enable_nsfw_on_providers_key</string>
     <string name="skip_startup_account_select_key">skip_startup_account_select_key</string>
     <string name="enable_skip_op_from_database">enable_skip_op_from_database</string>

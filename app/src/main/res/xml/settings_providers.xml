@@ -28,4 +28,30 @@
         android:title="@string/test_extensions"
         android:summary="@string/test_extensions_summary"/>
 
+    <PreferenceCategory android:title="@string/category_search_performance">
+        <SeekBarPreference
+            android:defaultValue="10"
+            android:icon="@drawable/arrow_and_edge_24px"
+            android:key="@string/search_concurrency_key"
+            android:max="25"
+            android:summary="@string/search_concurrency_summary"
+            android:title="@string/search_concurrency_title"
+            app:adjustable="true"
+            app:min="3"
+            app:seekBarIncrement="1"
+            app:showSeekBarValue="true" />
+
+        <SeekBarPreference
+            android:defaultValue="8"
+            android:icon="@drawable/history_toggle_off_24px"
+            android:key="@string/search_timeout_key"
+            android:max="20"
+            android:summary="@string/search_timeout_summary"
+            android:title="@string/search_timeout_title"
+            app:adjustable="true"
+            app:min="3"
+            app:seekBarIncrement="1"
+            app:showSeekBarValue="true" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

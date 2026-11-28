@@ -4,11 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.HomePageList
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -23,7 +26,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 
 data class ExpandableSearchList(
@@ -229,18 +235,34 @@ class SearchViewModel : ViewModel() {
             lastQuery = query
 
             withContext(Dispatchers.IO) { // This interrupts UI otherwise
+                val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
+                val concurrency = settingsManager?.getInt(
+                    context?.getString(R.string.search_concurrency_key),
+                    10
+                ) ?: 10
+                val timeoutSec = settingsManager?.getInt(
+                    context?.getString(R.string.search_timeout_key),
+                    8
+                ) ?: 8
+                val timeoutMs = timeoutSec * 1000L
+                val searchLimiter = Semaphore(permits = concurrency.coerceIn(1, 50))
+
                 repos.filter { a ->
                     (ignoreSettings || (providersActive.isEmpty() || providersActive.contains(a.name))) && (!isQuickSearch || a.hasQuickSearch)
                 }.amap { a -> // Parallel
-                    val search = if (isQuickSearch) a.quickSearch(query) else a.search(query, 1)
-                    if (currentSearchIndex != currentIndex) return@amap
-                    if (search is Resource.Success) {
-                        val searchValue = search.value
-                        expandableSearches[a.name] =
-                            ExpandableSearchList(searchValue.items, 1, searchValue.hasNext)
-                    }
+                    searchLimiter.withPermit {
+                        withTimeoutOrNull(timeoutMs) {
+                            val search = if (isQuickSearch) a.quickSearch(query) else a.search(query, 1)
+                            if (currentSearchIndex != currentIndex) return@withTimeoutOrNull
+                            if (search is Resource.Success) {
+                                val searchValue = search.value
+                                expandableSearches[a.name] =
+                                    ExpandableSearchList(searchValue.items, 1, searchValue.hasNext)
+                            }
 
-                    _currentSearch.postValue(expandableSearches)
+                            _currentSearch.postValue(expandableSearches)
+                        }
+                    }
                 }
 
                 if (currentSearchIndex != currentIndex) return@withContext // this should prevent rewrite of existing data bug

@@ -823,6 +823,11 @@
     </plurals>
     <string name="player_is_live">Live</string>
     <string name="installed_plugins">Installed plugins</string>
+    <string name="category_search_performance">Search Performance</string>
+    <string name="search_concurrency_title">Max Concurrent Search Providers</string>
+    <string name="search_concurrency_summary">Controls how many extensions search simultaneously. Lower values prevent crashes on low-RAM devices (Fire Stick / Android TV).</string>
+    <string name="search_timeout_title">Provider Search Timeout (seconds)</string>
+    <string name="search_timeout_summary">Maximum time in seconds to wait for each extension before skipping to the next.</string>
     <string name="tunneled_playback">Tunneled playback</string>
     <string name="tunneled_playback_desc">Tunneled playback may improve stuttering on 4k videos, but may also cause playback issues on unsupported devices</string>
 </resources>
